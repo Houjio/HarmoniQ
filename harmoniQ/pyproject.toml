@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "harmoniq"
+version = "0.1.0"
+description = "Library pour l'analyse de production d'énergie de Hydro-Québec"
+authors = [
+    "Sébastien Dasys <sebastien.dasys@polymtl.ca>",
+    # Ajoute ton nom si tu contribues au code
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "^1.21.0"
+pandas = "^1.3.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+black = "^21.7b0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
