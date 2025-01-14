@@ -17,7 +17,7 @@ Installation avec conda
 
 3. Installer les dépendances ::
 
-    pip install -e -r requirements.txt
+    pip install -e ./harmoniQ[dev]
 
 Installation avec Virtualenv
 ----------------------------
@@ -38,4 +38,4 @@ Installation avec Virtualenv
 
 3. Installer les dépendances ::
 
-    pip install -e -r requirements.txt
+    pip install -e ./harmoniQ[dev]
