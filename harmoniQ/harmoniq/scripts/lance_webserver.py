@@ -1,5 +1,6 @@
 import argparse
-from harmoniq.interface import app
+from harmoniq.webserver import app
+import uvicorn
 
 
 def main():
@@ -23,7 +24,7 @@ def main():
     )
 
     args = parser.parse_args()
-    app.run(debug=args.debug, host=args.host, port=args.port)
+    uvicorn.run(app, host=args.host, port=int(args.port), reload=args.debug)
 
 
 if __name__ == "__main__":
