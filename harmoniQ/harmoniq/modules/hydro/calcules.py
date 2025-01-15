@@ -3,6 +3,7 @@ import pandas as pd
 
 from dataclasses import dataclass
 
+
 @dataclass
 class Hydro:
     nom: str
@@ -10,6 +11,7 @@ class Hydro:
 
     def production_par_temps(self, heures: int) -> float:
         return self.production_par_heure_kw * heures
+
 
 if __name__ == "__main__":
     print("Lancement de calcules hydro")
