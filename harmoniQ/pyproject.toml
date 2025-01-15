@@ -14,11 +14,13 @@ authors = [
 dependencies = [
     "numpy",
     "pandas",
+    "flask",
     # Ajoute les dépendances nécessaires au fur et à mesure
 ]
 
 [project.scripts]
 load-db = "harmoniq.scripts.load_database:main"
+launch-app = "harmoniq.scripts.lance_interface:main"
 
 [project.optional-dependencies]
 dev = [
