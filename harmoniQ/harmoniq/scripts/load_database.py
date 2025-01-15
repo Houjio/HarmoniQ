@@ -30,10 +30,11 @@ def get_credentials() -> Tuple[str, str]:
         if r.lower() != "o":
             print("Erreur: Le courriel doit se terminer par @polymtlus.ca")
             exit(1)
-        
+
         email = email + "@polymtlus.ca"
 
     return email, password
+
 
 def get_sharepoint_user() -> ClientContext:
     print("Connexion à SharePoint...")
@@ -44,11 +45,13 @@ def get_sharepoint_user() -> ClientContext:
     print(f"Connecté en tant que {me.login_name}")
     return ctx
 
+
 def get_sharepoint_folder(ctx: ClientContext) -> Folder:
     print("Récupération du dossier...")
     list_obj = ctx.web.lists.get_by_title(SHAREPOINT_FOLDER)
     folder = list_obj.root_folder.folders.get_by_url(SHAREPOINT_SUBFOLDER)
     return folder
+
 
 def upload_db():
     print("Téléversement de la base de données...")
@@ -60,13 +63,16 @@ def upload_db():
         file.execute_query()
     print("Téléversement terminé")
 
+
 def download_db():
     print("Téléchargement de la base de données...")
     ctx = get_sharepoint_user()
     folder = get_sharepoint_folder(ctx)
     items = folder.files.get().execute_query()
     if SHAREPOINT_FILE not in [item.properties["Name"] for item in items]:
-        print(f"Erreur: Fichier {SHAREPOINT_SUBFOLDER}/{SHAREPOINT_FILE} non trouvé sur sharepoint")
+        print(
+            f"Erreur: Fichier {SHAREPOINT_SUBFOLDER}/{SHAREPOINT_FILE} non trouvé sur sharepoint"
+        )
         exit(1)
 
     print("Téléchargement du fichier...")
@@ -101,6 +107,7 @@ def main():
     else:
         print("Utilisez l'option -h pour afficher l'aide")
         exit(1)
+
 
 if __name__ == "__main__":
     main()
