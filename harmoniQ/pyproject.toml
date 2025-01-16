@@ -12,10 +12,13 @@ authors = [
     # Ajoute ton nom si tu contribues au code
 ]
 dependencies = [
+    # Général
     "numpy",
     "pandas",
+    # Web app dependencies
     "fastapi",
     "uvicorn",
+    "sqlalchemy",
     # Ajoute les dépendances nécessaires au fur et à mesure
 ]
 
@@ -27,6 +30,7 @@ launch-app = "harmoniq.scripts.lance_webserver:main"
 dev = [
     "black",
     "flake8",
+    "pytest",
     "Office365-REST-Python-Client"
 ]
 

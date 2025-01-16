@@ -23,4 +23,4 @@ Pour ajouter des tests, il faut ajouter des tests dans le dossier harmoniQ/tests
 
 .. code-block:: bash
 
-    python -m unittest discover -s tests
+    pytest

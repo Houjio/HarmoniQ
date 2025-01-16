@@ -7,4 +7,4 @@ harmoniq_env
 *.egg-info
 __pycache__
 _version.py
-
+*.pyc

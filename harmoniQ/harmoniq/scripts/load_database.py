@@ -3,6 +3,8 @@ from pathlib import Path
 from typing import Tuple
 import getpass
 
+from harmoniq import DB_PATH
+
 try:
     from office365.runtime.auth.user_credential import UserCredential
     from office365.sharepoint.client_context import ClientContext
@@ -57,7 +59,7 @@ def upload_db():
     print("Téléversement de la base de données...")
     ctx = get_sharepoint_user()
     folder = get_sharepoint_folder(ctx)
-    with open(LOCAL_DB_DIR / LOCAL_DB_NAME, "rb") as local_file:
+    with open(DB_PATH, "rb") as local_file:
         file_content = local_file.read()
         file = folder.upload_file(SHAREPOINT_FILE, file_content)
         file.execute_query()
@@ -79,7 +81,7 @@ def download_db():
     file = folder.files.get_by_url(SHAREPOINT_FILE)
     file_object = file.open_binary_stream().execute_query()
     file_content = file_object.value
-    with open(LOCAL_DB_DIR / LOCAL_DB_NAME, "wb") as local_file:
+    with open(DB_PATH, "wb") as local_file:
         local_file.write(file_content)
     print("Téléchargement terminé")
 
