@@ -9,6 +9,6 @@ router = APIRouter(
 )
 
 
-@router.get("/eolienne")
-def get_eoliennes():
-    return {"message": "Hello World"}
+@router.get("/ping")
+async def ping():
+    return {"ping": "pong"}

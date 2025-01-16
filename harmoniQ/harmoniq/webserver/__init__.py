@@ -18,11 +18,6 @@ app.mount("/static", StaticFiles(directory=STATIC_FILE), name="static")
 templates = Jinja2Templates(directory=ASSET_FILE)
 
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    app.state.client.close()
-
-
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
