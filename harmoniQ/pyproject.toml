@@ -9,6 +9,7 @@ description = "Librarie pour l'analyse de production d'énergie de Hydro-Québec
 requires-python = ">=3.8"
 authors = [
     {name = "Sébastien Dasys", email = "sebastien.dasys@polymtl.ca"},
+    {name = "Alec Mitchell", email = "alec.mitchell@polymtl.ca"},
     # Ajoute ton nom si tu contribues au code
 ]
 dependencies = [
@@ -21,6 +22,7 @@ dependencies = [
     "sqlalchemy",
     # Ajoute les dépendances nécessaires au fur et à mesure
     "nrel-pysam",
+    "windpowerlib",
 ]
 
 [project.scripts]
