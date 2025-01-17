@@ -20,6 +20,7 @@ dependencies = [
     "uvicorn",
     "sqlalchemy",
     # Ajoute les dépendances nécessaires au fur et à mesure
+    "nrel-pysam",
 ]
 
 [project.scripts]
