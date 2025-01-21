@@ -15,10 +15,15 @@ dependencies = [
     # Général
     "numpy",
     "pandas",
+    "matplotlib",
+    
+    # Web app dependencies
     "fastapi",
     "uvicorn",
     "sqlalchemy",
     # Ajoute les dépendances nécessaires au fur et à mesure
+    # hydro dependencies
+    "HydroGenerate",
 ]
 
 [project.scripts]
