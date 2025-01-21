@@ -16,12 +16,15 @@ dependencies = [
     "numpy",
     "pandas",
     "matplotlib",
+    "scipy",
     
     # Web app dependencies
     "fastapi",
     "uvicorn",
     "sqlalchemy",
     # Ajoute les dépendances nécessaires au fur et à mesure
+    # solaire dependencies
+    "pvlib",
     # hydro dependencies
     "HydroGenerate",
 ]
