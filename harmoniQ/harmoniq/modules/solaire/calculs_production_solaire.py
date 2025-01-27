@@ -165,3 +165,5 @@ Exemples
 (45.4167, -73.4999, 'La Prairie', 20, 'Etc/GMT+5')
 (45.6833, -73.4333, 'Varennes', 20, 'Etc/GMT+5')
 """
+# Appel des fonctions
+solar_energy_production(coordinates)
