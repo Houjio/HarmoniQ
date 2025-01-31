@@ -23,6 +23,7 @@ dependencies = [
     # Ajoute les dépendances nécessaires au fur et à mesure
     "nrel-pysam",
     "windpowerlib",
+    "geopandas",
 ]
 
 [project.scripts]
