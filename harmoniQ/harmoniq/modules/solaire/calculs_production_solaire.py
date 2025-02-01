@@ -140,9 +140,9 @@ def solar_energy_production(coordinates):
 
 # Coordinates for the locations of the solar plants
 coordinates = [
-    (45.5017, -73.5673, 'Montréal', 36, 'Etc/GMT+5'),
-    (45.4167, -73.4999, 'La Prairie', 20, 'Etc/GMT+5'),
-    (45.6833, -73.4333, 'Varennes', 20, 'Etc/GMT+5'),
+    (45.5017, -73.5673, 'Montréal', 0, 'Etc/GMT+5'),
+    (45.4167, -73.4999, 'La Prairie', 0, 'Etc/GMT+5'),
+    (45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5'),
 ]
 """
 Liste des coordonnées des emplacements des centrales solaires.
@@ -155,15 +155,15 @@ Chaque tuple contient les informations suivantes :
 - Nom : str
     Nom de l'emplacement.
 - Altitude : float
-    Altitude de l'emplacement en mètres.
+    Altitude de l'emplacement en mètres. fixé à 0 pour simplification.
 - Fuseau horaire : str
     Fuseau horaire de l'emplacement.
 
 Exemples
 --------
-(45.5017, -73.5673, 'Montréal', 36, 'Etc/GMT+5')
-(45.4167, -73.4999, 'La Prairie', 20, 'Etc/GMT+5')
-(45.6833, -73.4333, 'Varennes', 20, 'Etc/GMT+5')
+(45.5017, -73.5673, 'Montréal', 0, 'Etc/GMT+5')
+(45.4167, -73.4999, 'La Prairie', 0, 'Etc/GMT+5')
+(45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5')
 """
 # Appel des fonctions
 solar_energy_production(coordinates)
