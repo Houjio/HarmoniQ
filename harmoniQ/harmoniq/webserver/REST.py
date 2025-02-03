@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from harmoniq.db import shemas
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
+from datetime import datetime
 
-from harmoniq.db import engine
+from harmoniq.core import meteo
 
 router = APIRouter(
     prefix="/api",
@@ -17,48 +19,26 @@ async def ping():
     return {"ping": "pong"}
 
 
-@router.post("/stations", response_model=shemas.StationMeteoRead)
-def cree_station_meteo(
-    station: shemas.StationMeteoCreate, db: Session = Depends(engine.get_db)
+@router.post("/meteo/get_data")
+async def get_meteo_data(
+    latitude: float,
+    longitude: float,
+    interpolate: bool,
+    start_time: datetime,
+    granularity: meteo.Granularity,
+    end_time: Optional[datetime] = None,
 ):
-    return engine.create_station(station, db)
-
-
-@router.get("/stations", response_model=List[shemas.StationMeteoRead])
-def recupere_chaque_station(db: Session = Depends(engine.get_db)):
-    return engine.get_all_stations(db)
-
-
-@router.get("/stations/{station_id}", response_model=shemas.StationMeteoRead)
-def recupere_station_avec_id(station_id: int, db: Session = Depends(engine.get_db)):
-    station = engine.get_station_by_id(station_id, db)
-    if station is None:
-        raise HTTPException(status_code=404, detail="Station non trouvée")
-    return station
-
-
-@router.get("/stations/iata/{iata_id}", response_model=shemas.StationMeteoRead)
-def recupere_station_avec_iata_id(iata_id: str, db: Session = Depends(engine.get_db)):
-    station = engine.get_station_by_iata_id(iata_id, db)
-    if station is None:
-        raise HTTPException(status_code=404, detail="Station non trouvée")
-    return station
-
-
-@router.delete("/stations/{station_id}")
-def suprimer_station(station_id: int, db: Session = Depends(engine.get_db)):
-    station = engine.get_station_by_id(station_id, db)
-    if station is None:
-        raise HTTPException(status_code=404, detail="Station non trouvée")
-    engine.delete_station(station_id, db)
-    return {"message": "Station supprimée"}
-
-
-@router.post("/stations/n_proches")
-def recupere_stations_proches(
-    latitude: float, longitude: float, n: int, db: Session = Depends(engine.get_db)
-):
-    stations = engine.get_n_nearest_stations(
-        latitude=latitude, longitude=longitude, n=n, db=db
+    helper = meteo.WeatherHelper(
+        position=shemas.PositionBase(latitude=latitude, longitude=longitude),
+        interpolate=interpolate,
+        start_time=start_time,
+        end_time=end_time,
+        granularity=granularity,
     )
-    return stations
+    helper.load()
+    csv_buffer = helper.data.to_csv()
+    return StreamingResponse(
+        csv_buffer,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=weather_data.csv"},
+    )
