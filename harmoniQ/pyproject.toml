@@ -26,8 +26,6 @@ dependencies = [
     "windpowerlib",
     "geopandas",
     "env-canada"
-    # hydro dependencies
-    "HydroGenerate",
 ]
 
 [project.scripts]
