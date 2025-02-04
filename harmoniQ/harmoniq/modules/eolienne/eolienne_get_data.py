@@ -1,4 +1,4 @@
-from pathlib import Path
+"""from pathlib import Path
 import geopandas as gpd
 
 "https://geoappext.nrcan.gc.ca/arcgis/rest/services/IETS/PCWIS/MapServer/1/query?where=1%3D1&text=&objectIds=1&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&having=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&f=html"
@@ -19,5 +19,4 @@ params = {
     "outFields": "Wind_speed",
     "returnGeometry": False,
     "f": "json"
-}
-geoappext.nrcan.gc.ca
+}"""
