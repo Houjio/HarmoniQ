@@ -25,7 +25,7 @@ dependencies = [
     "nrel-pysam",
     "windpowerlib",
     "geopandas",
-    "bs4",
+    "env-canada"
     # hydro dependencies
     "HydroGenerate",
 ]
