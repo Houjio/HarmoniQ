@@ -25,7 +25,7 @@ def get_weather_data(coordinates):
         tmys.append(weather)
     return tmys
 
-def calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter):
+def calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter, surface_tilt, surface_azimuth):
     """
     Calcule les paramètres solaires et l'irradiance pour un emplacement donné.
 
@@ -38,13 +38,17 @@ def calculate_solar_parameters(weather, latitude, longitude, altitude, temperatu
     longitude : float
         Longitude de l'emplacement.
     altitude : float
-        Altitude de l'emplacement.
+        Altitude de l'emplacement en mètres.
     temperature_model_parameters : dict
         Paramètres du modèle de température.
     module : dict
         Paramètres du module solaire.
     inverter : dict
         Paramètres de l'onduleur.
+    surface_tilt : float
+        Angle d'inclinaison des panneaux solaires.
+    surface_azimuth : float
+        Orientation des panneaux solaires.
 
     Returns
     -------
@@ -64,14 +68,14 @@ def calculate_solar_parameters(weather, latitude, longitude, altitude, temperatu
     pressure = pvlib.atmosphere.alt2pres(altitude)
     am_abs = pvlib.atmosphere.get_absolute_airmass(airmass, pressure)
     aoi = pvlib.irradiance.aoi(
-        latitude,
-        180,
+        surface_tilt,
+        surface_azimuth,
         solpos["apparent_zenith"],
         solpos["azimuth"],
     )
     total_irradiance = pvlib.irradiance.get_total_irradiance(
-        latitude,
-        180,
+        surface_tilt,
+        surface_azimuth,
         solpos['apparent_zenith'],
         solpos['azimuth'],
         weather['dni'],
@@ -123,13 +127,16 @@ def solar_energy_production(coordinates):
 
     for location, weather in zip(coordinates, tmys):
         latitude, longitude, name, altitude, timezone = location
-        ac = calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter)
+        # Utilisez des valeurs optimisées pour l'angle et l'orientation des panneaux
+        surface_tilt = 50  # inclinaison favorisant la production hivernale
+        surface_azimuth = 180  # Orientation plein sud
+        ac = calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter, surface_tilt, surface_azimuth)
         annual_energy = ac.sum()
         energies[name] = annual_energy
 
     energies = pd.Series(energies)
-    print("Énergies annuelle TMY (Wh) :")
-    print(energies.apply(lambda x: f"{x:.2f}"))
+    print("Énergies annuelles (Wh) :")
+    print(energies.apply(lambda x: f"{x:.2f} Wh"))
 
     energies.plot(kind='bar', rot=0)
     plt.ylabel('Yearly energy yield (Wh)')
@@ -138,32 +145,71 @@ def solar_energy_production(coordinates):
 
     return energies
 
+def residential_solar_energy_production(coordinates):
+    """
+    Calcule l'énergie solaire annuelle pour les emplacements spécifiés avec des panneaux résidentiels.
+
+    Parameters
+    ----------
+    coordinates : list of tuples
+        Liste des coordonnées des emplacements sous forme de tuples (latitude, longitude, nom, altitude, fuseau horaire).
+
+    Returns
+    -------
+    Series
+        Énergies annuelles (Wh) pour chaque emplacement.
+    """
+    sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
+    sapm_inverters = pvlib.pvsystem.retrieve_sam('cecinverter')
+
+    module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
+    inverter = sapm_inverters['ABB__MICRO_0_25_I_OUTD_US_208__208V_']
+    temperature_model_parameters = pvlib.temperature.TEMPERATURE_MODEL_PARAMETERS['sapm']['open_rack_glass_glass']
+
+    tmys = get_weather_data(coordinates)
+    energies = {}
+
+    for location, weather in zip(coordinates, tmys):
+        latitude, longitude, name, altitude, timezone = location
+        # Utilisez des valeurs fixes pour l'angle et l'orientation des panneaux résidentiels
+        surface_tilt = 0  # Angle des panneaux fixé à 0°
+        surface_azimuth = 180  # Orientation plein sud
+        ac = calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter, surface_tilt, surface_azimuth)
+        annual_energy = ac.sum()
+        energies[name] = annual_energy
+
+    energies = pd.Series(energies)
+    print("Énergies annuelles résidentielles par MRC (Wh) :")
+    print(energies.apply(lambda x: f"{x:.2f} Wh"))
+
+    energies.plot(kind='bar', rot=45)
+    plt.ylabel('Yearly residential energy yield (Wh)')
+    plt.title('Yearly Residential Energy Yield per MRC')
+    plt.show()
+
+    return energies
+
 # Coordinates for the locations of the solar plants
-coordinates = [
+plants_coordinates = [
     (45.5017, -73.5673, 'Montréal', 0, 'Etc/GMT+5'),
     (45.4167, -73.4999, 'La Prairie', 0, 'Etc/GMT+5'),
     (45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5'),
 ]
-"""
-Liste des coordonnées des emplacements des centrales solaires.
 
-Chaque tuple contient les informations suivantes :
-- Latitude : float
-    Latitude de l'emplacement en degrés.
-- Longitude : float
-    Longitude de l'emplacement en degrés.
-- Nom : str
-    Nom de l'emplacement.
-- Altitude : float
-    Altitude de l'emplacement en mètres. fixé à 0 pour simplification.
-- Fuseau horaire : str
-    Fuseau horaire de l'emplacement.
+MRC_coordinates = [
+    (46.8139, -71.2082, 'Capitale-Nationale', 0, 'Etc/GMT+5'),  
+    (45.5017, -73.5673, 'Montréal', 0, 'Etc/GMT+5'),  
+    (45.7640, -74.0059, 'Laurentides', 0, 'Etc/GMT+5'), 
+    (46.3430, -72.5477, 'Mauricie', 0, 'Etc/GMT+5'),  
+    (45.5534, -73.5529, 'Laval', 0, 'Etc/GMT+5'),  
+    (45.5019, -73.5674, 'Montérégie', 0, 'Etc/GMT+5'),  
+    (46.8299, -71.2540, 'Chaudière-Appalaches', 0, 'Etc/GMT+5'), 
+    (46.8033, -71.2428, 'Saguenay-Lac-Saint-Jean', 0, 'Etc/GMT+5'), 
+    (48.4284, -71.0594, 'Côte-Nord', 0, 'Etc/GMT+5'),  
+    (45.4042, -71.8824, 'Estrie', 0, 'Etc/GMT+5'),  
+]
+# Appel des fonctions pour la production des centrales solaires
+# solar_energy_production(plants_coordinates)
 
-Exemples
---------
-(45.5017, -73.5673, 'Montréal', 0, 'Etc/GMT+5')
-(45.4167, -73.4999, 'La Prairie', 0, 'Etc/GMT+5')
-(45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5')
-"""
-# Appel des fonctions
-solar_energy_production(coordinates)
+# Appel des fonctions pour la production résidentielle
+residential_solar_energy_production(MRC_coordinates)
