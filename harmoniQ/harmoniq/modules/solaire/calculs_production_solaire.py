@@ -189,6 +189,51 @@ def residential_solar_energy_production(coordinates):
 
     return energies
 
+def power2surface():
+    """
+    Demande à l'utilisateur d'entrer soit la surface disponible, soit la puissance souhaitée, et calcule l'autre valeur en conséquence.
+
+    Returns
+    -------
+    tuple
+        Surface disponible en m² et puissance installée en MW.
+    """
+    panel_efficiency = 0.18  # Efficacité du panneau solaire (18%)
+
+    choice = input("Voulez-vous entrer la surface disponible (m²) ou la puissance souhaitée (MW) ? (entrez 'surface' ou 'puissance') : ").strip().lower()
+
+    if choice == 'surface':
+        try:
+            surface = float(input("Entrez la surface disponible en m² : "))
+            power = surface * panel_efficiency * 1000 / 1_000_000  # Convertir en MW
+            return surface, power
+        except ValueError:
+            print("Entrée invalide. Utilisation de la valeur par défaut de 1.7 m².")
+            surface = 1.7
+            power = surface * panel_efficiency * 1000 / 1_000_000
+            return surface, power
+    elif choice == 'puissance':
+        try:
+            power = float(input("Entrez la puissance souhaitée en MW : "))
+            surface = power * 1_000_000 / (panel_efficiency * 1000)  # Convertir en m²
+            return surface, power
+        except ValueError:
+            print("Entrée invalide. Utilisation de la valeur par défaut de 1 MW.")
+            power = 1.0
+            surface = power * 1_000_000 / (panel_efficiency * 1000)
+            return surface, power
+    else:
+        print("Choix invalide. Utilisation de la valeur par défaut de 1.7 m².")
+        surface = 1.7
+        power = surface * panel_efficiency * 1000 / 1_000_000
+        return surface, power
+
+# Exemple d'utilisation de la fonction
+surface, power = power2surface()
+print(f"Surface disponible : {surface:.2f} m²")
+print(f"Puissance installée : {power:.6f} MW")
+
+
 # Coordinates for the locations of the solar plants
 plants_coordinates = [
     (45.5017, -73.5673, 'Montréal', 0, 'Etc/GMT+5'),
@@ -212,4 +257,9 @@ MRC_coordinates = [
 # solar_energy_production(plants_coordinates)
 
 # Appel des fonctions pour la production résidentielle
-residential_solar_energy_production(MRC_coordinates)
+# residential_solar_energy_production(MRC_coordinates)
+
+
+surface, power = power2surface()
+print(f"Surface disponible : {surface:.2f} m²")
+print(f"Puissance installée : {power:.2f} kW")
