@@ -24,7 +24,6 @@ def get_weather_data(coordinates):
         weather = pvlib.iotools.get_pvgis_tmy(latitude, longitude)[0]
         weather.index.name = "utc_time"
         tmys.append(weather)
-        print(f"Données récupérées pour {name}")
     return tmys
 
 def calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter, surface_tilt, surface_azimuth):
@@ -134,10 +133,9 @@ def solar_energy_production(coordinates, show_plot=False):
     print("\nCalcul de la production solaire...")
     for location, weather in zip(coordinates, tmys):
         latitude, longitude, name, altitude, timezone = location
-        ac = calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter)
+        ac = calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter, 30, 180)
         annual_energy = ac.sum()
         energies[name] = annual_energy
-        print(f"Calcul terminé pour {name}")
 
     energies = pd.Series(energies)
     print("Énergies annuelles (Wh) :")
@@ -151,7 +149,7 @@ def solar_energy_production(coordinates, show_plot=False):
 
     return energies
 
-def residential_solar_energy_production(coordinates):
+def residential_solar_energy_production(coordinates, show_plot=False):
     """
     Calcule l'énergie solaire annuelle pour les emplacements spécifiés avec des panneaux résidentiels.
 
@@ -183,7 +181,7 @@ def residential_solar_energy_production(coordinates):
     for location, weather in zip(coordinates, tmys):
         latitude, longitude, name, altitude, timezone = location
         print(f"Calcul pour {name}...")
-        ac = calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter)
+        ac = calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter, 30, 180)
         annual_energy = ac.sum()
         energies[name] = annual_energy
         print(f"Calcul terminé pour {name}")
@@ -200,35 +198,34 @@ def residential_solar_energy_production(coordinates):
 
     return energies
 
-# Coordinates for the locations of the solar plants
-plants_coordinates = [
-    (45.5017, -73.5673, 'Montréal', 0, 'Etc/GMT+5'),
-    (45.4167, -73.4999, 'La Prairie', 0, 'Etc/GMT+5'),
-    (45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5'),
-]
-"""
-Liste des coordonnées des emplacements des centrales solaires.
+def surface2power(surface_m2, panel_efficiency=0.18):
+    """
+    Convertit une surface disponible en puissance installée.
 
-Chaque tuple contient les informations suivantes :
-- Latitude : float
-    Latitude de l'emplacement en degrés.
-- Longitude : float
-    Longitude de l'emplacement en degrés.
-- Nom : str
-    Nom de l'emplacement.
-- Altitude : float
-    Altitude de l'emplacement en mètres.
-- Fuseau horaire : str
-    Fuseau horaire de l'emplacement.
+    Parameters
+    ----------
+    surface_m2 : float
+        Surface disponible en mètres carrés (m²).
+    panel_efficiency : float, optional
+        Efficacité des panneaux solaires (par défaut 0.18 pour 18%).
 
-Exemples
---------
-(45.5017, -73.5673, 'Montréal', 36, 'Etc/GMT+5')
-(45.4167, -73.4999, 'La Prairie', 20, 'Etc/GMT+5')
-(45.6833, -73.4333, 'Varennes', 20, 'Etc/GMT+5')
-"""
-# Appel des fonctions
-#solar_energy_production(coordinates)
+    Returns
+    -------
+    float
+        Puissance installée en kilowatts (kW).
+    """
+    # Calcul de la puissance installée en watts (W)
+    power_w = surface_m2 * panel_efficiency * 1000
+    # Conversion de la puissance en kilowatts (kW)
+    power_kw = power_w / 1000
+    return power_kw
+
+# Exemple d'utilisation de la fonction
+surface_m2 = 100  # Surface disponible en m²
+power_kw = surface2power(surface_m2)
+print("\n==Conversion surface2power==")
+print(f"Surface disponible : {surface_m2} m²")
+print(f"Puissance installée : {power_kw:.2f} kW")
 
 def calcul_couts_solarpowerplant(energie_wh):
     """
@@ -267,8 +264,8 @@ def calcul_emissions_co2(energie_wh):
     
     Returns
     -------
-    tuple
-        (energie_kwh, emissions_kg) : énergie en kWh et émissions en kg CO2eq
+    pandas.Series
+        Émissions de CO2 en kg pour chaque emplacement.
     """
     # Convertir Wh en kWh
     energie_kwh = energie_wh / 1000
@@ -278,7 +275,7 @@ def calcul_emissions_co2(energie_wh):
     emissions_g = energie_kwh * facteur_emission
     emissions_kg = emissions_g / 1000
     
-    return energie_kwh, emissions_kg
+    return emissions_kg
 
 def calcul_resultats_complets():
     """
@@ -294,31 +291,36 @@ def calcul_resultats_complets():
     # Calculer les coûts et la puissance crête
     puissance_crete_kw, couts = calcul_couts_solarpowerplant(energie_wh)
     
-    # Calculer les émissions et obtenir l'énergie en kWh
-    energie_kwh, emissions_kg = calcul_emissions_co2(energie_wh)
+    # Calculer les émissions de CO2
+    emissions_kg = calcul_emissions_co2(energie_wh)
     
     print("\n=== RÉSULTATS PAR EMPLACEMENT ===")
     
     # Affichage des résultats pour chaque emplacement
     for emplacement in energie_wh.index:
         print(f"\n--- {emplacement} ---")
-        print(f"Production annuelle : {energie_kwh[emplacement]:,.2f} kWh")
+        print(f"Production annuelle : {energie_wh[emplacement] / 1000:,.2f} kWh")
         print(f"Puissance crête : {puissance_crete_kw[emplacement]:.2f} kW")
         print(f"Coût d'installation estimé : {couts[emplacement]:,.2f} $")
         print(f"Émissions CO2 : {emissions_kg[emplacement]:.2f} kg CO2eq/an")
     
     return {
-        'energie_kwh': energie_kwh,
+        'energie_kwh': energie_wh / 1000,
         'puissance_kw': puissance_crete_kw,
         'couts': couts,
         'emissions': emissions_kg
     }
 
+# Coordinates for the locations of the solar plants
+coordinates = [
+    (45.5017, -73.5673, 'Montréal', 0, 'Etc/GMT+5'),
+    (45.4167, -73.4999, 'La Prairie', 0, 'Etc/GMT+5'),
+    (45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5'),
+]
+
 # Exécution des calculs
 print("\nCalcul de la production d'énergie, des coûts et des émissions :")
 resultats = calcul_resultats_complets()
 
-
-
-
-    
+print("\n=== RÉSULTATS GLOBAUX ===")
+print(resultats)
