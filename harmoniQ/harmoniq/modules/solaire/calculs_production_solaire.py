@@ -198,34 +198,57 @@ def residential_solar_energy_production(coordinates, show_plot=False):
 
     return energies
 
-def surface2power(surface_m2, panel_efficiency=0.18):
+def convert_solar(value, module, mode='surface_to_power'):
     """
-    Convertit une surface disponible en puissance installée.
+    Convertit une surface disponible en puissance installée ou une puissance souhaitée en superficie nécessaire en utilisant les paramètres du module solaire.
 
     Parameters
     ----------
-    surface_m2 : float
-        Surface disponible en mètres carrés (m²).
-    panel_efficiency : float, optional
-        Efficacité des panneaux solaires (par défaut 0.18 pour 18%).
+    value : float
+        Surface disponible en mètres carrés (m²) ou puissance souhaitée en kilowatts (kW).
+    module : pandas.Series
+        Paramètres du module solaire.
+    mode : str, optional
+        Mode de conversion, soit 'surface_to_power' pour convertir une surface en puissance, soit 'power_to_surface' pour convertir une puissance en surface. Par défaut 'surface_to_power'.
 
     Returns
     -------
     float
-        Puissance installée en kilowatts (kW).
+        Puissance installée en kilowatts (kW) ou superficie nécessaire en mètres carrés (m²).
     """
-    # Calcul de la puissance installée en watts (W)
-    power_w = surface_m2 * panel_efficiency * 1000
-    # Conversion de la puissance en kilowatts (kW)
-    power_kw = power_w / 1000
-    return power_kw
+    # Efficacité du module solaire
+    panel_efficiency = module['Impo'] * module['Vmpo'] / (1000 * module['Area'])
+    
+    if mode == 'surface_to_power':
+        # Calcul de la puissance installée en watts (W)
+        power_w = value * panel_efficiency * 1000
+        # Conversion de la puissance en kilowatts (kW)
+        power_kw = power_w / 1000
+        return power_kw
+    elif mode == 'power_to_surface':
+        # Calcul de la superficie nécessaire en mètres carrés (m²)
+        surface_m2 = value * 1000 / (panel_efficiency * 1000)
+        return surface_m2
+    else:
+        raise ValueError("Mode invalide. Utilisez 'surface_to_power' ou 'power_to_surface'.")
 
-# Exemple d'utilisation de la fonction
+# Initialisation des modèles solaires
+sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
+module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
+
+# Exemple d'utilisation de la fonction convert_solar
 surface_m2 = 100  # Surface disponible en m²
-power_kw = surface2power(surface_m2)
-print("\n==Conversion surface2power==")
+power_kw = convert_solar(surface_m2, module, mode='surface_to_power')
+print("\n--Conversion surface_to_power--")
 print(f"Surface disponible : {surface_m2} m²")
 print(f"Puissance installée : {power_kw:.2f} kW")
+
+desired_power_kw = 10  # Puissance souhaitée en kW
+required_surface_m2 = convert_solar(desired_power_kw, module, mode='power_to_surface')
+print("\n--Conversion power_to_surface--")
+print(f"Puissance souhaitée : {desired_power_kw} kW")
+print(f"Superficie nécessaire : {required_surface_m2:.2f} m²")
+
 
 def calcul_couts_solarpowerplant(energie_wh):
     """
