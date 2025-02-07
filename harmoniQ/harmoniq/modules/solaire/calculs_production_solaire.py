@@ -267,11 +267,11 @@ def calcul_couts_solarpowerplant(energie_wh):
     # Calcul de la puissance crête
     heures_equivalent_pleine_puissance = 1200
     puissance_crete_w = energie_wh / heures_equivalent_pleine_puissance
-    puissance_crete_kw = puissance_crete_w / 1_000
-    puissance_crete_mw = puissance_crete_kw / 1_000
+    puissance_crete_kw = puissance_crete_w / 1000
+    puissance_crete_mw = puissance_crete_kw / 1000
     
     # Coût de référence par MW (40M$ / 9.5MW)
-    cout_par_mw = 40_000_000 / 9.5
+    cout_par_mw = 40000000 / 9.5
     couts = puissance_crete_mw * cout_par_mw
     
     return puissance_crete_kw, couts
@@ -309,7 +309,7 @@ def calcul_resultats_complets():
     - Émissions de CO2
     """
     # Obtenir la production d'énergie
-    energie_wh = solar_energy_production(plants_coordinates, show_plot=False)
+    energie_wh = solar_energy_production(coordinates, show_plot=False)
     
     # Calculer les coûts et la puissance crête
     puissance_crete_kw, couts = calcul_couts_solarpowerplant(energie_wh)
@@ -347,3 +347,79 @@ resultats = calcul_resultats_complets()
 
 print("\n=== RÉSULTATS GLOBAUX ===")
 print(resultats)
+
+def calculate_energy_from_power(coordinates, puissance_kw, surface_tilt=30, surface_azimuth=180):
+    """
+    Calcule la production d'énergie annuelle pour une installation solaire 
+    de puissance spécifiée à des coordonnées données.
+
+    Parameters
+    ----------
+    coordinates : tuple
+        Tuple contenant (latitude, longitude, nom, altitude, timezone)
+    puissance_kw : float
+        Puissance crête souhaitée en kilowatts (kW)
+    surface_tilt : float, optional
+        Angle d'inclinaison des panneaux en degrés. Par défaut 30°
+    surface_azimuth : float, optional
+        Orientation des panneaux en degrés (180° = sud). Par défaut 180°
+
+    Returns
+    -------
+    dict
+        Dictionnaire contenant l'énergie annuelle (Wh) et les données horaires
+    """
+    # Initialisation des modèles
+    sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
+    sapm_inverters = pvlib.pvsystem.retrieve_sam('cecinverter')
+    
+    # Sélection du module et de l'onduleur
+    module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
+    inverter = sapm_inverters['ABB__MICRO_0_25_I_OUTD_US_208__208V_']
+    
+    # Paramètres thermiques
+    temperature_model_parameters = pvlib.temperature.TEMPERATURE_MODEL_PARAMETERS['sapm']['open_rack_glass_glass']
+    
+    # Extraction des coordonnées
+    latitude, longitude, name, altitude, timezone = coordinates
+    
+    # Récupération des données météo
+    print(f"\nRécupération des données météo pour {name}...")
+    weather = pvlib.iotools.get_pvgis_tmy(latitude, longitude)[0]
+    weather.index.name = "utc_time"
+    
+    # Calcul du nombre de modules nécessaires
+    puissance_module_w = module['Impo'] * module['Vmpo']
+    nombre_modules = int(np.ceil((puissance_kw * 1000) / puissance_module_w))
+    
+    # Calcul de la production
+    print(f"Calcul de la production pour {puissance_kw} kW...")
+    ac = calculate_solar_parameters(
+        weather, latitude, longitude, altitude,
+        temperature_model_parameters, module, inverter,
+        surface_tilt, surface_azimuth
+    )
+    
+    # Mise à l'échelle selon la puissance demandée
+    ac_scaled = ac * nombre_modules
+    annual_energy = ac_scaled.sum()
+    
+    print(f"\nRésultats pour {name}:")
+    print(f"Puissance installée : {puissance_kw} kW")
+    print(f"Nombre de modules : {nombre_modules}")
+    print(f"Production annuelle : {annual_energy/1000:.2f} kWh")
+    
+    return {
+        'energie_annuelle_wh': annual_energy,
+        'energie_horaire': ac_scaled,
+        'nombre_modules': nombre_modules
+    }
+
+# Exemple d'utilisation
+if __name__ == "__main__":
+    # Exemple de coordonnées (Montréal)
+    coord_test = (45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5')
+    
+    puissance_test = 9500  # 100 kW
+    
+    resultats = calculate_energy_from_power(coord_test, puissance_test)
