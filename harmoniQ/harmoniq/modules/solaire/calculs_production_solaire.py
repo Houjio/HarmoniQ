@@ -289,7 +289,7 @@ def calcul_resultats_complets():
     - Émissions de CO2
     """
     # Obtenir la production d'énergie
-    energie_wh = solar_energy_production(coordinates, show_plot=False)
+    energie_wh = solar_energy_production(plants_coordinates, show_plot=False)
     
     # Calculer les coûts et la puissance crête
     puissance_crete_kw, couts = calcul_couts_solarpowerplant(energie_wh)
