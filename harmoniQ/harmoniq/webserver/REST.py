@@ -6,6 +6,7 @@ from typing import List, Optional
 from datetime import datetime
 
 from harmoniq.core import meteo
+from harmoniq.core.meteo import Granularity
 
 router = APIRouter(
     prefix="/api",
@@ -20,14 +21,19 @@ async def ping():
 
 
 @router.post("/meteo/get_data")
-async def get_meteo_data(
+def get_meteo_data(
     latitude: float,
     longitude: float,
     interpolate: bool,
     start_time: datetime,
-    granularity: meteo.Granularity,
+    granularity: int,
     end_time: Optional[datetime] = None,
 ):
+    try:
+        granularity = Granularity(granularity)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Granularity must be 1 or 2")
+
     helper = meteo.WeatherHelper(
         position=shemas.PositionBase(latitude=latitude, longitude=longitude),
         interpolate=interpolate,

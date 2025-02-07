@@ -15,6 +15,12 @@ class Granularity(Enum):
     HOURLY = 1
     DAILY = 2
 
+class Type(Enum):
+    NONE = 0
+    HYDRO = 1
+    SOLAIRE = 2
+    EOLIEN = 3
+
 
 class WeatherHelper:
     def __init__(
@@ -23,10 +29,13 @@ class WeatherHelper:
         interpolate: bool,
         start_time: datetime,
         end_time: Optional[datetime] = None,
+        data_type: Type = Type.NONE,
         granularity: Granularity = Granularity.DAILY,
     ):
         self.position = position
         self.elevation: Optional[float] = None
+        self.interpolate = interpolate
+        self.data_type = data_type
         self.start_time = start_time
         self._start_year = start_time.year
         self._start_month = start_time.month
@@ -63,17 +72,66 @@ class WeatherHelper:
                 else station.dlyRange
             )
 
-            if range != "|":
-                break
+            if range == "|":
+                continue
 
-        self._data = self._get_historical_data(
-            int(station.id),
-            self._granularity.value,
-            self._start_year,
-            self._start_month,
-        )
+            sub_data = self._get_historical_data(
+                int(station.id),
+                self._granularity.value,
+                self._start_year,
+                self._start_month,
+            )
 
-        self._clean_data(self._data)
+            if not self._validate_type(sub_data, self.data_type):
+                continue
+
+            self._clean_data(sub_data)
+        
+            if self._data is None:
+                self._data = sub_data
+            else:
+                self._data = pd.concat([self._data, sub_data])
+
+    @property
+    def month_range(self):
+        if self.granularity == "daily":
+            raise ValueError("Granularity must be hourly")
+        
+        month_range = pd.date_range(
+            start=datetime(self._start_year, self._start_month, 1),
+            end=datetime(self._end_year, self._end_month, 1),
+            freq="MS",
+        ).values
+
+        return [date.month for date in month_range]
+        
+    
+    @property
+    def yearly_range(self):
+        year_range = pd.date_range(
+            start=datetime(self._start_year, 1, 1),
+            end=datetime(self._end_year, 1, 1),
+            freq="YS",
+        ).values
+
+        return [date.year for date in year_range]
+
+    @staticmethod
+    def _validate_type(data: pd.DataFrame, data_type: Type) -> List[str]:
+        if data_type == Type.NONE:
+            return True
+        
+        if data_type == Type.HYDRO:
+            return data["Hauteur de précip. (mm)"].notnull().all()
+        
+        if data_type == Type.SOLAIRE:
+            return data["Vit. du vent (km/h)"].notnull().all()
+        
+        if data_type == Type.EOLIEN:
+            return data["Dir. du vent (10s deg)"].notnull().all()
+        
+        raise ValueError("Invalid data type")
+        
 
     @staticmethod
     def _clean_data(df: pd.DataFrame) -> pd.DataFrame:
