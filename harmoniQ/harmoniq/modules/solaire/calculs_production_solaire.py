@@ -249,105 +249,6 @@ print("\n--Conversion power_to_surface--")
 print(f"Puissance souhaitée : {desired_power_kw} kW")
 print(f"Superficie nécessaire : {required_surface_m2:.2f} m²")
 
-
-def calcul_couts_solarpowerplant(energie_wh):
-    """
-    Calcule le coût total pour chaque centrale solaire basé sur leur production annuelle.
-    
-    Parameters
-    ----------
-    energie_wh : pandas.Series
-        Production d'énergie annuelle en Wh pour chaque emplacement.
-    
-    Returns
-    -------
-    tuple
-        (puissance_crete_kw, couts) : puissance crête en kW et coûts en dollars
-    """
-    # Calcul de la puissance crête
-    heures_equivalent_pleine_puissance = 1200
-    puissance_crete_w = energie_wh / heures_equivalent_pleine_puissance
-    puissance_crete_kw = puissance_crete_w / 1000
-    puissance_crete_mw = puissance_crete_kw / 1000
-    
-    # Coût de référence par MW (40M$ / 9.5MW)
-    cout_par_mw = 40000000 / 9.5
-    couts = puissance_crete_mw * cout_par_mw
-    
-    return puissance_crete_kw, couts
-
-def calcul_emissions_co2(energie_wh):
-    """
-    Calcule les émissions de CO2 équivalent pour chaque centrale solaire.
-    
-    Parameters
-    ----------
-    energie_wh : pandas.Series
-        Production d'énergie annuelle en Wh pour chaque emplacement.
-    
-    Returns
-    -------
-    pandas.Series
-        Émissions de CO2 en kg pour chaque emplacement.
-    """
-    # Convertir Wh en kWh
-    energie_kwh = energie_wh / 1000
-    
-    # Facteur d'émission en g CO2eq/kWh
-    facteur_emission = 64
-    emissions_g = energie_kwh * facteur_emission
-    emissions_kg = emissions_g / 1000
-    
-    return emissions_kg
-
-def calcul_resultats_complets():
-    """
-    Calcule et affiche tous les résultats pour chaque centrale solaire :
-    - Production d'énergie
-    - Puissance crête
-    - Coûts d'installation
-    - Émissions de CO2
-    """
-    # Obtenir la production d'énergie
-    energie_wh = solar_energy_production(coordinates, show_plot=False)
-    
-    # Calculer les coûts et la puissance crête
-    puissance_crete_kw, couts = calcul_couts_solarpowerplant(energie_wh)
-    
-    # Calculer les émissions de CO2
-    emissions_kg = calcul_emissions_co2(energie_wh)
-    
-    print("\n=== RÉSULTATS PAR EMPLACEMENT ===")
-    
-    # Affichage des résultats pour chaque emplacement
-    for emplacement in energie_wh.index:
-        print(f"\n--- {emplacement} ---")
-        print(f"Production annuelle : {energie_wh[emplacement] / 1000:,.2f} kWh")
-        print(f"Puissance crête : {puissance_crete_kw[emplacement]:.2f} kW")
-        print(f"Coût d'installation estimé : {couts[emplacement]:,.2f} $")
-        print(f"Émissions CO2 : {emissions_kg[emplacement]:.2f} kg CO2eq/an")
-    
-    return {
-        'energie_kwh': energie_wh / 1000,
-        'puissance_kw': puissance_crete_kw,
-        'couts': couts,
-        'emissions': emissions_kg
-    }
-
-# Coordinates for the locations of the solar plants
-coordinates = [
-    (45.5017, -73.5673, 'Montréal', 0, 'Etc/GMT+5'),
-    (45.4167, -73.4999, 'La Prairie', 0, 'Etc/GMT+5'),
-    (45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5'),
-]
-
-# Exécution des calculs
-print("\nCalcul de la production d'énergie, des coûts et des émissions :")
-resultats = calcul_resultats_complets()
-
-print("\n=== RÉSULTATS GLOBAUX ===")
-print(resultats)
-
 def calculate_energy_from_power(coordinates, puissance_kw, surface_tilt=30, surface_azimuth=180):
     """
     Calcule la production d'énergie annuelle pour une installation solaire 
@@ -414,12 +315,61 @@ def calculate_energy_from_power(coordinates, puissance_kw, surface_tilt=30, surf
         'energie_horaire': ac_scaled,
         'nombre_modules': nombre_modules
     }
+energie_varenne = calculate_energy_from_power((46.81, -71.25, 'Varennes', 10, 'America/Toronto'), 9500)['energie_annuelle_wh']
 
-# Exemple d'utilisation
-if __name__ == "__main__":
-    # Exemple de coordonnées (Montréal)
-    coord_test = (45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5')
+def calcul_couts_solarpowerplant(energie_varenne):
+    """
+    Calcule le coût total pour chaque centrale solaire basé sur leur production annuelle.
     
-    puissance_test = 9500  # 100 kW
+    Parameters
+    ----------
+    energie_wh : pandas.Series
+        Production d'énergie annuelle en Wh pour chaque emplacement.
     
-    resultats = calculate_energy_from_power(coord_test, puissance_test)
+    Returns
+    -------
+    float
+        Coûts en dollars
+    """
+    # Calcul de la puissance crête
+    heures_equivalent_pleine_puissance = 1200
+    puissance_crete_w = energie_varenne/ heures_equivalent_pleine_puissance
+    puissance_crete_kw = puissance_crete_w / 1000
+    puissance_crete_mw = puissance_crete_kw / 1000
+    
+    # Coût de référence par MW (40M$ / 9.5MW)
+    cout_par_mw = 40000000 / 9.5
+    couts = puissance_crete_mw * cout_par_mw
+    
+    # Ne retourner que les coûts
+    return couts
+
+def calcul_emissions_co2(energie_varenne):
+    """
+    Calcule les émissions de CO2 équivalent pour chaque centrale solaire.
+    
+    Parameters
+    ----------
+    energie_wh : pandas.Series
+        Production d'énergie annuelle en Wh pour chaque emplacement.
+    
+    Returns
+    -------
+    pandas.Series
+        Émissions de CO2 en kg pour chaque emplacement.
+    """
+    # Convertir Wh en kWh
+    energie_kwh = energie_varenne / 1000
+    
+    # Facteur d'émission en g CO2eq/kWh
+    facteur_emission = 64
+    emissions_g = energie_kwh * facteur_emission
+    emissions_kg = emissions_g / 1000
+    
+    return emissions_kg
+
+Cout_varenne = calcul_couts_solarpowerplant(energie_varenne)
+CO2_varenne = calcul_emissions_co2(energie_varenne)
+
+print(f"Les coûts pour Varenne sont de {Cout_varenne:,.2f} $")
+print(f"Le CO2 pour Varenne est de {CO2_varenne:,.2f} kg")
