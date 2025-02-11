@@ -60,12 +60,20 @@ class EolienneBase(InfrastructureBase):
     modele_turbine : str
     project_name : str
     project_id : int
+    turbine_id : int
     annee_commission: Optional[int] = None
     surface_balayee: Optional[float] = None
     vitesse_vent_de_demarrage: Optional[float] = None
     Vitesse_vent_de_coupure: Optional[float] = None
     materiau_pale: Optional[str] = None
     type_generateur : Optional[TypeGenerateur] = None
+ 
+class EolienneParc(EolienneBase):
+    nombre_eoliennes: int
+    capacite_total: float
+    project_name: str
+    project_id: int
+    eoliennes: List[int]
 
 
 class HydroelectriqueBase(InfrastructureBase):
