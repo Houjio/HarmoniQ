@@ -16,7 +16,6 @@ dependencies = [
     "numpy",
     "pandas",
     "matplotlib",
-    
     # Web app dependencies
     "fastapi",
     "uvicorn",
