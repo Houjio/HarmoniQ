@@ -48,8 +48,24 @@ class InfrastructureBase(PositionBase):
     # TODO: Ajouter plus de champs
 
 
+class TypeGenerateur(Enum):
+    A = 1
+    B = 2
+    C = 3
+
 class EolienneBase(InfrastructureBase):
-    pass
+    diametre_rotor: float
+    hauteur_moyenne: float
+    puissance_nominal: float
+    modele_turbine : str
+    project_name : str
+    project_id : int
+    annee_commission: Optional[int] = None
+    surface_balayee: Optional[float] = None
+    vitesse_vent_de_demarrage: Optional[float] = None
+    Vitesse_vent_de_coupure: Optional[float] = None
+    materiau_pale: Optional[str] = None
+    type_generateur : Optional[TypeGenerateur] = None
 
 
 class HydroelectriqueBase(InfrastructureBase):

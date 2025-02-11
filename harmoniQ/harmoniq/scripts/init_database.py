@@ -49,7 +49,6 @@ def fill_weather_stations():
         )
         create_station(station, db)
 
-
 def main():
     print("Initialisation de la base de données")
     init_db()
