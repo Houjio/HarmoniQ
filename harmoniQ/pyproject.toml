@@ -16,7 +16,6 @@ dependencies = [
     "numpy",
     "pandas",
     "matplotlib",
-    
     # Web app dependencies
     "fastapi",
     "uvicorn",
@@ -27,6 +26,7 @@ dependencies = [
 ]
 
 [project.scripts]
+init-db = "harmoniq.scripts.init_database:main"
 load-db = "harmoniq.scripts.load_database:main"
 launch-app = "harmoniq.scripts.lance_webserver:main"
 
