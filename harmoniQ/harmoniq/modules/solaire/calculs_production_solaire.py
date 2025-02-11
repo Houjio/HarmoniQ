@@ -2,6 +2,8 @@ import pvlib
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import time
+
 
 def get_weather_data(coordinates):
     """
@@ -233,6 +235,7 @@ def convert_solar(value, module, mode='surface_to_power'):
         raise ValueError("Mode invalide. Utilisez 'surface_to_power' ou 'power_to_surface'.")
 
 # Initialisation des modèles solaires
+start_time = time.time()
 sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
 module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
 
@@ -371,5 +374,8 @@ def calcul_emissions_co2(energie_varenne):
 Cout_varenne = calcul_couts_solarpowerplant(energie_varenne)
 CO2_varenne = calcul_emissions_co2(energie_varenne)
 
+
+end_time = time.time()
 print(f"Les coûts pour Varenne sont de {Cout_varenne:,.2f} $")
 print(f"Le CO2 pour Varenne est de {CO2_varenne:,.2f} kg")
+print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
