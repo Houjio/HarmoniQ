@@ -4,8 +4,8 @@ import requests
 import pandas as pd
 from io import StringIO
 
-from harmoniq.db.engine import engine, get_db, create_station, get_station_by_iata_id
-from harmoniq.db.shemas import SQLBase, StationMeteoCreate
+from harmoniq.db.engine import engine, get_db
+from harmoniq.db.shemas import SQLBase, Eolienne
 
 
 def init_db():
@@ -19,9 +19,7 @@ def fill_eoliennes():
     response = requests.get(EOLIENNE_URL)
     response.raise_for_status()
     station_df = pd.read_excel(response.content)
-    station_df = station_df[
-        station_df["Province_Territoire"] == "Québec"
-    ] 
+    station_df = station_df[station_df["Province_Territoire"] == "Québec"]
 
     # Get unique "Project Name"
     project_names = station_df["Project Name"].unique()
@@ -30,14 +28,16 @@ def fill_eoliennes():
         average_lat = project_df["Latitude"].mean()
         average_lon = project_df["Longitude"].mean()
         project_capacity = project_df["Total Project Capacity (MW)"]
-        
+
         print(project_df)
+
 
 def main():
     print("Initialisation de la base de données")
     init_db()
     print("Collecte des éolienne")
-    fill_eoliennes()
+    # fill_eoliennes()
+
 
 if __name__ == "__main__":
     init_db()

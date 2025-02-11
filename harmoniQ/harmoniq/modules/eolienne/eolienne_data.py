@@ -50,7 +50,7 @@ from PySAM import Windpower as wp
 """
 
 
-#Initialisation d'un modèle test afin de démontrer les fonctionnalités de PySAM
+# Initialisation d'un modèle test afin de démontrer les fonctionnalités de PySAM
 model = wp.default("WindPowerMerchantPlant")
 model.Resource.wind_resource_model_choice = 1
 model.Resource.weibull_k_factor = 2.0
