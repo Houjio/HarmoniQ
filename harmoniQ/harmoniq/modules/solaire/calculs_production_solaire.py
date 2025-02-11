@@ -379,3 +379,95 @@ end_time = time.time()
 print(f"Les coûts pour Varenne sont de {Cout_varenne:,.2f} $")
 print(f"Le CO2 pour Varenne est de {CO2_varenne:,.2f} kg")
 print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
+
+def calculate_mrc_residential_solar(mrc_data_path, nb_residences_par_mrc=1000, surface_toit_moyenne=100, pourcentage_eligible=0.3):
+    """
+    Calcule la production d'énergie solaire résidentielle potentielle par MRC.
+    
+    Parameters
+    ----------
+    mrc_data_path : str
+        Chemin vers le fichier CSV contenant les données des MRC
+        (doit contenir: CDNAME, centroid_x, centroid_y)
+    nb_residences_par_mrc : int, optional
+        Nombre moyen de résidences par MRC (par défaut 1000)
+    surface_toit_moyenne : float, optional
+        Surface moyenne des toits en m² (par défaut 100m²)
+    pourcentage_eligible : float, optional
+        Pourcentage des toits éligibles (orientation, ombrage, etc.) (par défaut 30%)
+    
+    Returns
+    -------
+    dict
+        Dictionnaire contenant pour chaque MRC:
+        - énergie annuelle (kWh)
+        - nombre de maisons éligibles
+        - puissance totale installée (kW)
+    """
+    # Lecture du fichier CSV des MRC
+    mrc_df = pd.read_csv(mrc_data_path)
+    
+    # Initialisation des modèles
+    sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
+    module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
+    
+    resultats_mrc = {}
+    
+    for _, mrc in mrc_df.iterrows():
+        nom_mrc = mrc['CDNAME']
+        print(f"\nCalcul pour la MRC {nom_mrc}...")
+        
+        # Calcul du nombre de maisons éligibles
+        nb_maisons_eligibles = int(nb_residences_par_mrc * pourcentage_eligible)
+        
+        # Calcul de la surface totale disponible
+        surface_totale = nb_maisons_eligibles * surface_toit_moyenne
+        
+        # Conversion de la surface en puissance
+        puissance_totale_kw = convert_solar(surface_totale, module, mode='surface_to_power')
+        
+        # Calcul de la production d'énergie
+        # Note: centroid_x est la longitude, centroid_y est la latitude
+        coordinates = (mrc['centroid_y'], mrc['centroid_x'], nom_mrc, 0, 'America/Toronto')
+        production = calculate_energy_from_power(coordinates, puissance_totale_kw)
+        
+        # Stockage des résultats
+        resultats_mrc[nom_mrc] = {
+            'energie_annuelle_kwh': production['energie_annuelle_wh'] / 1000,
+            'nb_maisons_eligibles': nb_maisons_eligibles,
+            'puissance_installee_kw': puissance_totale_kw,
+            'latitude': mrc['centroid_y'],
+            'longitude': mrc['centroid_x']
+        }
+        
+        print(f"Résultats pour {nom_mrc}:")
+        print(f"Nombre de maisons éligibles: {nb_maisons_eligibles}")
+        print(f"Puissance totale installée: {puissance_totale_kw:.2f} kW")
+        print(f"Production annuelle: {production['energie_annuelle_wh']/1000:,.2f} kWh")
+    
+    return resultats_mrc
+
+# Exemple d'utilisation
+if __name__ == "__main__":
+    # Chemin vers le fichier des coordonnées des MRC
+    mrc_data_path = "coordonnes_MRC_clean.csv"
+    
+    print("\nDébut des calculs pour toutes les MRC du Québec...")
+    resultats = calculate_mrc_residential_solar(
+        mrc_data_path,
+        nb_residences_par_mrc=1000,  # Valeur par défaut, à ajuster selon les données réelles
+        surface_toit_moyenne=100,     # Surface moyenne en m²
+        pourcentage_eligible=0.3      # 30% des toits sont éligibles
+    )
+    
+    # Affichage du résumé des résultats
+    print("\n=== RÉSUMÉ DES RÉSULTATS POUR TOUTES LES MRC ===")
+    energie_totale = 0
+    for nom_mrc, data in resultats.items():
+        energie_totale += data['energie_annuelle_kwh']
+        print(f"\n{nom_mrc}:")
+        print(f"  Production annuelle : {data['energie_annuelle_kwh']:,.2f} kWh")
+        print(f"  Nombre de maisons : {data['nb_maisons_eligibles']}")
+        print(f"  Puissance installée : {data['puissance_installee_kw']:.2f} kW")
+    
+    print(f"\nProduction totale pour toutes les MRC : {energie_totale:,.2f} kWh")
