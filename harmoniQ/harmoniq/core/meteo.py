@@ -18,15 +18,15 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
     datefmt="%H:%M",
-    handlers=[
-        logging.StreamHandler()
-    ]
+    handlers=[logging.StreamHandler()],
 )
 logger = logging.getLogger(__name__)
+
 
 class Granularity(Enum):
     DAILY = 1
     HOURLY = 2
+
 
 class Type(Enum):
     NONE = 0
@@ -56,8 +56,10 @@ class WeatherHelper:
         self._granularity = granularity
         self._nearby_stations: Optional[pd.DataFrame] = None
         self._data: Optional[pd.DataFrame] = None
-        
-        logger.info(f"Created WeatherHelper({self.position} de {self.start_time} à {self.end_time})")
+
+        logger.info(
+            f"Created WeatherHelper({self.position} de {self.start_time} à {self.end_time})"
+        )
 
     def __repr__(self):
         return f"WeatherHelper({self.position} de {self.start_time} à {self.end_time})"
@@ -86,7 +88,9 @@ class WeatherHelper:
             )
 
             if range == "|":
-                logger.info(f"No {'hourly' if self._granularity == Granularity.HOURLY else 'daily'} data available")
+                logger.info(
+                    f"No {'hourly' if self._granularity == Granularity.HOURLY else 'daily'} data available"
+                )
                 continue
 
             sub_data = self._get_historical_data_range(int(station.id))
@@ -96,27 +100,26 @@ class WeatherHelper:
                 continue
 
             sub_data = self._clean_data(sub_data)
-        
+
             if not self.interpolate:
                 self._data = sub_data
                 return self._data
-            
+
             valid_data += 1
             logger.info(f"Found valid data from {station.Index}")
             data_list.append(sub_data)
-            
-            if valid_data >= 2: # TODO put back to 5
+
+            if valid_data >= 2:  # TODO put back to 5
                 break
 
         self._data = self._interpolate_data(data_list)
 
         if self._data is None:
             raise ValueError("No valid data found")
-        
+
         # Trim data out of range
         self._data = self._data.loc[
-            (self._data.index >= self.start_time)
-            & (self._data.index <= self.end_time)
+            (self._data.index >= self.start_time) & (self._data.index <= self.end_time)
         ]
 
         return self._data
@@ -125,45 +128,74 @@ class WeatherHelper:
     def _validate_type(data: pd.DataFrame, data_type: Type) -> List[str]:
         if data_type == Type.NONE:
             return True
-        
+
         if data_type == Type.HYDRO:
             return data["Hauteur de précip. (mm)"].notnull().all()
-        
+
         if data_type == Type.SOLAIRE:
             return data["Vit. du vent (km/h)"].notnull().all()
-        
+
         if data_type == Type.EOLIEN:
             return data["Dir. du vent (10s deg)"].notnull().all()
-        
+
         print(f"Invalid data for ")
-        
 
     def _clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
         if "Date/Time (LST)" in df.keys():
             df["Date/Time"] = pd.to_datetime(df["Date/Time (LST)"])
-        
+
         df["Date/Time"] = pd.to_datetime(df["Date/Time"])
         df.set_index("Date/Time", inplace=True)
         print(df.keys())
         if self._granularity == Granularity.HOURLY:
-            keys = ['Longitude (x)', 'Latitude (y)', 'Station Name', 'Climate ID', 'Max Temp (°C)', 'Min Temp (°C)', 'Mean Temp (°C)', 'Total Rain (mm)', 'Total Snow (cm)', 'Total Precip (mm)', 'Snow on Grnd (cm)', 'Dir of Max Gust (10s deg)', 'Spd of Max Gust (km/h)']
+            keys = [
+                "Longitude (x)",
+                "Latitude (y)",
+                "Station Name",
+                "Climate ID",
+                "Max Temp (°C)",
+                "Min Temp (°C)",
+                "Mean Temp (°C)",
+                "Total Rain (mm)",
+                "Total Snow (cm)",
+                "Total Precip (mm)",
+                "Snow on Grnd (cm)",
+                "Dir of Max Gust (10s deg)",
+                "Spd of Max Gust (km/h)",
+            ]
         elif self._granularity == Granularity.DAILY:
-            keys = ['Longitude (x)', 'Latitude (y)', 'Station Name', 'Climate ID', 'Temp (°C)', 'Dew Point Temp (°C)',
-            'Rel Hum (%)', 'Precip. Amount (mm)', 'Wind Dir (10s deg)',
-            'Wind Spd (km/h)', 'Hmdx', 'Wind Chill']
+            keys = [
+                "Longitude (x)",
+                "Latitude (y)",
+                "Station Name",
+                "Climate ID",
+                "Temp (°C)",
+                "Dew Point Temp (°C)",
+                "Rel Hum (%)",
+                "Precip. Amount (mm)",
+                "Wind Dir (10s deg)",
+                "Wind Spd (km/h)",
+                "Hmdx",
+                "Wind Chill",
+            ]
 
         df = df[keys]
         for key in df.keys():
             df.loc[:, key] = pd.to_numeric(df.loc[:, key], errors="coerce")
 
         return df
-    
+
     def _interpolate_data(self, list_of_df: List[pd.DataFrame]) -> pd.DataFrame:
-        latlon = [i[["Latitude (y)", "Longitude (x)"]].iloc[0].values for i in list_of_df]
-        
-        dist = [geodesic([self.position.latitude, self.position.longitude], i).km for i in latlon]
+        latlon = [
+            i[["Latitude (y)", "Longitude (x)"]].iloc[0].values for i in list_of_df
+        ]
+
+        dist = [
+            geodesic([self.position.latitude, self.position.longitude], i).km
+            for i in latlon
+        ]
         dist = np.array(dist)
-        
+
         weights = 1 / dist
         new_data = pd.DataFrame(index=list_of_df[0].index)
         for keys in list_of_df[0].keys():
@@ -178,7 +210,9 @@ class WeatherHelper:
             elif keys == "Climate ID":
                 new_data["Climate ID"] = "Interpolated"
             else:
-                new_data[keys] = np.average([i[keys] for i in list_of_df], axis=0, weights=weights)
+                new_data[keys] = np.average(
+                    [i[keys] for i in list_of_df], axis=0, weights=weights
+                )
 
         return new_data
 
@@ -247,19 +281,20 @@ class WeatherHelper:
         station_id: int,
     ) -> pd.DataFrame:
         if self._granularity == Granularity.HOURLY:
-            date_range = pd.date_range(start=self.start_time, end=self.end_time, freq="MS")
+            date_range = pd.date_range(
+                start=self.start_time, end=self.end_time, freq="MS"
+            )
         elif self._granularity == Granularity.DAILY:
-            date_range = pd.date_range(start=self.start_time, end=self.end_time, freq="YS")
+            date_range = pd.date_range(
+                start=self.start_time, end=self.end_time, freq="YS"
+            )
         else:
             raise ValueError("Invalid granularity")
 
         data = pd.DataFrame()
         for date in date_range:
             data_instance = self._get_historical_data(
-                station_id,
-                self._granularity,
-                year=date.year,
-                month=date.month
+                station_id, self._granularity, year=date.year, month=date.month
             )
 
             data = pd.concat([data, data_instance])
