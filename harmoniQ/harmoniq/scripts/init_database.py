@@ -12,50 +12,33 @@ def init_db():
     SQLBase.metadata.create_all(bind=engine)
 
 
-def fill_weather_stations():
-    STATION_URL = "https://dd.weather.gc.ca/observations/doc/swob-xml_station_list.csv"
+def fill_eoliennes():
+    EOLIENNE_URL = "https://ftp.cartes.canada.ca/pub/nrcan_rncan/Wind-energy_Energie-eolienne/wind_turbines_database/Wind_Turbine_Database_FGP.xlsx"
     db = next(get_db())
 
-    response = requests.get(STATION_URL)
+    response = requests.get(EOLIENNE_URL)
     response.raise_for_status()
-    station_df = pd.read_csv(StringIO(response.text))
+    station_df = pd.read_excel(response.content)
     station_df = station_df[
-        station_df["Province/Territory"] == "Quebec"
-    ]  # TODO (check if neighboring provinces should be included)
+        station_df["Province_Territoire"] == "Québec"
+    ] 
 
-    for _, row in station_df.iterrows():
-        iata_id = row["IATA_ID"]
-        station_name = row["Name"]
-
-        # Check if IATA id already exists
-        if get_station_by_iata_id(iata_id, db):
-            print(f"La station {station_name} existe déjà")
-            continue
-
-        print(f"Création de la station {station_name}")
-        station = StationMeteoCreate(
-            nom=station_name,
-            IATA_ID=iata_id,
-            WMO_ID=row["WMO_ID"] if pd.notna(row["WMO_ID"]) else None,
-            MSC_ID=row["MSC_ID"],
-            latitude=row["Latitude"],
-            longitude=row["Longitude"],
-            elevation_m=row["Elevation(m)"],
-            fournisseur_de_donnees=(
-                row["Data_Provider"] if pd.notna(row["Data_Provider"]) else None
-            ),
-            reseau=row["Dataset/Network"] if pd.notna(row["Dataset/Network"]) else None,
-            automatic=row["AUTO/MAN"] == "AUTO",
-        )
-        create_station(station, db)
+    # Get unique "Project Name"
+    project_names = station_df["Project Name"].unique()
+    for project_name in project_names:
+        project_df = station_df[station_df["Project Name"] == project_name]
+        average_lat = project_df["Latitude"].mean()
+        average_lon = project_df["Longitude"].mean()
+        project_capacity = project_df["Total Project Capacity (MW)"]
+        
+        print(project_df)
 
 
 def main():
     print("Initialisation de la base de données")
     init_db()
-    print("Collecte des stations météo")
-    fill_weather_stations()
-
+    print("Collecte des éolienne")
+    fill_eoliennes()
 
 if __name__ == "__main__":
     init_db()
