@@ -33,7 +33,6 @@ def fill_eoliennes():
         
         print(project_df)
 
-
 def main():
     print("Initialisation de la base de données")
     init_db()
