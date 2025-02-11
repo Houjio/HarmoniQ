@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import time
 
 
+
+
 def get_weather_data(coordinates):
     """
     Récupère les données météorologiques pour les emplacements spécifiés.
@@ -318,9 +320,9 @@ def calculate_energy_from_power(coordinates, puissance_kw, surface_tilt=30, surf
         'energie_horaire': ac_scaled,
         'nombre_modules': nombre_modules
     }
-energie_varenne = calculate_energy_from_power((46.81, -71.25, 'Varennes', 10, 'America/Toronto'), 9500)['energie_annuelle_wh']
+energie_centrales = calculate_energy_from_power((46.81, -71.25, 'Varennes', 10, 'Etc/GMT+5'), 9500)['energie_annuelle_wh']
 
-def calcul_couts_solarpowerplant(energie_varenne):
+def calcul_couts_solarpowerplant(energie_centrales):
     """
     Calcule le coût total pour chaque centrale solaire basé sur leur production annuelle.
     
@@ -336,7 +338,7 @@ def calcul_couts_solarpowerplant(energie_varenne):
     """
     # Calcul de la puissance crête
     heures_equivalent_pleine_puissance = 1200
-    puissance_crete_w = energie_varenne/ heures_equivalent_pleine_puissance
+    puissance_crete_w = energie_centrales/ heures_equivalent_pleine_puissance
     puissance_crete_kw = puissance_crete_w / 1000
     puissance_crete_mw = puissance_crete_kw / 1000
     
@@ -347,7 +349,7 @@ def calcul_couts_solarpowerplant(energie_varenne):
     # Ne retourner que les coûts
     return couts
 
-def calcul_emissions_co2(energie_varenne):
+def calcul_emissions_co2(energie_centrales):
     """
     Calcule les émissions de CO2 équivalent pour chaque centrale solaire.
     
@@ -362,7 +364,7 @@ def calcul_emissions_co2(energie_varenne):
         Émissions de CO2 en kg pour chaque emplacement.
     """
     # Convertir Wh en kWh
-    energie_kwh = energie_varenne / 1000
+    energie_kwh = energie_centrales / 1000
     
     # Facteur d'émission en g CO2eq/kWh
     facteur_emission = 64
@@ -371,13 +373,38 @@ def calcul_emissions_co2(energie_varenne):
     
     return emissions_kg
 
-Cout_varenne = calcul_couts_solarpowerplant(energie_varenne)
-CO2_varenne = calcul_emissions_co2(energie_varenne)
+coordinates_resendential = [
+    (48.4808, -68.5210, 'Bas-Saint-Laurent', 0, 'Etc/GMT+5'),
+    (48.4284, -71.0683, 'Saguenay–Lac-Saint-Jean', 0, 'Etc/GMT+5'),
+    (46.8139, -71.2082, 'Capitale-Nationale', 0, 'Etc/GMT+5'),
+    (46.3420, -72.5477, 'Mauricie', 0, 'Etc/GMT+5'),
+    (45.4036, -71.8826, 'Estrie', 0, 'Etc/GMT+5'),
+    (45.5017, -73.5673, 'Montréal', 0, 'Etc/GMT+5'),
+    (45.4215, -75.6919, 'Outaouais', 0, 'Etc/GMT+5'),
+    (48.0703, -77.7600, 'Abitibi-Témiscamingue', 0, 'Etc/GMT+5'),
+    (50.0340, -66.9141, 'Côte-Nord', 0, 'Etc/GMT+5'),
+    (53.4667, -76.0000, 'Nord-du-Québec', 0, 'Etc/GMT+5'),
+    (48.8360, -64.4931, 'Gaspésie–Îles-de-la-Madeleine', 0, 'Etc/GMT+5'),
+    (46.5000, -70.9000, 'Chaudière-Appalaches', 0, 'Etc/GMT+5'),
+    (45.6066, -73.7124, 'Laval', 0, 'Etc/GMT+5'),
+    (46.0270, -73.4360, 'Lanaudière', 0, 'Etc/GMT+5'),
+    (45.9990, -74.1428, 'Laurentides', 0, 'Etc/GMT+5'),
+    (45.4500, -73.3496, 'Montérégie', 0, 'Etc/GMT+5'),
+    (46.4043, -72.0169, 'Centre-du-Québec', 0, 'Etc/GMT+5'),
+]
+coordinates = [
+    (45.4167, -73.4999, 'La Prairie', 0, 'Etc/GMT+5'),
+    (45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5'),
+]
+
+
+Cout_centrales = calcul_couts_solarpowerplant(energie_centrales)
+CO2_centrales = calcul_emissions_co2(energie_centrales)
 
 
 end_time = time.time()
-print(f"Les coûts pour Varenne sont de {Cout_varenne:,.2f} $")
-print(f"Le CO2 pour Varenne est de {CO2_varenne:,.2f} kg")
+print(f"Les coûts pour les centrales solaires sont de {Cout_centrales:,.2f} $")
+print(f"Le CO2 pour les centrales solaires est de {CO2_centrales:,.2f} kg")
 print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
 
 def calculate_mrc_residential_solar(mrc_data_path, nb_residences_par_mrc=1000, surface_toit_moyenne=100, pourcentage_eligible=0.3):
