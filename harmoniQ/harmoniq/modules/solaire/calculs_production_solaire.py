@@ -373,7 +373,7 @@ def calcul_emissions_co2(energie_centrales):
     
     return emissions_kg
 
-coordinates_resendential = [
+coordinates_residential = [
     (48.4808, -68.5210, 'Bas-Saint-Laurent', 0, 'Etc/GMT+5'),
     (48.4284, -71.0683, 'Saguenay–Lac-Saint-Jean', 0, 'Etc/GMT+5'),
     (46.8139, -71.2082, 'Capitale-Nationale', 0, 'Etc/GMT+5'),
@@ -407,94 +407,92 @@ print(f"Les coûts pour les centrales solaires sont de {Cout_centrales:,.2f} $")
 print(f"Le CO2 pour les centrales solaires est de {CO2_centrales:,.2f} kg")
 print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
 
-def calculate_mrc_residential_solar(mrc_data_path, nb_residences_par_mrc=1000, surface_toit_moyenne=100, pourcentage_eligible=0.3):
+
+def calculate_regional_residential_solar(coordinates_residential, surface_panneau, surface_tilt=30, surface_azimuth=180):
     """
-    Calcule la production d'énergie solaire résidentielle potentielle par MRC.
+    Calcule la production d'énergie solaire résidentielle potentielle par région administrative.
     
     Parameters
     ----------
-    mrc_data_path : str
-        Chemin vers le fichier CSV contenant les données des MRC
-        (doit contenir: CDNAME, centroid_x, centroid_y)
-    nb_residences_par_mrc : int, optional
-        Nombre moyen de résidences par MRC (par défaut 1000)
-    surface_toit_moyenne : float, optional
-        Surface moyenne des toits en m² (par défaut 100m²)
-    pourcentage_eligible : float, optional
-        Pourcentage des toits éligibles (orientation, ombrage, etc.) (par défaut 30%)
+    coordinates_residential : list of tuples
+        Liste des coordonnées des régions sous forme de tuples 
+        (latitude, longitude, nom, altitude, timezone)
+    surface_panneau : float
+        Surface de panneaux solaires souhaitée en m²
+    surface_tilt : float, optional
+        Angle d'inclinaison des panneaux en degrés. Par défaut 30°
+    surface_azimuth : float, optional
+        Orientation des panneaux en degrés (180° = sud). Par défaut 180°
     
     Returns
     -------
     dict
-        Dictionnaire contenant pour chaque MRC:
+        Dictionnaire contenant pour chaque région:
         - énergie annuelle (kWh)
-        - nombre de maisons éligibles
-        - puissance totale installée (kW)
+        - puissance installée (kW)
+        - surface installée (m²)
+        - coordonnées (lat, lon)
     """
-    # Lecture du fichier CSV des MRC
-    mrc_df = pd.read_csv(mrc_data_path)
-    
     # Initialisation des modèles
     sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
     module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
     
-    resultats_mrc = {}
+    resultats_regions = {}
     
-    for _, mrc in mrc_df.iterrows():
-        nom_mrc = mrc['CDNAME']
-        print(f"\nCalcul pour la MRC {nom_mrc}...")
-        
-        # Calcul du nombre de maisons éligibles
-        nb_maisons_eligibles = int(nb_residences_par_mrc * pourcentage_eligible)
-        
-        # Calcul de la surface totale disponible
-        surface_totale = nb_maisons_eligibles * surface_toit_moyenne
-        
-        # Conversion de la surface en puissance
-        puissance_totale_kw = convert_solar(surface_totale, module, mode='surface_to_power')
+    # Conversion de la surface en puissance
+    puissance_installee_kw = convert_solar(surface_panneau, module, mode='surface_to_power')
+    
+    print(f"\nCalculs pour une installation de {surface_panneau} m² ({puissance_installee_kw:.2f} kW)")
+    
+    for coordinates in coordinates_residential:
+        latitude, longitude, nom_region, altitude, timezone = coordinates
+        print(f"\nCalcul pour la région {nom_region}...")
         
         # Calcul de la production d'énergie
-        # Note: centroid_x est la longitude, centroid_y est la latitude
-        coordinates = (mrc['centroid_y'], mrc['centroid_x'], nom_mrc, 0, 'America/Toronto')
-        production = calculate_energy_from_power(coordinates, puissance_totale_kw)
+        production = calculate_energy_from_power(
+            coordinates, 
+            puissance_installee_kw,
+            surface_tilt=surface_tilt,
+            surface_azimuth=surface_azimuth
+        )
         
         # Stockage des résultats
-        resultats_mrc[nom_mrc] = {
+        resultats_regions[nom_region] = {
             'energie_annuelle_kwh': production['energie_annuelle_wh'] / 1000,
-            'nb_maisons_eligibles': nb_maisons_eligibles,
-            'puissance_installee_kw': puissance_totale_kw,
-            'latitude': mrc['centroid_y'],
-            'longitude': mrc['centroid_x']
+            'puissance_installee_kw': puissance_installee_kw,
+            'surface_installee_m2': surface_panneau,
+            'latitude': latitude,
+            'longitude': longitude
         }
         
-        print(f"Résultats pour {nom_mrc}:")
-        print(f"Nombre de maisons éligibles: {nb_maisons_eligibles}")
-        print(f"Puissance totale installée: {puissance_totale_kw:.2f} kW")
+        print(f"Résultats pour {nom_region}:")
+        print(f"Surface installée: {surface_panneau:.2f} m²")
+        print(f"Puissance installée: {puissance_installee_kw:.2f} kW")
         print(f"Production annuelle: {production['energie_annuelle_wh']/1000:,.2f} kWh")
     
-    return resultats_mrc
+    return resultats_regions
 
 # Exemple d'utilisation
 if __name__ == "__main__":
-    # Chemin vers le fichier des coordonnées des MRC
-    mrc_data_path = "coordonnes_MRC_clean.csv"
+    # Test avec une surface de 100 m²
+    surface_test = 100  # m²
     
-    print("\nDébut des calculs pour toutes les MRC du Québec...")
-    resultats = calculate_mrc_residential_solar(
-        mrc_data_path,
-        nb_residences_par_mrc=1000,  # Valeur par défaut, à ajuster selon les données réelles
-        surface_toit_moyenne=100,     # Surface moyenne en m²
-        pourcentage_eligible=0.3      # 30% des toits sont éligibles
+    print("\nDébut des calculs pour toutes les régions du Québec...")
+    resultats = calculate_regional_residential_solar(
+        coordinates_residential,
+        surface_test,
+        surface_tilt=30,
+        surface_azimuth=180
     )
     
     # Affichage du résumé des résultats
-    print("\n=== RÉSUMÉ DES RÉSULTATS POUR TOUTES LES MRC ===")
+    print("\n=== RÉSUMÉ DES RÉSULTATS POUR TOUTES LES RÉGIONS ===")
     energie_totale = 0
-    for nom_mrc, data in resultats.items():
+    for nom_region, data in resultats.items():
         energie_totale += data['energie_annuelle_kwh']
-        print(f"\n{nom_mrc}:")
+        print(f"\n{nom_region}:")
         print(f"  Production annuelle : {data['energie_annuelle_kwh']:,.2f} kWh")
-        print(f"  Nombre de maisons : {data['nb_maisons_eligibles']}")
+        print(f"  Surface installée : {data['surface_installee_m2']:.2f} m²")
         print(f"  Puissance installée : {data['puissance_installee_kw']:.2f} kW")
     
-    print(f"\nProduction totale pour toutes les MRC : {energie_totale:,.2f} kWh")
+    print(f"\nProduction totale pour toutes les régions : {energie_totale:,.2f} kWh")
