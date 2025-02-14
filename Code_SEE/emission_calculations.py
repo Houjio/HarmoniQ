@@ -87,7 +87,6 @@ def calculate_distribution_emissions(energy_types, percent_distribution, kwh_tot
     
     return total_distribution_emissions
 
-
 def main():
     # Constants for the calculation
     energy_types = [
