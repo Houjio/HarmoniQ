@@ -61,6 +61,10 @@ class EolienneBase(BaseModel):
     diametre_rotor: float
     hauteur_moyenne: float
     puissance_nominal: float
+    modele_turbine : str
+    project_name : str
+    project_id : int
+    turbine_id : int
     modele_turbine: str
     project_name: str
     project_id: int
@@ -101,6 +105,14 @@ class Eolienne(SQLBase):
     vitesse_vent_de_coupure = Column(Float, nullable=True)
     materiau_pale = Column(String, nullable=True)
     type_generateur = Column(Integer, nullable=True)
+    type_generateur : Optional[TypeGenerateur] = None
+ 
+class EolienneParc(EolienneBase):
+    nombre_eoliennes: int
+    capacite_total: float
+    project_name: str
+    project_id: int
+    eoliennes: List[int]
 
 
 class HydroelectriqueBase(InfrastructureBase):
