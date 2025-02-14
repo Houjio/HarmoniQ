@@ -474,21 +474,28 @@ def calculate_regional_residential_solar(coordinates_residential, surface_pannea
 
 # Exemple d'utilisation
 if __name__ == "__main__":
-    # Test avec une surface de 100 m² pour Montréal seulement
+    # Test avec une surface de 100 m²
     surface_test = 100  # m²
-    montreal_coords = [(45.5017, -73.5673, 'Montréal', 0, 'Etc/GMT+5')]
     
-    print("\nDébut des calculs pour Montréal...")
+    print("\nDébut des calculs pour toutes les régions du Québec...")
     resultats = calculate_regional_residential_solar(
-        montreal_coords,
+        coordinates_residential,
         surface_test,
         surface_tilt=0,
         surface_azimuth=180
     )
     
-    # Affichage des résultats
-    data = resultats['Montréal']
-    print(f"\nRésultats pour Montréal:")
-    print(f"  Production annuelle : {data['energie_annuelle_kwh']:,.2f} kWh")
-    print(f"  Surface installée : {data['surface_installee_m2']:.2f} m²")
-    print(f"  Puissance installée : {data['puissance_installee_kw']:.2f} kW")
+    # Affichage du résumé des résultats
+    print("\n=== RÉSUMÉ DES RÉSULTATS POUR TOUTES LES RÉGIONS ===")
+    energie_totale = 0
+    for nom_region, data in resultats.items():
+        energie_totale += data['energie_annuelle_kwh']
+        print(f"\n{nom_region}:")
+        print(f"  Production annuelle : {data['energie_annuelle_kwh']:,.2f} kWh")
+        print(f"  Surface installée : {data['surface_installee_m2']:.2f} m²")
+        print(f"  Puissance installée : {data['puissance_installee_kw']:.2f} kW")
+    
+    print(f"\nProduction totale pour toutes les régions : {energie_totale:,.2f} kWh")
+    
+    end_time = time.time()
+    print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
