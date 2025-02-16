@@ -30,7 +30,7 @@ def get_weather_data(coordinates):
         tmys.append(weather)
     return tmys
 
-def calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter, surface_tilt, surface_azimuth):
+def calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter, surface_tilt, surface_orientation):
     """
     Calcule les paramètres solaires et l'irradiance pour un emplacement donné.
 
@@ -74,13 +74,13 @@ def calculate_solar_parameters(weather, latitude, longitude, altitude, temperatu
     am_abs = pvlib.atmosphere.get_absolute_airmass(airmass, pressure)
     aoi = pvlib.irradiance.aoi(
         surface_tilt,
-        surface_azimuth,
+        surface_orientation,
         solpos["apparent_zenith"],
         solpos["azimuth"],
     )
     total_irradiance = pvlib.irradiance.get_total_irradiance(
         surface_tilt,
-        surface_azimuth,
+        surface_orientation,
         solpos['apparent_zenith'],
         solpos['azimuth'],
         weather['dni'],
