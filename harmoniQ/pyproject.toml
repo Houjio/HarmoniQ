@@ -10,7 +10,6 @@ requires-python = ">=3.8"
 authors = [
     {name = "Sébastien Dasys", email = "sebastien.dasys@polymtl.ca"},
     {name = "Alec Mitchell", email = "alec.mitchell@polymtl.ca"},
-    {name = "Alec Mitchell", email = "alec.mitchell@polymtl.ca"},
     # Ajoute ton nom si tu contribues au code
 ]
 dependencies = [
@@ -23,6 +22,7 @@ dependencies = [
     "scipy",
     "openpyxl",
     # Web app dependencies
+    "flask",
     "fastapi",
     "uvicorn",
     "sqlalchemy",
