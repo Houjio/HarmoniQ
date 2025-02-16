@@ -2,9 +2,10 @@ from sqlalchemy import create_engine
 import sqlalchemy
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Session, sessionmaker
+from typing import Optional
 
 from harmoniq import DB_PATH
-from harmoniq.db.shemas import *
+from harmoniq.db import shemas
 
 DATABASE_URL = f"sqlite:///{DB_PATH}"
 engine = create_engine(DATABASE_URL)
@@ -22,92 +23,108 @@ def get_db():
         db.close()
 
 
-def create_station(station: StationMeteoCreate, db: Session):
-    """
-    Crée un nouvel enregistrement de station météo dans la base de données.
-
-    Args:
-        station (StationMeteoCreate): Les données requises pour créer une nouvelle station météo.
-        db (Session): La session de base de données utilisée pour interagir avec la base de données.
-
-    Returns:
-        StationMeteo: Le nouvel enregistrement de station météo créé.
-    """
-    db_station = StationMeteo(**station.model_dump())
-    db.add(db_station)
+def create_eolienne(db: Session, eolienne: shemas.EolienneCreate):
+    db_eolienne = shemas.Eolienne(**eolienne.model_dump())
+    db.add(db_eolienne)
     db.commit()
-    db.refresh(db_station)
-    return db_station
+    db.refresh(db_eolienne)
+    return db_eolienne
 
 
-def delete_station(station_id: int, db: Session) -> None:
-    """
-    Supprime un enregistrement de station météo de la base de données.
+def read_eoliennes(db: Session, id: Optional[int] = None):
+    if id is not None:
+        return db.query(shemas.Eolienne).filter(shemas.Eolienne.id == id).all()
+    return db.query(shemas.Eolienne).all()
 
-    Args:
-        station_id (int): L'identifiant de la station météo à supprimer.
-        db (Session): La session de base de données utilisée pour interagir avec la base de données.
-    """
-    db.query(StationMeteo).filter(StationMeteo.id == station_id).delete()
+
+def read_eolienne(db: Session, eolienne_id: int):
+    eolienne = (
+        db.query(shemas.Eolienne).filter(shemas.Eolienne.id == eolienne_id).first()
+    )
+    return eolienne
+
+
+def update_eolienne(db: Session, eolienne_id: int, eolienne: shemas.EolienneCreate):
+    db_eolienne = (
+        db.query(shemas.Eolienne).filter(shemas.Eolienne.id == eolienne_id).first()
+    )
+    if db_eolienne is None:
+        return None
+    for key, value in eolienne.dict().items():
+        setattr(db_eolienne, key, value)
     db.commit()
+    db.refresh(db_eolienne)
+    return db_eolienne
 
 
-def get_all_stations(db: Session):
-    """
-    Récupère toutes les stations météo de la base de données.
-
-    Args:
-        db (Session): La session de base de données utilisée pour interagir avec la base de données.
-    """
-    return db.query(StationMeteo).all()
-
-
-def get_station_by_id(station_id: int, db: Session):
-    """
-    Récupère une station météo à partir de son identifiant.
-
-    Args:
-        station_id (int): L'identifiant de la station météo à récupérer.
-        db (Session): La session de base de données utilisée pour interagir avec la base de données.
-    """
-    return db.query(StationMeteo).filter(StationMeteo.id == station_id).first()
+def delete_eolienne(db: Session, eolienne_id: int):
+    db_eolienne = (
+        db.query(shemas.Eolienne).filter(shemas.Eolienne.id == eolienne_id).first()
+    )
+    if db_eolienne is None:
+        return None
+    db.delete(db_eolienne)
+    db.commit()
+    return {"message": "Eolienne deleted successfully"}
 
 
-def get_station_by_iata_id(iata_id: str, db: Session):
-    """
-    Récupère une station météo à partir de son identifiant IATA.
-
-    Args:
-        iata_id (str): L'identifiant IATA de la station météo à récupérer.
-        db (Session): La session de base de données utilisée pour interagir avec la base de données.
-    """
-    return db.query(StationMeteo).filter(StationMeteo.IATA_ID == iata_id).first()
+def create_eolienne_parc(db: Session, eolienne_parc: shemas.EolienneParcCreate):
+    db_eolienne_parc = shemas.EolienneParc(**eolienne_parc.model_dump())
+    db.add(db_eolienne_parc)
+    db.commit()
+    db.refresh(db_eolienne_parc)
+    return db_eolienne_parc
 
 
-def get_n_nearest_stations(latitude: float, longitude: float, n: int, db: Session):
-    """
-    Récupère les n stations météo les plus proches d'un point donné.
+def read_eolienne_parcs(db: Session, id: Optional[int] = None):
+    if id is not None:
+        return db.query(shemas.EolienneParc).filter(shemas.EolienneParc.id == id).all()
+    return db.query(shemas.EolienneParc).all()
 
-    Args:
-        latitude (float): La latitude du point de référence.
-        longitude (float): La longitude du point de référence.
-        n (int): Le nombre de stations à récupérer.
-        db (Session): La session de base de données utilisée pour interagir avec la base de données.
-    """
-    latitude_radians = func.radians(latitude)
-    longitude_radians = func.radians(longitude)
 
-    return (
-        db.query(StationMeteo)
-        .order_by(
-            func.acos(
-                func.sin(latitude_radians)
-                * func.sin(func.radians(StationMeteo.latitude))
-                + func.cos(latitude_radians)
-                * func.cos(func.radians(StationMeteo.latitude))
-                * func.cos(func.radians(StationMeteo.longitude) - longitude_radians)
-            )
-        )
-        .limit(n)
+def read_eolienne_parc(db: Session, eolienne_parc_id: int):
+    eolienne_parc = (
+        db.query(shemas.EolienneParc)
+        .filter(shemas.EolienneParc.id == eolienne_parc_id)
+        .first()
+    )
+    return eolienne_parc
+
+
+def update_eolienne_parc(
+    db: Session, eolienne_parc_id: int, eolienne_parc: shemas.EolienneParcCreate
+):
+    db_eolienne_parc = (
+        db.query(shemas.EolienneParc)
+        .filter(shemas.EolienneParc.id == eolienne_parc_id)
+        .first()
+    )
+    if db_eolienne_parc is None:
+        return None
+    for key, value in eolienne_parc.dict().items():
+        setattr(db_eolienne_parc, key, value)
+    db.commit()
+    db.refresh(db_eolienne_parc)
+    return db_eolienne_parc
+
+
+def delete_eolienne_parc(db: Session, eolienne_parc_id: int):
+    db_eolienne_parc = (
+        db.query(shemas.EolienneParc)
+        .filter(shemas.EolienneParc.id == eolienne_parc_id)
+        .first()
+    )
+    if db_eolienne_parc is None:
+        return None
+    db.delete(db_eolienne_parc)
+    db.commit()
+    return {"message": "EolienneParc deleted successfully"}
+
+
+def all_eoliennes_in_parc(db: Session, eolienne_parc_id: int):
+    eoliennes = (
+        db.query(shemas.Eolienne)
+        .filter(shemas.Eolienne.eolienne_parc_id == eolienne_parc_id)
         .all()
     )
+    return eoliennes

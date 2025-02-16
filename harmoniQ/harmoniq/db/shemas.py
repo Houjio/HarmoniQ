@@ -1,7 +1,8 @@
 "Liste de modèles de données de la base de données"
 
-from sqlalchemy import Column, Integer, String, Float, Boolean
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, Integer, String, Float, Boolean, Table
+from sqlalchemy.orm import declarative_base, relationship, Mapped, mapped_column
+from sqlalchemy.sql.schema import ForeignKey
 
 from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
@@ -28,6 +29,9 @@ class PositionBase(BaseModel):
     latitude: float
     longitude: float
 
+    def __repr__(self):
+        return f"({self.latitude}, {self.longitude})"
+
 
 class CasBase(BaseModel):
     nom: str
@@ -45,9 +49,105 @@ class InfrastructureBase(PositionBase):
     # TODO: Ajouter plus de champs
 
 
-class EolienneBase(InfrastructureBase):
+# eolienne_parc_association = Table(
+#     'eolienne_parc_association',
+#     SQLBase.metadata,
+#     Column('parc_id', Integer, ForeignKey('eoliennes_parc.id')),
+#     Column('eolienne_id', Integer, ForeignKey('eoliennes.id'))
+# )
+
+class TypeGenerateur(Enum):
+    A = 1
+    B = 2
+    C = 3
+
+
+class EolienneBase(BaseModel):
+    latitude: float
+    longitude: float
+    eolienne_nom: str
+    diametre_rotor: float
+    hauteur_moyenne: float
+    puissance_nominal: float
+    turbine_id: int
+    modele_turbine: str
+    project_name: str
+    eolienne_parc_id: int
+    annee_commission: Optional[int] = None
+    surface_balayee: Optional[float] = None
+    vitesse_vent_de_demarrage: Optional[float] = None
+    vitesse_vent_de_coupure: Optional[float] = None
+    materiau_pale: Optional[str] = None
+    type_generateur: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+
+class EolienneCreate(EolienneBase):
     pass
 
+
+class EolienneResponse(EolienneBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class Eolienne(SQLBase):
+    __tablename__ = "eoliennes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    eolienne_nom = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    diametre_rotor = Column(Float)
+    hauteur_moyenne = Column(Float)
+    turbine_id = Column(Integer)
+    puissance_nominal = Column(Float)
+    modele_turbine = Column(String)
+    project_name = Column(String)
+    annee_commission = Column(Integer, nullable=True)
+    surface_balayee = Column(Float, nullable=True)
+    vitesse_vent_de_demarrage = Column(Float, nullable=True)
+    vitesse_vent_de_coupure = Column(Float, nullable=True)
+    materiau_pale = Column(String, nullable=True)
+    type_generateur = Column(Integer, nullable=True)
+    eolienne_parc_id = Column(Integer, ForeignKey("eoliennes_parc.id"), nullable=True)
+
+    eolienne_parc = relationship("EolienneParc", back_populates="eoliennes")
+ 
+
+class EolienneParcBase(BaseModel):
+    nom: str
+    latitude: float
+    longitude: float
+    nombre_eoliennes: int
+    capacite_total: float
+    
+
+class EolienneParcCreate(EolienneParcBase):
+    pass
+
+
+class EolienneParcResponse(EolienneParcBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class EolienneParc(SQLBase):
+    __tablename__ = "eoliennes_parc"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nom = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    nombre_eoliennes = Column(Integer)
+    capacite_total = Column(Float)
+    eoliennes = relationship("Eolienne", back_populates="eolienne_parc")
 
 class HydroelectriqueBase(InfrastructureBase):
     fils_de_l_eau: bool
@@ -64,49 +164,3 @@ class ThermiqueBase(InfrastructureBase):
 
 class TransmissionBase(InfrastructureBase):
     pass
-
-
-# Station Météo
-class StationMeteoBase(PositionBase):
-    """Pydanctic modèle de base pour les stations météo"""
-
-    nom: str
-    IATA_ID: str
-    WMO_ID: Optional[int] = None
-    MSC_ID: str
-    elevation_m: float
-    fournisseur_de_donnees: Optional[str] = None
-    reseau: Optional[str] = None
-    automatic: Optional[bool] = None
-
-
-class StationMeteoCreate(StationMeteoBase):
-    """Pydanctic modèle pour créer une station météo"""
-
-    pass
-
-
-class StationMeteoRead(StationMeteoBase):
-    """Pydanctic modèle pour lire une station météo"""
-
-    id: int
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class StationMeteo(SQLBase):
-    """Modèle SQLAlchemy pour les stations météo"""
-
-    __tablename__ = "stations_meteo"
-
-    id = Column(Integer, primary_key=True, index=True)
-    nom = Column(String, index=True)
-    IATA_ID = Column(String, index=True)
-    WMO_ID = Column(Integer, index=True, nullable=True)
-    MSC_ID = Column(String, index=True)
-    latitude = Column(Float, index=True)
-    longitude = Column(Float, index=True)
-    elevation_m = Column(Float, index=True)
-    fournisseur_de_donnees = Column(String, index=True, nullable=True)
-    reseau = Column(String, index=True, nullable=True)
-    automatic = Column(Boolean, index=True, nullable=True)
