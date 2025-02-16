@@ -22,7 +22,7 @@ def get_weather_data(coordinates_residential):
         Liste des DataFrames contenant les données météorologiques pour chaque emplacement.
     """
     tmys = []
-    for location in coordinates:
+    for location in coordinates_residential:
         latitude, longitude, name, altitude, timezone = location
         print(f"\nRécupération des données météo pour {name}...")
         weather = pvlib.iotools.get_pvgis_tmy(latitude, longitude)[0]
@@ -159,7 +159,7 @@ print("\n--Conversion power_to_surface--")
 print(f"Puissance souhaitée : {desired_power_kw} kW")
 print(f"Superficie nécessaire : {required_surface_m2:.2f} m²")
 
-def calculate_energy_solar_plants(coordinates, puissance_kw, surface_tilt=30, surface_orientation=180):
+def calculate_energy_solar_plants(coordinates_centrales, puissance_kw, surface_tilt=30, surface_orientation=180):
     """
     Calcule la production d'énergie annuelle pour une installation solaire 
     de puissance spécifiée à des coordonnées données.
@@ -192,7 +192,7 @@ def calculate_energy_solar_plants(coordinates, puissance_kw, surface_tilt=30, su
     temperature_model_parameters = pvlib.temperature.TEMPERATURE_MODEL_PARAMETERS['sapm']['open_rack_glass_glass']
     
     # Extraction des coordonnées
-    latitude, longitude, name, altitude, timezone = coordinates
+    latitude, longitude, name, altitude, timezone = coordinates_centrales
     
     # Récupération des données météo
     print(f"\nRécupération des données météo pour {name}...")
@@ -362,11 +362,30 @@ coordinates_residential = [
     (45.4500, -73.3496, 'Montérégie', 0, 'Etc/GMT+5'),
     (46.4043, -72.0169, 'Centre-du-Québec', 0, 'Etc/GMT+5'),
 ]
-coordinates = [
+coordinates_centrales = [
     (45.4167, -73.4999, 'La Prairie', 0, 'Etc/GMT+5'),
     (45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5'),
 ]
 
+population_relative = {
+    "Bas-Saint-Laurent": 0.0226,
+    "Saguenay-Lac-Saint-Jean": 0.0317,
+    "Capitale-Nationale": 0.0897,
+    "Mauricie": 0.0318,
+    "Estrie": 0.0580,
+    "Montréal": 0.2430,
+    "Outaouais": 0.0472,
+    "Abitibi-Témiscamingue": 0.0165,
+    "Côte-Nord": 0.0099,
+    "Nord-du-Québec": 0.0052,
+    "Gaspésie-Îles-de-la-Madeleine": 0.0102,
+    "Chaudière-Appalaches": 0.0503,
+    "Laval": 0.0508,
+    "Lanaudière": 0.0620,
+    "Laurentides": 0.0744,
+    "Montérégie": 0.1675,
+    "Centre-du-Québec": 0.0291
+}
 
 Cout_centrales = calcul_couts_solarpowerplant(energie_centrales)
 CO2_centrales = calcul_emissions_co2(energie_centrales)
