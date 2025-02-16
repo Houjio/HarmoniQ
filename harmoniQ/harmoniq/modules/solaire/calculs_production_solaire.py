@@ -153,54 +153,54 @@ def solar_energy_production(coordinates, show_plot=False):
 
     return energies
 
-def residential_solar_energy_production(coordinates, show_plot=False):
-    """
-    Calcule l'énergie solaire annuelle pour les emplacements spécifiés avec des panneaux résidentiels.
+# def residential_solar_energy_production(coordinates, show_plot=False):
+#     """
+#     Calcule l'énergie solaire annuelle pour les emplacements spécifiés avec des panneaux résidentiels.
 
-    Parameters
-    ----------
-    coordinates : list of tuples
-        Liste des coordonnées des emplacements sous forme de tuples (latitude, longitude, nom, altitude, fuseau horaire).
-    show_plot : bool, optional
-        Si True, affiche le graphique de production d'énergie. Par défaut False.
+#     Parameters
+#     ----------
+#     coordinates : list of tuples
+#         Liste des coordonnées des emplacements sous forme de tuples (latitude, longitude, nom, altitude, fuseau horaire).
+#     show_plot : bool, optional
+#         Si True, affiche le graphique de production d'énergie. Par défaut False.
 
-    Returns
-    -------
-    Series
-        Énergies annuelles (Wh) pour chaque emplacement.
-    """
-    print("\nInitialisation des modèles solaires...")
-    sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
-    sapm_inverters = pvlib.pvsystem.retrieve_sam('cecinverter')
+#     Returns
+#     -------
+#     Series
+#         Énergies annuelles (Wh) pour chaque emplacement.
+#     """
+#     print("\nInitialisation des modèles solaires...")
+#     sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
+#     sapm_inverters = pvlib.pvsystem.retrieve_sam('cecinverter')
 
-    module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
-    inverter = sapm_inverters['ABB__MICRO_0_25_I_OUTD_US_208__208V_']
-    temperature_model_parameters = pvlib.temperature.TEMPERATURE_MODEL_PARAMETERS['sapm']['open_rack_glass_glass']
+#     module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
+#     inverter = sapm_inverters['ABB__MICRO_0_25_I_OUTD_US_208__208V_']
+#     temperature_model_parameters = pvlib.temperature.TEMPERATURE_MODEL_PARAMETERS['sapm']['open_rack_glass_glass']
 
-    print("\nRécupération des données météorologiques...")
-    tmys = get_weather_data(coordinates)
-    energies = {}
+#     print("\nRécupération des données météorologiques...")
+#     tmys = get_weather_data(coordinates)
+#     energies = {}
 
-    print("\nCalcul de la production solaire...")
-    for location, weather in zip(coordinates, tmys):
-        latitude, longitude, name, altitude, timezone = location
-        print(f"Calcul pour {name}...")
-        ac = calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter, 30, 180)
-        annual_energy = ac.sum()
-        energies[name] = annual_energy
-        print(f"Calcul terminé pour {name}")
+#     print("\nCalcul de la production solaire...")
+#     for location, weather in zip(coordinates, tmys):
+#         latitude, longitude, name, altitude, timezone = location
+#         print(f"Calcul pour {name}...")
+#         ac = calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter, 30, 180)
+#         annual_energy = ac.sum()
+#         energies[name] = annual_energy
+#         print(f"Calcul terminé pour {name}")
 
-    energies = pd.Series(energies)
-    print("Énergies annuelle TMY (Wh) :")
-    print(energies.apply(lambda x: f"{x:.2f}"))
+#     energies = pd.Series(energies)
+#     print("Énergies annuelle TMY (Wh) :")
+#     print(energies.apply(lambda x: f"{x:.2f}"))
 
-    if show_plot:
-        energies.plot(kind='bar', rot=0)
-        plt.ylabel('Yearly energy yield (Wh)')
-        plt.title('Yearly Energy Yield of Solar Plants')
-        plt.show()
+#     if show_plot:
+#         energies.plot(kind='bar', rot=0)
+#         plt.ylabel('Yearly energy yield (Wh)')
+#         plt.title('Yearly Energy Yield of Solar Plants')
+#         plt.show()
 
-    return energies
+#     return energies
 
 def convert_solar(value, module, mode='surface_to_power'):
     """
@@ -254,7 +254,7 @@ print("\n--Conversion power_to_surface--")
 print(f"Puissance souhaitée : {desired_power_kw} kW")
 print(f"Superficie nécessaire : {required_surface_m2:.2f} m²")
 
-def calculate_energy_from_power(coordinates, puissance_kw, surface_tilt=30, surface_azimuth=180):
+def calculate_energy_centrales(coordinates, puissance_kw, surface_tilt=30, surface_orientation=180):
     """
     Calcule la production d'énergie annuelle pour une installation solaire 
     de puissance spécifiée à des coordonnées données.
@@ -303,7 +303,7 @@ def calculate_energy_from_power(coordinates, puissance_kw, surface_tilt=30, surf
     ac = calculate_solar_parameters(
         weather, latitude, longitude, altitude,
         temperature_model_parameters, module, inverter,
-        surface_tilt, surface_azimuth
+        surface_tilt, surface_orientation
     )
     
     # Mise à l'échelle selon la puissance demandée
@@ -320,7 +320,7 @@ def calculate_energy_from_power(coordinates, puissance_kw, surface_tilt=30, surf
         'energie_horaire': ac_scaled,
         'nombre_modules': nombre_modules
     }
-energie_centrales = calculate_energy_from_power((46.81, -71.25, 'Varennes', 10, 'Etc/GMT+5'), 9500)['energie_annuelle_wh']
+energie_centrales = calculate_energy_centrales((46.81, -71.25, 'Varennes', 10, 'Etc/GMT+5'), 9500)['energie_annuelle_wh']
 
 def calcul_couts_solarpowerplant(energie_centrales):
     """
