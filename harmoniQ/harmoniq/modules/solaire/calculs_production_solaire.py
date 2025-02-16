@@ -7,7 +7,7 @@ import time
 
 
 
-def get_weather_data(coordinates):
+def get_weather_data(coordinates_residential):
     """
     Récupère les données météorologiques pour les emplacements spécifiés.
 
@@ -106,101 +106,6 @@ def calculate_solar_parameters(weather, latitude, longitude, altitude, temperatu
     ac = pvlib.inverter.sandia(dc['v_mp'], dc['p_mp'], inverter)
     return ac
 
-def solar_energy_production(coordinates, show_plot=False):
-    """
-    Calcule l'énergie solaire annuelle pour les emplacements spécifiés.
-
-    Parameters
-    ----------
-    coordinates : list of tuples
-        Liste des coordonnées des emplacements sous forme de tuples (latitude, longitude, nom, altitude, fuseau horaire).
-    show_plot : bool, optional
-        Si True, affiche le graphique de production d'énergie. Par défaut False.
-
-    Returns
-    -------
-    Series
-        Énergies annuelles (Wh) pour chaque emplacement.
-    """
-    print("\nInitialisation des modèles solaires...")
-    sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
-    sapm_inverters = pvlib.pvsystem.retrieve_sam('cecinverter')
-
-    module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
-    inverter = sapm_inverters['ABB__MICRO_0_25_I_OUTD_US_208__208V_']
-    temperature_model_parameters = pvlib.temperature.TEMPERATURE_MODEL_PARAMETERS['sapm']['open_rack_glass_glass']
-
-    print("\nRécupération des données météorologiques...")
-    tmys = get_weather_data(coordinates)
-    energies = {}
-
-    print("\nCalcul de la production solaire...")
-    for location, weather in zip(coordinates, tmys):
-        latitude, longitude, name, altitude, timezone = location
-        ac = calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter, 30, 180)
-        annual_energy = ac.sum()
-        energies[name] = annual_energy
-
-    energies = pd.Series(energies)
-    print("Énergies annuelles (Wh) :")
-    print(energies.apply(lambda x: f"{x:.2f} Wh"))
-
-    if show_plot:
-        energies.plot(kind='bar', rot=0)
-        plt.ylabel('Yearly energy yield (Wh)')
-        plt.title('Yearly Energy Yield of Solar Plants')
-        plt.show()
-
-    return energies
-
-# def residential_solar_energy_production(coordinates, show_plot=False):
-#     """
-#     Calcule l'énergie solaire annuelle pour les emplacements spécifiés avec des panneaux résidentiels.
-
-#     Parameters
-#     ----------
-#     coordinates : list of tuples
-#         Liste des coordonnées des emplacements sous forme de tuples (latitude, longitude, nom, altitude, fuseau horaire).
-#     show_plot : bool, optional
-#         Si True, affiche le graphique de production d'énergie. Par défaut False.
-
-#     Returns
-#     -------
-#     Series
-#         Énergies annuelles (Wh) pour chaque emplacement.
-#     """
-#     print("\nInitialisation des modèles solaires...")
-#     sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
-#     sapm_inverters = pvlib.pvsystem.retrieve_sam('cecinverter')
-
-#     module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
-#     inverter = sapm_inverters['ABB__MICRO_0_25_I_OUTD_US_208__208V_']
-#     temperature_model_parameters = pvlib.temperature.TEMPERATURE_MODEL_PARAMETERS['sapm']['open_rack_glass_glass']
-
-#     print("\nRécupération des données météorologiques...")
-#     tmys = get_weather_data(coordinates)
-#     energies = {}
-
-#     print("\nCalcul de la production solaire...")
-#     for location, weather in zip(coordinates, tmys):
-#         latitude, longitude, name, altitude, timezone = location
-#         print(f"Calcul pour {name}...")
-#         ac = calculate_solar_parameters(weather, latitude, longitude, altitude, temperature_model_parameters, module, inverter, 30, 180)
-#         annual_energy = ac.sum()
-#         energies[name] = annual_energy
-#         print(f"Calcul terminé pour {name}")
-
-#     energies = pd.Series(energies)
-#     print("Énergies annuelle TMY (Wh) :")
-#     print(energies.apply(lambda x: f"{x:.2f}"))
-
-#     if show_plot:
-#         energies.plot(kind='bar', rot=0)
-#         plt.ylabel('Yearly energy yield (Wh)')
-#         plt.title('Yearly Energy Yield of Solar Plants')
-#         plt.show()
-
-#     return energies
 
 def convert_solar(value, module, mode='surface_to_power'):
     """
@@ -254,7 +159,7 @@ print("\n--Conversion power_to_surface--")
 print(f"Puissance souhaitée : {desired_power_kw} kW")
 print(f"Superficie nécessaire : {required_surface_m2:.2f} m²")
 
-def calculate_energy_centrales(coordinates, puissance_kw, surface_tilt=30, surface_orientation=180):
+def calculate_energy_solar_plants(coordinates, puissance_kw, surface_tilt=30, surface_orientation=180):
     """
     Calcule la production d'énergie annuelle pour une installation solaire 
     de puissance spécifiée à des coordonnées données.
@@ -267,7 +172,7 @@ def calculate_energy_centrales(coordinates, puissance_kw, surface_tilt=30, surfa
         Puissance crête souhaitée en kilowatts (kW)
     surface_tilt : float, optional
         Angle d'inclinaison des panneaux en degrés. Par défaut 30°
-    surface_azimuth : float, optional
+    surface_orientation : float, optional
         Orientation des panneaux en degrés (180° = sud). Par défaut 180°
 
     Returns
@@ -320,7 +225,72 @@ def calculate_energy_centrales(coordinates, puissance_kw, surface_tilt=30, surfa
         'energie_horaire': ac_scaled,
         'nombre_modules': nombre_modules
     }
-energie_centrales = calculate_energy_centrales((46.81, -71.25, 'Varennes', 10, 'Etc/GMT+5'), 9500)['energie_annuelle_wh']
+energie_centrales = calculate_energy_solar_plants((46.81, -71.25, 'Varennes', 10, 'Etc/GMT+5'), 9500)['energie_annuelle_wh']
+
+def calculate_regional_residential_solar(coordinates_residential, surface_panneau, surface_tilt=0, surface_orientation=180):
+    """
+    Calcule la production d'énergie solaire résidentielle potentielle par région administrative.
+    
+    Parameters
+    ----------
+    coordinates_residential : list of tuples
+        Liste des coordonnées des régions sous forme de tuples 
+        (latitude, longitude, nom, altitude, timezone)
+    surface_panneau : float
+        Surface de panneaux solaires souhaitée en m²
+    surface_tilt : float, optional
+        Angle d'inclinaison des panneaux en degrés. Par défaut 30°
+    surface_azimuth : float, optional
+        Orientation des panneaux en degrés (180° = sud). Par défaut 180°
+    
+    Returns
+    -------
+    dict
+        Dictionnaire contenant pour chaque région:
+        - énergie annuelle (kWh)
+        - puissance installée (kW)
+        - surface installée (m²)
+        - coordonnées (lat, lon)
+    """
+    # Initialisation des modèles
+    sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
+    module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
+    
+    resultats_regions = {}
+    
+    # Conversion de la surface en puissance
+    puissance_installee_kw = convert_solar(surface_panneau, module, mode='surface_to_power')
+    
+    print(f"\nCalculs pour une installation de {surface_panneau} m² ({puissance_installee_kw:.2f} kW)")
+    
+    for coordinates in coordinates_residential:
+        latitude, longitude, nom_region, altitude, timezone = coordinates
+        print(f"\nCalcul pour la région {nom_region}...")
+        
+        # Calcul de la production d'énergie
+        production = calculate_energy_solar_plants(
+            coordinates, 
+            puissance_installee_kw,
+            surface_tilt=surface_tilt,
+            surface_orientation=surface_orientation
+        )
+        
+        # Stockage des résultats
+        resultats_regions[nom_region] = {
+            'energie_annuelle_kwh': production['energie_annuelle_wh'] / 1000,
+            'puissance_installee_kw': puissance_installee_kw,
+            'surface_installee_m2': surface_panneau,
+            'latitude': latitude,
+            'longitude': longitude
+        }
+        
+        print(f"Résultats pour {nom_region}:")
+        print(f"Surface installée: {surface_panneau:.2f} m²")
+        print(f"Puissance installée: {puissance_installee_kw:.2f} kW")
+        print(f"Production annuelle: {production['energie_annuelle_wh']/1000:,.2f} kWh")
+    
+    return resultats_regions
+
 
 def calcul_couts_solarpowerplant(energie_centrales):
     """
@@ -401,76 +371,13 @@ coordinates = [
 Cout_centrales = calcul_couts_solarpowerplant(energie_centrales)
 CO2_centrales = calcul_emissions_co2(energie_centrales)
 
-
 end_time = time.time()
+
 print(f"Les coûts pour les centrales solaires sont de {Cout_centrales:,.2f} $")
 print(f"Le CO2 pour les centrales solaires est de {CO2_centrales:,.2f} kg")
 print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
 
 
-def calculate_regional_residential_solar(coordinates_residential, surface_panneau, surface_tilt=0, surface_azimuth=180):
-    """
-    Calcule la production d'énergie solaire résidentielle potentielle par région administrative.
-    
-    Parameters
-    ----------
-    coordinates_residential : list of tuples
-        Liste des coordonnées des régions sous forme de tuples 
-        (latitude, longitude, nom, altitude, timezone)
-    surface_panneau : float
-        Surface de panneaux solaires souhaitée en m²
-    surface_tilt : float, optional
-        Angle d'inclinaison des panneaux en degrés. Par défaut 30°
-    surface_azimuth : float, optional
-        Orientation des panneaux en degrés (180° = sud). Par défaut 180°
-    
-    Returns
-    -------
-    dict
-        Dictionnaire contenant pour chaque région:
-        - énergie annuelle (kWh)
-        - puissance installée (kW)
-        - surface installée (m²)
-        - coordonnées (lat, lon)
-    """
-    # Initialisation des modèles
-    sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
-    module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
-    
-    resultats_regions = {}
-    
-    # Conversion de la surface en puissance
-    puissance_installee_kw = convert_solar(surface_panneau, module, mode='surface_to_power')
-    
-    print(f"\nCalculs pour une installation de {surface_panneau} m² ({puissance_installee_kw:.2f} kW)")
-    
-    for coordinates in coordinates_residential:
-        latitude, longitude, nom_region, altitude, timezone = coordinates
-        print(f"\nCalcul pour la région {nom_region}...")
-        
-        # Calcul de la production d'énergie
-        production = calculate_energy_from_power(
-            coordinates, 
-            puissance_installee_kw,
-            surface_tilt=surface_tilt,
-            surface_azimuth=surface_azimuth
-        )
-        
-        # Stockage des résultats
-        resultats_regions[nom_region] = {
-            'energie_annuelle_kwh': production['energie_annuelle_wh'] / 1000,
-            'puissance_installee_kw': puissance_installee_kw,
-            'surface_installee_m2': surface_panneau,
-            'latitude': latitude,
-            'longitude': longitude
-        }
-        
-        print(f"Résultats pour {nom_region}:")
-        print(f"Surface installée: {surface_panneau:.2f} m²")
-        print(f"Puissance installée: {puissance_installee_kw:.2f} kW")
-        print(f"Production annuelle: {production['energie_annuelle_wh']/1000:,.2f} kWh")
-    
-    return resultats_regions
 
 # Exemple d'utilisation
 if __name__ == "__main__":
@@ -482,7 +389,7 @@ if __name__ == "__main__":
         coordinates_residential,
         surface_test,
         surface_tilt=0,
-        surface_azimuth=180
+        surface_orientation=180
     )
     
     # Affichage du résumé des résultats
