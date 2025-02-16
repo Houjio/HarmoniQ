@@ -7,10 +7,9 @@ from typing import Optional
 from harmoniq import DB_PATH
 from harmoniq.db import shemas
 
-DATABASE_URL = f"sqlite:///{DB_PATH}"
-engine = create_engine(DATABASE_URL)
+DATABASE__URL = f"sqlite:///{DB_PATH}"
+engine = create_engine(DATABASE__URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 
 def get_db():
     """

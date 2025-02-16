@@ -15,7 +15,7 @@ def init_db(reset=False):
     if reset:
         print("Réinitialisation de la base de données")
         SQLBase.metadata.drop_all(bind=engine)
-        
+
     SQLBase.metadata.create_all(bind=engine)
 
 
@@ -79,9 +79,9 @@ def fill_eoliennes():
             print(f"Erreur lors de l'ajout du projet {project_name}")
             print(e)
             breakpoint()
-        
+
         print(f"Projet {project_name} ajouté à la base de données")
-        
+
 
 def populate_db():
     print("Collecte des éolienne")
@@ -90,6 +90,9 @@ def populate_db():
 
 def main():
     parser = argparse.ArgumentParser(description="Initialise la base de données")
+    parser.add_argument(
+        "-t", "--test", action="store_true", help="Utilise la base de données de test"
+    )
     parser.add_argument(
         "-R", "--reset", action="store_true", help="Réinitialise la base de données"
     )
@@ -104,7 +107,7 @@ def main():
 
     print("Initialisation de la base de données")
     init_db(args.reset)
-    
+
     if args.populate:
         populate_db()
 
