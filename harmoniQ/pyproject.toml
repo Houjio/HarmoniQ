@@ -19,8 +19,6 @@ dependencies = [
     "matplotlib",
     "scipy",
     "openpyxl",
-    "scipy",
-    
     # Web app dependencies
     "fastapi",
     "uvicorn",

@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
+from harmoniq.db import shemas
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 
 from harmoniq.db import shemas
-from harmoniq.db import engine
+from harmoniq.core import meteo
+from harmoniq.core.meteo import Granularity
 from harmoniq.db.engine import get_db
 
 # from harmoniq.core import meteo
@@ -22,6 +24,35 @@ router = APIRouter(
 async def ping():
     return {"ping": "pong"}
 
+
+@router.post("/meteo/get_data")
+def get_meteo_data(
+    latitude: float,
+    longitude: float,
+    interpolate: bool,
+    start_time: datetime,
+    granularity: int,
+    end_time: Optional[datetime] = None,
+):
+    try:
+        granularity = Granularity(granularity)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Granularity must be 1 or 2")
+
+    helper = meteo.WeatherHelper(
+        position=shemas.PositionBase(latitude=latitude, longitude=longitude),
+        interpolate=interpolate,
+        start_time=start_time,
+        end_time=end_time,
+        granularity=granularity,
+    )
+    helper.load()
+    csv_buffer = helper.data.to_csv()
+    return StreamingResponse(
+        csv_buffer,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=weather_data.csv"},
+    )
 
 @router.post("/eoliennes/", response_model=shemas.EolienneResponse)
 def create_eolienne_endpoint(
