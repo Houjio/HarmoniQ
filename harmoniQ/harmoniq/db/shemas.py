@@ -49,13 +49,6 @@ class InfrastructureBase(PositionBase):
     # TODO: Ajouter plus de champs
 
 
-# eolienne_parc_association = Table(
-#     'eolienne_parc_association',
-#     SQLBase.metadata,
-#     Column('parc_id', Integer, ForeignKey('eoliennes_parc.id')),
-#     Column('eolienne_id', Integer, ForeignKey('eoliennes.id'))
-# )
-
 class TypeGenerateur(Enum):
     A = 1
     B = 2
@@ -117,7 +110,7 @@ class Eolienne(SQLBase):
     eolienne_parc_id = Column(Integer, ForeignKey("eoliennes_parc.id"), nullable=True)
 
     eolienne_parc = relationship("EolienneParc", back_populates="eoliennes")
- 
+
 
 class EolienneParcBase(BaseModel):
     nom: str
@@ -125,7 +118,7 @@ class EolienneParcBase(BaseModel):
     longitude: float
     nombre_eoliennes: int
     capacite_total: float
-    
+
 
 class EolienneParcCreate(EolienneParcBase):
     pass
@@ -148,6 +141,7 @@ class EolienneParc(SQLBase):
     nombre_eoliennes = Column(Integer)
     capacite_total = Column(Float)
     eoliennes = relationship("Eolienne", back_populates="eolienne_parc")
+
 
 class HydroelectriqueBase(InfrastructureBase):
     fils_de_l_eau: bool

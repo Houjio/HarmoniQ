@@ -5,11 +5,10 @@ from typing import List, Optional
 from datetime import datetime
 
 from harmoniq.db import shemas
+from harmoniq.core import meteo
 from harmoniq.db import engine
+from harmoniq.core.meteo import Granularity
 from harmoniq.db.engine import get_db
-
-# from harmoniq.core import meteo
-# from harmoniq.core.meteo import Granularity
 
 router = APIRouter(
     prefix="/api",
@@ -21,6 +20,36 @@ router = APIRouter(
 @router.get("/ping")
 async def ping():
     return {"ping": "pong"}
+
+
+@router.post("/meteo/get_data")
+def get_meteo_data(
+    latitude: float,
+    longitude: float,
+    interpolate: bool,
+    start_time: datetime,
+    granularity: int,
+    end_time: Optional[datetime] = None,
+):
+    try:
+        granularity = Granularity(granularity)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Granularity must be 1 or 2")
+
+    helper = meteo.WeatherHelper(
+        position=shemas.PositionBase(latitude=latitude, longitude=longitude),
+        interpolate=interpolate,
+        start_time=start_time,
+        end_time=end_time,
+        granularity=granularity,
+    )
+    helper.load()
+    csv_buffer = helper.data.to_csv()
+    return StreamingResponse(
+        csv_buffer,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=weather_data.csv"},
+    )
 
 
 @router.post("/eoliennes/", response_model=shemas.EolienneResponse)
@@ -65,6 +94,7 @@ def delete_eolienne_endpoint(eolienne_id: int, db: Session = Depends(get_db)):
 
     return result
 
+
 @router.post("/eolienne_parcs/", response_model=shemas.EolienneParcResponse)
 def create_eolienne_parc_endpoint(
     eolienne_parc: shemas.EolienneParcCreate, db: Session = Depends(get_db)
@@ -81,21 +111,31 @@ def read_eolienne_parcs_endpoint(db: Session = Depends(get_db)):
     return result
 
 
-@router.get("/eolienne_parcs/{eolienne_parc_id}", response_model=shemas.EolienneParcResponse)
+@router.get(
+    "/eolienne_parcs/{eolienne_parc_id}", response_model=shemas.EolienneParcResponse
+)
 def read_eolienne_parc_endpoint(eolienne_parc_id: int, db: Session = Depends(get_db)):
     result = engine.read_eolienne_parc(db, eolienne_parc_id)
     if result is None:
-        raise HTTPException(status_code=404, detail=f"Eolienne Parc {eolienne_parc_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Eolienne Parc {eolienne_parc_id} not found"
+        )
     return result
 
 
-@router.put("/eolienne_parcs/{eolienne_parc_id}", response_model=shemas.EolienneParcResponse)
+@router.put(
+    "/eolienne_parcs/{eolienne_parc_id}", response_model=shemas.EolienneParcResponse
+)
 def update_eolienne_parc_endpoint(
-    eolienne_parc_id: int, eolienne_parc: shemas.EolienneParcCreate, db: Session = Depends(get_db)
+    eolienne_parc_id: int,
+    eolienne_parc: shemas.EolienneParcCreate,
+    db: Session = Depends(get_db),
 ):
     result = engine.update_eolienne_parc(db, eolienne_parc_id, eolienne_parc)
     if result is None:
-        raise HTTPException(status_code=404, detail=f"Eolienne Parc {eolienne_parc_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Eolienne Parc {eolienne_parc_id} not found"
+        )
     return result
 
 
@@ -103,11 +143,49 @@ def update_eolienne_parc_endpoint(
 def delete_eolienne_parc_endpoint(eolienne_parc_id: int, db: Session = Depends(get_db)):
     result = engine.delete_eolienne_parc(db, eolienne_parc_id)
     if result is None:
-        raise HTTPException(status_code=404, detail=f"Eolienne Parc {eolienne_parc_id} not found")
+        raise HTTPException(
+            status_code=404, detail=f"Eolienne Parc {eolienne_parc_id} not found"
+        )
 
     return result
 
-@router.get("/eolienne_parcs/{eolienne_parc_id}/eoliennes", response_model=List[shemas.EolienneResponse])
-def read_eoliennes_in_parc_endpoint(eolienne_parc_id: int, db: Session = Depends(get_db)):
+
+@router.get(
+    "/eolienne_parcs/{eolienne_parc_id}/eoliennes",
+    response_model=List[shemas.EolienneResponse],
+)
+def read_eoliennes_in_parc_endpoint(
+    eolienne_parc_id: int, db: Session = Depends(get_db)
+):
     result = engine.all_eoliennes_in_parc(db, eolienne_parc_id)
     return result
+
+
+@router.post("/meteo/get_data")
+def get_meteo_data(
+    latitude: float,
+    longitude: float,
+    interpolate: bool,
+    start_time: datetime,
+    granularity: int,
+    end_time: Optional[datetime] = None,
+):
+    try:
+        granularity = Granularity(granularity)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Granularity must be 1 or 2")
+
+    helper = meteo.WeatherHelper(
+        position=shemas.PositionBase(latitude=latitude, longitude=longitude),
+        interpolate=interpolate,
+        start_time=start_time,
+        end_time=end_time,
+        granularity=granularity,
+    )
+    helper.load()
+    csv_buffer = helper.data.to_csv()
+    return StreamingResponse(
+        csv_buffer,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=weather_data.csv"},
+    )

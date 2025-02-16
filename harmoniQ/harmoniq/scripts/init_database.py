@@ -9,13 +9,18 @@ from harmoniq.db.shemas import SQLBase
 from harmoniq.db import shemas
 
 import argparse
+from harmoniq.db.engine import engine, get_db, create_eolienne_parc, create_eolienne
+from harmoniq.db.shemas import SQLBase
+from harmoniq.db import shemas
+
+import argparse
 
 
 def init_db(reset=False):
     if reset:
         print("Réinitialisation de la base de données")
         SQLBase.metadata.drop_all(bind=engine)
-        
+
     SQLBase.metadata.create_all(bind=engine)
 
 
@@ -23,6 +28,7 @@ def fill_eoliennes():
     EOLIENNE_URL = "https://ftp.cartes.canada.ca/pub/nrcan_rncan/Wind-energy_Energie-eolienne/wind_turbines_database/Wind_Turbine_Database_FGP.xlsx"
     db = next(get_db())
 
+    response = requests.get(EOLIENNE_URL)
     response = requests.get(EOLIENNE_URL)
     response.raise_for_status()
     station_df = pd.read_excel(response.content)
@@ -79,9 +85,9 @@ def fill_eoliennes():
             print(f"Erreur lors de l'ajout du projet {project_name}")
             print(e)
             breakpoint()
-        
+
         print(f"Projet {project_name} ajouté à la base de données")
-        
+
 
 def populate_db():
     print("Collecte des éolienne")
@@ -90,6 +96,9 @@ def populate_db():
 
 def main():
     parser = argparse.ArgumentParser(description="Initialise la base de données")
+    parser.add_argument(
+        "-t", "--test", action="store_true", help="Utilise la base de données de test"
+    )
     parser.add_argument(
         "-R", "--reset", action="store_true", help="Réinitialise la base de données"
     )
@@ -104,7 +113,7 @@ def main():
 
     print("Initialisation de la base de données")
     init_db(args.reset)
-    
+
     if args.populate:
         populate_db()
 
