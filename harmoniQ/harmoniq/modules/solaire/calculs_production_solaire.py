@@ -227,7 +227,7 @@ def calculate_energy_solar_plants(coordinates_centrales, puissance_kw, surface_t
     }
 energie_centrales = calculate_energy_solar_plants((46.81, -71.25, 'Varennes', 10, 'Etc/GMT+5'), 9500)['energie_annuelle_wh']
 
-def calculate_regional_residential_solar(coordinates_residential, population_relative, total_clients=125000, num_panels_per_client=4, surface_tilt=0, surface_orientation=180):
+def calculate_regional_residential_solar(coordinates_residential, population_relative, total_clients, num_panels_per_client, surface_tilt, surface_orientation):
     """
     Calcule la production d'énergie solaire résidentielle potentielle par région administrative.
     
@@ -256,26 +256,6 @@ def calculate_regional_residential_solar(coordinates_residential, population_rel
         - surface installée (m²)
         - coordonnées (lat, lon)
     """
-
-    population_relative = {
-        "Bas-Saint-Laurent": 0.0226,
-        "Saguenay-Lac-Saint-Jean": 0.0317,
-        "Capitale-Nationale": 0.0897,
-        "Mauricie": 0.0318,
-        "Estrie": 0.0580,
-        "Montréal": 0.2430,
-        "Outaouais": 0.0472,
-        "Abitibi-Témiscamingue": 0.0165,
-        "Côte-Nord": 0.0099,
-        "Nord-du-Québec": 0.0052,
-        "Gaspésie-Îles-de-la-Madeleine": 0.0102,
-        "Chaudière-Appalaches": 0.0503,
-        "Laval": 0.0508,
-        "Lanaudière": 0.0620,
-        "Laurentides": 0.0744,
-        "Montérégie": 0.1675,
-        "Centre-du-Québec": 0.0291
-    }
     
     # Initialisation des modèles
     sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
@@ -375,18 +355,18 @@ coordinates_residential = [
     (46.8139, -71.2082, 'Capitale-Nationale', 0, 'Etc/GMT+5'),
     (46.3420, -72.5477, 'Mauricie', 0, 'Etc/GMT+5'),
     (45.4036, -71.8826, 'Estrie', 0, 'Etc/GMT+5'),
-    (45.5017, -73.5673, 'Montréal', 0, 'Etc/GMT+5'),
+    (45.5017, -73.5673, 'Montreal', 0, 'Etc/GMT+5'),
     (45.4215, -75.6919, 'Outaouais', 0, 'Etc/GMT+5'),
-    (48.0703, -77.7600, 'Abitibi-Témiscamingue', 0, 'Etc/GMT+5'),
-    (50.0340, -66.9141, 'Côte-Nord', 0, 'Etc/GMT+5'),
-    (53.4667, -76.0000, 'Nord-du-Québec', 0, 'Etc/GMT+5'),
-    (48.8360, -64.4931, 'Gaspésie–Îles-de-la-Madeleine', 0, 'Etc/GMT+5'),
-    (46.5000, -70.9000, 'Chaudière-Appalaches', 0, 'Etc/GMT+5'),
+    (48.0703, -77.7600, 'Abitibi-Temiscamingue', 0, 'Etc/GMT+5'),
+    (50.0340, -66.9141, 'Cote-Nord', 0, 'Etc/GMT+5'),
+    (53.4667, -76.0000, 'Nord-du-Quebec', 0, 'Etc/GMT+5'),
+    (48.8360, -64.4931, 'Gaspesie–Iles-de-la-Madeleine', 0, 'Etc/GMT+5'),
+    (46.5000, -70.9000, 'Chaudiere-Appalaches', 0, 'Etc/GMT+5'),
     (45.6066, -73.7124, 'Laval', 0, 'Etc/GMT+5'),
-    (46.0270, -73.4360, 'Lanaudière', 0, 'Etc/GMT+5'),
+    (46.0270, -73.4360, 'Lanaudiere', 0, 'Etc/GMT+5'),
     (45.9990, -74.1428, 'Laurentides', 0, 'Etc/GMT+5'),
-    (45.4500, -73.3496, 'Montérégie', 0, 'Etc/GMT+5'),
-    (46.4043, -72.0169, 'Centre-du-Québec', 0, 'Etc/GMT+5'),
+    (45.4500, -73.3496, 'Monteregie', 0, 'Etc/GMT+5'),
+    (46.4043, -72.0169, 'Centre-du-Quebec', 0, 'Etc/GMT+5'),
 ]
 coordinates_centrales = [
     (45.4167, -73.4999, 'La Prairie', 0, 'Etc/GMT+5'),
@@ -395,22 +375,22 @@ coordinates_centrales = [
 
 population_relative = {
     "Bas-Saint-Laurent": 0.0226,
-    "Saguenay–Lac-Saint-Jean": 0.0317,
+    "Saguenay-Lac-Saint-Jean": 0.0317,
     "Capitale-Nationale": 0.0897,
     "Mauricie": 0.0318,
     "Estrie": 0.0580,
-    "Montréal": 0.2430,
+    "Montreal": 0.2430,
     "Outaouais": 0.0472,
-    "Abitibi-Témiscamingue": 0.0165,
-    "Côte-Nord": 0.0099,
-    "Nord-du-Québec": 0.0052,
-    "Gaspésie-Îles-de-la-Madeleine": 0.0102,
-    "Chaudière-Appalaches": 0.0503,
+    "Abitibi-Temiscamingue": 0.0165,
+    "Cote-Nord": 0.0099,
+    "Nord-du-Quebec": 0.0052,
+    "Gaspesie–Iles-de-la-Madeleine": 0.0102,
+    "Chaudiere-Appalaches": 0.0503,
     "Laval": 0.0508,
-    "Lanaudière": 0.0620,
+    "Lanaudiere": 0.0620,
     "Laurentides": 0.0744,
-    "Montérégie": 0.1675,
-    "Centre-du-Québec": 0.0291
+    "Monteregie": 0.1675,
+    "Centre-du-Quebec": 0.0291
 }
 
 Cout_centrales = calcul_couts_solarpowerplant(energie_centrales)
@@ -432,7 +412,9 @@ if __name__ == "__main__":
     print("\nDébut des calculs pour toutes les régions du Québec...")
     resultats = calculate_regional_residential_solar(
         coordinates_residential,
-        surface_test,
+        population_relative,
+        total_clients=125000,
+        num_panels_per_client=4,
         surface_tilt=0,
         surface_orientation=180
     )
