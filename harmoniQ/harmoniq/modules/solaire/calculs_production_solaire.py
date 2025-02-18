@@ -371,7 +371,7 @@ def calcul_emissions_co2(energie_centrales):
 
 coordinates_residential = [
     (48.4808, -68.5210, 'Bas-Saint-Laurent', 0, 'Etc/GMT+5'),
-    (48.4284, -71.0683, 'Saguenay–Lac-Saint-Jean', 0, 'Etc/GMT+5'),
+    (48.4284, -71.0683, 'Saguenay-Lac-Saint-Jean', 0, 'Etc/GMT+5'),
     (46.8139, -71.2082, 'Capitale-Nationale', 0, 'Etc/GMT+5'),
     (46.3420, -72.5477, 'Mauricie', 0, 'Etc/GMT+5'),
     (45.4036, -71.8826, 'Estrie', 0, 'Etc/GMT+5'),
@@ -395,7 +395,7 @@ coordinates_centrales = [
 
 population_relative = {
     "Bas-Saint-Laurent": 0.0226,
-    "Saguenay-Lac-Saint-Jean": 0.0317,
+    "Saguenay–Lac-Saint-Jean": 0.0317,
     "Capitale-Nationale": 0.0897,
     "Mauricie": 0.0318,
     "Estrie": 0.0580,
