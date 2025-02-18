@@ -75,6 +75,9 @@ class WeatherHelper:
         return self._data
 
     def load(self) -> None:
+        if self._data is not None:
+            return self._data
+
         self._nearby_stations = self._get_nearest_station()
 
         valid_data = 0
@@ -109,7 +112,7 @@ class WeatherHelper:
             logger.info(f"Found valid data from {station.Index}")
             data_list.append(sub_data)
 
-            if valid_data >= 2:  # TODO put back to 5
+            if valid_data >= 5:
                 break
 
         self._data = self._interpolate_data(data_list)
@@ -186,6 +189,7 @@ class WeatherHelper:
         return df
 
     def _interpolate_data(self, list_of_df: List[pd.DataFrame]) -> pd.DataFrame:
+        
         latlon = [
             i[["Latitude (y)", "Longitude (x)"]].iloc[0].values for i in list_of_df
         ]
@@ -221,6 +225,9 @@ class WeatherHelper:
         radius: Optional[int] = 200,
         limit: Optional[int] = 100,
     ) -> pd.DataFrame:
+        if self._nearby_stations is not None:
+            return self._nearby_stations
+        
         logger.info(f"Getting nearby stations for {self.position}")
         coordinates = (self.position.latitude, self.position.longitude)
 
@@ -238,6 +245,8 @@ class WeatherHelper:
                 )
             )
         ).T
+
+        self._nearby_stations = stations
         return stations
 
     @staticmethod
