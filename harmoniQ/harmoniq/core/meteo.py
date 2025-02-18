@@ -129,19 +129,9 @@ class WeatherHelper:
 
     @staticmethod
     def _validate_type(data: pd.DataFrame, data_type: Type) -> List[str]:
-        if data_type == Type.NONE:
-            return True
-
-        if data_type == Type.HYDRO:
-            return data["Hauteur de précip. (mm)"].notnull().all()
-
-        if data_type == Type.SOLAIRE:
-            return data["Vit. du vent (km/h)"].notnull().all()
-
-        if data_type == Type.EOLIEN:
-            return data["Dir. du vent (10s deg)"].notnull().all()
-
-        print(f"Invalid data for ")
+        ...
+        print(f"Data type: {data_type}")
+        return True # TODO: Implement
 
     def _clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
         if "Date/Time (LST)" in df.keys():
