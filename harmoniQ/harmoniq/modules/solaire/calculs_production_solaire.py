@@ -256,6 +256,27 @@ def calculate_regional_residential_solar(coordinates_residential, population_rel
         - surface installée (m²)
         - coordonnées (lat, lon)
     """
+
+    population_relative = {
+        "Bas-Saint-Laurent": 0.0226,
+        "Saguenay-Lac-Saint-Jean": 0.0317,
+        "Capitale-Nationale": 0.0897,
+        "Mauricie": 0.0318,
+        "Estrie": 0.0580,
+        "Montréal": 0.2430,
+        "Outaouais": 0.0472,
+        "Abitibi-Témiscamingue": 0.0165,
+        "Côte-Nord": 0.0099,
+        "Nord-du-Québec": 0.0052,
+        "Gaspésie-Îles-de-la-Madeleine": 0.0102,
+        "Chaudière-Appalaches": 0.0503,
+        "Laval": 0.0508,
+        "Lanaudière": 0.0620,
+        "Laurentides": 0.0744,
+        "Montérégie": 0.1675,
+        "Centre-du-Québec": 0.0291
+    }
+    
     # Initialisation des modèles
     sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
     module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
