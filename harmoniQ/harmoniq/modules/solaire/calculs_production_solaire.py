@@ -227,7 +227,7 @@ def calculate_energy_solar_plants(coordinates_centrales, puissance_kw, surface_t
     }
 energie_centrales = calculate_energy_solar_plants((46.81, -71.25, 'Varennes', 10, 'Etc/GMT+5'), 9500)['energie_annuelle_wh']
 
-def calculate_regional_residential_solar(coordinates_residential, surface_panneau, surface_tilt=0, surface_orientation=180):
+def calculate_regional_residential_solar(coordinates_residential, population_relative, total_clients=125000, num_panels_per_client=4, surface_tilt=0, surface_orientation=180):
     """
     Calcule la production d'énergie solaire résidentielle potentielle par région administrative.
     
@@ -236,8 +236,12 @@ def calculate_regional_residential_solar(coordinates_residential, surface_pannea
     coordinates_residential : list of tuples
         Liste des coordonnées des régions sous forme de tuples 
         (latitude, longitude, nom, altitude, timezone)
-    surface_panneau : float
-        Surface de panneaux solaires souhaitée en m²
+    population_relative : dict
+        Dictionnaire contenant la population relative pour chaque région.
+    total_clients : int
+        Nombre total de clients subventionnés.
+    num_panels_per_client : int, optional
+        Nombre de panneaux par client. Par défaut 4.
     surface_tilt : float, optional
         Angle d'inclinaison des panneaux en degrés. Par défaut 30°
     surface_azimuth : float, optional
@@ -258,14 +262,16 @@ def calculate_regional_residential_solar(coordinates_residential, surface_pannea
     
     resultats_regions = {}
     
-    # Conversion de la surface en puissance
-    puissance_installee_kw = convert_solar(surface_panneau, module, mode='surface_to_power')
-    
-    print(f"\nCalculs pour une installation de {surface_panneau} m² ({puissance_installee_kw:.2f} kW)")
-    
     for coordinates in coordinates_residential:
         latitude, longitude, nom_region, altitude, timezone = coordinates
-        print(f"\nCalcul pour la région {nom_region}...")
+        population_weight = population_relative.get(nom_region, 0)
+        num_clients_region = total_clients * population_weight
+        surface_panneau_region = num_clients_region * num_panels_per_client * module['Area']
+        
+        # Conversion de la surface en puissance
+        puissance_installee_kw = convert_solar(surface_panneau_region, module, mode='surface_to_power')
+        
+        print(f"\nCalcul pour la région {nom_region} avec une surface de {surface_panneau_region:.2f} m² ({puissance_installee_kw:.2f} kW)...")
         
         # Calcul de la production d'énergie
         production = calculate_energy_solar_plants(
@@ -279,18 +285,17 @@ def calculate_regional_residential_solar(coordinates_residential, surface_pannea
         resultats_regions[nom_region] = {
             'energie_annuelle_kwh': production['energie_annuelle_wh'] / 1000,
             'puissance_installee_kw': puissance_installee_kw,
-            'surface_installee_m2': surface_panneau,
+            'surface_installee_m2': surface_panneau_region,
             'latitude': latitude,
             'longitude': longitude
         }
         
         print(f"Résultats pour {nom_region}:")
-        print(f"Surface installée: {surface_panneau:.2f} m²")
+        print(f"Surface installée: {surface_panneau_region:.2f} m²")
         print(f"Puissance installée: {puissance_installee_kw:.2f} kW")
         print(f"Production annuelle: {production['energie_annuelle_wh']/1000:,.2f} kWh")
     
     return resultats_regions
-
 
 def calcul_couts_solarpowerplant(energie_centrales):
     """
