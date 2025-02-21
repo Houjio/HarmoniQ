@@ -159,17 +159,21 @@ print("\n--Conversion power_to_surface--")
 print(f"Puissance souhaitée : {desired_power_kw} kW")
 print(f"Superficie nécessaire : {required_surface_m2:.2f} m²")
 
-def calculate_energy_solar_plants(coordinates_centrales, puissance_kw, surface_tilt=30, surface_orientation=180):
+# Définition des centrales solaires avec leurs puissances
+coordinates_centrales = [
+    (45.4167, -73.4999, 'La Prairie', 0, 'Etc/GMT+5', 8000),  # 8 MW = 8000 kW
+    (45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5', 1500),    # 1.5 MW = 1500 kW
+]
+
+def calculate_energy_solar_plants(coordinates_centrales, surface_tilt=30, surface_orientation=180):
     """
-    Calcule la production d'énergie annuelle pour une installation solaire 
-    de puissance spécifiée à des coordonnées données.
+    Calcule la production d'énergie annuelle pour des centrales solaires 
+    aux coordonnées données avec leurs puissances spécifiées.
 
     Parameters
     ----------
-    coordinates : tuple
-        Tuple contenant (latitude, longitude, nom, altitude, timezone)
-    puissance_kw : float
-        Puissance crête souhaitée en kilowatts (kW)
+    coordinates_centrales : tuple
+        Tuple contenant (latitude, longitude, nom, altitude, timezone, puissance_kw)
     surface_tilt : float, optional
         Angle d'inclinaison des panneaux en degrés. Par défaut 30°
     surface_orientation : float, optional
@@ -178,54 +182,63 @@ def calculate_energy_solar_plants(coordinates_centrales, puissance_kw, surface_t
     Returns
     -------
     dict
-        Dictionnaire contenant l'énergie annuelle (Wh) et les données horaires
+        Dictionnaire contenant l'énergie annuelle (Wh) et les données horaires pour chaque centrale
     """
     # Initialisation des modèles
     sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod')
     sapm_inverters = pvlib.pvsystem.retrieve_sam('cecinverter')
     
-    # Sélection du module et de l'onduleur
     module = sandia_modules['Canadian_Solar_CS5P_220M___2009_']
     inverter = sapm_inverters['ABB__MICRO_0_25_I_OUTD_US_208__208V_']
-    
-    # Paramètres thermiques
     temperature_model_parameters = pvlib.temperature.TEMPERATURE_MODEL_PARAMETERS['sapm']['open_rack_glass_glass']
     
-    # Extraction des coordonnées
-    latitude, longitude, name, altitude, timezone = coordinates_centrales
+    resultats_centrales = {}
+    energie_totale = 0
     
-    # Récupération des données météo
-    print(f"\nRécupération des données météo pour {name}...")
-    weather = pvlib.iotools.get_pvgis_tmy(latitude, longitude)[0]
-    weather.index.name = "utc_time"
+    for centrale in coordinates_centrales:
+        latitude, longitude, name, altitude, timezone, puissance_kw = centrale
+        
+        # Récupération des données météo
+        print(f"\nRécupération des données météo pour {name}...")
+        weather = pvlib.iotools.get_pvgis_tmy(latitude, longitude)[0]
+        weather.index.name = "utc_time"
+        
+        # Calcul du nombre de modules nécessaires
+        puissance_module_w = module['Impo'] * module['Vmpo']
+        nombre_modules = int(np.ceil((puissance_kw * 1000) / puissance_module_w))
+        
+        # Calcul de la production
+        print(f"Calcul de la production pour {name} ({puissance_kw} kW)...")
+        ac = calculate_solar_parameters(
+            weather, latitude, longitude, altitude,
+            temperature_model_parameters, module, inverter,
+            surface_tilt, surface_orientation
+        )
+        
+        # Mise à l'échelle selon la puissance de la centrale
+        ac_scaled = ac * nombre_modules
+        annual_energy = ac_scaled.sum()
+        energie_totale += annual_energy
+        
+        # Stockage des résultats pour cette centrale
+        resultats_centrales[name] = {
+            'energie_annuelle_wh': annual_energy,
+            'energie_horaire': ac_scaled,
+            'nombre_modules': nombre_modules,
+            'puissance_kw': puissance_kw
+        }
+        
+        print(f"\nRésultats pour {name}:")
+        print(f"Puissance installée : {puissance_kw} kW")
+        print(f"Nombre de modules : {nombre_modules}")
+        print(f"Production annuelle : {annual_energy/1000:.2f} kWh")
     
-    # Calcul du nombre de modules nécessaires
-    puissance_module_w = module['Impo'] * module['Vmpo']
-    nombre_modules = int(np.ceil((puissance_kw * 1000) / puissance_module_w))
-    
-    # Calcul de la production
-    print(f"Calcul de la production pour {puissance_kw} kW...")
-    ac = calculate_solar_parameters(
-        weather, latitude, longitude, altitude,
-        temperature_model_parameters, module, inverter,
-        surface_tilt, surface_orientation
-    )
-    
-    # Mise à l'échelle selon la puissance demandée
-    ac_scaled = ac * nombre_modules
-    annual_energy = ac_scaled.sum()
-    
-    print(f"\nRésultats pour {name}:")
-    print(f"Puissance installée : {puissance_kw} kW")
-    print(f"Nombre de modules : {nombre_modules}")
-    print(f"Production annuelle : {annual_energy/1000:.2f} kWh")
-    
-    return {
-        'energie_annuelle_wh': annual_energy,
-        'energie_horaire': ac_scaled,
-        'nombre_modules': nombre_modules
-    }
-energie_centrales = calculate_energy_solar_plants((46.81, -71.25, 'Varennes', 10, 'Etc/GMT+5'), 9500)['energie_annuelle_wh']
+    resultats_centrales['energie_totale_wh'] = energie_totale
+    return resultats_centrales
+
+# Utilisation de la fonction
+resultats_centrales = calculate_energy_solar_plants(coordinates_centrales)
+energie_centrales = resultats_centrales['energie_totale_wh']
 
 def calculate_regional_residential_solar(coordinates_residential, population_relative, total_clients, num_panels_per_client, surface_tilt, surface_orientation):
     """
@@ -274,17 +287,22 @@ def calculate_regional_residential_solar(coordinates_residential, population_rel
         
         print(f"\nCalcul pour la région {nom_region} avec une surface de {surface_panneau_region:.2f} m² ({puissance_installee_kw:.2f} kW)...")
         
+        # Création du tuple de coordonnées avec la puissance
+        coordinates_with_power = (latitude, longitude, nom_region, altitude, timezone, puissance_installee_kw)
+        
         # Calcul de la production d'énergie
         production = calculate_energy_solar_plants(
-            coordinates, 
-            puissance_installee_kw,
+            [coordinates_with_power],  # Liste avec un seul tuple de coordonnées
             surface_tilt=surface_tilt,
             surface_orientation=surface_orientation
         )
         
+        # Récupération des résultats pour cette région
+        region_results = production[nom_region]
+        
         # Stockage des résultats
         resultats_regions[nom_region] = {
-            'energie_annuelle_kwh': production['energie_annuelle_wh'] / 1000,
+            'energie_annuelle_kwh': region_results['energie_annuelle_wh'] / 1000,
             'puissance_installee_kw': puissance_installee_kw,
             'surface_installee_m2': surface_panneau_region,
             'latitude': latitude,
@@ -294,7 +312,7 @@ def calculate_regional_residential_solar(coordinates_residential, population_rel
         print(f"Résultats pour {nom_region}:")
         print(f"Surface installée: {surface_panneau_region:.2f} m²")
         print(f"Puissance installée: {puissance_installee_kw:.2f} kW")
-        print(f"Production annuelle: {production['energie_annuelle_wh']/1000:,.2f} kWh")
+        print(f"Production annuelle: {region_results['energie_annuelle_wh']/1000:,.2f} kWh")
     
     return resultats_regions
 
@@ -367,10 +385,6 @@ coordinates_residential = [
     (45.9990, -74.1428, 'Laurentides', 0, 'Etc/GMT+5'),
     (45.4500, -73.3496, 'Monteregie', 0, 'Etc/GMT+5'),
     (46.4043, -72.0169, 'Centre-du-Quebec', 0, 'Etc/GMT+5'),
-]
-coordinates_centrales = [
-    (45.4167, -73.4999, 'La Prairie', 0, 'Etc/GMT+5'),
-    (45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5'),
 ]
 
 population_relative = {
