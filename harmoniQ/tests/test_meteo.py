@@ -1,7 +1,7 @@
 from datetime import datetime
 import pytest
 from harmoniq.core.meteo import WeatherHelper
-from harmoniq.db.shemas import PositionBase
+from harmoniq.db.schemas import PositionBase
 from harmoniq.core.meteo import Granularity, Type
 
 

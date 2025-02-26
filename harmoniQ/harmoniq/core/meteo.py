@@ -12,7 +12,7 @@ from geopy.distance import geodesic
 
 import logging
 
-from harmoniq.db.shemas import PositionBase
+from harmoniq.db.schemas import PositionBase
 
 logging.basicConfig(
     level=logging.INFO,
@@ -131,7 +131,7 @@ class WeatherHelper:
     def _validate_type(data: pd.DataFrame, data_type: Type) -> List[str]:
         ...
         print(f"Data type: {data_type}")
-        return True # TODO: Implement
+        return True  # TODO: Implement
 
     def _clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
         if "Date/Time (LST)" in df.keys():
@@ -179,7 +179,7 @@ class WeatherHelper:
         return df
 
     def _interpolate_data(self, list_of_df: List[pd.DataFrame]) -> pd.DataFrame:
-        
+
         latlon = [
             i[["Latitude (y)", "Longitude (x)"]].iloc[0].values for i in list_of_df
         ]
@@ -217,7 +217,7 @@ class WeatherHelper:
     ) -> pd.DataFrame:
         if self._nearby_stations is not None:
             return self._nearby_stations
-        
+
         logger.info(f"Getting nearby stations for {self.position}")
         coordinates = (self.position.latitude, self.position.longitude)
 

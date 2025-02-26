@@ -12,6 +12,61 @@ from enum import Enum
 SQLBase = declarative_base()
 
 
+class MRC(SQLBase):
+    __tablename__ = "mrc"
+
+    id = Column(Integer, primary_key=True)  # CDUID
+    nom = Column(String)
+    longitude_centre = Column(Float)
+    latitude_centre = Column(Float)
+
+    instances_population = relationship("InstancePopulation", back_populates="mrc")
+
+
+class MRCBase(BaseModel):
+    id: int
+    nom: str
+    longitude_centre: float
+    latitude_centre: float
+
+
+class MRCCreate(MRCBase):
+    pass
+
+
+class MRCResponse(MRCBase):
+    class Config:
+        from_attributes = True
+
+
+class InstancePopulation(SQLBase):
+    __tablename__ = "instance_population"
+
+    id = Column(Integer, primary_key=True)
+    annee = Column(Integer)
+    population = Column(Integer)
+    mrc_id = Column(Integer, ForeignKey("mrc.id"))
+
+    mrc = relationship("MRC", back_populates="instances_population")
+
+
+class InstancePopulationBase(BaseModel):
+    annee: int
+    population: int
+    mrc_id: int
+
+
+class InstancePopulationCreate(InstancePopulationBase):
+    pass
+
+
+class InstancePopulationResponse(InstancePopulationBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
 class TypeInfrastructures(str, Enum):
     """Enumération des types d'infrastructures"""
 
