@@ -316,7 +316,7 @@ def calculate_regional_residential_solar(coordinates_residential, population_rel
     
     return resultats_regions
 
-def calcul_couts_solarpowerplant(energie_centrales):
+def cost_solar_powerplant(energie_centrales):
     """
     Calcule le coût total pour chaque centrale solaire basé sur leur production annuelle.
     
@@ -343,7 +343,7 @@ def calcul_couts_solarpowerplant(energie_centrales):
     # Ne retourner que les coûts
     return couts
 
-def calcul_emissions_co2(energie_centrales):
+def co2_emissions(energie_centrales):
     """
     Calcule les émissions de CO2 équivalent pour chaque centrale solaire.
     
@@ -407,8 +407,8 @@ population_relative = {
     "Centre-du-Quebec": 0.0291
 }
 
-Cout_centrales = calcul_couts_solarpowerplant(energie_centrales)
-CO2_centrales = calcul_emissions_co2(energie_centrales)
+Cout_centrales = cost_solar_powerplant(energie_centrales)
+CO2_centrales = co2_emissions(energie_centrales)
 
 end_time = time.time()
 
