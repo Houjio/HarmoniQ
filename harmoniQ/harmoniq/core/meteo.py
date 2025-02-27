@@ -12,7 +12,7 @@ from geopy.distance import geodesic
 
 import logging
 
-from harmoniq.db.schemas import PositionBase
+from harmoniq.db.schemas import PositionBase, weather_schema
 
 logging.basicConfig(
     level=logging.INFO,
@@ -28,7 +28,7 @@ class Granularity(Enum):
     HOURLY = 2
 
 
-class Type(Enum):
+class EnergyType(Enum):
     NONE = 0
     HYDRO = 1
     SOLAIRE = 2
@@ -42,7 +42,7 @@ class WeatherHelper:
         interpolate: bool,
         start_time: datetime,
         end_time: Optional[datetime] = None,
-        data_type: Type = Type.NONE,
+        data_type: EnergyType = EnergyType.NONE,
         granularity: Granularity = Granularity.DAILY,
     ):
         self.position = position
@@ -128,9 +128,9 @@ class WeatherHelper:
         return self._data
 
     @staticmethod
-    def _validate_type(data: pd.DataFrame, data_type: Type) -> List[str]:
+    def _validate_type(data: pd.DataFrame, energy_type: EnergyType) -> List[str]:
         ...
-        print(f"Data type: {data_type}")
+        print(f"Energy Type: {energy_type}")
         return True  # TODO: Implement
 
     def _clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -173,6 +173,7 @@ class WeatherHelper:
             ]
 
         df = df[keys]
+        df = df.loc[:, df.columns.intersection(keys)]
         for key in df.keys():
             df.loc[:, key] = pd.to_numeric(df.loc[:, key], errors="coerce")
 
@@ -238,6 +239,11 @@ class WeatherHelper:
 
         self._nearby_stations = stations
         return stations
+    
+    @staticmethod
+    def _to_schema(data: pd.DataFrame) -> pd.DataFrame:
+
+        return data
 
     @staticmethod
     def _get_historical_data(
@@ -324,5 +330,5 @@ if __name__ == "__main__":
     end_time = datetime(2021, 3, 31)
     granularity = Granularity.HOURLY
 
-    weather = WeatherHelper(pos, True, start_time, end_time, Type.NONE, granularity)
+    weather = WeatherHelper(pos, True, start_time, end_time, EnergyType.NONE, granularity)
     weather.load()

@@ -16,6 +16,7 @@ dependencies = [
     # Général
     "numpy",
     "pandas",
+    "pandera",
     "matplotlib",
     "scipy",
     "openpyxl",
