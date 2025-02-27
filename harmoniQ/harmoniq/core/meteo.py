@@ -24,8 +24,8 @@ logger = logging.getLogger(__name__)
 
 
 class Granularity(Enum):
-    DAILY = 1
-    HOURLY = 2
+    DAILY = 2
+    HOURLY = 1
 
 
 class EnergyType(Enum):
@@ -98,11 +98,11 @@ class WeatherHelper:
 
             sub_data = self._get_historical_data_range(int(station.id))
 
+            sub_data = self._to_schema(sub_data)
+
             if not self._validate_type(sub_data, self.data_type):
                 logger.info(f"Data not of right type")
                 continue
-
-            sub_data = self._clean_data(sub_data)
 
             if not self.interpolate:
                 self._data = sub_data
@@ -129,55 +129,19 @@ class WeatherHelper:
 
     @staticmethod
     def _validate_type(data: pd.DataFrame, energy_type: EnergyType) -> List[str]:
-        ...
-        print(f"Energy Type: {energy_type}")
-        return True  # TODO: Implement
-
-    def _clean_data(self, df: pd.DataFrame) -> pd.DataFrame:
-        if "Date/Time (LST)" in df.keys():
-            df["Date/Time"] = pd.to_datetime(df["Date/Time (LST)"])
-
-        df["Date/Time"] = pd.to_datetime(df["Date/Time"])
-        df.set_index("Date/Time", inplace=True)
-        print(df.keys())
-        if self._granularity == Granularity.HOURLY:
-            keys = [
-                "Longitude (x)",
-                "Latitude (y)",
-                "Station Name",
-                "Climate ID",
-                "Max Temp (°C)",
-                "Min Temp (°C)",
-                "Mean Temp (°C)",
-                "Total Rain (mm)",
-                "Total Snow (cm)",
-                "Total Precip (mm)",
-                "Snow on Grnd (cm)",
-                "Dir of Max Gust (10s deg)",
-                "Spd of Max Gust (km/h)",
-            ]
-        elif self._granularity == Granularity.DAILY:
-            keys = [
-                "Longitude (x)",
-                "Latitude (y)",
-                "Station Name",
-                "Climate ID",
-                "Temp (°C)",
-                "Dew Point Temp (°C)",
-                "Rel Hum (%)",
-                "Precip. Amount (mm)",
-                "Wind Dir (10s deg)",
-                "Wind Spd (km/h)",
-                "Hmdx",
-                "Wind Chill",
-            ]
-
-        df = df[keys]
-        df = df.loc[:, df.columns.intersection(keys)]
-        for key in df.keys():
-            df.loc[:, key] = pd.to_numeric(df.loc[:, key], errors="coerce")
-
-        return df
+        if energy_type == EnergyType.NONE:
+            return True
+        elif energy_type == EnergyType.HYDRO:
+            if data["precipitation_mm"].isnull().all():
+                return False
+        elif energy_type == EnergyType.SOLAIRE:
+            if data["temperature_C"].isnull().all():
+                return False
+        elif energy_type == EnergyType.EOLIEN:
+            if data["vitesse_vent_kmh"].isnull().all():
+                return False
+        else:
+            raise ValueError("Invalid energy type")
 
     def _interpolate_data(self, list_of_df: List[pd.DataFrame]) -> pd.DataFrame:
 
@@ -239,11 +203,80 @@ class WeatherHelper:
 
         self._nearby_stations = stations
         return stations
-    
-    @staticmethod
-    def _to_schema(data: pd.DataFrame) -> pd.DataFrame:
 
-        return data
+    def _to_schema(self, data: pd.DataFrame) -> pd.DataFrame:
+        # Create a empty dataframe with the right columns (and time as index)
+        if self._granularity == Granularity.HOURLY:
+            time = pd.to_datetime(data["Date/Time (LST)"])
+        elif self._granularity == Granularity.DAILY:
+            time = pd.to_datetime(data["Date/Time"])
+
+        clean_df = pd.DataFrame(columns=weather_schema.columns.keys(), index=time)
+
+        # Add the time, longitude and latitude
+        clean_df["longitude"] = pd.to_numeric(data["Longitude (x)"], errors="coerce")
+        clean_df["latitude"] = pd.to_numeric(data["Latitude (y)"], errors="coerce")
+
+        if self._granularity == Granularity.HOURLY:
+            # Add the data specific to hourly granularity
+            clean_df["temperature_C"] = pd.to_numeric(
+                data["Temp (°C)"], errors="coerce"
+            )
+            clean_df["max_temperature_C"] = np.nan
+            clean_df["min_tempature_C"] = np.nan
+            clean_df["pluie_mm"] = np.nan
+            clean_df["neige_cm"] = np.nan
+            clean_df["precipitation_mm"] = pd.to_numeric(
+                data["Precip. Amount (mm)"], errors="coerce"
+            )
+            clean_df["neige_accumulee_cm"] = np.nan
+            clean_df["direction_vent"] = pd.to_numeric(
+                data["Wind Dir (10s deg)"], errors="coerce"
+            )
+            clean_df["vitesse_vent_kmh"] = pd.to_numeric(
+                data["Wind Spd (km/h)"], errors="coerce"
+            )
+            clean_df["humidite"] = pd.to_numeric(data["Rel Hum (%)"], errors="coerce")
+            clean_df["pression"] = pd.to_numeric(
+                data["Stn Press (kPa)"], errors="coerce"
+            )
+            clean_df["point_de_rosee"] = pd.to_numeric(
+                data["Dew Point Temp (°C)"], errors="coerce"
+            )
+        elif self._granularity == Granularity.DAILY:
+            # Add the data specific to daily granularity
+            clean_df["temperature_C"] = pd.to_numeric(
+                data["Mean Temp (°C)"], errors="coerce"
+            )
+            clean_df["max_temperature_C"] = pd.to_numeric(
+                data["Max Temp (°C)"], errors="coerce"
+            )
+            clean_df["min_tempature_C"] = pd.to_numeric(
+                data["Min Temp (°C)"], errors="coerce"
+            )
+            clean_df["pluie_mm"] = pd.to_numeric(
+                data["Total Rain (mm)"], errors="coerce"
+            )
+            clean_df["neige_cm"] = pd.to_numeric(
+                data["Total Snow (cm)"], errors="coerce"
+            )
+            clean_df["precipitation_mm"] = pd.to_numeric(
+                data["Total Precip (mm)"], errors="coerce"
+            )
+            clean_df["neige_accumulee_cm"] = pd.to_numeric(
+                data["Snow on Grnd (cm)"], errors="coerce"
+            )
+            clean_df["direction_vent"] = pd.to_numeric(
+                data["Dir of Max Gust (10s deg)"], errors="coerce"
+            )
+            clean_df["vitesse_vent_kmh"] = pd.to_numeric(
+                data["Spd of Max Gust (km/h)"], errors="coerce"
+            )
+            clean_df["humidite"] = clean_df["pression"] = clean_df["point_de_rosee"] = (
+                np.nan
+            )
+
+        return clean_df
 
     @staticmethod
     def _get_historical_data(
@@ -313,7 +346,7 @@ class WeatherHelper:
         month: int,
     ) -> pd.DataFrame:
         return self._get_historical_data(
-            station_id, timeframe=1, year=year, month=month
+            station_id, granularity=1, year=year, month=month
         )
 
     def _get_historical_data_daily(
@@ -330,5 +363,7 @@ if __name__ == "__main__":
     end_time = datetime(2021, 3, 31)
     granularity = Granularity.HOURLY
 
-    weather = WeatherHelper(pos, True, start_time, end_time, EnergyType.NONE, granularity)
+    weather = WeatherHelper(
+        pos, True, start_time, end_time, EnergyType.NONE, granularity
+    )
     weather.load()

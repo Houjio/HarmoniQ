@@ -39,13 +39,16 @@ def index(request: Request):
 def à_propos(request: Request):
     return templates.TemplateResponse(request=request, name="about.html")
 
+
 @app.get("/documentation", response_class=HTMLResponse)
 def documentation(request: Request):
     return templates.TemplateResponse(request=request, name="docs.html")
 
+
 @app.get("/app", response_class=HTMLResponse)
 def application(request: Request):
     return templates.TemplateResponse(request=request, name="app.html")
+
 
 @app.exception_handler(404)
 def not_found(request: Request, exc):

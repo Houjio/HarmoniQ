@@ -222,13 +222,16 @@ weather_schema = pa.DataFrameSchema(
         "temperature_C": pa.Column(pa.Float, nullable=False),
         "min_tempature_C": pa.Column(pa.Float, nullable=True), # Pour les données journalières
         "max_temperature_C": pa.Column(pa.Float, nullable=True), # Pour les données journalières
-        "pluie_mm": pa.Column(pa.Float, nullable=False),
-        "neige_cm": pa.Column(pa.Float, nullable=False),
+        "pluie_mm": pa.Column(pa.Float, nullable=True),
+        "neige_cm": pa.Column(pa.Float, nullable=True),
         "precipitation_mm": pa.Column(pa.Float, nullable=False),
-        "neige_accumulee_cm": pa.Column(pa.Float, nullable=False),
+        "neige_accumulee_cm": pa.Column(pa.Float, nullable=True),
         "direction_vent": pa.Column(pa.Float, nullable=False),
         "vitesse_vent_kmh": pa.Column(pa.Float, nullable=False),
+        "humidite": pa.Column(pa.Float, nullable=True),
+        "pression": pa.Column(pa.Float, nullable=True),
+        "point_de_rosee": pa.Column(pa.Float, nullable=True),
     },
-    index=pa.Index(pa.DateTime, name="date"),
+    index=pa.Index(pa.DateTime, name="datetemps"),
     strict=True,
 )

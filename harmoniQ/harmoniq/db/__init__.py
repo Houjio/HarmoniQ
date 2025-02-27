@@ -1,6 +1,7 @@
 from harmoniq.db import CRUD
 from harmoniq.db.engine import sql_tables
 
+
 def _format_table_name(table_name):
     """
     Format table name to snake case, keep all uppercase if table name is all uppercase
@@ -16,17 +17,27 @@ def _format_table_name(table_name):
 
     return table_name_formated
 
+
 def _create_crud_methods(crud_class, table_name, sql_class):
     methods = {
-        f"create_{table_name}": lambda db, data: crud_class.create_data(db, sql_class, data),
+        f"create_{table_name}": lambda db, data: crud_class.create_data(
+            db, sql_class, data
+        ),
         f"read_all_{table_name}": lambda db: crud_class.read_all_data(db, sql_class),
-        f"read_{table_name}_by_id": lambda db, id: crud_class.read_data_by_id(db, sql_class, id),
-        f"update_{table_name}": lambda db, id, data: crud_class.update_data(db, sql_class, id, data),
-        f"delete_{table_name}": lambda db, id: crud_class.delete_data(db, sql_class, id),
+        f"read_{table_name}_by_id": lambda db, id: crud_class.read_data_by_id(
+            db, sql_class, id
+        ),
+        f"update_{table_name}": lambda db, id, data: crud_class.update_data(
+            db, sql_class, id, data
+        ),
+        f"delete_{table_name}": lambda db, id: crud_class.delete_data(
+            db, sql_class, id
+        ),
     }
 
     for method_name, method in methods.items():
         setattr(crud_class, method_name, method)
+
 
 for sql_class, pydantic_classes in sql_tables.items():
     """
