@@ -80,7 +80,7 @@ print(costs)
 {
     'SOC (kWh)': 5800.0,
     'SOC (%)': 65.91,
-    'Capacity Remaining (kWh)': 8,718.65,
+    'Capacity Remaining (kWh)': 8718.65,
     'Efficiency (%)': 90.89,
     'Age (years)': 5
 }
