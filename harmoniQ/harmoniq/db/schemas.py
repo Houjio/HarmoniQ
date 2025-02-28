@@ -4,12 +4,68 @@ from sqlalchemy import Column, Integer, String, Float, Boolean, Table
 from sqlalchemy.orm import declarative_base, relationship, Mapped, mapped_column
 from sqlalchemy.sql.schema import ForeignKey
 
-from pydantic import BaseModel, ConfigDict
+import pandera as pa
+from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Optional
 from datetime import datetime, timedelta
 from enum import Enum
 
 SQLBase = declarative_base()
+
+
+class MRC(SQLBase):
+    __tablename__ = "mrc"
+
+    id = Column(Integer, primary_key=True)  # CDUID
+    nom = Column(String)
+    longitude_centre = Column(Float)
+    latitude_centre = Column(Float)
+
+    instances_population = relationship("InstancePopulation", back_populates="mrc")
+
+
+class MRCBase(BaseModel):
+    id: int
+    nom: str
+    longitude_centre: float
+    latitude_centre: float
+
+
+class MRCCreate(MRCBase):
+    pass
+
+
+class MRCResponse(MRCBase):
+    class Config:
+        from_attributes = True
+
+
+class InstancePopulation(SQLBase):
+    __tablename__ = "instance_population"
+
+    id = Column(Integer, primary_key=True)
+    annee = Column(Integer)
+    population = Column(Integer)
+    mrc_id = Column(Integer, ForeignKey("mrc.id"))
+
+    mrc = relationship("MRC", back_populates="instances_population")
+
+
+class InstancePopulationBase(BaseModel):
+    annee: int
+    population: int
+    mrc_id: int
+
+
+class InstancePopulationCreate(InstancePopulationBase):
+    pass
+
+
+class InstancePopulationResponse(InstancePopulationBase):
+    id: int
+
+    class Config:
+        from_attributes = True
 
 
 class TypeInfrastructures(str, Enum):
@@ -113,11 +169,11 @@ class Eolienne(SQLBase):
 
 
 class EolienneParcBase(BaseModel):
-    nom: str
-    latitude: float
-    longitude: float
-    nombre_eoliennes: int
-    capacite_total: float
+    nom: str = Field(..., description="Nom du parc éolien")
+    latitude: float = Field(..., description="Latitude moyenne des éoliennes (degrés)")
+    longitude: float = Field(..., description="Longitude moyenne des éoliennes (degrés)")
+    nombre_eoliennes: int = Field(..., description="Nombre d'éoliennes dans le parc")
+    capacite_total: float = Field(..., description="Capacité totale du parc (MW)")
 
 
 class EolienneParcCreate(EolienneParcBase):
@@ -158,3 +214,24 @@ class ThermiqueBase(InfrastructureBase):
 
 class TransmissionBase(InfrastructureBase):
     pass
+
+weather_schema = pa.DataFrameSchema(
+    columns={
+        "longitude": pa.Column(pa.Float, checks=pa.Check.greater_than(-180), nullable=False),
+        "latitude": pa.Column(pa.Float, checks=pa.Check.greater_than(-90), nullable=False),
+        "temperature_C": pa.Column(pa.Float, nullable=False),
+        "min_tempature_C": pa.Column(pa.Float, nullable=True), # Pour les données journalières
+        "max_temperature_C": pa.Column(pa.Float, nullable=True), # Pour les données journalières
+        "pluie_mm": pa.Column(pa.Float, nullable=True),
+        "neige_cm": pa.Column(pa.Float, nullable=True),
+        "precipitation_mm": pa.Column(pa.Float, nullable=False),
+        "neige_accumulee_cm": pa.Column(pa.Float, nullable=True),
+        "direction_vent": pa.Column(pa.Float, nullable=False),
+        "vitesse_vent_kmh": pa.Column(pa.Float, nullable=False),
+        "humidite": pa.Column(pa.Float, nullable=True),
+        "pression": pa.Column(pa.Float, nullable=True),
+        "point_de_rosee": pa.Column(pa.Float, nullable=True),
+    },
+    index=pa.Index(pa.DateTime, name="datetemps"),
+    strict=True,
+)

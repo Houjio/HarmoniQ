@@ -1,4 +1,4 @@
-from harmoniq.db.shemas import InfrastructureBase, CasBase
+from harmoniq.db.schemas import InfrastructureBase, CasBase
 
 import numpy as np
 

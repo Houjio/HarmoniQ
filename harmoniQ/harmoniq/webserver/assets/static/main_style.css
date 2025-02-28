@@ -9,6 +9,7 @@
 a {
     text-decoration: none;
     color: inherit;
+    font-size: inherit;
 }
 
 div#content {
@@ -18,21 +19,9 @@ div#content {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-image: url("https://images.pexels.com/photos/1635332/pexels-photo-1635332.jpeg");
+    background-image: linear-gradient( to bottom right, rgba(0, 0, 0, 0.342), rgba(141, 141, 141, 0.459)), url("https://images.pexels.com/photos/1635332/pexels-photo-1635332.jpeg");
     background-size: cover;
     background-position: center bottom;
-    position: relative;
-}
-
-div#content::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to top right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.1));
-    z-index: 1;
 }
 
 div#content div#hero-content {
@@ -63,8 +52,17 @@ div#nav {
 div#nav button {
     padding: 0.5em 1em;
     background: none;
-    font-weight: ;
+    font-weight: bold;
+    font-size: 1.5em;
     border: 2px solid white;
     color: white;
     border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin: 0 0.2em;
+}
+
+div#nav button:hover {
+    background-color: white;
+    color: black;
 }
