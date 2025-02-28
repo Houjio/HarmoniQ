@@ -76,16 +76,3 @@ print(battery.get_state())
 # Estimate costs
 costs = battery.estimate_costs()
 print(costs)
-
-{
-    'SOC (kWh)': 5800.0,
-    'SOC (%)': 65.91,
-    'Capacity Remaining (kWh)': 8,718.65,
-    'Efficiency (%)': 90.89,
-    'Age (years)': 5
-}
-{
-    'CapEx': 2500000,
-    'OpEx': 1500000,
-    'Total Cost': 4000000
-}
