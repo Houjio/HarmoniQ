@@ -146,6 +146,21 @@ class WeatherHelper:
                 "Latitude (y)",
                 "Station Name",
                 "Climate ID",
+                "Temp (°C)",
+                "Dew Point Temp (°C)",
+                "Rel Hum (%)",
+                "Precip. Amount (mm)",
+                "Wind Dir (10s deg)",
+                "Wind Spd (km/h)",
+                "Hmdx",
+                "Wind Chill",
+            ]
+        elif self._granularity == Granularity.DAILY:
+            keys = [
+                "Longitude (x)",
+                "Latitude (y)",
+                "Station Name",
+                "Climate ID",
                 "Max Temp (°C)",
                 "Min Temp (°C)",
                 "Mean Temp (°C)",
@@ -155,21 +170,6 @@ class WeatherHelper:
                 "Snow on Grnd (cm)",
                 "Dir of Max Gust (10s deg)",
                 "Spd of Max Gust (km/h)",
-            ]
-        elif self._granularity == Granularity.DAILY:
-            keys = [
-                "Longitude (x)",
-                "Latitude (y)",
-                "Station Name",
-                "Climate ID",
-                "Temp (°C)",
-                "Dew Point Temp (°C)",
-                "Rel Hum (%)",
-                "Precip. Amount (mm)",
-                "Wind Dir (10s deg)",
-                "Wind Spd (km/h)",
-                "Hmdx",
-                "Wind Chill",
             ]
 
         df = df[keys]
