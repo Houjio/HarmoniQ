@@ -1,0 +1,36 @@
+# Librairies principales
+pypsa>=0.21.3  
+pandas>=2.0.0 
+numpy>=1.24.0
+scipy>=1.10.0 
+
+# Librairies géographiques
+geopandas>=0.13.0
+
+# Visualisation
+matplotlib>=3.7.0
+plotly>=5.13.0
+seaborn>=0.13.2  
+
+# Gestion des données
+openpyxl>=3.1.0
+xlrd>=2.0.1
+
+# Utilitaires
+tqdm>=4.65.0
+python-dotenv>=1.0.0
+
+# Tests
+pytest>=7.3.0
+pytest-cov>=4.0.0
+
+# Documentation
+sphinx>=7.1.0
+sphinx-rtd-theme>=1.2.0
+
+# Solveurs d'optimisation
+highspy>=1.5.1
+
+
+
+

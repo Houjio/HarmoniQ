@@ -1,0 +1,1119 @@
+transmission_line_id,transmission_circuit_id,owner,province,operating_region,number_of_circuits,current_type,line_segment_length_km,line_segment_length_mi,line_length_km,line_length_mi,voltage,reactance,ttc_summer,ttc_winter,network_node_name_starting,network_node_code_starting,network_node_name_ending,network_node_code_ending,notes
+36156,HF1-HF2,Brookfield Renewable Energy,QC,Quebec,1,ac,30.780,19.000,30.780,19.000,120,12.95,107,118,High Falls,QC_HIF_GSS,Masson-Nord,QC_MSN_DSS,NULL
+36157,L1100,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,68.400,42.222,68.400,42.222,120,28.78,107,118,Paugan,QC_PAU_GSS,Maniwaki,QC_MNI_DSS,NULL
+36158,L1101,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.400,2.716,65.940,40.704,120,27.74,107,118,Interconnexion-Maclaren,QC_INM_SWS,Buckingham,QC_BUC_DSS,NULL
+36159,L1101,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,65.940,40.704,120,27.74,107,118,Buckingham,QC_BUC_DSS,FPS Canada Inc,QC_FPS_ISS,NULL
+36160,L1101,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.750,8.488,65.940,40.704,120,27.74,107,118,Templeton,QC_TMP_DSS,Interconnexion-Maclaren,QC_INM_SWS,NULL
+36161,L1101,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.150,11.204,65.940,40.704,120,27.74,107,118,Erco Mondial Buckingham,QC_ERC_ISS,Interconnexion-Maclaren,QC_INM_SWS,NULL
+36162,L1101,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,65.940,40.704,120,27.74,107,118,Thurso-Papineau,QC_THU_DSS,Petite-Nation,QC_PTN_TSS,NULL
+36163,L1101,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.140,0.704,65.940,40.704,120,27.74,107,118,FPS Canada Inc,QC_FPS_ISS,Thurso-Papineau,QC_THU_DSS,Thurso renamed to Thurso-Papineau
+36164,L1102,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,0.550,0.340,24.200,14.938,120,10.18,107,118,Gatineau,QC_GAT_DSS,Bowater Gatineau,QC_BGT_ISS,NULL
+36165,L1102,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,3.850,2.377,24.200,14.938,120,10.18,107,118,Touraine,QC_TRN_DSS,Gatineau,QC_GAT_DSS,NULL
+36166,L1102,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.750,8.488,24.200,14.938,120,10.18,107,118,Templeton,QC_TMP_DSS,Interconnexion-Maclaren,QC_INM_SWS,NULL
+36167,L1102,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.050,3.735,24.200,14.938,120,10.18,107,118,Gatineau,QC_GAT_DSS,Templeton,QC_TMP_DSS,NULL
+36168,L1103,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.400,2.716,4.400,2.716,120,1.85,107,118,Touraine,QC_TRN_DSS,Bowater Gatineau,QC_BGT_ISS,NULL
+36169,L1104,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.400,2.716,34.040,21.012,120,14.32,107,118,Interconnexion-Maclaren,QC_INM_SWS,Buckingham,QC_BUC_DSS,NULL
+36170,L1104,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,34.040,21.012,120,14.32,107,118,Buckingham,QC_BUC_DSS,FPS Canada Inc,QC_FPS_ISS,NULL
+36171,L1104,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,34.040,21.012,120,14.32,107,118,Thurso-Papineau,QC_THU_DSS,Petite-Nation,QC_PTN_TSS,NULL
+36172,L1104,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.140,0.704,34.040,21.012,120,14.32,107,118,FPS Canada Inc,QC_FPS_ISS,Thurso-Papineau,QC_THU_DSS,Thurso renamed to Thurso-Papineau
+36173,L1105,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.220,0.136,6.820,4.210,120,2.87,107,118,Rapides-Farmers,QC_RPF_GSS,Limbour,QC_LMB_DSS,NULL
+36174,L1105,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.650,1.019,6.820,4.210,120,2.87,107,118,Chelsea,QC_CHL_GSS,Rapides-Farmers,QC_RPF_GSS,NULL
+36175,L1105,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.950,3.056,6.820,4.210,120,2.87,107,118,Limbour,QC_LMB_DSS,Touraine,QC_TRN_DSS,NULL
+36176,L1106,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.400,2.716,4.400,2.716,120,1.85,107,118,Touraine,QC_TRN_DSS,Bowater Gatineau,QC_BGT_ISS,NULL
+36177,L1107,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,22.800,14.074,120,9.59,107,118,Rapides-Farmers,QC_RPF_GSS,Wakefield,QC_WKF_DSS,NULL
+36178,L1108,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,34.200,21.111,120,14.39,107,118,Wakefield,QC_WKF_DSS,Paugan,QC_PAU_GSS,NULL
+36179,L1108,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,34.200,21.111,120,14.39,107,118,Rapides-Farmers,QC_RPF_GSS,Wakefield,QC_WKF_DSS,NULL
+36180,L1109,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.300,2.037,3.300,2.037,120,1.39,107,118,Lucerne,QC_LUC_SWS,Gamelin,QC_GAM_DSS,NULL
+36181,L1110,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,2.280,1.407,120,0.96,107,118,Cadieux,QC_CDX_DSS,Bryson,QC_BRY_GSS,NULL
+36182,L1111,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,28.500,17.593,120,11.99,107,118,Petite-Nation,QC_PTN_TSS,Calumet,QC_CAL_DSS,NULL
+36183,L1112,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,17.100,10.556,120,7.19,107,118,Mont-Laurier,QC_MLR_DSS,Lac-des-ÃƒÅ½les,QC_LDI_DSS,NULL
+36184,L1113,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,28.500,17.593,28.500,17.593,120,11.99,107,118,Lucerne,QC_LUC_SWS,Quyon,QC_QUY_TSS,NULL
+36185,L1114,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.650,1.019,1.650,1.019,120,0.69,107,118,Rapides-Farmers,QC_RPF_GSS,Chelsea,QC_CHL_GSS,NULL
+36186,L1115,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.700,4.753,7.700,4.753,120,3.24,107,118,Glenwood,QC_GLN_DSS,Lucerne,QC_LUC_SWS,NULL
+36187,L1116,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.650,1.019,1.650,1.019,120,0.69,107,118,Val-TÃƒÂ©treau,QC_VTR_DSS,Hull-2,QC_HL2_GSS,NULL
+36188,L1117,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,14.400,8.889,32.775,20.231,120,13.79,107,118,Dorion,QC_DRN_DSS,Coteau-du-Lac,QC_CDL_DSS,line name assumed
+36189,L1117,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,32.775,20.231,120,13.79,107,118,Vaudreuil-Soulanges,QC_VDS_DSS,Dorion,QC_DRN_DSS,NULL
+36190,L1118,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,59.550,36.759,120,25.05,107,118,Calumet,QC_CAL_DSS,Lachute,QC_LCT_DSS,NULL
+36191,L1118,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.875,17.824,59.550,36.759,120,25.05,107,118,SGL Canada,QC_SGL_ISS,Lafontaine,QC_LAF_TSS,NULL
+36192,L1118,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,59.550,36.759,120,25.05,107,118,Lachute,QC_LCT_DSS,SGL Canada,QC_SGL_ISS,NULL
+36193,L1119,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,60.375,37.269,120,25.40,107,118,Paquin,QC_PAQ_DSS,Achigan,QC_ACH_DSS,NULL
+36194,L1119,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,60.375,37.269,120,25.40,107,118,Lafontaine,QC_LAF_TSS,Paquin,QC_PAQ_DSS,NULL
+36195,L1119,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,60.375,37.269,120,25.40,107,118,Achigan,QC_ACH_DSS,Saint-Lin,QC_SLI_DSS,NULL
+36196,L1121,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,86.625,53.472,120,36.44,107,118,Paquin,QC_PAQ_DSS,Achigan,QC_ACH_DSS,NULL
+36197,L1121,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,86.625,53.472,120,36.44,107,118,Lafontaine,QC_LAF_TSS,Lachute,QC_LCT_DSS,NULL
+36198,L1121,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,86.625,53.472,120,36.44,107,118,Lafontaine,QC_LAF_TSS,Paquin,QC_PAQ_DSS,NULL
+36199,L1121,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,86.625,53.472,120,36.44,107,118,Achigan,QC_ACH_DSS,Saint-Lin,QC_SLI_DSS,NULL
+36200,L1122,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,19.425,11.991,120,8.17,107,118,Paquin,QC_PAQ_DSS,Arthur-Buies,QC_ARB_DSS,NULL
+36201,L1122,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.625,1.620,19.425,11.991,120,8.17,107,118,Saint-JÃƒÂ©rÃƒÂ´me,QC_SJR_DSS,Cascades Groupe Papiers,QC_CGP_ISS,NULL
+36202,L1122,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,19.425,11.991,120,8.17,107,118,Rolland,QC_ROL_DSS,Lafontaine,QC_LAF_TSS,NULL
+36203,L1122,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,19.425,11.991,120,8.17,107,118,Cascades Groupe Papiers,QC_CGP_ISS,Rolland,QC_ROL_DSS,NULL
+36204,L1122,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.625,1.620,19.425,11.991,120,8.17,107,118,Arthur-Buies,QC_ARB_DSS,Saint-JÃƒÂ©rÃƒÂ´me,QC_SJR_DSS,NULL
+36205,L1123,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,28.500,17.593,120,11.99,107,118,Notre-Dame-du-Laus,QC_NDL_DSS,High Falls,QC_HIF_GSS,NULL
+36206,L1124,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,26.250,16.204,120,11.04,107,118,Contrecoeur,QC_CTC_DSS,Sorel,QC_SOR_DSS,NULL
+36207,L1125,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,39.900,24.630,120,16.79,107,118,Notre-Dame-du-Laus,QC_NDL_DSS,Lac-des-ÃƒÅ½les,QC_LDI_DSS,NULL
+36208,L1126,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,5.250,3.241,120,2.21,107,118,Lachute,QC_LCT_DSS,SGL Canada,QC_SGL_ISS,NULL
+36209,L1127,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,34.125,21.065,120,14.36,107,118,Paquin,QC_PAQ_DSS,Lafontaine,QC_LAF_TSS,NULL
+36210,L1127,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,34.125,21.065,120,14.36,107,118,Doc-Grignon,QC_DOG_DSS,Paquin,QC_PAQ_DSS,NULL
+36211,L1128,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,34.125,21.065,120,14.36,107,118,Paquin,QC_PAQ_DSS,Lafontaine,QC_LAF_TSS,NULL
+36212,L1128,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,34.125,21.065,120,14.36,107,118,Doc-Grignon,QC_DOG_DSS,Paquin,QC_PAQ_DSS,NULL
+36213,L1130,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,5.700,3.519,120,2.40,107,118,Bryson,QC_BRY_GSS,Emballages Smurfit-Stone,QC_ESS_ISS,NULL
+36214,L1131,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,7.000,4.321,120,2.95,107,118,Les CÃƒÂ¨dres,QC_LCS_GSS,Dorion,QC_DRN_DSS,NULL
+36215,L1132,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,18.375,11.343,120,7.73,107,118,Lachute,QC_LCT_DSS,Rigaud,QC_RIG_DSS,NULL
+36216,L1133,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,18.375,11.343,120,7.73,107,118,Saint-Polycarpe,QC_SPL_DSS,Rigaud,QC_RIG_DSS,NULL
+36217,L1135,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,7.980,4.926,120,3.36,107,118,Duvernay,QC_DUV_TSS,Landry,QC_LDY_DSS,NULL
+36218,L1136,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.192,1.970,11.970,7.389,120,5.04,107,118,Duvernay,QC_DUV_TSS,Saint-FranÃƒÂ§ois,QC_SFR_DSS,NULL
+36219,L1136,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.778,5.419,11.970,7.389,120,5.04,107,118,Saint-FranÃƒÂ§ois,QC_SFR_DSS,Terrebonne,QC_TER_DSS,NULL
+36220,L1137,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,15.960,9.852,120,6.71,107,118,Sainte-Rose,QC_SRO_DSS,Renaud,QC_RND_DSS,NULL
+36221,L1137,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,15.960,9.852,120,6.71,107,118,Duvernay,QC_DUV_TSS,Sainte-Rose,QC_SRO_DSS,NULL
+36222,L1138,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,7.980,4.926,120,3.36,107,118,Duvernay,QC_DUV_TSS,Landry,QC_LDY_DSS,NULL
+36223,L1139,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,7.980,4.926,15.960,9.852,120,6.71,107,118,Sainte-Rose,QC_SRO_DSS,Renaud,QC_RND_DSS,NULL
+36224,L1139,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,15.960,9.852,120,6.71,107,118,Duvernay,QC_DUV_TSS,Sainte-Rose,QC_SRO_DSS,NULL
+36225,L1141,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.625,14.583,23.625,14.583,120,9.94,107,118,Chute-Hemmings,QC_CHH_GSS,Sainte-PerpÃƒÂ©tue,QC_SPE_DSS,NULL
+36226,L1142,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.875,17.824,63.000,38.889,120,26.51,107,118,Moras,QC_MOR_DSS,BÃƒÂ©cancour,QC_BEC_TSS,NULL
+36227,L1142,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.125,21.065,63.000,38.889,120,26.51,107,118,Sainte-PerpÃƒÂ©tue,QC_SPE_DSS,Moras,QC_MOR_DSS,NULL
+36228,L1143,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,44.625,27.546,44.625,27.546,120,18.77,107,118,Chute-Hemmings,QC_CHH_GSS,Asbestos,QC_ASB_DSS,NULL
+36229,L1145,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,44.000,27.160,120,18.51,107,118,Grand-PrÃƒÂ©,QC_GRP_DSS,Charette,QC_CHR_DSS,NULL
+36230,L1145,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,44.000,27.160,120,18.51,107,118,Shawinigan-3,QC_SH3_GSS,Leman,QC_LMN_SWS,NULL
+36231,L1145,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,44.000,27.160,120,18.51,107,118,Leman,QC_LMN_SWS,Shawinigan-2,QC_SH2_GSS,Line name assumed
+36232,L1145,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,44.000,27.160,120,18.51,107,118,Charette,QC_CHR_DSS,Shawinigan-3,QC_SH3_GSS,NULL
+36233,L1146,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,34.200,21.111,120,14.39,107,118,Quyon,QC_QUY_TSS,Paugan,QC_PAU_GSS,NULL
+36234,L1147,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.350,0.833,1.800,1.111,120,0.76,107,118,Sorel,QC_SOR_DSS,Forges-de-Sorel,QC_FGS_ISS,NULL
+36235,L1147,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.450,0.278,1.800,1.111,120,0.76,107,118,Forges-de-Sorel,QC_FGS_ISS,GEC-Alstom-Fagan,QC_GEC_ISS,NULL
+36236,L1148,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.500,1.543,2.500,1.543,120,1.05,107,118,Leman,QC_LMN_SWS,Almaville,QC_ALV_DSS,Line name assumed
+36237,L1149,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.500,1.543,2.500,1.543,120,1.05,107,118,Leman,QC_LMN_SWS,Almaville,QC_ALV_DSS,Line name assumed
+36238,L1151,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,44.000,27.160,120,18.51,107,118,Grand-PrÃƒÂ©,QC_GRP_DSS,Charette,QC_CHR_DSS,NULL
+36239,L1151,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,44.000,27.160,120,18.51,107,118,Shawinigan-3,QC_SH3_GSS,Leman,QC_LMN_SWS,NULL
+36240,L1151,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,44.000,27.160,120,18.51,107,118,Leman,QC_LMN_SWS,Shawinigan-2,QC_SH2_GSS,Line name assumed
+36241,L1151,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,44.000,27.160,120,18.51,107,118,Charette,QC_CHR_DSS,Shawinigan-3,QC_SH3_GSS,NULL
+36242,L1152,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,40.425,24.954,120,17.01,107,118,Marcotte,QC_MAR_DSS,Chute-Hemmings,QC_CHH_GSS,NULL
+36243,L1152,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.375,24.306,40.425,24.954,120,17.01,107,118,Chute-Hemmings,QC_CHH_GSS,Yamaska,QC_YAM_DSS,NULL
+36244,L1153,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,21.000,12.963,120,8.83,107,118,Sorel-Sud,QC_SRS_DSS,Yamaska,QC_YAM_DSS,NULL
+36245,L1155,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,7.000,4.321,120,2.95,107,118,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,Kruger Inc Trois-RiviÃƒÂ¨res,QC_KRT_ISS,NULL
+36246,L1156,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,15.960,9.852,120,6.71,107,118,Sainte-Rose,QC_SRO_DSS,Boulevard-Labelle,QC_BLL_DSS,NULL
+36247,L1156,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,15.960,9.852,120,6.71,107,118,Duvernay,QC_DUV_TSS,Sainte-Rose,QC_SRO_DSS,NULL
+36248,L1157,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,15.960,9.852,120,6.71,107,118,Sainte-Rose,QC_SRO_DSS,Boulevard-Labelle,QC_BLL_DSS,NULL
+36249,L1157,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,15.960,9.852,120,6.71,107,118,Duvernay,QC_DUV_TSS,Sainte-Rose,QC_SRO_DSS,NULL
+36250,L1159,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.625,14.583,37.800,23.333,120,15.90,107,118,Kingsey,QC_KSY_TSS,Arthabaska,QC_ART_DSS,NULL
+36251,L1159,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,37.800,23.333,120,15.90,107,118,Arthabaska,QC_ART_DSS,Bois-Francs,QC_BSF_DSS,NULL
+36252,L1159,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,37.800,23.333,120,15.90,107,118,Rosiers,QC_RSR_DSS,Kingsey,QC_KSY_TSS,Line name assumed
+36253,L1160,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,26.250,16.204,120,11.04,107,118,Chambly,QC_CHY_DSS,Saint-CÃƒÂ©saire,QC_SCS_DSS,NULL
+36254,L1161,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,15.750,9.722,120,6.63,107,118,Varennes,QC_VRN_DSS,IREQ,QC_IRQ_ISS,NULL
+36255,L1161,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,15.750,9.722,120,6.63,107,118,Institute-de-Recherche,QC_IDR_ISS,Pierre Boucher,QC_PBO_DSS,NULL
+36256,L1162,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,25.725,15.880,120,10.82,107,118,Praxair Canada Contrecoeur,QC_PRX_ISS,Argonal Inc,QC_ARG_ISS,NULL
+36257,L1162,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,25.725,15.880,120,10.82,107,118,Argonal Inc,QC_ARG_ISS,Contrecoeur,QC_CTC_DSS,NULL
+36258,L1162,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,25.725,15.880,120,10.82,107,118,Varennes,QC_VRN_DSS,Praxair Canada Contrecoeur,QC_PRX_ISS,NULL
+36259,L1162,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,25.725,15.880,120,10.82,107,118,Basell Canada Inc,QC_BAS_ISS,Varennes,QC_VRN_DSS,Line name assumed
+36260,L1163,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,15.750,9.722,120,6.63,107,118,Varennes,QC_VRN_DSS,IREQ,QC_IRQ_ISS,NULL
+36261,L1163,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,15.750,9.722,120,6.63,107,118,Institute-de-Recherche,QC_IDR_ISS,Pierre Boucher,QC_PBO_DSS,NULL
+36262,L1164,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.625,14.583,37.800,23.333,120,15.90,107,118,Kingsey,QC_KSY_TSS,Arthabaska,QC_ART_DSS,NULL
+36263,L1164,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,37.800,23.333,120,15.90,107,118,Arthabaska,QC_ART_DSS,Bois-Francs,QC_BSF_DSS,NULL
+36264,L1164,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,37.800,23.333,120,15.90,107,118,Rosiers,QC_RSR_DSS,Kingsey,QC_KSY_TSS,Line name assumed
+36265,L1165,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.192,1.970,3.192,1.970,120,1.34,107,118,Aqueduc,QC_AQD_TSS,Hadley,QC_HAD_DSS,NULL
+36266,L1166,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.192,1.970,3.192,1.970,120,1.34,107,118,Aqueduc,QC_AQD_TSS,Hadley,QC_HAD_DSS,NULL
+36267,L1167,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,18.375,11.343,120,7.73,107,118,Lambton,QC_LAM_DSS,Saint-Ãƒâ€°variste,QC_SEV_DSS,NULL
+36268,L1168,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,42.000,25.926,99.750,61.574,120,41.97,100,110,MÃƒÂ©gantic,QC_MEG_DSS,Lambton,QC_LAM_DSS,NULL
+36269,L1168,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.750,35.648,99.750,61.574,120,41.97,100,110,Weedon,QC_WDN_DSS,MÃƒÂ©gantic,QC_MEG_DSS,NULL
+36270,L1169,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,18.375,11.343,120,7.73,107,118,Cleveland,QC_CLV_DSS,Cowansville,QC_COW_DSS,NULL
+36271,L1171,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,20.475,12.639,120,8.61,107,118,Domtar Windsor,QC_DOM_ISS,Des Cantons,QC_DEC_TSS,NULL
+36272,L1171,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,20.475,12.639,120,8.61,107,118,Windsor,QC_WND_DSS,Domtar Windsor,QC_DOM_ISS,NULL
+36273,L1171,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,20.475,12.639,120,8.61,107,118,Bromptonville,QC_BRO_DSS,Kruger Inc Bromptonville,QC_KRB_ISS,NULL
+36274,L1171,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,20.475,12.639,120,8.61,107,118,Kruger Inc Bromptonville,QC_KRB_ISS,Windsor,QC_WND_DSS,NULL
+36275,L1173,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,22.800,14.074,120,9.59,107,118,Wyman,QC_WYM_DSS,Cadieux,QC_CDX_DSS,NULL
+36276,L1174,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,20.475,12.639,120,8.61,107,118,Domtar Windsor,QC_DOM_ISS,Des Cantons,QC_DEC_TSS,NULL
+36277,L1174,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,20.475,12.639,120,8.61,107,118,Windsor,QC_WND_DSS,Domtar Windsor,QC_DOM_ISS,NULL
+36278,L1174,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,20.475,12.639,120,8.61,107,118,Bromptonville,QC_BRO_DSS,Kruger Inc Bromptonville,QC_KRB_ISS,NULL
+36279,L1174,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,20.475,12.639,120,8.61,107,118,Kruger Inc Bromptonville,QC_KRB_ISS,Windsor,QC_WND_DSS,NULL
+36280,L1175,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.000,6.173,44.700,27.593,120,18.81,107,118,Sherbrooke,QC_SHR_TSS,Bromptonville,QC_BRO_DSS,NULL
+36281,L1175,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,31.500,19.444,44.700,27.593,120,18.81,107,118,Bromptonville,QC_BRO_DSS,Cascades Canada East Angus,QC_CCE_ISS,NULL
+36282,L1175,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.200,1.975,44.700,27.593,120,18.81,107,118,Ville de Sherbrooke Orford,QC_VSO_DSS,Sherbrooke,QC_SHR_TSS,NULL
+36283,L1176,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,7.980,4.926,120,3.36,107,118,Rockfield,QC_RCK_DSS,Aqueduc,QC_AQD_TSS,NULL
+36284,L1176,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,7.980,4.926,120,3.36,107,118,Hampstead,QC_HAM_DSS,Rockfield,QC_RCK_DSS,NULL
+36285,L1178,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.192,1.970,10.374,6.404,120,4.36,107,118,Duvernay,QC_DUV_TSS,Saint-FranÃƒÂ§ois,QC_SFR_DSS,NULL
+36286,L1178,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.182,4.433,10.374,6.404,120,4.36,107,118,Saint-FranÃƒÂ§ois,QC_SFR_DSS,Terrebonne,QC_TER_DSS,NULL
+36287,L1179,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,21.000,12.963,120,8.83,107,118,Duvernay,QC_DUV_TSS,Mascouche,QC_MAS_DSS,NULL
+36288,L1179,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,21.000,12.963,120,8.83,107,118,Mascouche,QC_MAS_DSS,Pierre-Le Gardeur,QC_PLG_TSS,NULL
+36289,L1179,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,21.000,12.963,120,8.83,107,118,Mascouche,QC_MAS_DSS,Terrebonne,QC_TER_DSS,NULL
+36290,L1180,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,57.750,35.648,120,24.30,107,118,Sainte-Rosalie,QC_SRL_DSS,Casavant,QC_CSV_DSS,NULL
+36291,L1180,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.875,17.824,57.750,35.648,120,24.30,107,118,Saint-CÃƒÂ©saire,QC_SCS_DSS,MontÃƒÂ©rÃƒÂ©gie,QC_MTR_TSS,NULL
+36292,L1180,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,57.750,35.648,120,24.30,107,118,MontÃƒÂ©rÃƒÂ©gie,QC_MTR_TSS,Sainte-Rosalie,QC_SRL_DSS,NULL
+36293,L1181,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.875,17.824,49.875,30.787,120,20.98,107,118,Saint-CÃƒÂ©saire,QC_SCS_DSS,MontÃƒÂ©rÃƒÂ©gie,QC_MTR_TSS,NULL
+36294,L1181,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,49.875,30.787,120,20.98,107,118,MontÃƒÂ©rÃƒÂ©gie,QC_MTR_TSS,Sainte-Rosalie,QC_SRL_DSS,NULL
+36295,L1182,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,11.550,7.130,120,4.86,107,118,Heriot,QC_HER_TSS,Grantham,QC_GRT_DSS,NULL
+36296,L1182,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.675,2.269,11.550,7.130,120,4.86,107,118,Marcotte,QC_MAR_DSS,Heriot,QC_HER_TSS,NULL
+36297,L1183,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,65.625,40.509,120,27.61,107,118,Bromptonville,QC_BRO_DSS,East Angus,QC_EAG_DSS,NULL
+36298,L1183,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.375,24.306,65.625,40.509,120,27.61,107,118,East Angus,QC_EAG_DSS,Weedon,QC_WDN_DSS,NULL
+36299,L1184,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,13.125,8.102,120,5.52,107,118,LAcadie,QC_ACD_DSS,Chambly,QC_CHY_DSS,NULL
+36300,L1186,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,13.125,8.102,120,5.52,107,118,Heriot,QC_HER_TSS,Grantham,QC_GRT_DSS,NULL
+36301,L1186,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,13.125,8.102,120,5.52,107,118,Marcotte,QC_MAR_DSS,Heriot,QC_HER_TSS,NULL
+36302,L1187,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,26.250,16.204,120,11.04,107,118,Granby,QC_GRY_DSS,Cleveland,QC_CLV_DSS,NULL
+36303,L1187,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,26.250,16.204,120,11.04,107,118,Saint-CÃƒÂ©saire,QC_SCS_DSS,Granby,QC_GRY_DSS,NULL
+36304,L1188,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,7.875,4.861,120,3.31,107,118,Sainte-Rosalie,QC_SRL_DSS,Casavant,QC_CSV_DSS,NULL
+36305,L1189,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.200,1.975,11.200,6.914,120,4.71,107,118,Ville de Sherbrooke Orford,QC_VSO_DSS,Sherbrooke,QC_SHR_TSS,NULL
+36306,L1189,Hydro-Sherbrooke,QC,Quebec,1,ac,3.200,1.975,11.200,6.914,120,4.71,107,118,Ville de Sherbrooke Saint-FranÃƒÂ§ois,QC_VSF_DSS,Ville de Sherbrooke Galt,QC_VSG_DSS,NULL
+36307,L1189,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.800,2.963,11.200,6.914,120,4.71,107,118,Ville de Sherbrooke Galt,QC_VSG_DSS,Ville de Sherbrooke Orford,QC_VSO_DSS,NULL
+36308,L1191,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.400,3.951,6.400,3.951,120,2.69,107,118,Ville de Sherbrooke Galt,QC_VSG_DSS,Sherbrooke,QC_SHR_TSS,NULL
+36309,L1192,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,15.750,9.722,120,6.63,107,118,Stukely,QC_STK_DSS,Waterloo,QC_WLO_DSS,NULL
+36310,L1193,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,18.375,11.343,120,7.73,107,118,La Prairie,QC_LPR_TSS,Richelieu,QC_RCH_DSS,NULL
+36311,L1194,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.596,0.985,9.870,6.093,120,4.15,107,118,Viger,QC_VIG_SWS,AdÃƒÂ©lard-Godbout,QC_ADG_DSS,NULL
+36312,L1194,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.399,0.246,9.870,6.093,120,4.15,107,118,AdÃƒÂ©lard-Godbout,QC_ADG_DSS,Central-2,QC_CT2_DSS,NULL
+36313,L1194,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,9.870,6.093,120,4.15,107,118,Brossard,QC_BRS_DSS,Viger,QC_VIG_SWS,NULL
+36314,L1195,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.875,17.824,28.875,17.824,120,12.15,107,118,Moras,QC_MOR_DSS,BÃƒÂ©cancour,QC_BEC_TSS,NULL
+36315,L1196,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.596,0.985,1.596,0.985,120,0.67,107,118,Atwater,QC_ATW_DSS,Maissonneuve,QC_MNV_DSS,NULL
+36316,L1197,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,18.375,11.343,120,7.73,107,118,Rigaud,QC_RIG_DSS,Vaudreuil-Soulanges,QC_VDS_DSS,NULL
+36317,L1198,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,1.575,0.972,12.075,7.454,120,5.08,107,118,Mine Jeffrey,QC_MNJ_ISS,Asbestos,QC_ASB_DSS,NULL
+36318,L1198,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,10.500,6.481,12.075,7.454,120,5.08,107,118,Asbestos,QC_ASB_DSS,Rosiers,QC_RSR_DSS,NULL
+36319,L1199,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.200,0.123,15.950,9.846,120,6.71,107,118,Ville de Joliette,QC_VDJ_DSS,Joliette,QC_JLT_DSS,NULL
+36320,L1199,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,15.950,9.846,120,6.71,107,118,Joliette,QC_JLT_DSS,Ramezay,QC_RAM_DSS,NULL
+36321,L1200,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.384,3.941,6.384,3.941,120,2.69,107,118,Aqueduc,QC_AQD_TSS,Atwater,QC_ATW_DSS,NULL
+36322,L1204,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.200,0.741,3.200,1.975,120,1.35,107,118,Royalmount,QC_RLM_DSS,Hampstead,QC_HAM_DSS,NULL
+36323,L1204,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.000,1.235,3.200,1.975,120,1.35,107,118,Laurent,QC_LRT_DSS,Royalmount,QC_RLM_DSS,NULL
+36324,L1205,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,36.750,22.685,120,15.46,107,118,Mercier,QC_MER_DSS,La Prairie,QC_LPR_TSS,NULL
+36325,L1205,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,36.750,22.685,120,15.46,107,118,LÃƒÂ©ry,QC_LRY_ISS,Mercier,QC_MER_DSS,NULL
+36326,L1206,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,52.500,32.407,120,22.09,107,118,Saint-RÃƒÂ©mi,QC_SRE_DSS,Delson,QC_DLN_DSS,NULL
+36327,L1206,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,52.500,32.407,120,22.09,107,118,LÃƒÂ©ry,QC_LRY_ISS,Mercier,QC_MER_DSS,NULL
+36328,L1206,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,52.500,32.407,120,22.09,107,118,Mercier,QC_MER_DSS,Saint-RÃƒÂ©mi,QC_SRE_DSS,NULL
+36329,L1209,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,28.875,17.824,120,12.15,107,118,La Prairie,QC_LPR_TSS,Chambly,QC_CHY_DSS,NULL
+36330,L1209,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,28.875,17.824,120,12.15,107,118,Chambly,QC_CHY_DSS,Saint-Basile,QC_SAB_DSS,NULL
+36331,L1210,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.591,2.217,3.591,2.217,120,1.51,107,118,Saint-Maxime,QC_SMX_DSS,Marie-Victorin,QC_MRV_DSS,NULL
+36332,L1211,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.591,2.217,3.591,2.217,120,1.51,107,118,Saint-Maxime,QC_SMX_DSS,Marie-Victorin,QC_MRV_DSS,NULL
+36333,L1212,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.596,0.985,1.596,0.985,120,0.67,107,118,Guy,QC_GUY_DSS,Maissonneuve,QC_MNV_DSS,NULL
+36334,L1213,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,42.000,25.926,120,17.67,107,118,Ormstown,QC_ORM_DSS,Huntingdon,QC_HUN_DSS,NULL
+36335,L1213,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,42.000,25.926,120,17.67,107,118,ChÃƒÂ¢teauguay,QC_CHG_DSS,Ormstown,QC_ORM_DSS,NULL
+36336,L1214,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,42.000,25.926,120,17.67,107,118,Ormstown,QC_ORM_DSS,Huntingdon,QC_HUN_DSS,NULL
+36337,L1214,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,42.000,25.926,120,17.67,107,118,ChÃƒÂ¢teauguay,QC_CHG_DSS,Ormstown,QC_ORM_DSS,NULL
+36338,L1215,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.394,1.478,2.394,1.478,120,1.01,107,118,Berri,QC_BRI_DSS,De Lorimier,QC_DEL_DSS,NULL
+36339,L1218,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,7.980,4.926,120,3.36,107,118,MontrÃƒÂ©al-Est,QC_MTE_DSS,Interquisa,QC_INQ_ISS,NULL
+36340,L1218,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,7.980,4.926,120,3.36,107,118,Falconbridge LimitÃƒÂ©e MontrÃƒÂ©al-Est,QC_FLC_ISS,MontrÃƒÂ©al-Est,QC_MTE_DSS,NULL
+36341,L1221,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,42.000,25.926,120,17.67,107,118,Mercier,QC_MER_DSS,La Prairie,QC_LPR_TSS,NULL
+36342,L1221,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,42.000,25.926,120,17.67,107,118,La Prairie,QC_LPR_TSS,Richelieu,QC_RCH_DSS,NULL
+36343,L1225,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,13.125,8.102,120,5.52,107,118,Delson,QC_DLN_DSS,La Prairie,QC_LPR_TSS,NULL
+36344,L1226,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,3.990,2.463,120,1.68,107,118,MontrÃƒÂ©al-Est,QC_MTE_DSS,Henri-Bourassa,QC_BOU_DSS,Bourassa and Henri Bourassa treated as single station
+36345,L1227,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,7.980,4.926,120,3.36,107,118,Bout-de-lÃƒÅ½le,QC_BDI_DSS,MontrÃƒÂ©al-Est,QC_MTE_DSS,Bourassa and Henri Bourassa treated as single station
+36346,L1228,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,3.990,2.463,120,1.68,107,118,Bout-de-lÃƒÅ½le,QC_BDI_DSS,Henri-Bourassa,QC_BOU_DSS,Bourassa and Henri Bourassa treated as single station
+36347,L1229,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,3.990,2.463,120,1.68,107,118,MontrÃƒÂ©al-Est,QC_MTE_DSS,Henri-Bourassa,QC_BOU_DSS,Bourassa and Henri Bourassa treated as single station
+36348,L1230,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.384,3.941,11.172,6.896,120,4.70,107,118,Saraguay,QC_SRG_DSS,Laurent,QC_LRT_DSS,NULL
+36349,L1230,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,11.172,6.896,120,4.70,107,118,Laurent,QC_LRT_DSS,Mont-Royal,QC_MTY_DSS,NULL
+36350,L1231,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,28.875,17.824,120,12.15,107,118,La Prairie,QC_LPR_TSS,Chambly,QC_CHY_DSS,NULL
+36351,L1231,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,28.875,17.824,120,12.15,107,118,Chambly,QC_CHY_DSS,Saint-Basile,QC_SAB_DSS,NULL
+36352,L1232,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.197,0.739,1.197,0.739,120,0.50,107,118,Berri,QC_BRI_DSS,Dorchester,QC_DOR_DSS,NULL
+36353,L1233,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,12.372,7.637,120,5.21,107,118,Royalmount,QC_RLM_DSS,Mont-Royal,QC_MTY_DSS,NULL
+36354,L1233,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.200,0.741,12.372,7.637,120,5.21,107,118,Hampstead,QC_HAM_DSS,Royalmount,QC_RLM_DSS,NULL
+36355,L1233,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.384,3.941,12.372,7.637,120,5.21,107,118,Mont-Royal,QC_MTY_DSS,Saraguay,QC_SRG_DSS,NULL
+36356,L1235,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,3.990,2.463,120,1.68,107,118,Saraguay,QC_SRG_DSS,Reed,QC_REE_DSS,NULL
+36357,L1236,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,3.990,2.463,120,1.68,107,118,Saraguay,QC_SRG_DSS,Reed,QC_REE_DSS,NULL
+36358,L1237,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,4.788,2.956,120,2.01,107,118,Reed,QC_REE_DSS,Fleury,QC_FLE_DSS,NULL
+36359,L1238,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,4.788,2.956,120,2.01,107,118,Reed,QC_REE_DSS,Fleury,QC_FLE_DSS,NULL
+36360,L1239,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.625,14.583,23.625,14.583,120,9.94,107,118,Saint-RÃƒÂ©mi,QC_SRE_DSS,Napierville,QC_NPR_DSS,NULL
+36361,L1241,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,7.980,4.926,120,3.36,107,118,Rockfield,QC_RCK_DSS,Aqueduc,QC_AQD_TSS,NULL
+36362,L1241,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,7.980,4.926,120,3.36,107,118,Hampstead,QC_HAM_DSS,Rockfield,QC_RCK_DSS,NULL
+36363,L1242,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.200,1.975,3.200,1.975,120,1.35,107,118,Hadley,QC_HAD_DSS,Atwater,QC_ATW_DSS,NULL
+36364,L1243,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.000,4.938,9.000,5.556,120,3.79,107,118,Langlois,QC_LGS_TSS,Eka Chimie Canada Inc,QC_EKA_ISS,NULL
+36365,L1243,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,9.000,5.556,120,3.79,107,118,Eka Chimie Canada Inc,QC_EKA_ISS,Larocque,QC_LRQ_ISS,NULL
+36366,L1244,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.596,0.985,1.596,0.985,120,0.67,107,118,Longue-Pointe,QC_LGP_DSS,Notre-Dame,QC_NDA_TSS,NULL
+36367,L1245,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.596,0.985,1.596,0.985,120,0.67,107,118,Longue-Pointe,QC_LGP_DSS,Notre-Dame,QC_NDA_TSS,NULL
+36368,L1246,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.384,3.941,6.384,3.941,120,2.69,107,118,Saraguay,QC_SRG_DSS,Laurent,QC_LRT_DSS,NULL
+36369,L1247,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,4.788,2.956,120,2.01,107,118,Laurent,QC_LRT_DSS,Mont-Royal,QC_MTY_DSS,NULL
+36370,L1248,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.384,3.941,6.384,3.941,120,2.69,107,118,Saraguay,QC_SRG_DSS,Laurent,QC_LRT_DSS,NULL
+36371,L1250,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.800,2.963,9.588,5.919,120,4.03,107,118,Berri,QC_BRI_DSS,Jeanne-dArc,QC_JDA_DSS,NULL
+36372,L1250,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,9.588,5.919,120,4.03,107,118,Jeanne-dArc,QC_JDA_DSS,Notre-Dame,QC_NDA_TSS,NULL
+36373,L1251,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,13.125,8.102,120,5.52,107,118,Delson,QC_DLN_DSS,La Prairie,QC_LPR_TSS,NULL
+36374,L1253,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.182,4.433,7.980,4.926,120,3.36,107,118,Saint-Jean,QC_SJE_DSS,Salaberry,QC_SLB_DSS,NULL
+36375,L1253,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.798,0.493,7.980,4.926,120,3.36,107,118,Salaberry,QC_SLB_DSS,Saraguay,QC_SRG_DSS,NULL
+36376,L1254,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.374,6.404,18.354,11.330,120,7.72,107,118,Baie dUrfÃƒÂ©,QC_BAU_DSS,Saint-Jean,QC_SJE_DSS,NULL
+36377,L1254,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.182,4.433,18.354,11.330,120,7.72,107,118,Saint-Jean,QC_SJE_DSS,Salaberry,QC_SLB_DSS,NULL
+36378,L1254,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.798,0.493,18.354,11.330,120,7.72,107,118,Salaberry,QC_SLB_DSS,Saraguay,QC_SRG_DSS,NULL
+36379,L1255,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.374,6.404,10.374,6.404,120,4.36,107,118,Baie dUrfÃƒÂ©,QC_BAU_DSS,Saint-Jean,QC_SJE_DSS,NULL
+36380,L1256,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,31.920,19.704,31.920,19.704,120,13.43,107,118,LÃƒÅ½le-Perrot,QC_LIP_DSS,Beauharnois-Est,QC_BEE_GSS,NULL
+36381,L1257,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,31.920,19.704,31.920,19.704,120,13.43,107,118,Baie dUrfÃƒÂ©,QC_BAU_DSS,Beauharnois-Est,QC_BEE_GSS,NULL
+36382,L1260,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.000,6.173,10.000,6.173,120,4.21,107,118,Les CÃƒÂ¨dres,QC_LCS_GSS,Beauharnois-Ouest,QC_BEO_TSS,NULL
+36383,L1261,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.000,6.173,10.000,6.173,120,4.21,107,118,Les CÃƒÂ¨dres,QC_LCS_GSS,Beauharnois-Ouest,QC_BEO_TSS,NULL
+36384,L1262,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.000,4.938,8.000,4.938,120,3.37,107,118,Langlois,QC_LGS_TSS,Monseigneur-Ãƒâ€°mard,QC_MGE_DSS,NULL
+36385,L1263,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.500,1.543,2.500,1.543,120,1.05,107,118,Les CÃƒÂ¨dres,QC_LCS_GSS,Langlois,QC_LGS_TSS,NULL
+36386,L1264,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.500,0.309,11.000,6.790,120,4.63,107,118,Larocque,QC_LRQ_ISS,La SociÃƒÂ©tÃƒÂ© en commandite revenu Noranda,QC_LCN_ISS,NULL
+36387,L1264,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.500,1.543,11.000,6.790,120,4.63,107,118,Valleyfield,QC_VLF_DSS,Larocque,QC_LRQ_ISS,NULL
+36388,L1264,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.000,4.938,11.000,6.790,120,4.63,107,118,Langlois,QC_LGS_TSS,Valleyfield,QC_VLF_DSS,NULL
+36389,L1265,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.125,21.065,34.125,21.065,120,14.36,107,118,Carillon,QC_CAR_GSS,Mirabel,QC_MIR_DSS,NULL
+36390,L1266,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,55.125,34.028,120,23.19,107,118,Sainte-ThÃƒÂ©rÃƒÂ¨se-Ouest,QC_STO_DSS,Chomedey,QC_CHO_TSS,NULL
+36391,L1266,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,44.625,27.546,55.125,34.028,120,23.19,107,118,Carillon,QC_CAR_GSS,Sainte-ThÃƒÂ©rÃƒÂ¨se-Ouest,QC_STO_DSS,NULL
+36392,L1267,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.375,24.306,52.500,32.407,120,22.09,107,118,Carillon,QC_CAR_GSS,La Trappe,QC_LTR_DSS,NULL
+36393,L1267,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,52.500,32.407,120,22.09,107,118,La Trappe,QC_LTR_DSS,Saint-Eustache,QC_SEU_DSS,NULL
+36394,L1268,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.375,24.306,52.500,32.407,120,22.09,107,118,Carillon,QC_CAR_GSS,La Trappe,QC_LTR_DSS,NULL
+36395,L1268,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,52.500,32.407,120,22.09,107,118,La Trappe,QC_LTR_DSS,Saint-Eustache,QC_SEU_DSS,NULL
+36396,L1269,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.500,2.778,4.500,2.778,120,1.89,107,118,Goodyear Canada,QC_GOO_ISS,Valleyfield,QC_VLF_DSS,NULL
+36397,L1270,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,63.000,38.889,120,26.51,107,118,Saint-Chrysostome,QC_SCH_DSS,Hemmingford,QC_HEM_DSS,NULL
+36398,L1270,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,36.750,22.685,63.000,38.889,120,26.51,107,118,Saint-Louis,QC_SLO_DSS,Saint-Chrysostome,QC_SCH_DSS,NULL
+36399,L1272,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,14.364,8.867,14.364,8.867,120,6.04,107,118,Chomedey,QC_CHO_TSS,Fleury,QC_FLE_DSS,NULL
+36400,L1273,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,14.364,8.867,14.364,8.867,120,6.04,107,118,Chomedey,QC_CHO_TSS,Fleury,QC_FLE_DSS,NULL
+36401,L1274,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,14.364,8.867,14.364,8.867,120,6.04,107,118,Chomedey,QC_CHO_TSS,Fleury,QC_FLE_DSS,NULL
+36402,L1275,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,14.364,8.867,14.364,8.867,120,6.04,107,118,Chomedey,QC_CHO_TSS,Fleury,QC_FLE_DSS,NULL
+36403,L1276,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,10.500,6.481,120,4.42,107,118,La Prairie,QC_LPR_TSS,Saint-Maxime,QC_SMX_DSS,NULL
+36404,L1277,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,10.500,6.481,120,4.42,107,118,La Prairie,QC_LPR_TSS,Saint-Maxime,QC_SMX_DSS,NULL
+36405,L1278,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.596,0.985,15.120,9.333,120,6.36,107,118,Viger,QC_VIG_SWS,AdÃƒÂ©lard-Godbout,QC_ADG_DSS,NULL
+36406,L1278,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.399,0.246,15.120,9.333,120,6.36,107,118,AdÃƒÂ©lard-Godbout,QC_ADG_DSS,Central-2,QC_CT2_DSS,NULL
+36407,L1278,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,15.120,9.333,120,6.36,107,118,Brossard,QC_BRS_DSS,Viger,QC_VIG_SWS,NULL
+36408,L1279,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.394,1.478,2.394,1.478,120,1.01,107,118,Atwater,QC_ATW_DSS,Guy,QC_GUY_DSS,NULL
+36409,L1280,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.995,1.231,1.995,1.231,120,0.84,107,118,AdÃƒÂ©lard-Godbout,QC_ADG_DSS,Dorchester,QC_DOR_DSS,NULL
+36410,L1281,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.187,3.202,5.187,3.202,120,2.18,107,118,Beaumont,QC_BEM_DSS,Dorchester,QC_DOR_DSS,NULL
+36411,L1282,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.187,3.202,5.187,3.202,120,2.18,107,118,Beaumont,QC_BEM_DSS,Dorchester,QC_DOR_DSS,NULL
+36412,L1283,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,3.990,2.463,120,1.68,107,118,Beaumont,QC_BEM_DSS,Fleury,QC_FLE_DSS,NULL
+36413,L1284,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,3.990,2.463,120,1.68,107,118,Beaumont,QC_BEM_DSS,Fleury,QC_FLE_DSS,NULL
+36414,L1285,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,52.500,32.407,120,22.09,107,118,Saint-RÃƒÂ©mi,QC_SRE_DSS,Delson,QC_DLN_DSS,NULL
+36415,L1285,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,52.500,32.407,120,22.09,107,118,LÃƒÂ©ry,QC_LRY_ISS,Mercier,QC_MER_DSS,NULL
+36416,L1285,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,52.500,32.407,120,22.09,107,118,Mercier,QC_MER_DSS,Saint-RÃƒÂ©mi,QC_SRE_DSS,NULL
+36417,L1286,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,3.990,2.463,120,1.68,107,118,Beaumont,QC_BEM_DSS,Fleury,QC_FLE_DSS,NULL
+36418,L1287,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.990,2.463,3.990,2.463,120,1.68,107,118,Beaumont,QC_BEM_DSS,Fleury,QC_FLE_DSS,NULL
+36419,L1288,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.586,3.448,5.586,3.448,120,2.35,107,118,Chomedey,QC_CHO_TSS,Plouffe,QC_PLF_DSS,NULL
+36420,L1289,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.586,3.448,5.586,3.448,120,2.35,107,118,Chomedey,QC_CHO_TSS,Plouffe,QC_PLF_DSS,NULL
+36421,L1291,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,12.500,7.716,120,5.26,107,118,Beauharnois-Ouest,QC_BEO_TSS,Beauharnois-Est,QC_BEE_GSS,NULL
+36422,L1291,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.500,7.099,12.500,7.716,120,5.26,107,118,ChÃƒÂ¢teauguay,QC_CHG_DSS,Beauharnois-Ouest,QC_BEO_TSS,NULL
+36423,L1292,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,12.500,7.716,120,5.26,107,118,Beauharnois-Ouest,QC_BEO_TSS,Beauharnois-Est,QC_BEE_GSS,NULL
+36424,L1292,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.500,7.099,12.500,7.716,120,5.26,107,118,ChÃƒÂ¢teauguay,QC_CHG_DSS,Beauharnois-Ouest,QC_BEO_TSS,NULL
+36425,L1295,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,4.788,2.956,120,2.01,107,118,Rosemont,QC_RSM_DSS,BÃƒÂ©langer,QC_BEL_TSS,NULL
+36426,L1296,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,4.788,2.956,120,2.01,107,118,Rosemont,QC_RSM_DSS,BÃƒÂ©langer,QC_BEL_TSS,NULL
+36427,L1297,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.192,1.970,3.192,1.970,120,1.34,107,118,Jeanne-dArc,QC_JDA_DSS,De Lorimier,QC_DEL_DSS,NULL
+36428,L1298,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,4.788,2.956,120,2.01,107,118,Jeanne-dArc,QC_JDA_DSS,Notre-Dame,QC_NDA_TSS,NULL
+36429,L1299,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,4.788,2.956,120,2.01,107,118,Jeanne-dArc,QC_JDA_DSS,Notre-Dame,QC_NDA_TSS,NULL
+36430,L1301,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.900,21.543,68.400,42.222,120,28.78,107,118,Amos,QC_AMO_DSS,QuÃƒÂ©bec Lithium,QC_QCL_ISS,NULL
+36431,L1301,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,33.500,20.679,68.400,42.222,120,28.78,107,118,QuÃƒÂ©bec Lithium,QC_QCL_ISS,Val dOr,QC_VDO_DSS,NULL
+36432,L1302,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,5.700,3.519,120,2.40,107,118,Notre-Dame-du-Nord,QC_NDN_DSS,PremiÃƒÂ¨re Chute,QC_PRC_GSS,NULL
+36433,L1306,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,57.000,35.185,120,23.98,107,118,Rouyn,QC_RYN_DSS,Pandora,QC_PND_DSS,NULL
+36434,L1308,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,22.800,14.074,120,9.59,107,118,Louvicourt,QC_LVT_DSS,Val dOr,QC_VDO_DSS,NULL
+36435,L1310,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,39.900,24.630,120,16.79,107,118,Amos,QC_AMO_DSS,Pandora,QC_PND_DSS,NULL
+36436,L1311,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,45.600,28.148,93.480,57.704,120,39.33,104,115,Rapide-7,QC_RP7_GSS,Cadillac,QC_CDL_GSS,NULL
+36437,L1311,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,45.600,28.148,93.480,57.704,120,39.33,104,115,Rapide-7,QC_RP7_GSS,Cadillac,QC_CDL_GSS,NULL
+36438,L1311,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,93.480,57.704,120,39.33,104,115,Cadillac,QC_CDL_GSS,Pandora,QC_PND_DSS,NULL
+36439,L1312,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,45.600,28.148,47.880,29.556,120,20.14,107,118,Rapide-7,QC_RP7_GSS,Cadillac,QC_CDL_GSS,NULL
+36440,L1312,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,47.880,29.556,120,20.14,107,118,Cadillac,QC_CDL_GSS,Pandora,QC_PND_DSS,NULL
+36441,L1313,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,57.000,35.185,120,23.98,107,118,Rouyn,QC_RYN_DSS,Mine Doyon,QC_MDY_ISS,NULL
+36442,L1313,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,57.000,35.185,120,23.98,107,118,Mine Doyon,QC_MDY_ISS,Pandora,QC_PND_DSS,NULL
+36443,L1315,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,39.900,24.630,120,16.79,107,118,Cadillac,QC_CDL_GSS,Rapide-2,QC_RP2_GSS,NULL
+36444,L1316,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,28.500,17.593,120,11.99,107,118,Rapide-2,QC_RP2_GSS,Rapide-7,QC_RP7_GSS,NULL
+36445,L1317,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.140,0.704,63.840,39.407,120,26.86,107,118,Senneterre,QC_STR_DSS,Boralex,QC_BLX_ISS,NULL
+36446,L1317,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,63.840,39.407,120,26.86,107,118,Amos,QC_AMO_DSS,Saint-Blaise,QC_SBL_DSS,NULL
+36447,L1317,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,63.840,39.407,120,26.86,107,118,Saint-Blaise,QC_SBL_DSS,Senneterre,QC_STR_DSS,NULL
+36448,L1318,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,5.700,3.519,120,2.40,107,118,Notre-Dame-du-Nord,QC_NDN_DSS,PremiÃƒÂ¨re Chute,QC_PRC_GSS,NULL
+36449,L1320,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,62.700,38.704,120,26.38,107,118,Palmarolle,QC_PML_DSS,Reneault,QC_RNT_DSS,NULL
+36450,L1320,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,62.700,38.704,120,26.38,107,118,Reneault,QC_RNT_DSS,Rouyn,QC_RYN_DSS,NULL
+36451,L1321,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,68.400,42.222,125.400,77.407,120,52.76,86,95,Amos,QC_AMO_DSS,Coigny,QC_COI_DSS,NULL
+36452,L1321,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,125.400,77.407,120,52.76,86,95,Poirier,QC_POI_DSS,Joutel,QC_JOU_SWS,NULL
+36453,L1321,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,45.600,28.148,125.400,77.407,120,52.76,86,95,Coigny,QC_COI_DSS,Poirier,QC_POI_DSS,NULL
+36454,L1322,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,45.600,28.148,57.000,35.185,120,23.98,107,118,Rouyn,QC_RYN_DSS,Mines Agnico-Eagle LimitÃƒÂ©e,QC_MAE_ISS,NULL
+36455,L1322,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,57.000,35.185,120,23.98,107,118,Mines Agnico-Eagle LimitÃƒÂ©e,QC_MAE_ISS,Pandora,QC_PND_DSS,NULL
+36456,L1323,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,78.000,48.148,78.000,48.148,120,32.82,107,118,Rouyn,QC_RYN_DSS,Rapides-des-Iles,QC_RPI_GSS,NULL
+36457,L1324,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,78.000,48.148,78.000,48.148,120,32.82,107,118,Rouyn,QC_RYN_DSS,Rapides-des-Iles,QC_RPI_GSS,NULL
+36458,L1325,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,11.400,7.037,120,4.80,107,118,PremiÃƒÂ¨re Chute,QC_PRC_GSS,Rapides-des-Iles,QC_RPI_GSS,NULL
+36459,L1327,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.400,9.506,15.400,9.506,120,6.48,107,118,Malartic-2,QC_MLC_GSS,Cadillac,QC_CDL_GSS,NULL
+36460,L1328,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.000,13.580,22.800,14.074,120,9.59,107,118,Malartic-2,QC_MLC_GSS,Goldex,QC_GDX_ISS,NULL
+36461,L1328,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.800,0.494,22.800,14.074,120,9.59,107,118,Goldex,QC_GDX_ISS,Val dOr,QC_VDO_DSS,NULL
+36462,L1330,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,84.000,51.852,108.300,66.852,120,45.56,95,104,Reneault,QC_RNT_DSS,Abitibi Consolidated Amos,QC_ACA_ISS,NULL
+36463,L1330,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.500,0.926,108.300,66.852,120,45.56,95,104,Abitibi Consolidated Amos,QC_ACA_ISS,Amos,QC_AMO_DSS,NULL
+36464,L1330,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,108.300,66.852,120,45.56,95,104,Rouyn,QC_RYN_DSS,Reneault,QC_RNT_DSS,NULL
+36465,L1332,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,74.100,45.741,78.660,48.556,120,33.09,107,118,Lorrainville,QC_LRV_DSS,Kipawa,QC_KIP_DSS,NULL
+36466,L1332,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,78.660,48.556,120,33.09,107,118,Temcell,QC_TMC_ISS,Tembec Inc TÃƒÂ©miscaming,QC_TMB_ISS,NULL
+36467,L1332,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,78.660,48.556,120,33.09,107,118,Kipawa,QC_KIP_DSS,Temcell,QC_TMC_ISS,NULL
+36468,L1333,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,22.800,14.074,120,9.59,107,118,Lorrainville,QC_LRV_DSS,Rapides-des-Iles,QC_RPI_GSS,NULL
+36469,L1335,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,51.300,31.667,125.400,77.407,120,52.76,86,95,Quevillon,QC_QVN_DSS,Saint-Blaise,QC_SBL_DSS,NULL
+36470,L1335,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,74.100,45.741,125.400,77.407,120,52.76,86,95,Saint-Blaise,QC_SBL_DSS,Val dOr,QC_VDO_DSS,NULL
+36471,L1338,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.680,8.444,13.680,8.444,120,5.76,107,118,Rapides-des-Iles,QC_RPI_GSS,Rapides-des-Quinze,QC_RPQ_GSS,NULL
+36472,L1339,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,74.100,45.741,74.100,45.741,120,31.17,107,118,Rapides-des-Quinze,QC_RPQ_GSS,Rapide-7,QC_RP7_GSS,NULL
+36473,L1340,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,34.200,21.111,120,14.39,107,118,Palmarolle,QC_PML_DSS,Normetal,QC_NMT_DSS,NULL
+36474,L1342,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,85.500,52.778,85.500,52.778,120,35.97,107,118,Normetal,QC_NMT_DSS,Mines Casa-Berardi,QC_MCB_ISS,NULL
+36475,L1346,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,68.400,42.222,68.400,42.222,120,28.78,107,118,Mines Selbaie,QC_MNS_ISS,Joutel,QC_JOU_SWS,NULL
+36476,L1347,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,39.900,24.630,120,16.79,107,118,Matagami,QC_MTG_DSS,Joutel,QC_JOU_SWS,NULL
+36477,L1352,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.700,4.753,7.700,4.753,120,3.24,107,118,Glenwood,QC_GLN_DSS,Lucerne,QC_LUC_SWS,NULL
+36478,L1353,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.875,17.824,37.653,23.243,120,15.84,107,118,Chomedey,QC_CHO_TSS,Mirabel,QC_MIR_DSS,NULL
+36479,L1353,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.778,5.419,37.653,23.243,120,15.84,107,118,Chomedey,QC_CHO_TSS,Sainte-ThÃƒÂ©rÃƒÂ¨se-Ouest,QC_STO_DSS,NULL
+36480,L1354,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.374,6.404,10.374,6.404,120,4.36,107,118,Chomedey,QC_CHO_TSS,Saint-Eustache,QC_SEU_DSS,NULL
+36481,L1355,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,26.250,16.204,120,11.04,107,118,MontÃƒÂ©rÃƒÂ©gie,QC_MTR_TSS,Acton,QC_ACT_DSS,NULL
+36482,L1356,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,57.000,35.185,120,23.98,107,118,Sainte-Agathe-des-Monts,QC_SAG_DSS,Ouimet,QC_OMT_DSS,NULL
+36483,L1356,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,57.000,35.185,120,23.98,107,118,Ouimet,QC_OMT_DSS,Saint-Donat,QC_SDN_DSS,NULL
+36484,L1357,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,57.000,35.185,120,23.98,107,118,Sainte-Agathe-des-Monts,QC_SAG_DSS,Ouimet,QC_OMT_DSS,NULL
+36485,L1357,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,57.000,35.185,120,23.98,107,118,Ouimet,QC_OMT_DSS,Saint-Donat,QC_SDN_DSS,NULL
+36486,L1358,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,114.000,70.370,120,47.96,92,101,Ouimet,QC_OMT_DSS,Grand-BrulÃƒÂ©,QC_GRB_TSS,NULL
+36487,L1358,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,114.000,70.370,120,47.96,92,101,LAnnonciation,QC_LAN_DSS,Joly,QC_JOL_DSS,NULL
+36488,L1358,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,51.300,31.667,114.000,70.370,120,47.96,92,101,Mont-Laurier,QC_MLR_DSS,LAnnonciation,QC_LAN_DSS,NULL
+36489,L1358,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,114.000,70.370,120,47.96,92,101,Joly,QC_JOL_DSS,Ouimet,QC_OMT_DSS,NULL
+36490,L1359,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,39.900,24.630,39.900,24.630,120,16.79,107,118,Maniwaki,QC_MNI_DSS,Mont-Laurier,QC_MLR_DSS,NULL
+36491,L1360,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,114.000,70.370,120,47.96,92,101,Ouimet,QC_OMT_DSS,Grand-BrulÃƒÂ©,QC_GRB_TSS,NULL
+36492,L1360,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,114.000,70.370,120,47.96,92,101,LAnnonciation,QC_LAN_DSS,Joly,QC_JOL_DSS,NULL
+36493,L1360,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,51.300,31.667,114.000,70.370,120,47.96,92,101,Mont-Laurier,QC_MLR_DSS,LAnnonciation,QC_LAN_DSS,NULL
+36494,L1360,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,114.000,70.370,120,47.96,92,101,Joly,QC_JOL_DSS,Ouimet,QC_OMT_DSS,NULL
+36495,L1361,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.500,0.309,3.000,1.852,120,1.26,107,118,Larocque,QC_LRQ_ISS,La SociÃƒÂ©tÃƒÂ© en commandite revenu Noranda,QC_LCN_ISS,NULL
+36496,L1361,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.500,1.543,3.000,1.852,120,1.26,107,118,Valleyfield,QC_VLF_DSS,Larocque,QC_LRQ_ISS,NULL
+36497,L1362,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.500,7.099,11.500,7.099,120,4.84,107,118,ChÃƒÂ¢teauguay,QC_CHG_DSS,Beauharnois-Est,QC_BEE_GSS,NULL
+36498,L1363,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.500,7.099,11.500,7.099,120,4.84,107,118,ChÃƒÂ¢teauguay,QC_CHG_DSS,Beauharnois-Est,QC_BEE_GSS,NULL
+36499,L1367,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,16.800,10.370,120,7.07,107,118,Paquin,QC_PAQ_DSS,Arthur-Buies,QC_ARB_DSS,NULL
+36500,L1367,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.625,1.620,16.800,10.370,120,7.07,107,118,Saint-JÃƒÂ©rÃƒÂ´me,QC_SJR_DSS,Cascades Groupe Papiers,QC_CGP_ISS,NULL
+36501,L1367,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,16.800,10.370,120,7.07,107,118,Rolland,QC_ROL_DSS,Lafontaine,QC_LAF_TSS,NULL
+36502,L1367,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,16.800,10.370,120,7.07,107,118,Cascades Groupe Papiers,QC_CGP_ISS,Rolland,QC_ROL_DSS,NULL
+36503,L1367,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.625,1.620,16.800,10.370,120,7.07,107,118,Arthur-Buies,QC_ARB_DSS,Saint-JÃƒÂ©rÃƒÂ´me,QC_SJR_DSS,NULL
+36504,L1368,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.550,0.340,10.450,6.451,120,4.40,107,118,Gatineau,QC_GAT_DSS,Bowater Gatineau,QC_BGT_ISS,NULL
+36505,L1368,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.850,2.377,10.450,6.451,120,4.40,107,118,Vignan,QC_VGN_TSS,Gatineau,QC_GAT_DSS,NULL
+36506,L1368,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.050,3.735,10.450,6.451,120,4.40,107,118,Gatineau,QC_GAT_DSS,Templeton,QC_TMP_DSS,NULL
+36507,L1369,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.300,2.037,3.300,2.037,120,1.39,107,118,Lucerne,QC_LUC_SWS,Gamelin,QC_GAM_DSS,NULL
+36508,L1370,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.600,4.074,13.750,8.488,120,5.78,107,118,Val-TÃƒÂ©treau,QC_VTR_DSS,Lucerne,QC_LUC_SWS,NULL
+36509,L1370,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.150,4.414,13.750,8.488,120,5.78,107,118,Lucerne,QC_LUC_SWS,Rapides-Farmers,QC_RPF_GSS,NULL
+36510,L1371,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,0.550,0.340,19.250,11.883,120,8.10,107,118,Rapides-Farmers,QC_RPF_GSS,Limbour,QC_LMB_DSS,NULL
+36511,L1371,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,6.600,4.074,19.250,11.883,120,8.10,107,118,Val-TÃƒÂ©treau,QC_VTR_DSS,Lucerne,QC_LUC_SWS,NULL
+36512,L1371,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,7.150,4.414,19.250,11.883,120,8.10,107,118,Lucerne,QC_LUC_SWS,Rapides-Farmers,QC_RPF_GSS,NULL
+36513,L1371,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,4.400,2.716,19.250,11.883,120,8.10,107,118,Limbour,QC_LMB_DSS,Touraine,QC_TRN_DSS,NULL
+36514,L1371,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,0.550,0.340,19.250,11.883,120,8.10,107,118,Touraine,QC_TRN_DSS,Vignan,QC_VGN_TSS,NULL
+36515,L1373,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.400,2.716,4.400,2.716,120,1.85,107,118,Limbour,QC_LMB_DSS,Touraine,QC_TRN_DSS,NULL
+36516,L1376,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,11.400,7.037,120,4.80,107,118,Quyon,QC_QUY_TSS,Wyman,QC_WYM_DSS,NULL
+36517,L1377,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,11.400,7.037,120,4.80,107,118,Wakefield,QC_WKF_DSS,Paugan,QC_PAU_GSS,NULL
+36518,L1383,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,26.250,16.204,120,11.04,107,118,Granby,QC_GRY_DSS,Cleveland,QC_CLV_DSS,NULL
+36519,L1383,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,26.250,16.204,120,11.04,107,118,Saint-CÃƒÂ©saire,QC_SCS_DSS,Granby,QC_GRY_DSS,NULL
+36520,L1384,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,44.625,27.546,120,18.77,107,118,Granby,QC_GRY_DSS,Cleveland,QC_CLV_DSS,NULL
+36521,L1384,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,44.625,27.546,120,18.77,107,118,Cleveland,QC_CLV_DSS,Cowansville,QC_COW_DSS,NULL
+36522,L1384,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,44.625,27.546,120,18.77,107,118,Saint-CÃƒÂ©saire,QC_SCS_DSS,Granby,QC_GRY_DSS,NULL
+36523,L1385,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,18.375,11.343,120,7.73,107,118,Magog,QC_MGG_DSS,Sherbrooke,QC_SHR_TSS,NULL
+36524,L1386,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,26.250,16.204,120,11.04,107,118,Magog,QC_MGG_DSS,B.O.C. Canada Inc,QC_BOC_ISS,Line name assumed
+36525,L1386,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,26.250,16.204,120,11.04,107,118,B.O.C. Canada Inc,QC_BOC_ISS,EKA Chimie Canada Inc Magog,QC_EKM_ISS,Line name assumed
+36526,L1386,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,26.250,16.204,120,11.04,107,118,Sherbrooke,QC_SHR_TSS,Magog,QC_MGG_DSS,NULL
+36527,L1386,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.575,0.972,26.250,16.204,120,11.04,107,118,EKA Chimie Canada Inc Magog,QC_EKM_ISS,Ville de Magog,QC_VDM_DSS,Line name assumed
+36528,L1387,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,26.250,16.204,120,11.04,107,118,Magog,QC_MGG_DSS,B.O.C. Canada Inc,QC_BOC_ISS,Line name assumed
+36529,L1387,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,26.250,16.204,120,11.04,107,118,B.O.C. Canada Inc,QC_BOC_ISS,EKA Chimie Canada Inc Magog,QC_EKM_ISS,Line name assumed
+36530,L1387,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,26.250,16.204,120,11.04,107,118,Sherbrooke,QC_SHR_TSS,Magog,QC_MGG_DSS,NULL
+36531,L1387,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.575,0.972,26.250,16.204,120,11.04,107,118,EKA Chimie Canada Inc Magog,QC_EKM_ISS,Ville de Magog,QC_VDM_DSS,Line name assumed
+36532,L1388,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,21.000,12.963,120,8.83,107,118,Stukely,QC_STK_DSS,Magog,QC_MGG_DSS,NULL
+36533,L1390,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,15.750,9.722,120,6.63,107,118,Cleveland,QC_CLV_DSS,Waterloo,QC_WLO_DSS,NULL
+36534,L1391,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,1.500,0.926,120,0.63,107,118,Cournoyer,QC_COY_DSS,BÃƒÂ©cancour,QC_BEC_TSS,NULL
+36535,L1391,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.500,0.309,1.500,0.926,120,0.63,107,118,Cournoyer,QC_COY_DSS,Silicium-BÃƒÂ©cancour,QC_SLB_ISS,NULL
+36536,L1392,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,3.500,2.160,120,1.47,107,118,Cournoyer,QC_COY_DSS,BÃƒÂ©cancour,QC_BEC_TSS,NULL
+36537,L1392,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.500,0.926,3.500,2.160,120,1.47,107,118,Cournoyer,QC_COY_DSS,Hydrogenal Inc,QC_HYD_ISS,NULL
+36538,L1392,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.500,0.309,3.500,2.160,120,1.47,107,118,Hydrogenal Inc,QC_HYD_ISS,P.C.I. Chimie Canada Inc,QC_PCI_ISS,NULL
+36539,L1392,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.500,0.309,3.500,2.160,120,1.47,107,118,P.C.I. Chimie Canada Inc,QC_PCI_ISS,Viterra Inc.,QC_VIT_ISS,NULL
+36540,L1393,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.875,17.824,28.875,17.824,120,12.15,107,118,Parisville,QC_PAR_DSS,BÃƒÂ©cancour,QC_BEC_TSS,NULL
+36541,L1394,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,44.625,27.546,120,18.77,107,118,Villeroy,QC_VLL_DSS,Parisville,QC_PAR_DSS,NULL
+36542,L1394,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.625,14.583,44.625,27.546,120,18.77,107,118,Plessisville,QC_PLS_DSS,Villeroy,QC_VLL_DSS,NULL
+36543,L1395,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,26.250,16.204,120,11.04,107,118,Daveluyville,QC_DVL_DSS,BÃƒÂ©cancour,QC_BEC_TSS,NULL
+36544,L1398,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,1.000,0.617,120,0.42,107,118,Beauharnois-Est,QC_BEE_GSS,Beauharnois-Ouest,QC_BEO_TSS,NULL
+36545,L1399,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,1.000,0.617,120,0.42,107,118,Beauharnois-Est,QC_BEE_GSS,Beauharnois-Ouest,QC_BEO_TSS,NULL
+36546,L1401,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.000,11.111,81.375,50.231,120,34.24,107,118,Ville de Sherbrooke MassÃƒÂ©,QC_VSM_DSS,Beaulieu,QC_BEL_DSS,NULL
+36547,L1401,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,60.375,37.269,81.375,50.231,120,34.24,107,118,Beaulieu,QC_BEL_DSS,Stanstead,QC_STS_DSS,NULL
+36548,L1401,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.000,1.852,81.375,50.231,120,34.24,107,118,Sherbrooke,QC_SHR_TSS,Ville de Sherbrooke MassÃƒÂ©,QC_VSM_DSS,NULL
+36549,L1402,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.000,11.111,105.000,64.815,120,44.18,97,107,Ville de Sherbrooke MassÃƒÂ©,QC_VSM_DSS,Beaulieu,QC_BEL_DSS,NULL
+36550,L1402,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,42.000,25.926,105.000,64.815,120,44.18,97,107,Beaulieu,QC_BEL_DSS,Coaticook,QC_CTK_DSS,NULL
+36551,L1402,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,42.000,25.926,105.000,64.815,120,44.18,97,107,Coaticook,QC_CTK_DSS,Sleeper et Akhurst,QC_SAK_ISS,NULL
+36552,L1402,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.000,1.852,105.000,64.815,120,44.18,97,107,Sherbrooke,QC_SHR_TSS,Ville de Sherbrooke MassÃƒÂ©,QC_VSM_DSS,NULL
+36553,L1403,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,7.875,4.861,120,3.31,107,118,Joliette,QC_JLT_DSS,Papiers-Scott Inc,QC_PSI_ISS,NULL
+36554,L1404,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,91.875,56.713,120,38.65,106,116,Ramezay,QC_RAM_DSS,Laurendeau,QC_LRD_DSS,NULL
+36555,L1404,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,36.750,22.685,91.875,56.713,120,38.65,106,116,Ramezay,QC_RAM_DSS,Magnan,QC_MGN_DSS,NULL
+36556,L1404,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,91.875,56.713,120,38.65,106,116,Joliette,QC_JLT_DSS,Ramezay,QC_RAM_DSS,NULL
+36557,L1404,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,91.875,56.713,120,38.65,106,116,Ramezay,QC_RAM_DSS,Sainte-Ãƒâ€°mÃƒÂ©lie,QC_SEM_DSS,NULL
+36558,L1405,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,91.875,56.713,120,38.65,106,116,Ramezay,QC_RAM_DSS,Laurendeau,QC_LRD_DSS,NULL
+36559,L1405,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,36.750,22.685,91.875,56.713,120,38.65,106,116,Ramezay,QC_RAM_DSS,Magnan,QC_MGN_DSS,NULL
+36560,L1405,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,91.875,56.713,120,38.65,106,116,Joliette,QC_JLT_DSS,Ramezay,QC_RAM_DSS,NULL
+36561,L1405,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,91.875,56.713,120,38.65,106,116,Ramezay,QC_RAM_DSS,Sainte-Ãƒâ€°mÃƒÂ©lie,QC_SEM_DSS,NULL
+36562,L1406,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,39.900,24.630,120,16.79,107,118,Sainte-Ãƒâ€°mÃƒÂ©lie,QC_SEM_DSS,Provost,QC_PVT_DSS,NULL
+36563,L1407,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,49.875,30.787,120,20.98,107,118,Lavaltrie,QC_LVL_DSS,LAssomption,QC_LAS_DSS,NULL
+36564,L1407,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,49.875,30.787,120,20.98,107,118,LanaudiÃƒÂ¨re,QC_LND_TSS,Lavaltrie,QC_LVL_DSS,NULL
+36565,L1407,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,49.875,30.787,120,20.98,107,118,Berthier,QC_BTH_DSS,Lavaltrie,QC_LVL_DSS,NULL
+36566,L1407,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,49.875,30.787,120,20.98,107,118,LAssomption,QC_LAS_DSS,Saint-Sulpice,QC_SSL_DSS,NULL
+36567,L1408,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,49.875,30.787,120,20.98,107,118,Lavaltrie,QC_LVL_DSS,LAssomption,QC_LAS_DSS,NULL
+36568,L1408,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,49.875,30.787,120,20.98,107,118,LanaudiÃƒÂ¨re,QC_LND_TSS,Lavaltrie,QC_LVL_DSS,NULL
+36569,L1408,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,49.875,30.787,120,20.98,107,118,Berthier,QC_BTH_DSS,Lavaltrie,QC_LVL_DSS,NULL
+36570,L1408,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,49.875,30.787,120,20.98,107,118,LAssomption,QC_LAS_DSS,Saint-Sulpice,QC_SSL_DSS,NULL
+36571,L1409,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,21.000,12.963,120,8.83,107,118,Joliette,QC_JLT_DSS,Kildare,QC_KLD_DSS,NULL
+36572,L1410,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,21.000,12.963,120,8.83,107,118,Joliette,QC_JLT_DSS,Kildare,QC_KLD_DSS,NULL
+36573,L1414,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,23.625,14.583,120,9.94,107,118,Duvernay,QC_DUV_TSS,Groulx,QC_GRX_DSS,NULL
+36574,L1414,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,23.625,14.583,120,9.94,107,118,Groulx,QC_GRX_DSS,Sainte-Anne-des-Plaines,QC_SAP_DSS,NULL
+36575,L1415,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,23.625,14.583,120,9.94,107,118,Duvernay,QC_DUV_TSS,Groulx,QC_GRX_DSS,NULL
+36576,L1415,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,23.625,14.583,120,9.94,107,118,Groulx,QC_GRX_DSS,Sainte-Anne-des-Plaines,QC_SAP_DSS,NULL
+36577,L1416,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,28.500,17.593,120,11.99,107,118,Petite-Nation,QC_PTN_TSS,ChenÃƒÂ©ville,QC_CHV_DSS,NULL
+36578,L1417,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.420,2.111,3.420,2.111,120,1.44,107,118,Papineauville,QC_PAP_DSS,Petite-Nation,QC_PTN_TSS,NULL
+36579,L1418,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,55.125,34.028,120,23.19,107,118,Beauceville,QC_BCV_TSS,Saint-Joseph,QC_SJO_DSS,NULL
+36580,L1418,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.625,14.583,55.125,34.028,120,23.19,107,118,Saint-Joseph,QC_SJO_DSS,Sainte-Marie,QC_SMA_DSS,NULL
+36581,L1418,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,55.125,34.028,120,23.19,107,118,Neubois,QC_NBS_DSS,Sainte-Marie,QC_SMA_DSS,NULL
+36582,L1420,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.625,14.583,49.875,30.787,120,20.98,107,118,MontÃƒÂ©rÃƒÂ©gie,QC_MTR_TSS,Acton,QC_ACT_DSS,NULL
+36583,L1420,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,49.875,30.787,120,20.98,107,118,Acton,QC_ACT_DSS,Heriot,QC_HER_TSS,NULL
+36584,L1420,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,49.875,30.787,120,20.98,107,118,Heriot,QC_HER_TSS,Marcotte,QC_MAR_DSS,NULL
+36585,L1421,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,63.000,38.889,63.000,38.889,120,26.51,107,118,Sainte-Rosalie,QC_SRO_DSS,Acton,QC_ACT_DSS,NULL
+36586,L1422,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,18.375,11.343,120,7.73,107,118,Granby,QC_GRY_DSS,Leclerc,QC_LCL_DSS,NULL
+36587,L1422,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,18.375,11.343,120,7.73,107,118,Leclerc,QC_LCL_DSS,MontÃƒÂ©rÃƒÂ©gie,QC_MTR_TSS,NULL
+36588,L1423,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,18.375,11.343,120,7.73,107,118,Granby,QC_GRY_DSS,Leclerc,QC_LCL_DSS,NULL
+36589,L1423,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,18.375,11.343,120,7.73,107,118,Leclerc,QC_LCL_DSS,MontÃƒÂ©rÃƒÂ©gie,QC_MTR_TSS,NULL
+36590,L1424,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.875,17.824,28.875,17.824,120,12.15,107,118,Saint-CÃƒÂ©saire,QC_SCS_DSS,Iberville,QC_IBR_DSS,NULL
+36591,L1425,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.875,17.824,52.500,32.407,120,22.09,107,118,Saint-CÃƒÂ©saire,QC_SCS_DSS,Iberville,QC_IBR_DSS,NULL
+36592,L1425,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.625,14.583,52.500,32.407,120,22.09,107,118,Iberville,QC_IBR_DSS,Saint-SÃƒÂ©bastien,QC_SSB_DSS,NULL
+36593,L1426,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,15.750,9.722,120,6.63,107,118,Saint-CÃƒÂ©saire,QC_SCS_DSS,Farnham,QC_FRN_DSS,NULL
+36594,L1427,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,21.000,12.963,120,8.83,107,118,Farnham,QC_FRN_DSS,Bedford,QC_BED_DSS,NULL
+36595,L1428,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,15.750,9.722,120,6.63,107,118,Saint-SÃƒÂ©bastien,QC_SSB_DSS,Bedford,QC_BED_DSS,NULL
+36596,L1430,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.125,21.065,34.125,21.065,120,14.36,107,118,Sainte-Claire,QC_SCL_DSS,ChaudiÃƒÂ¨re,QC_CHU_DSS,NULL
+36597,L1431,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,42.000,25.926,120,17.67,107,118,Sainte-Claire,QC_SCL_DSS,Neubois,QC_NBS_DSS,NULL
+36598,L1431,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,42.000,25.926,120,17.67,107,118,Neubois,QC_NBS_DSS,Sainte-Marie,QC_SMA_DSS,NULL
+36599,L1432,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.625,14.583,23.625,14.583,120,9.94,107,118,Saint-Joseph,QC_SJO_DSS,Sainte-Marie,QC_SMA_DSS,NULL
+36600,L1433,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,10.500,6.481,120,4.42,107,118,Beauceville,QC_BCV_TSS,Saint-Joseph,QC_SJO_DSS,NULL
+36601,L1434,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,10.500,6.481,120,4.42,107,118,Sainte-Claire,QC_SCL_DSS,Saint-Lazare,QC_SLZ_DSS,NULL
+36602,L1435,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,7.000,4.321,10.000,6.173,120,4.21,107,118,Les CÃƒÂ¨dres,QC_LCS_GSS,Dorion,QC_DRN_DSS,NULL
+36603,L1435,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,3.000,1.852,10.000,6.173,120,4.21,107,118,Langlois,QC_LGS_TSS,Les CÃƒÂ¨dres,QC_LCS_GSS,NULL
+36604,L1436,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,2.700,1.667,120,1.14,107,118,PPG Canada Inc,QC_PPG_ISS,LÃƒÂ©ry,QC_LRY_ISS,NULL
+36605,L1436,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.200,0.123,2.700,1.667,120,1.14,107,118,Usine Beauharnois Alcan,QC_UBA_ISS,PPG Canada Inc,QC_PPG_ISS,NULL
+36606,L1436,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.500,0.926,2.700,1.667,120,1.14,107,118,Beauharnois-Est,QC_BEE_GSS,Usine Beauharnois Alcan,QC_UBA_ISS,NULL
+36607,L1437,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.000,1.852,4.000,2.469,120,1.68,107,118,PPG Canada Inc,QC_PPG_ISS,LÃƒÂ©ry,QC_LRY_ISS,NULL
+36608,L1437,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,4.000,2.469,120,1.68,107,118,Beauharnois-Est,QC_BEE_GSS,PPG Canada Inc,QC_PPG_ISS,NULL
+36609,L1438,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.500,2.160,3.500,2.160,120,1.47,107,118,LÃƒÂ©ry,QC_LRY_ISS,Beauharnois-Est,QC_BEE_GSS,NULL
+36610,L1439,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.500,2.160,3.500,2.160,120,1.47,107,118,LÃƒÂ©ry,QC_LRY_ISS,Beauharnois-Est,QC_BEE_GSS,NULL
+36611,L1440,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.000,2.469,8.000,4.938,120,3.37,107,118,RiviÃƒÂ¨re-du-Loup,QC_RDL_TSS,F.F. Soucy S.E.C.,QC_FFS_ISS,NULL
+36612,L1440,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.000,2.469,8.000,4.938,120,3.37,107,118,F.F. Soucy S.E.C.,QC_FFS_ISS,Grand-Portage,QC_GPG_DSS,NULL
+36613,L1442,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,7.980,4.926,120,3.36,107,118,RiviÃƒÂ¨re-du-Loup,QC_RDL_TSS,Grand-Portage,QC_GPG_DSS,NULL
+36614,L1443,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,62.700,38.704,120,26.38,107,118,Saint-Alexandre,QC_SAL_DSS,RiviÃƒÂ¨re-du-Loup,QC_RDL_TSS,NULL
+36615,L1443,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,62.700,38.704,120,26.38,107,118,Saint-Pascal,QC_SPA_DSS,Saint-Alexandre,QC_SAL_DSS,NULL
+36616,L1443,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,62.700,38.704,120,26.38,107,118,La PocatiÃƒÂ¨re,QC_LPC_DSS,Saint-Pascal,QC_SPA_DSS,NULL
+36617,L1444,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,62.700,38.704,120,26.38,107,118,Saint-Alexandre,QC_SAL_DSS,RiviÃƒÂ¨re-du-Loup,QC_RDL_TSS,NULL
+36618,L1444,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,62.700,38.704,120,26.38,107,118,Saint-Pascal,QC_SPA_DSS,Saint-Alexandre,QC_SAL_DSS,NULL
+36619,L1444,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,62.700,38.704,120,26.38,107,118,La PocatiÃƒÂ¨re,QC_LPC_DSS,Saint-Pascal,QC_SPA_DSS,NULL
+36620,L1448,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,79.800,49.259,120,33.57,107,118,Sully JCT,QC_SLY_JCT,Cabano,QC_CAB_DSS,NULL
+36621,L1448,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,79.800,49.259,120,33.57,107,118,Cabano,QC_CAB_DSS,Squatec,QC_SQU_DSS,NULL
+36622,L1448,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,79.800,49.259,120,33.57,107,118,RiviÃƒÂ¨re-du-Loup,QC_RDL_TSS,Sully JCT,QC_SLY_JCT,NULL
+36623,L1449,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,51.300,31.667,51.300,31.667,120,21.58,107,118,RiviÃƒÂ¨re-du-Loup,QC_RDL_TSS,Cabano,QC_CAB_DSS,NULL
+36624,L1450,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,26.300,16.235,120,11.06,107,118,Amqui,QC_AMQ_DSS,Causapscal,QC_CSP_DSS,NULL
+36625,L1450,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,9.200,5.679,26.300,16.235,120,11.06,107,118,Causapscal,QC_CSP_DSS,Vents du Kempt,QC_VDK_GSS,NULL
+36626,L1451,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,28.500,17.593,120,11.99,107,118,Sully JCT,QC_SLY_JCT,Sully,QC_SLY_DSS,NULL
+36627,L1453,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,22.800,14.074,120,9.59,107,118,Cabano,QC_CAB_DSS,DÃƒÂ©gelis,QC_DEG_DSS,NULL
+36628,L1454,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,39.100,24.136,120,16.45,107,118,Sayabec,QC_SYB_DSS,Amqui,QC_AMQ_DSS,NULL
+36629,L1454,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.000,13.580,39.100,24.136,120,16.45,107,118,Les Boules,QC_LBS_TSS,Sayabec,QC_SYB_DSS,NULL
+36630,L1455,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,40.700,25.123,120,17.12,107,118,Uniboard Canada Inc,QC_UCI_ISS,Amqui,QC_AMQ_DSS,NULL
+36631,L1455,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,40.700,25.123,120,17.12,107,118,Les Boules,QC_LBS_TSS,Sayabec,QC_SYB_DSS,NULL
+36632,L1455,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.800,0.494,40.700,25.123,120,17.12,107,118,Sayabec,QC_SYB_DSS,Uniboard Canada Inc,QC_UCI_ISS,NULL
+36633,L1457,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.625,1.620,56.875,35.108,120,23.93,107,118,Beauceville,QC_BCV_TSS,Beauceville-Est,QC_BCE_DSS,NULL
+36634,L1457,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,56.875,35.108,120,23.93,107,118,Saint-Georges,QC_SGO_DSS,Bolduc,QC_BLD_DSS,NULL
+36635,L1457,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,56.875,35.108,120,23.93,107,118,Beauceville-Est,QC_BCE_DSS,Saint-Georges,QC_SGO_DSS,NULL
+36636,L1457,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.500,10.802,56.875,35.108,120,23.93,107,118,Bolduc,QC_BLD_DSS,Saint-Robert-Bellarmin,QC_SRB_GSS,NULL
+36637,L1458,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,18.375,11.343,120,7.73,107,118,Beauceville,QC_BCV_TSS,East Broughton,QC_EAB_DSS,NULL
+36638,L1459,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,36.750,22.685,36.750,22.685,120,15.46,107,118,Saint-Ãƒâ€°variste,QC_SEV_DSS,Beauceville,QC_BCV_TSS,NULL
+36639,L1460,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.960,9.852,31.710,19.574,120,13.34,107,118,Saint-Georges,QC_SGO_DSS,LiniÃƒÂ¨re,QC_LNR_DSS,NULL
+36640,L1460,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,31.710,19.574,120,13.34,107,118,Beauceville,QC_BCV_TSS,Saint-Georges,QC_SGO_DSS,NULL
+36641,L1461,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,15.750,9.722,120,6.63,107,118,Beauceville,QC_BCV_TSS,Saint-Georges,QC_SGO_DSS,NULL
+36642,L1462,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,67.260,41.519,120,28.30,107,118,Saint-Ãƒâ€°variste,QC_SEV_DSS,Beauceville,QC_BCV_TSS,NULL
+36643,L1462,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,27.360,16.889,67.260,41.519,120,28.30,107,118,Beauceville,QC_BCV_TSS,Sainte-Germaine,QC_SGE_DSS,NULL
+36644,L1466,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,39.900,24.630,120,16.79,107,118,RiviÃƒÂ¨re-du-Loup,QC_RDL_TSS,Cacouna,QC_CAC_DSS,NULL
+36645,L1466,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,39.900,24.630,120,16.79,107,118,Cacouna,QC_CAC_DSS,Saint-ClÃƒÂ©ment,QC_SCM_DSS,NULL
+36646,L1467,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,4.788,2.956,120,2.01,107,118,Rosemont,QC_RSM_DSS,BÃƒÂ©langer,QC_BEL_TSS,NULL
+36647,L1468,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,4.788,2.956,120,2.01,107,118,Jeanne-dArc,QC_JDA_DSS,Longue-Pointe,QC_LGP_DSS,NULL
+36648,L1469,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.182,4.433,7.182,4.433,120,3.02,107,118,De Lorimier,QC_DEL_DSS,Notre-Dame,QC_NDA_TSS,NULL
+36649,L1470,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.500,1.543,2.500,1.543,120,1.05,107,118,Les CÃƒÂ¨dres,QC_LCS_GSS,Langlois,QC_LGS_TSS,NULL
+36650,L1471,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.000,4.938,8.500,5.247,120,3.58,107,118,Langlois,QC_LGS_TSS,Eka Chimie Canada Inc,QC_EKA_ISS,NULL
+36651,L1471,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.500,0.309,8.500,5.247,120,3.58,107,118,Eka Chimie Canada Inc,QC_EKA_ISS,Larocque,QC_LRQ_ISS,NULL
+36652,L1472,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,9.000,5.556,9.000,5.556,120,3.79,107,118,Langlois,QC_LGS_TSS,Beauharnois-Ouest,QC_BEO_TSS,NULL
+36653,L1473,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,21.000,12.963,120,8.83,107,118,Coleraine,QC_COL_DSS,Thetford,QC_THT_DSS,NULL
+36654,L1474,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,52.500,32.407,52.500,32.407,120,22.09,107,118,MÃƒÂ©gantic,QC_MEG_DSS,Coleraine,QC_COL_DSS,NULL
+36655,L1475,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,57.000,35.185,120,23.98,107,118,La VÃƒÂ©rendrye,QC_LVR_TSS,Parent,QC_PRT_DSS,NULL
+36656,L1477,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.000,3.086,6.500,4.012,120,2.73,107,118,Thibaudeau,QC_THI_DSS,Leman,QC_LMN_SWS,NULL
+36657,L1477,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.500,0.926,6.500,4.012,120,2.73,107,118,Des HÃƒÂªtres,QC_DEH_DSS,Thibaudeau,QC_THI_DSS,NULL
+36658,L1478,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.500,0.926,1.500,0.926,120,0.63,107,118,Des HÃƒÂªtres,QC_DEH_DSS,Thibaudeau,QC_THI_DSS,NULL
+36659,L1479,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.000,3.704,6.000,3.704,120,2.52,107,118,Thibaudeau,QC_THI_DSS,Leman,QC_LMN_SWS,NULL
+36660,L1491,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,84.000,51.852,85.500,52.778,120,35.97,107,118,Palmarolle,QC_PML_DSS,Abitibi Consolidated Amos,QC_ACA_ISS,NULL
+36661,L1491,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.500,0.926,85.500,52.778,120,35.97,107,118,Abitibi Consolidated Amos,QC_ACA_ISS,Amos,QC_AMO_DSS,NULL
+36662,L1492,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,84.000,51.852,85.500,52.778,120,35.97,107,118,Palmarolle,QC_PML_DSS,Abitibi Consolidated Amos,QC_ACA_ISS,NULL
+36663,L1492,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.500,0.926,85.500,52.778,120,35.97,107,118,Abitibi Consolidated Amos,QC_ACA_ISS,Amos,QC_AMO_DSS,NULL
+36664,L1493,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,33.000,20.370,120,13.88,107,118,Quevillon,QC_QVN_DSS,Domtar QuÃƒÂ©villon,QC_DOQ_ISS,NULL
+36665,L1493,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.500,2.778,33.000,20.370,120,13.88,107,118,Domtar QuÃƒÂ©villon,QC_DOQ_ISS,Mine Gonzague-Langlois,QC_MGL_ISS,NULL
+36666,L1495,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,22.800,14.074,120,9.59,107,118,Saint-ClÃƒÂ©ment,QC_SCM_DSS,Squatec,QC_SQU_DSS,NULL
+36667,L1498,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,22.800,14.074,120,9.59,107,118,La Grande-1,QC_LG1_GSS,Chisasibi,QC_CHA_DSS,NULL
+36668,L1524,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,79.800,49.259,79.800,49.259,120,33.57,107,118,La Grande-1,QC_LG1_GSS,Wemindji,QC_WJI_DSS,NULL
+36669,L1525,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,14.000,8.642,14.000,8.642,120,5.89,107,118,Grand-BrulÃƒÂ©,QC_GRB_TSS,Mont-Tremblant,QC_MTB_DSS,NULL
+36670,L1526,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,14.000,8.642,14.000,8.642,120,5.89,107,118,Grand-BrulÃƒÂ©,QC_GRB_TSS,Mont-Tremblant,QC_MTB_DSS,NULL
+36671,L1530,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,52.500,32.407,120,22.09,107,118,Bois-Francs,QC_BSF_DSS,Plessisville,QC_PLS_DSS,NULL
+36672,L1530,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,52.500,32.407,120,22.09,107,118,Plessisville,QC_PLS_DSS,Plessisville,QC_PLS_DSS,NULL
+36673,L1533,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,15.750,9.722,120,6.63,107,118,Pierre-Le Gardeur,QC_PLG_TSS,Repetigny,QC_RPT_DSS,NULL
+36674,L1534,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,15.750,9.722,120,6.63,107,118,Pierre-Le Gardeur,QC_PLG_TSS,Repetigny,QC_RPT_DSS,NULL
+36675,L1535,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,10.500,6.481,120,4.42,107,118,Terrebonne,QC_TER_DSS,Pierre-Le Gardeur,QC_PLG_TSS,NULL
+36676,L1536,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.000,16.049,26.000,16.049,120,10.94,107,118,Sainte-Germaine,QC_SGE_DSS,Massif-du-Sud,QC_MSF_GSS,NULL
+36677,L1537,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,45.600,28.148,45.600,28.148,120,19.18,107,118,Sainte-Germaine,QC_SGE_DSS,Daaquam,QC_DAQ_DSS,NULL
+36678,L1538,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.000,3.704,6.000,19.000,120,2.52,107,118,Cadillac,QC_CDL_GSS,Mine Malartic,QC_MML_ISS,NULL
+36679,L1540,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,36.750,22.685,120,15.46,107,118,Farnham,QC_FRN_DSS,Bedford,QC_BED_DSS,NULL
+36680,L1540,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,36.750,22.685,120,15.46,107,118,Saint-CÃƒÂ©saire,QC_SCS_DSS,Farnham,QC_FRN_DSS,NULL
+36681,L1541,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,36.750,22.685,120,15.46,107,118,Farnham,QC_FRN_DSS,Bedford,QC_BED_DSS,NULL
+36682,L1541,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,36.750,22.685,120,15.46,107,118,Saint-CÃƒÂ©saire,QC_SCS_DSS,Farnham,QC_FRN_DSS,NULL
+36683,L1542,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.000,9.259,15.000,9.259,120,6.31,107,118,LAssomption,QC_LAS_DSS,Pierre-Le Gardeur,QC_PLG_TSS,NULL
+36684,L1543,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.000,9.259,15.000,9.259,120,6.31,107,118,LAssomption,QC_LAS_DSS,Pierre-Le Gardeur,QC_PLG_TSS,NULL
+36685,L1546,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.400,5.185,8.400,5.185,120,3.53,107,118,Cleveland,QC_CLV_DSS,Adamsville,QC_ADM_DSS,NULL
+36686,L1547,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.400,5.185,8.400,5.185,120,3.53,107,118,Cleveland,QC_CLV_DSS,Adamsville,QC_ADM_DSS,NULL
+36687,L1548,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,68.875,42.515,120,28.98,107,118,Sainte-Agathe-des-Monts,QC_SAG_DSS,Doc-Grignon,QC_DOG_DSS,NULL
+36688,L1548,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,68.875,42.515,120,28.98,107,118,Saint-Sauveur,QC_SSA_DSS,Doc-Grignon,QC_DOG_DSS,NULL
+36689,L1548,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,40.000,24.691,68.875,42.515,120,28.98,107,118,Grand-BrulÃƒÂ©,QC_GRB_TSS,Sainte-Agathe-des-Monts,QC_SAG_DSS,NULL
+36690,L1549,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,68.875,42.515,120,28.98,107,118,Sainte-Agathe-des-Monts,QC_SAG_DSS,Doc-Grignon,QC_DOG_DSS,NULL
+36691,L1549,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,68.875,42.515,120,28.98,107,118,Saint-Sauveur,QC_SSA_DSS,Doc-Grignon,QC_DOG_DSS,NULL
+36692,L1549,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,40.000,24.691,68.875,42.515,120,28.98,107,118,Grand-BrulÃƒÂ©,QC_GRB_TSS,Sainte-Agathe-des-Monts,QC_SAG_DSS,NULL
+36693,L1550,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,68.400,42.222,120,28.78,107,118,Paugan,QC_PAU_GSS,Gracefield,QC_GRC_DSS,NULL
+36694,L1550,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,68.400,42.222,120,28.78,107,118,Gracefield,QC_GRC_DSS,Maniwaki,QC_MNI_DSS,NULL
+36695,L1552,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,7.000,4.321,7.000,4.321,120,2.95,107,118,Les CÃƒÂ¨dres,QC_LCS_GSS,Dorion,QC_DRN_DSS,NULL
+36696,L1562,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.374,6.404,10.374,6.404,120,4.36,107,118,Baie dUrfÃƒÂ©,QC_BAU_DSS,Compass YUL II,QC_CMP_ISS,NULL
+36697,L1601,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,91.200,56.296,161,41.04,191,210,RiviÃƒÂ¨re-Sainte-Anne,QC_RVS_DSS,Copper Mountain,QC_CMT_DSS,NULL
+36698,L1601,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,91.200,56.296,161,41.04,191,210,GoÃƒÂ©mon,QC_GOE_TSS,RiviÃƒÂ¨re-Sainte-Anne,QC_RVS_DSS,NULL
+36699,L1602,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,91.200,56.296,91.200,56.296,161,41.04,191,210,Copper Mountain,QC_CMT_DSS,Micmac,QC_MCM_DSS,NULL
+36700,L1603,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,34.200,21.111,161,15.39,193,212,Micmac,QC_MCM_DSS,PercÃƒÂ©,QC_PCE_DSS,NULL
+36701,L1604,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,45.600,28.148,45.600,28.148,161,20.52,193,212,GaspÃƒÂ©,QC_GSP_DSS,PercÃƒÂ©,QC_PCE_DSS,NULL
+36702,L1605,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,28.500,17.593,161,12.83,193,212,RiviÃƒÂ¨re-au-Renard,QC_RVD_DSS,GaspÃƒÂ©,QC_GSP_DSS,NULL
+36703,L1606,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,7.980,4.926,161,3.59,193,212,Micmac,QC_MCM_DSS,GaspÃƒÂ©sia,QC_GSA_ISS,NULL
+36704,L1607,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,51.300,31.667,51.300,31.667,161,23.09,193,212,Micmac,QC_MCM_DSS,GaspÃƒÂ©,QC_GSP_DSS,NULL
+36705,L1608,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.940,14.778,23.940,14.778,161,10.77,193,212,Alcoa,QC_ALC_ISS,Hauterive,QC_HTR_DSS,NULL
+36706,L1609,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.940,14.778,23.940,14.778,161,10.77,193,212,Alcoa,QC_ALC_ISS,Hauterive,QC_HTR_DSS,NULL
+36707,L1610,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,2.280,1.407,120,0.96,107,118,Hauterive,QC_HTR_DSS,LaflÃƒÂ¨che,QC_LFL_DSS,NULL
+36708,L1611,SociÃƒÂ©tÃƒÂ© en Commandite HydroÃƒÂ©lectrique Manicouagan,QC,Quebec,1,ac,11.400,7.037,13.680,8.444,120,5.76,107,118,Hauterive,QC_HTR_DSS,Manic-1,QC_MC1_GSS,NULL
+36709,L1611,SociÃƒÂ©tÃƒÂ© en Commandite HydroÃƒÂ©lectrique Manicouagan,QC,Quebec,1,ac,2.280,1.407,13.680,8.444,120,5.76,107,118,Manic-1,QC_MC1_GSS,McCormick,QC_MCC_GSS,NULL
+36710,L1612,SociÃƒÂ©tÃƒÂ© en Commandite HydroÃƒÂ©lectrique Manicouagan,QC,Quebec,1,ac,11.400,7.037,13.680,8.444,120,5.76,107,118,Hauterive,QC_HTR_DSS,Manic-1,QC_MC1_GSS,NULL
+36711,L1612,SociÃƒÂ©tÃƒÂ© en Commandite HydroÃƒÂ©lectrique Manicouagan,QC,Quebec,1,ac,2.280,1.407,13.680,8.444,120,5.76,107,118,Manic-1,QC_MC1_GSS,McCormick,QC_MCC_GSS,NULL
+36712,L1613,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.140,0.704,11.400,7.037,161,5.13,193,212,Mont-Rothery,QC_MRY_GSS,Mont-Copper,QC_MTC_GSS,NULL
+36713,L1613,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,11.400,7.037,161,5.13,193,212,Mont-Copper,QC_MTC_GSS,Mont-Miller,QC_MTM_GSS,NULL
+36714,L1613,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.560,2.815,11.400,7.037,161,5.13,193,212,Copper Mountain,QC_CMT_DSS,Mont-Rothery,QC_MRY_GSS,NULL
+36715,L1615,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,157.320,97.111,120,66.19,74,82,CÃƒÂ´te-Nord,QC_CON_DSS,Alcoa,QC_ALC_ISS,NULL
+36716,L1615,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,157.320,97.111,120,66.19,74,82,PentecÃƒÂ´te,QC_PTC_DSS,Baie-TrinitÃƒÂ©,QC_BAT_DSS,NULL
+36717,L1615,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,157.320,97.111,120,66.19,74,82,Godbout,QC_GOD_DSS,CÃƒÂ´te-Nord,QC_CON_DSS,NULL
+36718,L1615,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,157.320,97.111,120,66.19,74,82,Baie-TrinitÃƒÂ©,QC_BAT_DSS,Godbout,QC_GOD_DSS,NULL
+36719,L1615,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.420,2.111,157.320,97.111,120,66.19,74,82,McCormick,QC_MCC_GSS,Hauterive,QC_HTR_DSS,NULL
+36720,L1615,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,157.320,97.111,120,66.19,74,82,Alcoa,QC_ALC_ISS,McCormick,QC_MCC_GSS,NULL
+36721,L1615,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,157.320,97.111,120,66.19,74,82,RiviÃƒÂ¨re-aux-Rochers,QC_RVR_DSS,PentecÃƒÂ´te,QC_PTC_DSS,NULL
+36722,L1616,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,33.060,20.407,120,13.91,107,118,Port Cartier,QC_PCR_SWS,Companie-MiniÃƒÂ¨re-QuÃƒÂ©bec-Cartier,QC_CMQ_ISS,NULL
+36723,L1616,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,33.060,20.407,120,13.91,107,118,Companie-MiniÃƒÂ¨re-QuÃƒÂ©bec-Cartier,QC_CMQ_ISS,Katahdin PÃƒÂ¢te QuÃƒÂ©bec,QC_KPQ_ISS,NULL
+36724,L1616,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,33.060,20.407,120,13.91,107,118,Laure,QC_LAU_DSS,Port Cartier,QC_PCR_SWS,NULL
+36725,L1616,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,33.060,20.407,120,13.91,107,118,Katahdin PÃƒÂ¢te QuÃƒÂ©bec,QC_KPQ_ISS,RiviÃƒÂ¨re-aux-Rochers,QC_RVR_DSS,NULL
+36726,L1617,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.140,0.704,25.080,15.481,161,11.29,193,212,Sept-ÃƒÅ½les,QC_STI_DSS,Iron-Ore-du-Canada,QC_IOC_ISS,NULL
+36727,L1617,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.140,0.704,25.080,15.481,161,11.29,193,212,Arnaud,QC_ARN_TSS,Laure,QC_LAU_DSS,Connection assumed between Laure and Arnaud
+36728,L1617,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,25.080,15.481,161,11.29,193,212,Laure,QC_LAU_DSS,Sept-ÃƒÅ½les,QC_STI_DSS,NULL
+36729,L1618,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,5.700,3.519,161,2.57,193,212,Aluminerie Alouette,QC_ALO_ISS,Laure,QC_LAU_DSS,NULL
+36730,L1619,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,159.600,98.519,161,71.82,132,145,RiviÃƒÂ¨re-au-Tonnerre,QC_RVT_DSS,Magpie,QC_MGP_GSS,NULL
+36731,L1619,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,159.600,98.519,161,71.82,132,145,RiviÃƒÂ¨re-aux-Bouleaux,QC_RVB_DSS,RiviÃƒÂ¨re-ÃƒÂ -la-Chaloupe,QC_RVC_DSS,NULL
+36732,L1619,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,159.600,98.519,161,71.82,132,145,RiviÃƒÂ¨re-ÃƒÂ -la-Chaloupe,QC_RVC_DSS,RiviÃƒÂ¨re-au-Tonnerre,QC_RVT_DSS,NULL
+36733,L1619,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,62.700,38.704,159.600,98.519,161,71.82,132,145,Sept-ÃƒÅ½les,QC_STI_DSS,RiviÃƒÂ¨re-aux-Bouleaux,QC_RVB_DSS,NULL
+36734,L1619,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,159.600,98.519,161,71.82,132,145,Laure,QC_LAU_DSS,Sept-ÃƒÅ½les,QC_STI_DSS,NULL
+36735,L1620,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,33.060,20.407,120,13.91,107,118,Port Cartier,QC_PCR_SWS,Companie-MiniÃƒÂ¨re-QuÃƒÂ©bec-Cartier,QC_CMQ_ISS,NULL
+36736,L1620,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,33.060,20.407,120,13.91,107,118,Companie-MiniÃƒÂ¨re-QuÃƒÂ©bec-Cartier,QC_CMQ_ISS,Katahdin PÃƒÂ¢te QuÃƒÂ©bec,QC_KPQ_ISS,NULL
+36737,L1620,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,33.060,20.407,120,13.91,107,118,Laure,QC_LAU_DSS,Port Cartier,QC_PCR_SWS,NULL
+36738,L1620,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,33.060,20.407,120,13.91,107,118,Katahdin PÃƒÂ¢te QuÃƒÂ©bec,QC_KPQ_ISS,RiviÃƒÂ¨re-aux-Rochers,QC_RVR_DSS,NULL
+36739,L1622,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,22.800,14.074,120,9.59,107,118,Roberval,QC_RBV_DSS,CogÃƒÂ©nÃƒÂ©ration Saint-FÃƒÂ©licien,QC_CSF_GSS,NULL
+36740,L1622,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,22.800,14.074,120,9.59,107,118,CogÃƒÂ©nÃƒÂ©ration Saint-FÃƒÂ©licien,QC_CSF_GSS,Saint-FÃƒÂ©licien,QC_SFE_DSS,NULL
+36741,L1623,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,22.800,14.074,120,9.59,107,118,Roberval,QC_RBV_DSS,Desbiens,QC_DBN_DSS,NULL
+36742,L1624,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,37.800,23.333,37.800,23.333,120,15.90,107,118,LIsle Maligne,QC_LIM_ISS,Desbiens,QC_DBN_DSS,NULL
+36743,L1625,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,125.400,77.407,182.400,112.593,161,82.08,121,133,Obalski,QC_OBL_DSS,Corporation MiniÃƒÂ¨re Inmet,QC_CMI_ISS,NULL
+36744,L1625,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,182.400,112.593,161,82.08,121,133,Obalski,QC_OBL_DSS,Waconichi,QC_WCO_DSS,NULL
+36745,L1626,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,22.800,14.074,120,9.59,107,118,Roberval,QC_RBV_DSS,CogÃƒÂ©nÃƒÂ©ration Saint-FÃƒÂ©licien,QC_CSF_GSS,NULL
+36746,L1626,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,22.800,14.074,120,9.59,107,118,CogÃƒÂ©nÃƒÂ©ration Saint-FÃƒÂ©licien,QC_CSF_GSS,Saint-FÃƒÂ©licien,QC_SFE_DSS,NULL
+36747,L1627,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,39.900,24.630,120,16.79,107,118,Chapais,QC_CHP_DSS,Chibougamau,QC_CHB_TSS,NULL
+36748,L1627,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,39.900,24.630,120,16.79,107,118,Chibougamau,QC_CHB_TSS,Obalski,QC_OBL_DSS,NULL
+36749,L1628,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,22.800,14.074,120,9.59,107,118,Chibougamau,QC_CHB_TSS,Obalski,QC_OBL_DSS,NULL
+36750,L1629,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,68.400,42.222,68.400,42.222,161,30.78,193,212,Saint-FÃƒÂ©licien,QC_SFE_DSS,Chigoubiche,QC_CHI_DSS,NULL
+36751,L1630,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,28.500,17.593,161,12.83,193,212,Saint-FÃƒÂ©licien,QC_SFE_DSS,Mistassini,QC_MIS_DSS,NULL
+36752,L1635,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.000,1.235,2.000,1.235,161,0.90,193,212,LIsle Maligne,QC_LIM_ISS,Abitibi Consolidated Alma,QC_ACL_ISS,NULL
+36753,L1638,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,15.960,9.852,161,7.18,193,212,SFK PÃƒÂ¢te SENC,QC_SFK_ISS,Normandin,QC_NRN_DSS,NULL
+36754,L1638,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,15.960,9.852,161,7.18,193,212,Saint-FÃƒÂ©licien,QC_SFE_DSS,SFK PÃƒÂ¢te SENC,QC_SFK_ISS,NULL
+36755,L1639,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,28.500,17.593,161,12.83,193,212,Saint-FÃƒÂ©licien,QC_SFE_DSS,Bowater Produits Forestiers,QC_BPF_ISS,NULL
+36756,L1639,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,28.500,17.593,161,12.83,193,212,Bowater Produits Forestiers,QC_BPF_ISS,Mistassini,QC_MIS_DSS,NULL
+36757,L1640,Hydro-QuÃƒÂ©bec Transmission / Rio Tinto Alcan,QC,Quebec,1,ac,22.400,13.827,28.100,17.346,161,12.65,193,212,Saguenay,QC_SAG_TSS,Dubuc,QC_DBC_ISS,NULL
+36758,L1640,Rio Tinto Alcan,QC,Quebec,1,ac,0.100,0.062,28.100,17.346,161,12.65,193,212,Elkem Metal Canada,QC_EMC_ISS,Dubuc,QC_DBC_ISS,NULL
+36759,L1640,Rio Tinto Alcan,QC,Quebec,1,ac,5.600,3.457,28.100,17.346,161,12.65,193,212,Chicoutimi-Nord,QC_CHN_DSS,Elkem Metal Canada,QC_EMC_ISS,NULL
+36760,L1641,Hydro-QuÃƒÂ©bec Transmission / Rio Tinto Alcan,QC,Quebec,1,ac,22.400,13.827,22.400,13.827,161,10.08,193,212,Saguenay,QC_SAG_TSS,Chicoutimi,QC_CHC_DSS,NULL
+36761,L1642,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.400,0.864,43.800,27.037,161,19.71,193,212,JonquiÃƒÂ¨re,QC_JNQ_DSS,Abitibi Consolidated KÃƒÂ©nogami,QC_ACK_ISS,NULL
+36762,L1642,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,43.800,27.037,161,19.71,193,212,Saguenay,QC_SAG_TSS,Cascades Canada Saguenay,QC_CCS_ISS,NULL
+36763,L1642,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.600,3.457,43.800,27.037,161,19.71,193,212,Cascades Canada Saguenay,QC_CCS_ISS,JonquiÃƒÂ¨re,QC_JNQ_DSS,NULL
+36764,L1642,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,20.000,12.346,43.800,27.037,161,19.71,193,212,Cascades Canada Saguenay,QC_CCS_ISS,Junction 1646,QC_1646_JCT,NULL
+36765,L1642,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,43.800,27.037,161,19.71,193,212,Junction 1646,QC_1646_JCT,Saint-Ambroise,QC_SAM_DSS,NULL
+36766,L1642,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.800,1.728,43.800,27.037,161,19.71,193,212,Abitibi Consolidated KÃƒÂ©nogami,QC_ACK_ISS,Ville de Saguenay,QC_VSA_DSS,NULL
+36767,L1643,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.400,0.864,30.800,19.012,161,13.86,193,212,JonquiÃƒÂ¨re,QC_JNQ_DSS,Abitibi Consolidated KÃƒÂ©nogami,QC_ACK_ISS,NULL
+36768,L1643,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,30.800,19.012,161,13.86,193,212,Saguenay,QC_SAG_TSS,Cascades Canada Saguenay,QC_CCS_ISS,NULL
+36769,L1643,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.600,3.457,30.800,19.012,161,13.86,193,212,Cascades Canada Saguenay,QC_CCS_ISS,JonquiÃƒÂ¨re,QC_JNQ_DSS,NULL
+36770,L1643,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,30.800,19.012,161,13.86,193,212,Cascades Canada Saguenay,QC_CCS_ISS,Junction 1647,QC_1647_JCT,NULL
+36771,L1643,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,30.800,19.012,161,13.86,193,212,Junction 1647,QC_1647_JCT,Saint-Ambroise,QC_SAM_DSS,NULL
+36772,L1643,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.800,1.728,30.800,19.012,161,13.86,193,212,Abitibi Consolidated KÃƒÂ©nogami,QC_ACK_ISS,Ville de Saguenay,QC_VSA_DSS,NULL
+36773,L1644,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.000,9.259,15.000,9.259,161,6.75,193,212,Saguenay,QC_SAG_TSS,Du Portage,QC_DPT_DSS,NULL
+36774,L1645,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.000,9.259,15.000,9.259,161,6.75,193,212,Saguenay,QC_SAG_TSS,Du Portage,QC_DPT_DSS,NULL
+36775,L1646,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.200,6.914,19.600,12.099,161,8.82,193,212,Niobec,QC_NIO_ISS,Chicoutimi-Nord,QC_CHN_DSS,NULL
+36776,L1646,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.200,2.593,19.600,12.099,161,8.82,193,212,Junction 1646,QC_1646_JCT,Niobec,QC_NIO_ISS,NULL
+36777,L1646,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.200,2.593,19.600,12.099,161,8.82,193,212,Junction 1646,QC_1646_JCT,Simard,QC_SIM_TSS,NULL
+36778,L1647,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.400,9.506,25.300,15.617,161,11.39,193,212,Junction 1647,QC_1647_JCT,Chicoutimi-Nord,QC_CHN_DSS,NULL
+36779,L1647,Rio Tinto Alcan,QC,Quebec,1,ac,0.100,0.062,25.300,15.617,161,11.39,193,212,Elkem Metal Canada,QC_EMC_ISS,Dubuc,QC_DBC_ISS,NULL
+36780,L1647,Rio Tinto Alcan,QC,Quebec,1,ac,5.600,3.457,25.300,15.617,161,11.39,193,212,Chicoutimi-Nord,QC_CHN_DSS,Elkem Metal Canada,QC_EMC_ISS,NULL
+36781,L1647,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.200,2.593,25.300,15.617,161,11.39,193,212,Junction 1647,QC_1647_JCT,Simard,QC_SIM_TSS,NULL
+36782,L1648,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,108.300,66.852,108.300,66.852,161,48.74,171,188,Simard,QC_SIM_TSS,PÃƒÂ©ribonka,QC_PRB_GSS,NULL
+36783,L1649,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,108.300,66.852,108.300,66.852,161,48.74,171,188,Simard,QC_SIM_TSS,PÃƒÂ©ribonka,QC_PRB_GSS,NULL
+36784,L1650,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,5.700,3.519,161,2.57,193,212,Laure,QC_LAU_DSS,Pointe-Noire,QC_PNE_ISS,NULL
+36785,L1652,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,31.920,19.704,94.620,58.407,120,39.81,104,114,Romaine-1,QC_RM1_GSS,Johan-Beetz,QC_JHB_DSS,NULL
+36786,L1652,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,62.700,38.704,94.620,58.407,120,39.81,104,114,Johan-Beetz,QC_JHB_DSS,Natashquan,QC_NTS_DSS,NULL
+36787,L1653,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,31.920,19.704,31.920,19.704,120,13.43,107,118,Havre-Saint-Pierre,QC_HSP_DSS,Romaine-1,QC_RM1_GSS,NULL
+36788,L1657,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,28.500,17.593,161,12.83,193,212,RiviÃƒÂ¨re-au-Renard,QC_RVD_DSS,Anse-ÃƒÂ -Valleau,QC_ANV_GSS,NULL
+36789,L1657,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,28.500,17.593,161,12.83,193,212,Anse-ÃƒÂ -Valleau,QC_ANV_GSS,Montagne-SÃƒÂ¨che,QC_MSH_GSS,NULL
+36790,L1659,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,17.100,10.556,161,7.70,193,212,Montagne-SÃƒÂ¨che,QC_MSH_GSS,Grande VallÃƒÂ©e,QC_GVL_DSS,NULL
+36791,L1665,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,62.700,38.704,62.700,38.704,161,28.22,193,212,Magpie,QC_MGP_GSS,Havre-Saint-Pierre,QC_HSP_DSS,NULL
+36792,L1695,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,78.000,48.148,203.400,125.556,120,85.57,63,69,Lac-Hope,QC_LHP_DSS,Hart-Jaune,QC_HTJ_GSS,NULL
+36793,L1695,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,125.400,77.407,203.400,125.556,120,85.57,63,69,Normand,QC_NRM_DSS,Lac-Hope,QC_LHP_DSS,NULL
+36794,L2304,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,22.800,14.074,230,10.94,402,435,Chute-Allard,QC_CAL_GSS,Rapide-des-Coeurs,QC_RPC_GSS,NULL
+36795,L2305,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,28.500,17.593,230,13.68,402,435,Rapide-des-Coeurs,QC_RPC_GSS,Rapide-Blanc,QC_RPB_TSS,NULL
+36796,L2306,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,21.000,12.963,230,10.08,402,435,Sherbrooke,QC_SHR_TSS,Des Cantons,QC_DEC_TSS,NULL
+36797,L2307,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,21.000,12.963,230,10.08,402,435,Sherbrooke,QC_SHR_TSS,Des Cantons,QC_DEC_TSS,NULL
+36798,L2308,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,21.000,12.963,230,10.08,402,435,Sherbrooke,QC_SHR_TSS,Des Cantons,QC_DEC_TSS,NULL
+36799,L2311,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,62.700,38.704,230,30.10,402,435,LÃƒÂ©vis,QC_LVS_DSS,Bourget,QC_BGT_DSS,NULL
+36800,L2311,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,62.700,38.704,230,30.10,402,435,Bourget,QC_BGT_DSS,La Durantaye,QC_LAD_DSS,NULL
+36801,L2311,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,62.700,38.704,230,30.10,402,435,La Durantaye,QC_LAD_DSS,Montmagny,QC_MNM_DSS,NULL
+36802,L2312,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,62.700,38.704,230,30.10,402,435,LÃƒÂ©vis,QC_LVS_DSS,Bourget,QC_BGT_DSS,NULL
+36803,L2312,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,62.700,38.704,230,30.10,402,435,Bourget,QC_BGT_DSS,La Durantaye,QC_LAD_DSS,NULL
+36804,L2312,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,62.700,38.704,230,30.10,402,435,La Durantaye,QC_LAD_DSS,Montmagny,QC_MNM_DSS,NULL
+36805,L2313,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,96.900,59.815,230,46.51,383,414,Trois-Pistoles,QC_TRP_DSS,Rimouski,QC_RIM_TSS,NULL
+36806,L2313,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,96.900,59.815,230,46.51,383,414,RiviÃƒÂ¨re-du-Loup,QC_RDL_TSS,Trois-Pistoles,QC_TRP_DSS,NULL
+36807,L2314,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,96.900,59.815,230,46.51,383,414,Trois-Pistoles,QC_TRP_DSS,Rimouski,QC_RIM_TSS,NULL
+36808,L2314,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,96.900,59.815,230,46.51,383,414,RiviÃƒÂ¨re-du-Loup,QC_RDL_TSS,Trois-Pistoles,QC_TRP_DSS,NULL
+36809,L2317,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,1.000,0.617,230,0.48,402,435,Sorel,QC_SOR_DSS,Qit-Fer-et-Titane,QC_QFT_ISS,NULL
+36810,L2318,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.000,0.617,1.000,0.617,230,0.48,402,435,Sorel,QC_SOR_DSS,Qit-Fer-et-Titane,QC_QFT_ISS,NULL
+36811,L2319,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,42.000,25.926,230,20.16,402,435,Saint-Basile,QC_SAB_DSS,Boucherville,QC_BCH_TSS,NULL
+36812,L2319,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.875,17.824,42.000,25.926,230,20.16,402,435,Saint-CÃƒÂ©saire,QC_SCS_DSS,Saint-Basile,QC_SAB_DSS,NULL
+36813,L2320,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,47.250,29.167,47.250,29.167,230,22.68,402,435,Varennes,QC_VRN_DSS,Sorel-Sud,QC_SRS_DSS,NULL
+36814,L2321,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,13.125,8.102,230,6.30,402,435,Boucherville,QC_BCH_TSS,Varennes,QC_VRN_DSS,NULL
+36815,L2322,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,18.375,11.343,230,8.82,402,435,Sidbec-Dosco,QC_SDD_ISS,Carignan,QC_CRG_TSS,NULL
+36816,L2323,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,22.575,13.935,230,10.84,402,435,Varennes,QC_VRN_DSS,Mittal Canada Inc Contrecoeur,QC_MTC_ISS,NULL
+36817,L2323,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.200,2.593,22.575,13.935,230,10.84,402,435,Mittal Canada Inc Contrecoeur,QC_MTC_ISS,Sidbec-Dosco,QC_SDD_ISS,NULL
+36818,L2324,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,42.000,25.926,230,20.16,402,435,Saint-Basile,QC_SAB_DSS,Boucherville,QC_BCH_TSS,NULL
+36819,L2324,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.875,17.824,42.000,25.926,230,20.16,402,435,Saint-CÃƒÂ©saire,QC_SCS_DSS,Saint-Basile,QC_SAB_DSS,NULL
+36820,L2325,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,231.420,142.852,230,111.08,215,233,LIsle Maligne,QC_LIM_ISS,Alma,QC_ALM_DSS,NULL
+36821,L2325,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,216.600,133.704,231.420,142.852,230,111.08,215,233,Alma,QC_ALM_DSS,Charlesbourg,QC_CHB_DSS,NULL
+36822,L2325,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,9.120,5.630,231.420,142.852,230,111.08,215,233,Charlesbourg,QC_CHB_DSS,QuÃƒÂ©bec,QC_QBC_TSS,NULL
+36823,L2326,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,5.700,3.519,230,2.74,402,435,LIsle Maligne,QC_LIM_ISS,Alma,QC_ALM_DSS,NULL
+36824,L2327,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,14.175,8.750,230,6.80,402,435,Varennes,QC_VRN_DSS,PÃƒÂ©tremont Inc,QC_PMT_ISS,NULL
+36825,L2327,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,14.175,8.750,230,6.80,402,435,Boucherville,QC_BCH_TSS,Varennes,QC_VRN_DSS,NULL
+36826,L2328,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,18.375,11.343,42.000,25.926,230,20.16,402,435,Rouville,QC_RVL_DSS,Boucherville,QC_BCH_TSS,NULL
+36827,L2328,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,23.625,14.583,42.000,25.926,230,20.16,402,435,Saint-CÃƒÂ©saire,QC_SCS_DSS,Rouville,QC_RVL_DSS,NULL
+36828,L2329,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,7.875,4.861,230,3.78,402,435,Thetford,QC_THT_DSS,Appalaches,QC_APP_TSS,NULL
+36829,L2330,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.000,4.938,8.000,4.938,230,3.84,402,435,QuÃƒÂ©bec,QC_QBC_TSS,La SuÃƒÂ¨te,QC_LST_DSS,NULL
+36830,L2331,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,159.600,98.519,159.600,98.519,230,76.61,275,298,Trenche,QC_TRC_GSS,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,NULL
+36831,L2332,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.600,5.309,8.600,5.309,230,4.13,402,435,Carignan,QC_CRG_TSS,Sorel,QC_SOR_DSS,NULL
+36832,L2333,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.000,6.173,10.000,6.173,230,4.80,402,435,ChaudiÃƒÂ¨re,QC_CHU_DSS,LÃƒÂ©vis,QC_LVS_DSS,NULL
+36833,L2334,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,12.000,7.407,230,5.76,402,435,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,Cap-de-la-Madeleine,QC_CPM_DSS,NULL
+36834,L2334,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.000,3.086,12.000,7.407,230,5.76,402,435,Chenaux,QC_CHE_DSS,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,NULL
+36835,L2336,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.600,5.309,16.600,10.247,230,7.97,402,435,Carignan,QC_CRG_TSS,Sorel,QC_SOR_DSS,NULL
+36836,L2336,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.000,4.938,16.600,10.247,230,7.97,402,435,Sorel,QC_SOR_DSS,Sorel-Sud,QC_SRS_DSS,NULL
+36837,L2337,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,7.000,4.321,230,3.36,402,435,Laurentides,QC_LDS_TSS,QuÃƒÂ©bec,QC_QBC_TSS,NULL
+36838,L2338,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.000,6.173,10.000,6.173,230,4.80,402,435,ChaudiÃƒÂ¨re,QC_CHU_DSS,LÃƒÂ©vis,QC_LVS_DSS,NULL
+36839,L2340,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,34.200,21.111,230,16.42,402,435,Saint-Ulric-Saint-LÃƒÂ©andre,QC_SUL_GSS,Le Nordais-1,QC_LN1_GSS,NULL
+36840,L2340,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,34.200,21.111,230,16.42,402,435,Le Nordais-1,QC_LN1_GSS,Matane,QC_MAT_DSS,NULL
+36841,L2340,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,34.200,21.111,230,16.42,402,435,Les Boules,QC_LBS_TSS,Saint-Ulric-Saint-LÃƒÂ©andre,QC_SUL_GSS,NULL
+36842,L2341,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,68.400,42.222,102.600,63.333,230,49.25,368,399,Matane,QC_MAT_DSS,GoÃƒÂ©mon,QC_GOE_TSS,NULL
+36843,L2341,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,102.600,63.333,230,49.25,368,399,Spruce Falls Inc,QC_SPF_ISS,Matane,QC_MAT_DSS,NULL
+36844,L2341,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,102.600,63.333,230,49.25,368,399,Les Boules,QC_LBS_TSS,Spruce Falls Inc,QC_SPF_ISS,NULL
+36845,L2342,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.500,1.543,2.500,1.543,230,1.20,402,435,Des HÃƒÂªtres,QC_DEH_DSS,Alcan Usine Shawinigan,QC_AUS_ISS,NULL
+36846,L2343,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.000,2.469,4.000,2.469,230,1.92,402,435,BÃƒÂ©cancour,QC_BEC_TSS,Trans Canada Ãƒâ€°nergie,QC_TCE_ISS,NULL
+36847,L2344,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.000,3.086,5.000,3.086,230,2.40,402,435,BÃƒÂ©cancour,QC_BEC_TSS,Trans Canada Ãƒâ€°nergie,QC_TCE_ISS,NULL
+36848,L2345,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,12.000,7.407,230,5.76,402,435,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,Cap-de-la-Madeleine,QC_CPM_DSS,NULL
+36849,L2345,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.000,3.086,12.000,7.407,230,5.76,402,435,Chenaux,QC_CHE_DSS,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,NULL
+36850,L2346,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,10.000,6.173,10.000,6.173,230,4.80,402,435,Mauricie,QC_MAU_TSS,La Gabelle,QC_LAG_GSS,NULL
+36851,L2349,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,69.400,42.840,230,33.31,402,435,Le Nordais-2,QC_LN2_GSS,GoÃƒÂ©mon,QC_GOE_TSS,NULL
+36852,L2349,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,58.000,35.802,69.400,42.840,230,33.31,402,435,Matane,QC_MAT_DSS,Le Nordais-2,QC_LN2_GSS,NULL
+36853,L2350,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,69.400,42.840,230,33.31,402,435,Le Nordais-2,QC_LN2_GSS,GoÃƒÂ©mon,QC_GOE_TSS,NULL
+36854,L2350,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,58.000,35.802,69.400,42.840,230,33.31,402,435,Matane,QC_MAT_DSS,Le Nordais-2,QC_LN2_GSS,NULL
+36855,L2351,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,96.900,59.815,230,46.51,383,414,PaspÃƒÂ©biac,QC_PSP_DSS,CascapÃƒÂ©dia,QC_CSC_DSS,NULL
+36856,L2351,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,96.900,59.815,230,46.51,383,414,Micmac,QC_MCM_DSS,PaspÃƒÂ©biac,QC_PSP_DSS,NULL
+36857,L2352,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,96.900,59.815,230,46.51,383,414,PaspÃƒÂ©biac,QC_PSP_DSS,CascapÃƒÂ©dia,QC_CSC_DSS,NULL
+36858,L2352,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,96.900,59.815,230,46.51,383,414,Micmac,QC_MCM_DSS,PaspÃƒÂ©biac,QC_PSP_DSS,NULL
+36859,L2353,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,7.980,4.926,230,3.83,402,435,Micmac,QC_MCM_DSS,GaspÃƒÂ©sia,QC_GSA_ISS,NULL
+36860,L2354,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.500,1.543,2.500,1.543,230,1.20,402,435,BÃƒÂ©cancour,QC_BEC_TSS,Aluminerie-de-BÃƒÂ©cancour,QC_ABC_ISS,NULL
+36861,L2355,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.500,1.543,2.500,1.543,230,1.20,402,435,BÃƒÂ©cancour,QC_BEC_TSS,Aluminerie-de-BÃƒÂ©cancour,QC_ABC_ISS,NULL
+36862,L2356,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,63.000,38.889,65.625,40.509,230,31.50,402,435,Sorel,QC_SOR_DSS,Francheville,QC_FRA_DSS,NULL
+36863,L2356,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.625,1.620,65.625,40.509,230,31.50,402,435,Francheville,QC_FRA_DSS,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,NULL
+36864,L2357,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.100,6.235,10.100,6.235,230,4.85,402,435,New Richmond,QC_NRD_GSS,CascapÃƒÂ©dia,QC_CSC_DSS,Line name assumed
+36865,L2358,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,92.500,57.099,142.500,87.963,230,68.40,297,321,Beaumont GS,QC_BMT_GSS,MÃƒÂ©kanic,QC_MEK_DSS,NULL
+36866,L2358,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,50.000,30.864,142.500,87.963,230,68.40,297,321,MÃƒÂ©kanic,QC_MEK_DSS,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,NULL
+36867,L2360,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,42.000,25.926,42.000,25.926,230,20.16,402,435,Heriot,QC_HER_TSS,Nicolet,QC_NIC_TSS,NULL
+36868,L2361,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,42.000,25.926,42.000,25.926,230,20.16,402,435,Heriot,QC_HER_TSS,Nicolet,QC_NIC_TSS,NULL
+36869,L2366,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,7.000,4.321,230,3.36,402,435,Laurentides,QC_LDS_TSS,QuÃƒÂ©bec,QC_QBC_TSS,NULL
+36870,L2367,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,12.000,7.407,12.000,7.407,230,5.76,402,435,La SuÃƒÂ¨te,QC_LST_DSS,ChaudiÃƒÂ¨re,QC_CHU_DSS,NULL
+36871,L2369,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.000,6.173,10.000,6.173,230,4.80,402,435,Laurentides,QC_LDS_TSS,La SuÃƒÂ¨te,QC_LST_DSS,NULL
+36872,L2370,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,91.200,56.296,93.480,57.704,230,44.87,392,424,La Tuque,QC_LTU_GSS,Emballages-Smurfit-Stone La Tuque,QC_EST_ISS,Line name assumed
+36873,L2370,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,93.480,57.704,230,44.87,392,424,Des HÃƒÂªtres,QC_DEH_DSS,La Tuque,QC_LTU_GSS,NULL
+36874,L2371,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.000,10.494,17.000,10.494,230,8.16,402,435,Mauricie,QC_MAU_TSS,Des HÃƒÂªtres,QC_DEH_DSS,NULL
+36875,L2372,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,16.000,9.877,16.000,9.877,230,7.68,402,435,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,Mauricie,QC_MAU_TSS,NULL
+36876,L2373,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,7.875,4.861,230,3.78,402,435,Thetford,QC_THT_DSS,Antoine-Lemieux,QC_ANL_DSS,NULL
+36877,L2374,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,55.125,34.028,55.125,34.028,230,26.46,402,435,Thetford,QC_THT_DSS,Beauceville,QC_BCV_TSS,NULL
+36878,L2375,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,7.875,4.861,230,3.78,402,435,Thetford,QC_THT_DSS,Appalaches,QC_APP_TSS,NULL
+36879,L2376,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.125,21.065,34.125,21.065,230,16.38,402,435,Nicolet,QC_NIC_TSS,Kingsey,QC_KSY_TSS,NULL
+36880,L2377,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.125,21.065,34.125,21.065,230,16.38,402,435,Nicolet,QC_NIC_TSS,Kingsey,QC_KSY_TSS,NULL
+36881,L2378,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.000,10.494,17.000,10.494,230,8.16,402,435,Mauricie,QC_MAU_TSS,Des HÃƒÂªtres,QC_DEH_DSS,NULL
+36882,L2379,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.000,6.173,28.625,17.670,230,13.74,402,435,Mauricie,QC_MAU_TSS,La Gabelle,QC_LAG_GSS,NULL
+36883,L2379,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,16.000,9.877,28.625,17.670,230,13.74,402,435,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,Mauricie,QC_MAU_TSS,NULL
+36884,L2379,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.625,1.620,28.625,17.670,230,13.74,402,435,Francheville,QC_FRA_DSS,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,NULL
+36885,L2380,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,153.900,95.000,153.900,95.000,230,73.87,282,305,Rapide-Blanc,QC_RPB_TSS,Des HÃƒÂªtres,QC_DEH_DSS,NULL
+36886,L2381,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,42.000,25.926,42.000,25.926,230,20.16,402,435,Nicolet,QC_NIC_TSS,BÃƒÂ©cancour,QC_BEC_TSS,NULL
+36887,L2382,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,42.000,25.926,42.000,25.926,230,20.16,402,435,Nicolet,QC_NIC_TSS,BÃƒÂ©cancour,QC_BEC_TSS,NULL
+36888,L2383,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,44.625,27.546,52.125,32.176,230,25.02,402,435,Nicolet,QC_NIC_TSS,BÃƒÂ©cancour,QC_BEC_TSS,NULL
+36889,L2383,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.500,4.630,52.125,32.176,230,25.02,402,435,BÃƒÂ©cancour,QC_BEC_TSS,BÃƒÂ©cancour GS,QC_BEC_GSS,NULL
+36890,L2384,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,13.125,8.102,230,6.30,402,435,MÃƒÂ©tallurgie Magnola Inc,QC_MMI_ISS,Kingsey,QC_KSY_TSS,NULL
+36891,L2385,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,30.000,18.519,30.000,18.519,230,14.40,402,435,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,BÃƒÂ©cancour,QC_BEC_TSS,NULL
+36892,L2386,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.500,4.630,7.500,4.630,230,3.60,402,435,BÃƒÂ©cancour,QC_BEC_TSS,BÃƒÂ©cancour GS,QC_BEC_GSS,NULL
+36893,L2387,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,45.600,28.148,230,21.89,402,435,Rimouski,QC_RIM_TSS,Jules-A.-Brillant,QC_JUB_DSS,NULL
+36894,L2387,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,45.600,28.148,230,21.89,402,435,Mont-Joli,QC_MTJ_DSS,Les Boules,QC_LBS_TSS,NULL
+36895,L2387,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,45.600,28.148,230,21.89,402,435,Jules-A.-Brillant,QC_JUB_DSS,Mont-Joli,QC_MTJ_DSS,NULL
+36896,L2388,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,45.600,28.148,230,21.89,402,435,Rimouski,QC_RIM_TSS,Jules-A.-Brillant,QC_JUB_DSS,NULL
+36897,L2388,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,45.600,28.148,230,21.89,402,435,Mont-Joli,QC_MTJ_DSS,Les Boules,QC_LBS_TSS,NULL
+36898,L2388,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,45.600,28.148,230,21.89,402,435,Jules-A.-Brillant,QC_JUB_DSS,Mont-Joli,QC_MTJ_DSS,NULL
+36899,L2389,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,7.000,4.321,230,3.36,402,435,Trois-RiviÃƒÂ¨res,QC_TRR_SWS,Kruger Inc Trois-RiviÃƒÂ¨res,QC_KRT_ISS,NULL
+36900,L2392,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,74.100,45.741,230,35.57,402,435,Saint-Ulric-Saint-LÃƒÂ©andre,QC_SUL_GSS,Le Nordais-2,QC_LN2_GSS,NULL
+36901,L2392,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,74.100,45.741,230,35.57,402,435,Rimouski,QC_RIM_TSS,Les Boules,QC_LBS_TSS,NULL
+36902,L2392,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,74.100,45.741,230,35.57,402,435,Le Nordais-1,QC_LN1_GSS,Matane,QC_MAT_DSS,NULL
+36903,L2392,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,74.100,45.741,230,35.57,402,435,Les Boules,QC_LBS_TSS,Saint-Ulric-Saint-LÃƒÂ©andre,QC_SUL_GSS,NULL
+36904,L2393,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,39.900,24.630,230,19.15,402,435,Rimouski,QC_RIM_TSS,Les Boules,QC_LBS_TSS,NULL
+36905,L2394,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,85.500,52.778,230,41.04,402,435,LAnse Pleureuse,QC_LPL_DSS,Gros-Morne,QC_GRM_GSS,NULL
+36906,L2394,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,85.500,52.778,230,41.04,402,435,Mont-Louis,QC_MTL_GSS,LAnse Pleureuse,QC_LPL_DSS,NULL
+36907,L2394,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,68.400,42.222,85.500,52.778,230,41.04,402,435,GoÃƒÂ©mon,QC_GOE_TSS,Mont-Louis,QC_MTL_GSS,NULL
+36908,L2396,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.100,10.556,85.500,52.778,230,41.04,402,435,Mont-Louis,QC_MTL_GSS,Gros-Morne,QC_GRM_GSS,NULL
+36909,L2396,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,68.400,42.222,85.500,52.778,230,41.04,402,435,GoÃƒÂ©mon,QC_GOE_TSS,Mont-Louis,QC_MTL_GSS,NULL
+36910,L2397,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,96.900,59.815,230,46.51,383,414,CascapÃƒÂ©dia,QC_CSC_DSS,Carleton,QC_CLT_GSS,NULL
+36911,L2397,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,62.700,38.704,96.900,59.815,230,46.51,383,414,Carleton,QC_CLT_GSS,MatapÃƒÂ©dia,QC_MTP_DSS,NULL
+36912,L2398,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,96.900,59.815,230,46.51,383,414,CascapÃƒÂ©dia,QC_CSC_DSS,Carleton,QC_CLT_GSS,NULL
+36913,L2398,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,62.700,38.704,96.900,59.815,230,46.51,383,414,Carleton,QC_CLT_GSS,MatapÃƒÂ©dia,QC_MTP_DSS,NULL
+36914,L2399,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,65.625,40.509,65.625,40.509,230,31.50,402,435,Beauceville,QC_BCV_TSS,LÃƒÂ©vis,QC_LVS_DSS,NULL
+36915,L2403,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.750,8.488,13.750,8.488,230,6.60,402,435,Outaouais,QC_OUT_TSS,Masson-Sud,QC_MSS_DSS,NULL
+36916,L2404,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.750,8.488,13.750,8.488,230,6.60,402,435,Outaouais,QC_OUT_TSS,Masson-Sud,QC_MSS_DSS,NULL
+36917,L2405,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,3.500,2.160,3.500,2.160,230,1.68,402,435,Charlesbourg,QC_CHB_DSS,Frontenac-1,QC_FR1_DSS,NULL
+36918,L2406,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,3.500,2.160,3.500,2.160,230,1.68,402,435,Laurentides,QC_LDS_TSS,Charlesbourg,QC_CHB_DSS,NULL
+36919,L2407,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.800,0.494,5.800,3.580,230,2.78,402,435,Limoilou,QC_LLL_DSS,Compagnie Papiers Stadacona S.E.C.,QC_CPS_ISS,NULL
+36920,L2407,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.000,3.086,5.800,3.580,230,2.78,402,435,QuÃƒÂ©bec,QC_QBC_TSS,Limoilou,QC_LLL_DSS,NULL
+36921,L2408,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.000,3.086,5.000,3.086,230,2.40,402,435,QuÃƒÂ©bec,QC_QBC_TSS,Limoilou,QC_LLL_DSS,Line name assumed
+36922,L3001,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,387.600,239.259,387.600,239.259,315,175.68,303,366,Bersimis-1,QC_BS1_GSS,Laurentides,QC_LDS_TSS,NULL
+36923,L3002,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,387.600,239.259,387.600,239.259,315,175.68,303,366,Bersimis-1,QC_BS1_GSS,Laurentides,QC_LDS_TSS,NULL
+36924,L3003,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,387.600,239.259,387.600,239.259,315,175.68,303,366,Bersimis-1,QC_BS1_GSS,Laurentides,QC_LDS_TSS,NULL
+36925,L3004,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,387.600,239.259,387.600,239.259,315,175.68,303,366,Bersimis-1,QC_BS1_GSS,Laurentides,QC_LDS_TSS,NULL
+36926,L3005,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,47.250,29.167,131.250,81.019,315,59.49,618,748,Bout-de-lÃƒÅ½le,QC_BDI_DSS,LanaudiÃƒÂ¨re,QC_LND_TSS,NULL
+36927,L3005,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,84.000,51.852,131.250,81.019,315,59.49,618,748,LanaudiÃƒÂ¨re,QC_LND_TSS,Mauricie,QC_MAU_TSS,NULL
+36928,L3006,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,21.000,12.963,315,9.52,794,960,Laurentides,QC_LDS_TSS,Anne-HÃƒÂ©bert,QC_ANH_DSS,NULL
+36929,L3007,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,28.875,17.824,315,13.09,794,960,Saint-Bruno-de-Montarville,QC_SBM_DSS,Boucherville,QC_BCH_TSS,NULL
+36930,L3007,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,28.875,17.824,315,13.09,794,960,La Prairie,QC_LPR_TSS,Brossard,QC_BRS_DSS,NULL
+36931,L3007,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,28.875,17.824,315,13.09,794,960,Brossard,QC_BRS_DSS,Saint-Bruno-de-Montarville,QC_SBM_DSS,NULL
+36932,L3008,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,28.875,17.824,315,13.09,794,960,Saint-Bruno-de-Montarville,QC_SBM_DSS,Boucherville,QC_BCH_TSS,NULL
+36933,L3008,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,28.875,17.824,315,13.09,794,960,La Prairie,QC_LPR_TSS,Brossard,QC_BRS_DSS,NULL
+36934,L3008,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,28.875,17.824,315,13.09,794,960,Brossard,QC_BRS_DSS,Saint-Bruno-de-Montarville,QC_SBM_DSS,NULL
+36935,L3009,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,34.200,21.111,315,15.50,794,960,Bersimis-2,QC_BS2_GSS,Bersimis-1,QC_BS1_GSS,NULL
+36936,L3010,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,62.700,38.704,74.100,45.741,315,33.59,794,960,Bersimis-2,QC_BS2_GSS,Hauterive,QC_HTR_DSS,NULL
+36937,L3010,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,74.100,45.741,315,33.59,794,960,Manicouagan,QC_MGN_TSS,Hauterive,QC_HTR_DSS,NULL
+36938,L3011,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,102.600,63.333,250.800,154.815,315,113.67,403,488,Les Basques,QC_BSQ_DSS,Charlevoix,QC_CHX_DSS,NULL
+36939,L3011,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,148.200,91.481,250.800,154.815,315,113.67,403,488,Bersimis-2,QC_BS2_GSS,Les Basques,QC_BSQ_DSS,NULL
+36940,L3012,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,148.200,91.481,148.200,91.481,315,67.17,571,690,Bersimis-2,QC_BS2_GSS,Les Basques,QC_BSQ_DSS,NULL
+36941,L3013,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,11.400,7.037,315,5.17,794,960,Manicouagan,QC_MGN_TSS,Hauterive,QC_HTR_DSS,NULL
+36942,L3014,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,11.400,7.037,315,5.17,794,960,Manicouagan,QC_MGN_TSS,Hauterive,QC_HTR_DSS,NULL
+36943,L3015,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,78.750,48.611,78.750,48.611,315,35.69,794,960,Mauricie,QC_MAU_TSS,LanaudiÃƒÂ¨re,QC_LND_TSS,NULL
+36944,L3016,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,55.125,34.028,315,24.98,794,960,Lachenaie,QC_LAC_DSS,Bout-de-lÃƒÅ½le,QC_BDI_DSS,NULL
+36945,L3016,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,55.125,34.028,315,24.98,794,960,Pierre-Le Gardeur,QC_PLG_TSS,Lachenaie,QC_LAC_DSS,NULL
+36946,L3016,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.375,24.306,55.125,34.028,315,24.98,794,960,LanaudiÃƒÂ¨re,QC_LND_TSS,Pierre-Le Gardeur,QC_PLG_TSS,NULL
+36947,L3017,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.000,2.469,46.374,28.626,315,21.02,794,960,Saint-Michel,QC_SMC_DSS,Anjou,QC_ANJ_DSS,NULL
+36948,L3017,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.000,2.469,46.374,28.626,315,21.02,794,960,Saint-Michel,QC_SMC_DSS,Anjou,QC_ANJ_DSS,NULL
+36949,L3017,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.650,4.105,46.374,28.626,315,21.02,794,960,Henri-Bourassa,QC_BOU_DSS,Bout-de-lÃƒÅ½le,QC_BDI_DSS,Bourassa and Henri Bourassa treated as single station
+36950,L3017,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.394,1.478,46.374,28.626,120,19.51,107,118,Fleury,QC_FLE_DSS,Charland,QC_CLD_DSS,NULL
+36951,L3017,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.330,0.821,46.374,28.626,315,21.02,794,960,MontrÃƒÂ©al-Est,QC_MTE_DSS,Henri-Bourassa,QC_BOU_DSS,Bourassa and Henri Bourassa treated as single station
+36952,L3017,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.000,6.173,46.374,28.626,315,21.02,794,960,Anjou,QC_ANJ_DSS,MontrÃƒÂ©al-Est,QC_MTE_DSS,NULL
+36953,L3017,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.000,6.173,46.374,28.626,315,21.02,794,960,Anjou,QC_ANJ_DSS,MontrÃƒÂ©al-Est,QC_MTE_DSS,NULL
+36954,L3017,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.000,2.469,46.374,28.626,315,21.02,794,960,Charland,QC_CLD_DSS,Saint-Michel,QC_SMC_DSS,NULL
+36955,L3017,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.000,2.469,46.374,28.626,315,21.02,794,960,Charland,QC_CLD_DSS,Saint-Michel,QC_SMC_DSS,NULL
+36956,L3019,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.192,1.970,11.067,6.831,315,5.02,794,960,Bout-de-lÃƒÅ½le,QC_BDI_DSS,Boucherville,QC_BCH_TSS,NULL
+36957,L3019,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,11.067,6.831,315,5.02,794,960,Lachenaie,QC_LAC_DSS,Bout-de-lÃƒÅ½le,QC_BDI_DSS,NULL
+36958,L3020,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,136.800,84.444,136.800,84.444,315,62.00,602,728,Les Basques,QC_BSQ_DSS,Baie-Saint-Paul,QC_BSP_DSS,NULL
+36959,L3021,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,7.980,4.926,315,3.62,794,960,Manicouagan,QC_MGN_TSS,Manic-2,QC_MC2_GSS,NULL
+36960,L3022,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,7.980,4.926,315,3.62,794,960,Manicouagan,QC_MGN_TSS,Manic-2,QC_MC2_GSS,NULL
+36961,L3023,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,7.980,4.926,315,3.62,794,960,Manicouagan,QC_MGN_TSS,Manic-2,QC_MC2_GSS,NULL
+36962,L3024,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,7.980,4.926,315,3.62,794,960,Manicouagan,QC_MGN_TSS,Manic-2,QC_MC2_GSS,NULL
+36963,L3026,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,5.700,3.519,315,2.58,794,960,Hauterive,QC_HTR_DSS,Outardes-2,QC_OT2_GSS,NULL
+36964,L3027,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,9.120,5.630,9.120,5.630,315,4.13,794,960,Manic-3,QC_MC3_GSS,Micoua,QC_MIC_TSS,NULL
+36965,L3028,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,9.120,5.630,9.120,5.630,315,4.13,794,960,Manic-3,QC_MC3_GSS,Micoua,QC_MIC_TSS,NULL
+36966,L3029,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,34.200,21.111,315,15.50,794,960,Outardes-3,QC_OT3_GSS,Manicouagan,QC_MGN_TSS,NULL
+36967,L3030,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,34.200,21.111,315,15.50,794,960,Outardes-3,QC_OT3_GSS,Manicouagan,QC_MGN_TSS,NULL
+36968,L3031,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,114.000,70.370,114.000,70.370,315,51.67,679,821,Micoua,QC_MIC_TSS,Manic-5,QC_MC5_GSS,NULL
+36969,L3032,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,114.000,70.370,114.000,70.370,315,51.67,679,821,Micoua,QC_MIC_TSS,Manic-5,QC_MC5_GSS,NULL
+36970,L3033,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,114.000,70.370,114.000,70.370,315,51.67,679,821,Micoua,QC_MIC_TSS,Manic-5A,QC_M5A_GSS,NULL
+36971,L3034,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,114.000,70.370,114.000,70.370,315,51.67,679,821,Micoua,QC_MIC_TSS,Manic-5A,QC_M5A_GSS,NULL
+36972,L3035,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,11.400,7.037,315,5.17,794,960,Micoua,QC_MIC_TSS,Outardes-4,QC_OT4_GSS,NULL
+36973,L3036,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,11.400,7.037,315,5.17,794,960,Micoua,QC_MIC_TSS,Outardes-4,QC_OT4_GSS,NULL
+36974,L3039,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.420,2.111,147.060,90.778,315,66.65,574,694,Normand,QC_NRM_DSS,Lac Bloom,QC_LBM_ISS,NULL
+36975,L3039,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,143.640,88.667,147.060,90.778,315,66.65,574,694,Lac Bloom,QC_LBM_ISS,Montagnais,QC_MTG_TSS,NULL
+36976,L3040,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,15.750,9.722,28.875,17.824,315,13.09,794,960,Chomedey,QC_CHO_TSS,Blainville,QC_BLV_DSS,NULL
+36977,L3040,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,13.125,8.102,28.875,17.824,315,13.09,794,960,Blainville,QC_BLV_DSS,ChÃƒÂ©nier,QC_CHN_TSS,NULL
+36978,L3041,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,15.750,9.722,28.875,17.824,315,13.09,794,960,Chomedey,QC_CHO_TSS,Blainville,QC_BLV_DSS,NULL
+36979,L3041,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,13.125,8.102,28.875,17.824,315,13.09,794,960,Blainville,QC_BLV_DSS,ChÃƒÂ©nier,QC_CHN_TSS,NULL
+36980,L3042,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.394,1.478,2.394,1.478,315,1.09,794,960,Viger,QC_VIG_SWS,Guy,QC_GUY_DSS,NULL
+36981,L3043,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.394,1.478,2.394,1.478,315,1.09,794,960,Viger,QC_VIG_SWS,Guy,QC_GUY_DSS,NULL
+36982,L3044,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,21.210,13.093,315,9.61,794,960,Roussillon,QC_RSN_DSS,Hertel,QC_HRT_TSS,NULL
+36983,L3044,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.960,9.852,21.210,13.093,315,9.61,794,960,Aqueduc,QC_AQD_TSS,Roussillon,QC_RSN_DSS,NULL
+36984,L3045,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.250,3.241,21.210,13.093,315,9.61,794,960,Roussillon,QC_RSN_DSS,Hertel,QC_HRT_TSS,NULL
+36985,L3045,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.960,9.852,21.210,13.093,315,9.61,794,960,Aqueduc,QC_AQD_TSS,Roussillon,QC_RSN_DSS,NULL
+36986,L3046,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.793,1.724,29.127,17.980,315,13.20,794,960,Sources,QC_SOU_DSS,Saint-Jean,QC_SJE_DSS,NULL
+36987,L3046,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.546,13.300,29.127,17.980,315,13.20,794,960,Duvernay,QC_DUV_TSS,Saraguay,QC_SRG_DSS,NULL
+36988,L3046,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,29.127,17.980,315,13.20,794,960,Saraguay,QC_SRG_DSS,Sources,QC_SOU_DSS,NULL
+36989,L3047,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.793,1.724,29.127,17.980,315,13.20,794,960,Sources,QC_SOU_DSS,Saint-Jean,QC_SJE_DSS,NULL
+36990,L3047,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.546,13.300,29.127,17.980,315,13.20,794,960,Duvernay,QC_DUV_TSS,Saraguay,QC_SRG_DSS,NULL
+36991,L3047,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,29.127,17.980,315,13.20,794,960,Saraguay,QC_SRG_DSS,Sources,QC_SOU_DSS,NULL
+36992,L3048,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.182,4.433,21.546,13.300,315,9.77,794,960,Duvernay,QC_DUV_TSS,Le Corbusier,QC_LEC_DSS,NULL
+36993,L3048,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,14.364,8.867,21.546,13.300,315,9.77,794,960,Le Corbusier,QC_LEC_DSS,Saraguay,QC_SRG_DSS,NULL
+36994,L3049,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.182,4.433,14.364,8.867,315,6.51,794,960,Le Corbusier,QC_LEC_DSS,Chomedey,QC_CHO_TSS,NULL
+36995,L3049,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.182,4.433,14.364,8.867,315,6.51,794,960,Duvernay,QC_DUV_TSS,Le Corbusier,QC_LEC_DSS,NULL
+36996,L3050,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.000,2.469,28.374,17.515,315,12.86,794,960,Saint-Michel,QC_SMC_DSS,Anjou,QC_ANJ_DSS,NULL
+36997,L3050,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.650,4.105,28.374,17.515,315,12.86,794,960,Henri-Bourassa,QC_BOU_DSS,Bout-de-lÃƒÅ½le,QC_BDI_DSS,Bourassa and Henri Bourassa treated as single station
+36998,L3050,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.394,1.478,28.374,17.515,120,11.94,107,118,Fleury,QC_FLE_DSS,Charland,QC_CLD_DSS,NULL
+36999,L3050,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.330,0.821,28.374,17.515,315,12.86,794,960,MontrÃƒÂ©al-Est,QC_MTE_DSS,Henri-Bourassa,QC_BOU_DSS,Bourassa and Henri Bourassa treated as single station
+37000,L3050,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.000,6.173,28.374,17.515,315,12.86,794,960,Anjou,QC_ANJ_DSS,MontrÃƒÂ©al-Est,QC_MTE_DSS,NULL
+37001,L3050,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.000,2.469,28.374,17.515,315,12.86,794,960,Charland,QC_CLD_DSS,Saint-Michel,QC_SMC_DSS,NULL
+37002,L3052,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,79.800,49.259,112.800,69.630,315,51.13,683,827,Petite-Nation,QC_PTN_TSS,ChÃƒÂ©nier,QC_CHN_TSS,NULL
+37003,L3052,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,33.000,20.370,112.800,69.630,315,51.13,683,827,Outaouais,QC_OUT_TSS,Petite-Nation,QC_PTN_TSS,NULL
+37004,L3053,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,79.800,49.259,112.800,69.630,315,51.13,683,827,Petite-Nation,QC_PTN_TSS,ChÃƒÂ©nier,QC_CHN_TSS,NULL
+37005,L3053,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,33.000,20.370,112.800,69.630,315,51.13,683,827,Outaouais,QC_OUT_TSS,Petite-Nation,QC_PTN_TSS,NULL
+37006,L3054,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,57.750,35.648,315,26.17,794,960,Patriotes,QC_PAT_DSS,ChÃƒÂ©nier,QC_CHN_TSS,NULL
+37007,L3054,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,36.750,22.685,57.750,35.648,315,26.17,794,960,Chomedey,QC_CHO_TSS,Patriotes,QC_PAT_DSS,NULL
+37008,L3055,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,57.750,35.648,315,26.17,794,960,Patriotes,QC_PAT_DSS,ChÃƒÂ©nier,QC_CHN_TSS,NULL
+37009,L3055,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,36.750,22.685,57.750,35.648,315,26.17,794,960,Chomedey,QC_CHO_TSS,Patriotes,QC_PAT_DSS,NULL
+37010,L3056,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.625,1.620,2.625,1.620,315,1.19,794,960,Boucherville,QC_BCH_TSS,Du Tremblay,QC_DUT_DSS,NULL
+37011,L3057,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,7.875,4.861,315,3.57,794,960,Du Tremblay,QC_DUT_DSS,Notre-Dame,QC_NDA_TSS,NULL
+37012,L3058,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,21.000,12.963,315,9.52,794,960,ChÃƒÂ©nier,QC_CHN_TSS,Lafontaine,QC_LAF_TSS,NULL
+37013,L3059,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,21.000,12.963,315,9.52,794,960,ChÃƒÂ©nier,QC_CHN_TSS,Lafontaine,QC_LAF_TSS,NULL
+37014,L3061,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.100,1.296,8.400,5.185,315,3.81,794,960,Du Tremblay,QC_DUT_DSS,Mittal Canada Inc,QC_MCI_ISS,NULL
+37015,L3061,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.300,3.889,8.400,5.185,315,3.81,794,960,Mittal Canada Inc,QC_MCI_ISS,Notre-Dame,QC_NDA_TSS,NULL
+37016,L3062,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.625,1.620,2.625,1.620,315,1.19,794,960,Hertel,QC_HRT_TSS,La Prairie,QC_LPR_TSS,NULL
+37017,L3063,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.625,1.620,2.625,1.620,315,1.19,794,960,Hertel,QC_HRT_TSS,La Prairie,QC_LPR_TSS,NULL
+37018,L3065,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,15.750,9.722,315,7.14,794,960,Viger,QC_VIG_SWS,Hertel,QC_HRT_TSS,NULL
+37019,L3066,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,15.750,9.722,315,7.14,794,960,Viger,QC_VIG_SWS,Hertel,QC_HRT_TSS,NULL
+37020,L3067,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,13.125,8.102,315,5.95,794,960,Jacques-Cartier,QC_JQC_TSS,Leneuf,QC_LNF_DSS,NULL
+37021,L3068,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.000,3.704,6.000,3.704,315,2.72,794,960,Laurentides,QC_LDS_TSS,NeufchÃƒÂ¢tel,QC_NEU_DSS,NULL
+37022,L3069,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,47.250,29.167,47.250,29.167,315,21.42,794,960,Duvernay,QC_DUV_TSS,LanaudiÃƒÂ¨re,QC_LND_TSS,NULL
+37023,L3070,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.000,4.938,15.188,9.375,315,6.88,794,960,Duvernay,QC_DUV_TSS,Anjou,QC_ANJ_DSS,NULL
+37024,L3070,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.400,1.481,15.188,9.375,315,6.88,794,960,Anjou,QC_ANJ_DSS,Langelier,QC_LGL_DSS,NULL
+37025,L3070,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,15.188,9.375,315,6.88,794,960,Langelier,QC_LGL_DSS,Notre-Dame,QC_NDA_TSS,NULL
+37026,L3071,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.000,4.938,15.188,9.375,315,6.88,794,960,Duvernay,QC_DUV_TSS,Anjou,QC_ANJ_DSS,NULL
+37027,L3071,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.400,1.481,15.188,9.375,315,6.88,794,960,Anjou,QC_ANJ_DSS,Langelier,QC_LGL_DSS,NULL
+37028,L3071,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,4.788,2.956,15.188,9.375,315,6.88,794,960,Langelier,QC_LGL_DSS,Notre-Dame,QC_NDA_TSS,NULL
+37029,L3072,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.399,0.246,3.192,1.970,315,1.45,794,960,Saint-Patrick,QC_SPK_DSS,Atwater,QC_ATW_DSS,NULL
+37030,L3072,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.793,1.724,3.192,1.970,315,1.45,794,960,Viger,QC_VIG_SWS,Saint-Patrick,QC_SPK_DSS,NULL
+37031,L3073,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,6.384,3.941,9.576,5.911,315,4.34,794,960,Aqueduc,QC_AQD_TSS,Atwater,QC_ATW_DSS,NULL
+37032,L3073,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.399,0.246,9.576,5.911,315,4.34,794,960,Saint-Patrick,QC_SPK_DSS,Des Irlandais,QC_IRL_DSS,NULL
+37033,L3073,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.394,1.478,9.576,5.911,315,4.34,794,960,Atwater,QC_ATW_DSS,Saint-Patrick,QC_SPK_DSS,NULL
+37034,L3073,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.399,0.246,9.576,5.911,315,4.34,794,960,Des Irlandais,QC_IRL_DSS,Viger,QC_VIG_SWS,NULL
+37035,L3078,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,136.800,84.444,176.700,109.074,315,80.09,508,615,LÃƒÂ©vis,QC_LVS_DSS,Kamouraska,QC_KAM_SWS,NULL
+37036,L3078,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,176.700,109.074,315,80.09,508,615,Kamouraska,QC_KAM_SWS,RiviÃƒÂ¨re-du-loup,QC_RDL_TSS,NULL
+37037,L3079,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,136.800,84.444,176.700,109.074,315,80.09,508,615,LÃƒÂ©vis,QC_LVS_DSS,Kamouraska_SCS,QC_KAM_SWS,NULL
+37038,L3079,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,176.700,109.074,315,80.09,508,615,Kamouraska_SCS,QC_KAM_SWS,RiviÃƒÂ¨re-du-loup,QC_RDL_TSS,NULL
+37039,L3080,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,136.800,84.444,176.700,109.074,315,80.09,508,615,LÃƒÂ©vis,QC_LVS_DSS,Kamouraska_SCS,QC_KAM_SWS,NULL
+37040,L3080,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,176.700,109.074,315,80.09,508,615,Kamouraska_SCS,QC_KAM_SWS,RiviÃƒÂ¨re-du-loup,QC_RDL_TSS,NULL
+37041,L3081,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,136.800,84.444,176.700,109.074,315,80.09,508,615,LÃƒÂ©vis,QC_LVS_DSS,Kamouraska_SCS,QC_KAM_SWS,NULL
+37042,L3081,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,176.700,109.074,315,80.09,508,615,Kamouraska_SCS,QC_KAM_SWS,RiviÃƒÂ¨re-du-loup,QC_RDL_TSS,NULL
+37043,L3082,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,91.200,56.296,91.200,56.296,315,41.34,786,951,RiviÃƒÂ¨re-du-loup,QC_RDL_TSS,Rimouski,QC_RIM_TSS,NULL
+37044,L3083,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,91.200,56.296,91.200,56.296,315,41.34,786,951,RiviÃƒÂ¨re-du-loup,QC_RDL_TSS,Rimouski,QC_RIM_TSS,NULL
+37045,L3084,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,79.800,49.259,79.800,49.259,315,36.17,794,960,RiviÃƒÂ¨re-du-loup,QC_RDL_TSS,Madawaska,QC_MAD_SWS,NULL
+37046,L3085,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,79.800,49.259,79.800,49.259,315,36.17,794,960,RiviÃƒÂ¨re-du-loup,QC_RDL_TSS,Madawaska,QC_MAD_SWS,NULL
+37047,L3086,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.000,3.086,5.000,3.086,315,2.27,794,960,LÃƒÂ©ry,QC_LRY_ISS,ChÃƒÂ¢teauguay,QC_CHG_DSS,NULL
+37048,L3087,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.000,3.086,5.000,3.086,315,2.27,794,960,LÃƒÂ©ry,QC_LRY_ISS,ChÃƒÂ¢teauguay,QC_CHG_DSS,NULL
+37049,L3088,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.000,11.111,18.000,11.111,315,8.16,794,960,NeufchÃƒÂ¢tel,QC_NEU_DSS,Anne-HÃƒÂ©bert,QC_ANH_DSS,NULL
+37050,L3089,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,85.400,52.716,125.400,77.407,315,56.84,637,771,Rimouski,QC_RIM_TSS,Le Plateau,QC_LPT_GSS,NULL
+37051,L3089,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,40.000,24.691,125.400,77.407,315,56.84,637,771,Le Plateau,QC_LPT_GSS,MatapÃƒÂ©dia,QC_MTP_DSS,NULL
+37052,L3090,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,74.100,45.741,125.400,77.407,315,56.84,637,771,Rimouski,QC_RIM_TSS,Lac-Alfred,QC_LAD_GSS,NULL
+37053,L3090,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,51.300,31.667,125.400,77.407,315,56.84,637,771,Lac-Alfred,QC_LAD_GSS,MatapÃƒÂ©dia,QC_MTP_DSS,NULL
+37054,L3091,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.000,10.494,17.000,10.494,315,7.71,794,960,Langlois,QC_LGS_TSS,ChÃƒÂ¢teauguay,QC_CHG_DSS,NULL
+37055,L3092,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,17.000,10.494,17.000,10.494,315,7.71,794,960,Langlois,QC_LGS_TSS,ChÃƒÂ¢teauguay,QC_CHG_DSS,NULL
+37056,L3093,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.500,0.309,7.500,4.630,315,3.40,794,960,QuÃƒÂ©bec,QC_QBC_TSS,Frontenac-1,QC_FR1_DSS,Line name assumed
+37057,L3093,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,7.500,4.630,315,3.40,794,960,Laurentides,QC_LDS_TSS,QuÃƒÂ©bec,QC_QBC_TSS,NULL
+37058,L3094,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.500,0.309,7.500,4.630,315,3.40,794,960,QuÃƒÂ©bec,QC_QBC_TSS,Frontenac-2,QC_FR2_DSS,Line name assumed
+37059,L3094,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.000,4.321,7.500,4.630,315,3.40,794,960,Laurentides,QC_LDS_TSS,QuÃƒÂ©bec,QC_QBC_TSS,NULL
+37060,L3095,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,136.800,84.444,216.600,133.704,345,96.13,546,714,RiviÃƒÂ¨re-du-Moulin,QC_RDM_GSS,Laurentides,QC_LDS_TSS,NULL
+37061,L3095,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,79.800,49.259,216.600,133.704,345,96.13,546,714,Delisle,QC_DLS_ISS,RiviÃƒÂ¨re-du-Moulin,QC_RDM_GSS,NULL
+37062,L3096,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.500,0.309,0.500,0.309,315,0.23,794,960,Frontenac-1,QC_FR1_DSS,Frontenac-2,QC_FR2_DSS,Line name assumed
+37063,L3098,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.192,1.970,11.067,6.831,315,5.02,794,960,Bout-de-lÃƒÅ½le,QC_BDI_DSS,Boucherville,QC_BCH_TSS,NULL
+37064,L3098,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.875,4.861,11.067,6.831,315,5.02,794,960,Lachenaie,QC_LAC_DSS,Bout-de-lÃƒÅ½le,QC_BDI_DSS,NULL
+37065,L3099,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.182,4.433,7.182,4.433,315,3.26,794,960,Chomedey,QC_CHO_TSS,Saraguay,QC_SRG_DSS,NULL
+37066,L3100,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,84.000,51.852,84.000,51.852,315,38.07,794,960,Jacques-Cartier,QC_JQC_TSS,Mauricie,QC_MAU_TSS,NULL
+37067,L3101,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,73.500,45.370,73.500,45.370,315,33.31,794,960,Leneuf,QC_LNF_DSS,Mauricie,QC_MAU_TSS,NULL
+37068,L3102,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,47.250,29.167,47.250,29.167,315,21.42,794,960,Alain-Grandbois,QC_AGB_DSS,Mauricie,QC_MAU_TSS,NULL
+37069,L3104,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,36.750,22.685,315,16.66,794,960,Jacques-Cartier,QC_JQC_TSS,Duchesnay,QC_DUC_DSS,NULL
+37070,L3104,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,36.750,22.685,315,16.66,794,960,Duchesnay,QC_DUC_DSS,Laurentides,QC_LDS_TSS,NULL
+37071,L3105,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,21.000,12.963,36.750,22.685,315,16.66,794,960,Jacques-Cartier,QC_JQC_TSS,Duchesnay,QC_DUC_DSS,NULL
+37072,L3105,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,36.750,22.685,315,16.66,794,960,Duchesnay,QC_DUC_DSS,Laurentides,QC_LDS_TSS,NULL
+37073,L3106,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.875,17.824,28.875,17.824,315,13.09,794,960,Jacques-Cartier,QC_JQC_TSS,Deschambault,QC_DSM_SWS,NULL
+37074,L3107,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,15.750,9.722,16.800,10.370,315,7.61,794,960,Alcoa-Aluminierie de Deschambault SENC,QC_AAD_ISS,Alain-Grandbois,QC_AGB_DSS,NULL
+37075,L3107,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,1.050,0.648,16.800,10.370,315,7.61,794,960,Deschambault,QC_DSM_SWS,Alcoa-Aluminierie de Deschambault SENC,QC_AAD_ISS,NULL
+37076,L3110,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,44.625,27.546,315,20.23,794,960,Deschambault,QC_DSM_SWS,Jacques-Cartier,QC_JQC_TSS,NULL
+37077,L3110,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,44.625,27.546,315,20.23,794,960,Jacques-Cartier,QC_JQC_TSS,NeufchÃƒÂ¢tel,QC_NEU_DSS,NULL
+37078,L3115,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,61.560,38.000,315,27.90,794,960,Sainte-Marguerite-1,QC_SM1_GSS,Arnaud,QC_ARN_TSS,NULL
+37079,L3115,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,61.560,38.000,315,27.90,794,960,Sainte-Marguerite-2,QC_SM2_GSS,Sainte-Marguerite-1,QC_SM1_GSS,NULL
+37080,L3115,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,61.560,38.000,315,27.90,794,960,Sainte-Marguerite-3,QC_SM3_GSS,Sainte-Marguerite-2,QC_SM2_GSS,NULL
+37081,L3116,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,61.560,38.000,315,27.90,794,960,Sainte-Marguerite-1,QC_SM1_GSS,Arnaud,QC_ARN_TSS,NULL
+37082,L3116,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,61.560,38.000,315,27.90,794,960,Sainte-Marguerite-2,QC_SM2_GSS,Sainte-Marguerite-1,QC_SM1_GSS,NULL
+37083,L3116,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,61.560,38.000,315,27.90,794,960,Sainte-Marguerite-3,QC_SM3_GSS,Sainte-Marguerite-2,QC_SM2_GSS,NULL
+37084,L3117,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.600,17.654,28.600,17.654,315,12.96,794,960,Outaouais,QC_OUT_TSS,Vignan,QC_VGN_TSS,NULL
+37085,L3118,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.600,17.654,28.600,17.654,315,12.96,794,960,Outaouais,QC_OUT_TSS,Vignan,QC_VGN_TSS,NULL
+37086,L3121,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,108.300,66.852,108.300,66.852,315,49.09,702,849,ChÃƒÂ©nier,QC_CHN_TSS,Outaouais,QC_OUT_TSS,NULL
+37087,L3122,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,108.300,66.852,108.300,66.852,315,49.09,702,849,ChÃƒÂ©nier,QC_CHN_TSS,Outaouais,QC_OUT_TSS,NULL
+37088,L3123,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,45.600,28.148,45.600,28.148,315,20.67,794,960,Manic-3,QC_MC3_GSS,Toulnustouc,QC_TLC_GSS,NULL
+37089,L3127,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,39.900,24.630,39.900,24.630,315,18.08,794,960,Romaine-2,QC_RM2_GSS,Romaine-1,QC_RM1_GSS,NULL
+37090,L3129,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,239.400,147.778,239.400,147.778,315,108.51,416,503,Arnaud,QC_ARN_TSS,Murailles,QC_MUR_TSS,NULL
+37091,L3130,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.000,20.988,206.000,127.160,315,93.37,459,556,Romaine-4,QC_RM4_GSS,Romaine-3,QC_RM3_GSS,NULL
+37092,L3130,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,172.000,106.173,206.000,127.160,315,93.37,459,556,Montagnais,QC_MTG_TSS,Romaine-4,QC_RM4_GSS,NULL
+37093,L3131,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.200,0.123,0.200,0.123,315,0.09,794,960,Murailles,QC_MUR_TSS,Romaine-2,QC_RM2_GSS,NULL
+37094,L3133,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.200,0.123,0.200,0.123,315,0.09,794,960,Murailles,QC_MUR_TSS,Romaine-2,QC_RM2_GSS,NULL
+37095,L3145,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.394,1.478,2.394,1.478,315,1.09,794,960,Viger,QC_VIG_SWS,Guy,QC_GUY_DSS,NULL
+37096,L3150,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,142.500,87.963,315,64.59,586,709,Waswanipi,QC_WSW_DSS,Lebel,QC_LBL_ISS,NULL
+37097,L3150,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,108.300,66.852,142.500,87.963,315,64.59,586,709,Abitibi,QC_ABT_TSS,Waswanipi,QC_WSW_DSS,NULL
+37098,L3151,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,142.500,87.963,315,64.59,586,709,Waswanipi,QC_WSW_DSS,Lebel,QC_LBL_ISS,NULL
+37099,L3151,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,108.300,66.852,142.500,87.963,315,64.59,586,709,Abitibi,QC_ABT_TSS,Waswanipi,QC_WSW_DSS,NULL
+37100,L3152,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,57.000,35.185,315,25.83,794,960,La Grande-1,QC_LG1_GSS,Radisson,QC_RAD_TSS,NULL
+37101,L3153,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,57.000,35.185,315,25.83,794,960,La Grande-1,QC_LG1_GSS,Radisson,QC_RAD_TSS,NULL
+37102,L3154,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,96.900,59.815,96.900,59.815,315,43.92,755,914,Figuery,QC_FIG_TSS,Lebel,QC_LBL_ISS,NULL
+37103,L3155,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,96.900,59.815,96.900,59.815,315,43.92,755,914,Figuery,QC_FIG_TSS,Lebel,QC_LBL_ISS,NULL
+37104,L3162,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,11.400,7.037,11.400,7.037,315,5.17,794,960,La Grande-2A,QC_LG2A_GSS,Radisson,QC_RAD_TSS,NULL
+37105,L3163,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,2,ac,11.400,7.037,11.400,7.037,315,5.17,794,960,La Grande-2A,QC_LG2A_GSS,Radisson,QC_RAD_TSS,NULL
+37106,L3166,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,62.700,38.704,62.700,38.704,315,28.42,794,960,Brisay,QC_BSY_GSS,Laforge-2,QC_LF2_GSS,NULL
+37107,L3167,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,62.700,38.704,62.700,38.704,315,28.42,794,960,Brisay,QC_BSY_GSS,Laforge-2,QC_LF2_GSS,NULL
+37108,L3168,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,108.300,66.852,108.300,66.852,315,49.09,702,849,Nikamo,QC_NIK_SWS,Laforge-2,QC_LF2_GSS,NULL
+37109,L3169,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,108.300,66.852,108.300,66.852,315,49.09,702,849,Nikamo,QC_NIK_SWS,Laforge-2,QC_LF2_GSS,NULL
+37110,L3170,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,5.700,3.519,315,2.58,794,960,Nikamo,QC_NIK_SWS,Laforge-1,QC_LF1_GSS,NULL
+37111,L3171,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.700,3.519,5.700,3.519,315,2.58,794,960,Nikamo,QC_NIK_SWS,Laforge-1,QC_LF1_GSS,NULL
+37112,L3172,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,79.800,49.259,79.800,49.259,315,36.17,794,960,Nikamo,QC_NIK_SWS,Tilly,QC_TLY_TSS,NULL
+37113,L3173,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,79.800,49.259,79.800,49.259,315,36.17,794,960,Nikamo,QC_NIK_SWS,Tilly,QC_TLY_TSS,NULL
+37114,L3176,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,47.880,29.556,47.880,29.556,315,21.70,794,960,Nemiscau,QC_NEM_DSS,Eastmain-1,QC_EM1_GSS,NULL
+37115,L3177,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,47.880,29.556,47.880,29.556,315,21.70,794,960,Nemiscau,QC_NEM_DSS,Eastmain-1,QC_EM1_GSS,NULL
+37116,L3186,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.400,8.272,48.425,29.892,315,21.95,794,960,Le FranÃƒÂ§ois,QC_LEF_DSS,Beauport,QC_BPT_DSS,NULL
+37117,L3186,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,48.425,29.892,315,21.95,794,960,Beauport,QC_BPT_DSS,Laurentides,QC_LDS_TSS,NULL
+37118,L3186,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.625,14.583,48.425,29.892,315,21.95,794,960,BeauprÃƒÂ©,QC_BPR_DSS,Le FranÃƒÂ§ois,QC_LEF_DSS,NULL
+37119,L3187,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,91.200,56.296,315,41.34,786,951,Charlevoix,QC_CHX_DSS,Baie-Saint-Paul,QC_BSP_DSS,NULL
+37120,L3187,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.800,14.074,91.200,56.296,315,41.34,786,951,Seigneurie de BeauprÃƒÂ©,QC_SDB_GSS,BeauprÃƒÂ©,QC_BPR_DSS,NULL
+37121,L3187,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,91.200,56.296,315,41.34,786,951,Baie-Saint-Paul,QC_BSP_DSS,Seigneurie de BeauprÃƒÂ©,QC_SDB_GSS,NULL
+37122,L3188,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,80.625,49.769,315,36.54,794,960,Baie-Saint-Paul,QC_BSP_DSS,BeauprÃƒÂ©,QC_BPR_DSS,NULL
+37123,L3188,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,23.625,14.583,80.625,49.769,315,36.54,794,960,BeauprÃƒÂ©,QC_BPR_DSS,Le FranÃƒÂ§ois,QC_LEF_DSS,NULL
+37124,L3189,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,79.800,49.259,79.800,49.259,315,36.17,794,960,Sarcelle,QC_SRC_GSS,Eastmain-1,QC_EM1_GSS,NULL
+37125,L3192,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.400,8.272,24.800,15.309,315,11.24,794,960,Le FranÃƒÂ§ois,QC_LEF_DSS,Beauport,QC_BPT_DSS,NULL
+37126,L3192,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,24.800,15.309,315,11.24,794,960,Beauport,QC_BPT_DSS,Laurentides,QC_LDS_TSS,NULL
+37127,L3198,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.394,1.478,5.586,3.448,315,2.53,794,960,Dorchester,QC_DOR_DSS,De Lorimier,QC_DEL_DSS,NULL
+37128,L3198,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,3.192,1.970,5.586,3.448,315,2.53,794,960,Viger,QC_VIG_SWS,Dorchester,QC_DOR_DSS,NULL
+37129,L3199,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,5.586,3.448,5.586,3.448,315,2.53,794,960,Viger,QC_VIG_SWS,De Lorimier,QC_DEL_DSS,NULL
+37130,L3210,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.965,8.620,15.295,9.441,315,6.93,794,960,Jean-R Marcotte,QC_JRM_ISS,Duvernay,QC_DUV_TSS,NULL
+37131,L3210,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.330,0.821,15.295,9.441,315,6.93,794,960,Bout-de-lÃƒÅ½le,QC_BDI_DSS,Jean-R Marcotte,QC_JRM_ISS,Line name assumed. 
+37132,L3211,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,14.364,8.867,14.364,8.867,315,6.51,794,960,Bout-de-lÃƒÅ½le,QC_BDI_DSS,Duvernay,QC_DUV_TSS,NULL
+37133,L3216,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,0.266,0.164,0.266,0.164,315,0.12,794,960,Des Irlandais,QC_IRL_DSS,Viger,QC_VIG_SWS,NULL
+37134,L4003,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,dc,148.200,91.481,835.620,515.815,450,null,1000,1000,Rapide-Blanc,QC_RPB_TSS,Grondines,QC_GRO_SWS,NULL
+37135,L4003,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,dc,687.420,424.333,835.620,515.815,450,null,1000,1000,Radisson,QC_RAD_TSS,Rapide-Blanc,QC_RPB_TSS,NULL
+37136,L4004,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,dc,148.200,91.481,835.620,515.815,450,null,1000,1000,Rapide-Blanc,QC_RPB_TSS,Grondines,QC_GRO_SWS,NULL
+37137,L4004,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,dc,687.420,424.333,835.620,515.815,450,null,1000,1000,Radisson,QC_RAD_TSS,Rapide-Blanc,QC_RPB_TSS,NULL
+37138,L4005,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,dc,5.700,3.519,5.700,3.519,450,null,1000,1000,Grondines,QC_GRO_SWS,LotbiniÃƒÂ¨re,QC_LTB_SWS,NULL
+37139,L4006,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,dc,5.700,3.519,5.700,3.519,450,null,1000,1000,Grondines,QC_GRO_SWS,LotbiniÃƒÂ¨re,QC_LTB_SWS,NULL
+37140,L4007,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,dc,68.400,42.222,68.400,42.222,450,null,1000,1000,LotbiniÃƒÂ¨re,QC_LTB_SWS,Nicolet,QC_NIC_TSS,NULL
+37141,L4008,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,dc,68.400,42.222,68.400,42.222,450,null,1000,1000,LotbiniÃƒÂ¨re,QC_LTB_SWS,Nicolet,QC_NIC_TSS,NULL
+37142,L4009,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,dc,79.800,49.259,79.800,49.259,450,null,1000,1000,Nicolet,QC_NIC_TSS,Des Cantons,QC_DEC_TSS,NULL
+37143,L4010,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,dc,79.800,49.259,79.800,49.259,450,null,1000,1000,Nicolet,QC_NIC_TSS,Des Cantons,QC_DEC_TSS,NULL
+37144,L7002,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,183.750,113.426,183.750,113.426,735,69.83,3745,4045,Carignan,QC_CRG_TSS,Jacques-Cartier,QC_JQC_TSS,NULL
+37145,L7004,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,159.600,98.519,365.940,225.889,735,139.06,2378,2568,PÃƒÂ©rigny,QC_PER_SWS,Laurentides,QC_LDS_TSS,NULL
+37146,L7004,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,206.340,127.370,365.940,225.889,735,139.06,2378,2568,Outardes,QC_OTD_TSS,PÃƒÂ©rigny,QC_PER_SWS,L7004 rerouted to Outardes substation
+37147,L7005,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,115.500,71.296,115.500,71.296,735,43.89,5087,5494,Nicolet,QC_NIC_TSS,LÃƒÂ©vis,QC_LVS_DSS,NULL
+37148,L7006,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,141.750,87.500,735,53.87,4444,4800,Hertel,QC_HRT_TSS,Boucherville,QC_BCH_TSS,NULL
+37149,L7006,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,115.500,71.296,141.750,87.500,735,53.87,4444,4800,Boucherville,QC_BCH_TSS,Nicolet,QC_NIC_TSS,NULL
+37150,L7007,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,131.100,80.926,348.840,215.333,735,132.56,2454,2650,Manicouagan,QC_MGN_TSS,Bergeronnes,QC_BRG_SWS,NULL
+37151,L7007,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,217.740,134.407,348.840,215.333,735,132.56,2454,2650,Bergeronnes,QC_BRG_SWS,LÃƒÂ©vis,QC_LVS_DSS,NULL
+37152,L7008,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,131.100,80.926,348.840,215.333,735,132.56,2454,2650,Manicouagan,QC_MGN_TSS,Bergeronnes,QC_BRG_SWS,NULL
+37153,L7008,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,217.740,134.407,348.840,215.333,735,132.56,2454,2650,Bergeronnes,QC_BRG_SWS,LÃƒÂ©vis,QC_LVS_DSS,NULL
+37154,L7009,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,15.750,9.722,15.750,9.722,735,5.99,6003,6483,Boucherville,QC_BCH_TSS,Bout-de-lÃƒÅ½le,QC_BDI_DSS,NULL
+37155,L7010,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,30.000,18.519,30.000,18.519,735,11.40,6003,6483,Laurentides,QC_LDS_TSS,LÃƒÂ©vis,QC_LVS_DSS,NULL
+37156,L7011,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,47.880,29.556,47.880,29.556,735,18.19,6003,6483,Outardes,QC_OTD_TSS,Manicouagan,QC_MGN_TSS,L7011 terminated at Outardes substation
+37157,L7014,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,52.500,32.407,52.500,32.407,735,19.95,6003,6483,Boucherville,QC_BCH_TSS,Carignan,QC_CRG_TSS,NULL
+37158,L7016,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,229.140,141.444,229.140,141.444,735,87.07,3238,3497,La VÃƒÂ©rendrye,QC_LVR_TSS,Duvernay,QC_DUV_TSS,NULL
+37159,L7017,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,223.440,137.926,223.440,137.926,735,84.91,3292,3556,Jacques-Cartier,QC_JQC_TSS,Bout-de-lÃƒÅ½le,QC_BDI_DSS,NULL
+37160,L7018,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,165.300,102.037,165.300,102.037,735,62.81,4016,4337,Jacques-Cartier,QC_JQC_TSS,Saguenay,QC_SAG_TSS,NULL
+37161,L7019,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,229.140,141.444,229.140,141.444,735,87.07,3238,3497,Micoua,QC_MIC_TSS,Saguenay,QC_SAG_TSS,NULL
+37162,L7020,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,28.500,17.593,735,10.83,6003,6483,Jacques-Cartier,QC_JQC_TSS,Laurentides,QC_LDS_TSS,NULL
+37163,L7021,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,262.000,161.728,262.000,161.728,735,99.56,2964,3201,Micoua,QC_MIC_TSS,Saguenay,QC_SAG_TSS,Line name assumed
+37164,L7023,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,131.100,80.926,348.840,215.333,735,132.56,2454,2650,Manicouagan,QC_MGN_TSS,Bergeronnes,QC_BRG_SWS,NULL
+37165,L7023,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,217.740,134.407,348.840,215.333,735,132.56,2454,2650,Bergeronnes,QC_BRG_SWS,LÃƒÂ©vis,QC_LVS_DSS,NULL
+37166,L7024,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,194.940,120.333,194.940,120.333,735,74.08,3602,3890,Jacques-Cartier,QC_JQC_TSS,Chamouchouane,QC_CHM_SWS,NULL
+37167,L7025,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,194.940,120.333,194.940,120.333,735,74.08,3602,3890,Jacques-Cartier,QC_JQC_TSS,Chamouchouane,QC_CHM_SWS,NULL
+37168,L7026,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,114.000,70.370,114.000,70.370,735,43.32,5131,5542,Saguenay,QC_SAG_TSS,Chamouchouane,QC_CHM_SWS,NULL
+37169,L7027,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,136.800,84.444,136.800,84.444,735,51.98,4550,4914,Arnaud,QC_ARN_TSS,Manic-3,QC_MC3_GSS,NULL
+37170,L7028,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,153.900,95.000,153.900,95.000,735,58.48,4210,4547,Arnaud,QC_ARN_TSS,Manicouagan,QC_MGN_TSS,NULL
+37171,L7029,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,153.900,95.000,153.900,95.000,735,58.48,4210,4547,Arnaud,QC_ARN_TSS,Manicouagan,QC_MGN_TSS,NULL
+37172,L7031,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,217.740,134.407,217.740,134.407,735,82.74,3349,3617,Montagnais,QC_MTG_TSS,Arnaud,QC_ARN_TSS,NULL
+37173,L7032,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,217.740,134.407,217.740,134.407,735,82.74,3349,3617,Montagnais,QC_MTG_TSS,Arnaud,QC_ARN_TSS,NULL
+37174,L7033,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,217.740,134.407,217.740,134.407,735,82.74,3349,3617,Montagnais,QC_MTG_TSS,Arnaud,QC_ARN_TSS,NULL
+37175,L7034,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,115.500,71.296,115.500,71.296,735,43.89,5087,5494,Boucherville,QC_BCH_TSS,Nicolet,QC_NIC_TSS,NULL
+37176,L7035,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,115.500,71.296,115.500,71.296,735,43.89,5087,5494,Nicolet,QC_NIC_TSS,LÃƒÂ©vis,QC_LVS_DSS,NULL
+37177,L7036,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,26.250,16.204,26.250,16.204,735,9.98,6003,6483,Hertel,QC_HRT_TSS,Boucherville,QC_BCH_TSS,NULL
+37178,L7038,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,52.500,32.407,52.500,32.407,735,19.95,6003,6483,ChÃƒÂ¢teauguay,QC_CHG_DSS,Hertel,QC_HRT_TSS,NULL
+37179,L7042,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,99.750,61.574,99.750,61.574,735,37.91,5604,6052,ChÃƒÂ¢teauguay,QC_CHG_DSS,ChÃƒÂ©nier,QC_CHN_TSS,NULL
+37180,L7044,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,239.400,147.778,239.400,147.778,735,90.97,3146,3397,La VÃƒÂ©rendrye,QC_LVR_TSS,ChÃƒÂ©nier,QC_CHN_TSS,NULL
+37181,L7045,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,159.600,98.519,159.600,98.519,735,60.65,4110,4439,La VÃƒÂ©rendrye,QC_LVR_TSS,Grand-BrulÃƒÂ©,QC_GRB_TSS,NULL
+37182,L7046,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,31.500,19.444,42.000,25.926,735,15.96,6003,6483,Judith-Jasmin,QC_JUJ_DSS,ChÃƒÂ©nier,QC_CHN_TSS,NULL
+37183,L7046,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,42.000,25.926,735,15.96,6003,6483,Duvernay,QC_DUV_TSS,Judith-Jasmin,QC_JUJ_DSS,NULL
+37184,L7047,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,79.800,49.259,79.800,49.259,735,30.32,6003,6483,Grand-BrulÃƒÂ©,QC_GRB_TSS,ChÃƒÂ©nier,QC_CHN_TSS,NULL
+37185,L7048,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,73.500,45.370,73.500,45.370,735,27.93,6003,6483,MontÃƒÂ©rÃƒÂ©gie,QC_MTR_TSS,Des Cantons,QC_DEC_TSS,NULL
+37186,L7049,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,78.750,48.611,78.750,48.611,735,29.93,6003,6483,Hertel,QC_HRT_TSS,MontÃƒÂ©rÃƒÂ©gie,QC_MTR_TSS,NULL
+37187,L7054,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,102.600,63.333,102.600,63.333,735,38.99,5500,5941,Le Moyne,QC_LEM_SWS,Tilly,QC_TLY_TSS,NULL
+37188,L7055,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,102.600,63.333,102.600,63.333,735,38.99,5500,5941,Le Moyne,QC_LEM_SWS,Tilly,QC_TLY_TSS,NULL
+37189,L7056,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,102.600,63.333,102.600,63.333,735,38.99,5500,5941,Le Moyne,QC_LEM_SWS,Tilly,QC_TLY_TSS,NULL
+37190,L7057,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,96.900,59.815,96.900,59.815,735,36.82,5712,6169,Le Moyne,QC_LEM_SWS,Chissibi,QC_CHS_SWS,NULL
+37191,L7059,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,234.840,144.963,234.840,144.963,735,89.24,3186,3441,Albanel,QC_ALB_SWS,Chissibi,QC_CHS_SWS,NULL
+37192,L7060,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,136.800,84.444,136.800,84.444,735,51.98,4550,4914,La Grande-2,QC_LG2_GSS,Chissibi,QC_CHS_SWS,NULL
+37193,L7061,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,240.540,148.481,240.540,148.481,735,91.41,3136,3387,La Grande-2,QC_LG2_GSS,Nemiscau,QC_NEM_DSS,NULL
+37194,L7062,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,246.240,152.000,246.240,152.000,735,93.57,3088,3335,Radisson,QC_RAD_TSS,Nemiscau,QC_NEM_DSS,NULL
+37195,L7063,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,246.240,152.000,246.240,152.000,735,93.57,3088,3335,Radisson,QC_RAD_TSS,Nemiscau,QC_NEM_DSS,NULL
+37196,L7066,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,2.280,1.407,735,0.87,6003,6483,Chissibi,QC_CHS_SWS,La Grande-3,QC_LG3_GSS,NULL
+37197,L7067,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,2.280,1.407,735,0.87,6003,6483,Chissibi,QC_CHS_SWS,La Grande-3,QC_LG3_GSS,NULL
+37198,L7068,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,2.280,1.407,735,0.87,6003,6483,Chissibi,QC_CHS_SWS,La Grande-3,QC_LG3_GSS,NULL
+37199,L7069,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,194.940,120.333,194.940,120.333,735,74.08,3602,3890,Le Moyne,QC_LEM_SWS,Albanel,QC_ALB_SWS,NULL
+37200,L7070,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,194.940,120.333,194.940,120.333,735,74.08,3602,3890,Le Moyne,QC_LEM_SWS,Albanel,QC_ALB_SWS,NULL
+37201,L7071,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,2.280,1.407,735,0.87,6003,6483,Tilly,QC_TLY_TSS,La Grande-4,QC_LG4_GSS,NULL
+37202,L7072,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,2.280,1.407,735,0.87,6003,6483,Tilly,QC_TLY_TSS,La Grande-4,QC_LG4_GSS,NULL
+37203,L7073,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,2.280,1.407,2.280,1.407,735,0.87,6003,6483,Tilly,QC_TLY_TSS,La Grande-4,QC_LG4_GSS,NULL
+37204,L7076,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,212.040,130.889,212.040,130.889,735,80.58,3408,3680,Albanel,QC_ALB_SWS,Chibougamau,QC_CHB_TSS,NULL
+37205,L7077,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,212.040,130.889,212.040,130.889,735,80.58,3408,3680,Albanel,QC_ALB_SWS,Chibougamau,QC_CHB_TSS,NULL
+37206,L7078,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,212.040,130.889,212.040,130.889,735,80.58,3408,3680,Albanel,QC_ALB_SWS,Chibougamau,QC_CHB_TSS,NULL
+37207,L7079,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,34.200,21.111,34.200,21.111,735,13.00,6003,6483,Albanel,QC_ALB_SWS,Nemiscau,QC_NEM_DSS,NULL
+37208,L7080,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,251.940,155.519,251.940,155.519,735,95.74,3042,3285,Abitibi,QC_ABT_TSS,Nemiscau,QC_NEM_DSS,NULL
+37209,L7081,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,200.640,123.852,200.640,123.852,735,76.24,3534,3817,Abitibi,QC_ABT_TSS,Nemiscau,QC_NEM_DSS,NULL
+37210,L7082,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,200.640,123.852,200.640,123.852,735,76.24,3534,3817,Abitibi,QC_ABT_TSS,Nemiscau,QC_NEM_DSS,NULL
+37211,L7084,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,171.000,105.556,171.000,105.556,735,64.98,3927,4241,Chamouchouane,QC_CHM_SWS,Chibougamau,QC_CHB_TSS,NULL
+37212,L7085,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,171.000,105.556,171.000,105.556,735,64.98,3927,4241,Chamouchouane,QC_CHM_SWS,Chibougamau,QC_CHB_TSS,NULL
+37213,L7086,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,171.000,105.556,171.000,105.556,735,64.98,3927,4241,Chamouchouane,QC_CHM_SWS,Chibougamau,QC_CHB_TSS,NULL
+37214,L7088,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,11.400,7.037,735,4.33,6003,6483,La Grande-2,QC_LG2_GSS,Radisson,QC_RAD_TSS,NULL
+37215,L7089,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,11.400,7.037,735,4.33,6003,6483,La Grande-2,QC_LG2_GSS,Radisson,QC_RAD_TSS,NULL
+37216,L7090,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.000,35.185,57.000,35.185,735,21.66,6003,6483,Abitibi,QC_ABT_TSS,Chibougamau,QC_CHB_TSS,NULL
+37217,L7092,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,240.540,148.481,240.540,148.481,735,91.41,3136,3387,Abitibi,QC_ABT_TSS,La VÃƒÂ©rendrye,QC_LVR_TSS,NULL
+37218,L7093,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,240.540,148.481,240.540,148.481,735,91.41,3136,3387,Abitibi,QC_ABT_TSS,La VÃƒÂ©rendrye,QC_LVR_TSS,NULL
+37219,L7094,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,246.240,152.000,246.240,152.000,735,93.57,3088,3335,Abitibi,QC_ABT_TSS,La VÃƒÂ©rendrye,QC_LVR_TSS,NULL
+37220,L7095,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,78.750,48.611,97.125,59.954,735,36.91,5703,6159,MÃƒÂ©tallurgie Magnola Inc,QC_MMI_ISS,Appalaches,QC_APP_TSS,NULL
+37221,L7095,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,97.125,59.954,735,36.91,5703,6159,Des Cantons,QC_DEC_TSS,MÃƒÂ©tallurgie Magnola Inc,QC_MMI_ISS,NULL
+37222,L7096,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,18.375,11.343,76.125,46.991,735,28.93,6003,6483,Des Cantons,QC_DEC_TSS,MÃƒÂ©tallurgie Magnola Inc,QC_MMI_ISS,NULL
+37223,L7096,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,57.750,35.648,76.125,46.991,735,28.93,6003,6483,MÃƒÂ©tallurgie Magnola Inc,QC_MMI_ISS,Nicolet,QC_NIC_TSS,NULL
+37224,L7097,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,84.000,51.852,84.000,51.852,735,31.92,6003,6483,Appalaches,QC_APP_TSS,LÃƒÂ©vis,QC_LVS_DSS,NULL
+37225,L7099,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,1.050,0.648,1.050,0.648,735,0.40,6003,6483,IREQ,QC_IRQ_ISS,Boucherville,QC_BCH_TSS,NULL
+37226,L7100,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,7.980,4.926,735,3.03,6003,6483,Outardes,QC_OTD_TSS,Micoua,QC_MIC_TSS,NULL
+37227,L7101,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,7.980,4.926,7.980,4.926,735,3.03,6003,6483,Outardes,QC_OTD_TSS,Micoua,QC_MIC_TSS,NULL
+37228,L7102,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,13.125,8.102,13.125,8.102,735,4.99,6003,6483,Duvernay,QC_DUV_TSS,Bout-de-lÃƒÅ½le,QC_BDI_DSS,NULL
+37229,L7103,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,367.080,226.593,367.080,226.593,735,139.49,2373,2563,Chamouchouane,QC_CHM_SWS,Judith-Jasmin,QC_JUJ_DSS,NULL
+37230,L7108,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,10.500,6.481,10.500,6.481,735,3.99,6003,6483,Duvernay,QC_DUV_TSS,Judith-Jasmin,QC_JUJ_DSS,NULL
+37231,L7109,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,31.920,19.704,31.920,19.704,735,12.13,6003,6483,Romaine-3,QC_RM3_GSS,Romaine-4,QC_RM4_GSS,Line name assumed
+37232,L7110,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,175.560,108.370,175.560,108.370,735,66.71,3860,4168,Romaine-4,QC_RM4_GSS,Montagnais,QC_MTG_TSS,Line name assumed
+37233,L8313,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,11.400,7.037,11.400,7.037,120,4.80,107,118,Rapides-des-Iles,QC_RPI_GSS,Notre-Dame-du-Nord,QC_NDN_DSS,NULL
+37234,L9001,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,5.600,3.457,161,2.52,193,212,Chute-ÃƒÂ -Caron,QC_CAC_GSS,Shipshaw,QC_SPS_GSS,NULL
+37235,L9001,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,5.600,3.457,161,2.52,193,212,Shipshaw,QC_SPS_GSS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37236,L9002,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,5.600,3.457,161,2.52,193,212,Chute-ÃƒÂ -Caron,QC_CAC_GSS,Shipshaw,QC_SPS_GSS,NULL
+37237,L9002,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,5.600,3.457,161,2.52,193,212,Shipshaw,QC_SPS_GSS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37238,L9003,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,2.800,1.728,161,1.26,193,212,Shipshaw,QC_SPS_GSS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37239,L9004,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,2.800,1.728,161,1.26,193,212,Shipshaw,QC_SPS_GSS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37240,L9005,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,2.800,1.728,161,1.26,193,212,Shipshaw,QC_SPS_GSS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37241,L9006,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,2.800,1.728,161,1.26,193,212,Shipshaw,QC_SPS_GSS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37242,L9007,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,2.800,1.728,161,1.26,193,212,Shipshaw,QC_SPS_GSS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37243,L9008,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,2.800,1.728,161,1.26,193,212,Shipshaw,QC_SPS_GSS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37244,L9010,Rio Tinto Alcan,QC,Quebec,1,ac,30.800,19.012,33.600,20.741,161,15.12,193,212,LIsle Maligne,QC_LIM_ISS,Chute-ÃƒÂ -Caron,QC_CAC_GSS,NULL
+37245,L9010,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,33.600,20.741,161,15.12,193,212,LIsle Maligne,QC_LIM_ISS,Usine Alma,QC_UAL_ISS,NULL
+37246,L9011,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,5.600,3.457,161,2.52,193,212,Chute-ÃƒÂ -Caron,QC_CAC_GSS,Shipshaw,QC_SPS_GSS,NULL
+37247,L9011,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,5.600,3.457,161,2.52,193,212,Shipshaw,QC_SPS_GSS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37248,L9012,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,5.600,3.457,161,2.52,193,212,Chute-ÃƒÂ -Caron,QC_CAC_GSS,Shipshaw,QC_SPS_GSS,NULL
+37249,L9012,Rio Tinto Alcan,QC,Quebec,1,ac,2.800,1.728,5.600,3.457,161,2.52,193,212,Shipshaw,QC_SPS_GSS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37250,L9013,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,38.000,23.457,38.000,23.457,161,17.10,193,212,LIsle Maligne,QC_LIM_ISS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37251,L9014,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,38.000,23.457,38.000,23.457,161,17.10,193,212,LIsle Maligne,QC_LIM_ISS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37252,L9015,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,38.000,23.457,38.000,23.457,161,17.10,193,212,LIsle Maligne,QC_LIM_ISS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37253,L9016,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,38.000,23.457,38.000,23.457,161,17.10,193,212,LIsle Maligne,QC_LIM_ISS,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,NULL
+37254,L9019,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.400,13.827,22.400,13.827,161,10.08,193,212,Chute-du-diable,QC_CDD_GSS,LIsle Maligne,QC_LIM_ISS,NULL
+37255,L9020,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,22.400,13.827,22.400,13.827,161,10.08,193,212,Chute-du-diable,QC_CDD_GSS,LIsle Maligne,QC_LIM_ISS,NULL
+37256,L9021,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,16.800,10.370,25.200,15.556,161,11.34,193,212,Chute-ÃƒÂ -la-Savane,QC_CAS_GSS,LÃƒÅ½le,QC_LIL_DSS,NULL
+37257,L9021,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.400,5.185,25.200,15.556,161,11.34,193,212,LÃƒÅ½le,QC_LIL_DSS,LIsle Maligne,QC_LIM_ISS,NULL
+37258,L9022,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,16.800,10.370,25.200,15.556,161,11.34,193,212,Chute-ÃƒÂ -la-Savane,QC_CAS_GSS,LÃƒÅ½le,QC_LIL_DSS,NULL
+37259,L9022,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,8.400,5.185,25.200,15.556,161,11.34,193,212,LÃƒÅ½le,QC_LIL_DSS,LIsle Maligne,QC_LIM_ISS,NULL
+37260,L9027,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,28.500,17.593,161,12.83,193,212,Mistassini,QC_MIS_DSS,Chute-ÃƒÂ -la-Savane,QC_CAS_GSS,NULL
+37261,L9028,Hydro-QuÃƒÂ©bec Transmission,QC,Quebec,1,ac,28.500,17.593,28.500,17.593,161,12.83,193,212,Mistassini,QC_MIS_DSS,Chute-ÃƒÂ -la-Savane,QC_CAS_GSS,NULL
+37262,L9061,Rio Tinto Alcan,QC,Quebec,1,ac,136.800,84.444,136.800,84.444,315,62.00,602,728,Chute-des-Passes,QC_CDP_DSS,Delisle,QC_DLS_ISS,NULL
+37263,L9062,Rio Tinto Alcan,QC,Quebec,1,ac,136.800,84.444,136.800,84.444,315,62.00,602,728,Chute-des-Passes,QC_CDP_DSS,Delisle,QC_DLS_ISS,NULL
+37264,L9065,Rio Tinto Alcan,QC,Quebec,1,ac,16.000,9.877,39.000,24.074,161,17.55,193,212,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,Du Portage,QC_DPT_DSS,NULL
+37265,L9065,Rio Tinto Alcan,QC,Quebec,1,ac,23.000,14.198,39.000,24.074,161,17.55,193,212,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,Port-Alfred,QC_PAF_DSS,NULL
+37266,L9066,Rio Tinto Alcan,QC,Quebec,1,ac,16.000,9.877,39.000,24.074,161,17.55,193,212,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,Du Portage,QC_DPT_DSS,NULL
+37267,L9066,Rio Tinto Alcan,QC,Quebec,1,ac,23.000,14.198,39.000,24.074,161,17.55,193,212,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,Port-Alfred,QC_PAF_DSS,NULL
+37268,L9067,Rio Tinto Alcan,QC,Quebec,1,ac,23.000,14.198,23.280,14.370,161,10.48,193,212,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,AluminiÃƒÂ¨re Grande-Baie Alcan,QC_AGA_ISS,NULL
+37269,L9067,Rio Tinto Alcan,QC,Quebec,1,ac,0.280,0.173,23.280,14.370,161,10.48,193,212,AluminiÃƒÂ¨re Grande-Baie Alcan,QC_AGA_ISS,La Baie,QC_LAB_DSS,NULL
+37270,L9068,Rio Tinto Alcan,QC,Quebec,1,ac,23.000,14.198,23.280,14.370,161,10.48,193,212,Usine JonquiÃƒÂ¨re,QC_UJQ_DSS,AluminiÃƒÂ¨re Grande-Baie Alcan,QC_AGA_ISS,NULL
+37271,L9068,Rio Tinto Alcan,QC,Quebec,1,ac,0.280,0.173,23.280,14.370,161,10.48,193,212,AluminiÃƒÂ¨re Grande-Baie Alcan,QC_AGA_ISS,La Baie,QC_LAB_DSS,NULL
+37272,MATI,Brookfield Renewable Energy,QC,Quebec,1,ac,0.880,0.543,0.880,0.543,120,0.37,107,118,Masson-Nord,QC_MSN_DSS,Interconnexion-Maclaren,QC_INM_SWS,NULL
+37273,MM1-MM2,Brookfield Renewable Energy,QC,Quebec,2,ac,1.100,0.679,1.100,0.679,120,0.46,107,118,Papier Masson Inc,QC_PMI_ISS,Masson-Nord,QC_MSN_DSS,NULL
