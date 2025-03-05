@@ -1,0 +1,9 @@
+energy_source,energy_capacities,co2_emission_factors
+hydr_res,40553000,0.017
+hydr_rrun,0,0.006
+therm_gaz,573000,0.62
+therm_oil,131000,0.878
+biomass,114000,0.088
+solar,0,0.064
+wind,1349000,0.014
+other,1172000,0
