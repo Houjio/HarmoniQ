@@ -1,0 +1,4 @@
+Length_km,Line_Type,Maintenance_Cost_Per_Year,Years_of_Operation,Cost_Per_Substation,Other_Costs
+300,AC735,100000,30,2000000,2000000
+400,DC450,120000,30,2500000,2500000
+250,AC735,90000,25,2000000,1500000

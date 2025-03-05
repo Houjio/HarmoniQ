@@ -1,0 +1,4 @@
+Length_km,Line_Type,Total_Cost,Number_of_Substations
+300,AC735,309000000.0,2
+400,DC450,491100000.0,2
+250,AC735,255750000.0,1
