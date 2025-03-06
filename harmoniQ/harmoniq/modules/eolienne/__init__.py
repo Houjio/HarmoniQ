@@ -34,20 +34,18 @@ class InfraEolienne(Infrastructure):
         self.cas: CasBase = cas
         self.meteo: pd.DataFrame = self._charger_meteo(cas)
 
+    @necessite_cas
+    def calculer_production(self):
+        return get_turbine_power(self.donnees, self.meteo)
+
 
 if __name__ == "__main__":
-    import requests
+    from harmoniq.db.CRUD import read_all_eolienne
+    from harmoniq.db.engine import get_db
     from datetime import datetime, timedelta
 
-    test = requests.get("http://0.0.0.0:5000/api/ping")
-    test.raise_for_status()
-    print("Test reussi, recupération de d'une éolienne")
-
-    eolienne_list = requests.get("http://0.0.0.0:5000/api/eolienne/")
-    eolienne_list.raise_for_status()
-    eolienne_list = eolienne_list.json()
-
-    eolienne = Eolienne(**eolienne_list[0])
+    db = next(get_db())
+    eolienne = read_all_eolienne(db)[0]
     infraEolienne = InfraEolienne(eolienne)
 
     cas = CasBase(
@@ -58,3 +56,5 @@ if __name__ == "__main__":
     )
 
     infraEolienne.charger_cas(cas)
+
+    production = infraEolienne.calculer_production()
