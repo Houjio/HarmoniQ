@@ -143,11 +143,10 @@ class WeatherHelper:
         else:
             raise ValueError("Invalid energy type")
 
-    def _interpolate_data(self, list_of_df: List[pd.DataFrame]) -> pd.DataFrame:
+        return True
 
-        latlon = [
-            i[["Latitude (y)", "Longitude (x)"]].iloc[0].values for i in list_of_df
-        ]
+    def _interpolate_data(self, list_of_df: List[pd.DataFrame]) -> pd.DataFrame:
+        latlon = [i[["latitude", "longitude"]].iloc[0].values for i in list_of_df]
 
         dist = [
             geodesic([self.position.latitude, self.position.longitude], i).km
@@ -158,16 +157,12 @@ class WeatherHelper:
         weights = 1 / dist
         new_data = pd.DataFrame(index=list_of_df[0].index)
         for keys in list_of_df[0].keys():
-            if keys == "Date/Time":
+            if keys == "tempsdate":
                 continue
-            if keys == "Latitude (y)":
-                new_data["Latitude (y)"] = self.position.latitude
-            elif keys == "Longitude (x)":
-                new_data["Longitude (x)"] = self.position.longitude
-            elif keys == "Station Name":
-                new_data["Station Name"] = "Interpolated"
-            elif keys == "Climate ID":
-                new_data["Climate ID"] = "Interpolated"
+            if keys == "latitude":
+                new_data["latitude"] = self.position.latitude
+            elif keys == "longitude":
+                new_data["longitude"] = self.position.longitude
             else:
                 new_data[keys] = np.average(
                     [i[keys] for i in list_of_df], axis=0, weights=weights
@@ -212,66 +207,41 @@ class WeatherHelper:
             time = pd.to_datetime(data["Date/Time"])
 
         clean_df = pd.DataFrame(columns=weather_schema.columns.keys(), index=time)
+        clean_df.index.name = "tempsdate"
+
+        # Align the index of the old data with the new data
+        data.index = time
+        data.index.name = "tempsdate"
 
         # Add the time, longitude and latitude
-        clean_df["longitude"] = pd.to_numeric(data["Longitude (x)"], errors="coerce")
-        clean_df["latitude"] = pd.to_numeric(data["Latitude (y)"], errors="coerce")
+        clean_df["longitude"] = data["Longitude (x)"]
+        clean_df["latitude"] = data["Latitude (y)"]
 
         if self._granularity == Granularity.HOURLY:
             # Add the data specific to hourly granularity
-            clean_df["temperature_C"] = pd.to_numeric(
-                data["Temp (°C)"], errors="coerce"
-            )
+            clean_df["temperature_C"] = data["Temp (°C)"]
             clean_df["max_temperature_C"] = np.nan
             clean_df["min_tempature_C"] = np.nan
             clean_df["pluie_mm"] = np.nan
             clean_df["neige_cm"] = np.nan
-            clean_df["precipitation_mm"] = pd.to_numeric(
-                data["Precip. Amount (mm)"], errors="coerce"
-            )
+            clean_df["precipitation_mm"] = data["Precip. Amount (mm)"]
             clean_df["neige_accumulee_cm"] = np.nan
-            clean_df["direction_vent"] = pd.to_numeric(
-                data["Wind Dir (10s deg)"], errors="coerce"
-            )
-            clean_df["vitesse_vent_kmh"] = pd.to_numeric(
-                data["Wind Spd (km/h)"], errors="coerce"
-            )
-            clean_df["humidite"] = pd.to_numeric(data["Rel Hum (%)"], errors="coerce")
-            clean_df["pression"] = pd.to_numeric(
-                data["Stn Press (kPa)"], errors="coerce"
-            )
-            clean_df["point_de_rosee"] = pd.to_numeric(
-                data["Dew Point Temp (°C)"], errors="coerce"
-            )
+            clean_df["direction_vent"] = data["Wind Dir (10s deg)"]
+            clean_df["vitesse_vent_kmh"] = data["Wind Spd (km/h)"]
+            clean_df["humidite"] = data["Rel Hum (%)"]
+            clean_df["pression"] = data["Stn Press (kPa)"]
+            clean_df["point_de_rosee"] = data["Dew Point Temp (°C)"]
         elif self._granularity == Granularity.DAILY:
             # Add the data specific to daily granularity
-            clean_df["temperature_C"] = pd.to_numeric(
-                data["Mean Temp (°C)"], errors="coerce"
-            )
-            clean_df["max_temperature_C"] = pd.to_numeric(
-                data["Max Temp (°C)"], errors="coerce"
-            )
-            clean_df["min_tempature_C"] = pd.to_numeric(
-                data["Min Temp (°C)"], errors="coerce"
-            )
-            clean_df["pluie_mm"] = pd.to_numeric(
-                data["Total Rain (mm)"], errors="coerce"
-            )
-            clean_df["neige_cm"] = pd.to_numeric(
-                data["Total Snow (cm)"], errors="coerce"
-            )
-            clean_df["precipitation_mm"] = pd.to_numeric(
-                data["Total Precip (mm)"], errors="coerce"
-            )
-            clean_df["neige_accumulee_cm"] = pd.to_numeric(
-                data["Snow on Grnd (cm)"], errors="coerce"
-            )
-            clean_df["direction_vent"] = pd.to_numeric(
-                data["Dir of Max Gust (10s deg)"], errors="coerce"
-            )
-            clean_df["vitesse_vent_kmh"] = pd.to_numeric(
-                data["Spd of Max Gust (km/h)"], errors="coerce"
-            )
+            clean_df["temperature_C"] = data["Mean Temp (°C)"]
+            clean_df["max_temperature_C"] = data["Max Temp (°C)"]
+            clean_df["min_tempature_C"] = data["Min Temp (°C)"]
+            clean_df["pluie_mm"] = data["Total Rain (mm)"]
+            clean_df["neige_cm"] = data["Total Snow (cm)"]
+            clean_df["precipitation_mm"] = data["Total Precip (mm)"]
+            clean_df["neige_accumulee_cm"] = data["Snow on Grnd (cm)"]
+            clean_df["direction_vent"] = data["Dir of Max Gust (10s deg)"]
+            clean_df["vitesse_vent_kmh"] = data["Spd of Max Gust (km/h)"]
             clean_df["humidite"] = clean_df["pression"] = clean_df["point_de_rosee"] = (
                 np.nan
             )

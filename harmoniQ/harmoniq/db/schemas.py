@@ -171,7 +171,9 @@ class Eolienne(SQLBase):
 class EolienneParcBase(BaseModel):
     nom: str = Field(..., description="Nom du parc éolien")
     latitude: float = Field(..., description="Latitude moyenne des éoliennes (degrés)")
-    longitude: float = Field(..., description="Longitude moyenne des éoliennes (degrés)")
+    longitude: float = Field(
+        ..., description="Longitude moyenne des éoliennes (degrés)"
+    )
     nombre_eoliennes: int = Field(..., description="Nombre d'éoliennes dans le parc")
     capacite_total: float = Field(..., description="Capacité totale du parc (MW)")
 
@@ -215,13 +217,22 @@ class ThermiqueBase(InfrastructureBase):
 class TransmissionBase(InfrastructureBase):
     pass
 
+
 weather_schema = pa.DataFrameSchema(
     columns={
-        "longitude": pa.Column(pa.Float, checks=pa.Check.greater_than(-180), nullable=False),
-        "latitude": pa.Column(pa.Float, checks=pa.Check.greater_than(-90), nullable=False),
+        "longitude": pa.Column(
+            pa.Float, checks=pa.Check.greater_than(-180), nullable=False
+        ),
+        "latitude": pa.Column(
+            pa.Float, checks=pa.Check.greater_than(-90), nullable=False
+        ),
         "temperature_C": pa.Column(pa.Float, nullable=False),
-        "min_tempature_C": pa.Column(pa.Float, nullable=True), # Pour les données journalières
-        "max_temperature_C": pa.Column(pa.Float, nullable=True), # Pour les données journalières
+        "min_tempature_C": pa.Column(
+            pa.Float, nullable=True
+        ),  # Pour les données journalières
+        "max_temperature_C": pa.Column(
+            pa.Float, nullable=True
+        ),  # Pour les données journalières
         "pluie_mm": pa.Column(pa.Float, nullable=True),
         "neige_cm": pa.Column(pa.Float, nullable=True),
         "precipitation_mm": pa.Column(pa.Float, nullable=False),
