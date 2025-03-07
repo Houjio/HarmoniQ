@@ -165,7 +165,7 @@ coordinates_centrales = [
     (45.6833, -73.4333, 'Varennes', 0, 'Etc/GMT+5', 1500),    # 1.5 MW = 1500 kW
 ]
 
-def calculate_energy_solar_plants(coordinates_centrales, surface_tilt=30, surface_orientation=180):
+def calculate_energy_solar_plants(coordinates_centrales, surface_tilt=45, surface_orientation=180):
     """
     Calcule la production d'énergie annuelle pour des centrales solaires 
     aux coordonnées données avec leurs puissances spécifiées.
@@ -444,6 +444,70 @@ if __name__ == "__main__":
         print(f"  Puissance installée : {data['puissance_installee_kw']:.2f} kW")
     
     print(f"\nProduction totale pour toutes les régions : {energie_totale:,.2f} kWh")
-    
-    end_time = time.time()
-    print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
+
+
+#   Validation avec données réelles Hydro-Québec
+def load_csv(file_path):
+    """
+    Charge le fichier CSV contenant les données de production solaire.
+
+    Parameters
+    ----------
+    file_path : str
+        Chemin vers le fichier CSV.
+
+    Returns
+    -------
+    DataFrame
+        DataFrame contenant les données de production solaire.
+    """
+    return pd.read_csv(file_path, sep=';')
+
+def plot_validation(resultats_centrales, real_data):
+    """
+    Superpose sur un graphique mensuel la production des centrales solaires simulée totale avec les données réelles.
+
+    Parameters
+    ----------
+    resultats_centrales : dict
+        Dictionnaire contenant les résultats des centrales solaires simulées.
+    real_data : DataFrame
+        DataFrame contenant les données de production solaire réelle.
+    """
+    # Combiner les données horaires de toutes les centrales simulées
+    simulated_data = pd.concat([resultats_centrales[name]['energie_horaire'] for name in resultats_centrales.keys() if name != 'energie_totale_wh'])
+    simulated_data = simulated_data.groupby(simulated_data.index).sum()  
+
+    # Assurez-vous que simulated_data est un DataFrame et ajoutez la colonne 'production_kwh'
+    simulated_data = simulated_data.to_frame(name='production_kwh') 
+    simulated_data['month'] = simulated_data.index.month 
+
+    # Calculer la production mensuelle simulée
+    monthly_simulated = simulated_data.groupby('month')['production_kwh'].sum() / 1e6 # Conversion de Wh en MWh
+
+    real_data['Solaire'] = real_data['Solaire']  
+
+    # Calculer la production mensuelle réelle
+    real_data['month'] = pd.to_datetime(real_data['Date']).dt.month
+    monthly_real = real_data.groupby('month')['Solaire'].sum() 
+    # Tracer le graphique
+    plt.figure(figsize=(10, 6))
+    plt.plot(monthly_simulated.index, monthly_simulated.values, marker='o', linestyle='-', color='b', label='Production simulée')
+    plt.plot(monthly_real.index, monthly_real.values, marker='o', linestyle='-', color='r', label='Production réelle')
+    plt.title('Production Solaire Mensuelle')
+    plt.xlabel('Mois')
+    plt.ylabel('Production (MWh)')
+    plt.legend()
+    plt.grid(True)
+    plt.xticks(range(1, 13))
+    plt.show()
+
+# Charger les données réelles
+file_path = '2022-sources-electricite-quebec.csv'
+real_data = load_csv(file_path)
+
+# Superposer les données simulées et réelles sur un graphique
+plot_validation(resultats_centrales, real_data)
+
+end_time = time.time()
+print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
