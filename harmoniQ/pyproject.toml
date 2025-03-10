@@ -22,6 +22,7 @@ dependencies = [
     "openpyxl",
     "scipy",
     "openpyxl",
+    "isodate",
     # Web app dependencies
     "flask",
     "fastapi",

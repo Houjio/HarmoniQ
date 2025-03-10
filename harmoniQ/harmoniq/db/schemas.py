@@ -1,14 +1,16 @@
 "Liste de modèles de données de la base de données"
 
-from sqlalchemy import Column, Integer, String, Float, Boolean, Table
+from sqlalchemy import Column, Integer, String, Float, Boolean, Table, Enum
 from sqlalchemy.orm import declarative_base, relationship, Mapped, mapped_column
+from sqlalchemy.types import TypeDecorator
 from sqlalchemy.sql.schema import ForeignKey
 
 import pandera as pa
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, TypeAdapter, Field, field_validator, validator
 from typing import List, Optional
 from datetime import datetime, timedelta
-from enum import Enum
+import isodate
+from enum import Enum as PyEnum
 
 SQLBase = declarative_base()
 
@@ -68,7 +70,7 @@ class InstancePopulationResponse(InstancePopulationBase):
         from_attributes = True
 
 
-class TypeInfrastructures(str, Enum):
+class TypeInfrastructures(str, PyEnum):
     """Enumération des types d'infrastructures"""
 
     eolienne = "éolienne"
@@ -89,12 +91,93 @@ class PositionBase(BaseModel):
         return f"({self.latitude}, {self.longitude})"
 
 
-class CasBase(BaseModel):
+class Optimisme(PyEnum):
+    pessimiste = 1
+    moyen = 2
+    optimiste = 3
+
+
+class DateTimeString(TypeDecorator):
+    impl = String
+
+    def process_bind_param(self, value, dialect):
+        if value is not None:
+            return value.isoformat()
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            return datetime.fromisoformat(value)
+        return value
+
+class TimeDeltaString(TypeDecorator):
+    impl = String
+
+    def process_bind_param(self, value, dialect):
+        if value is not None:
+            return isodate.duration_isoformat(value)
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            return isodate.parse_duration(value)
+        return value
+
+class Scenario(SQLBase):
+    __tablename__ = "scenario"
+
+    id = Column(Integer, primary_key=True)
+    nom = Column(String)
+    description = Column(String)
+    date_de_debut = Column(DateTimeString)
+    date_de_fin = Column(DateTimeString)
+    pas_de_temps = Column(TimeDeltaString)
+    optimisme_social = Column(Enum(Optimisme))
+    optimisme_ecologique = Column(Enum(Optimisme))
+
+
+class ScenarioBase(BaseModel):
     nom: str
     description: Optional[str] = None
-    date_de_debut: datetime
-    date_de_fin: datetime
-    pas_de_temps: timedelta
+    date_de_debut: datetime = Field(
+        ..., description="Date de début de la simulation (YYYY-MM-DD)"
+    )
+    date_de_fin: datetime = Field(
+        ..., description="Date de fin de la simulation (YYYY-MM-DD)"
+    )
+    pas_de_temps: timedelta = Field(
+        ..., description="Pas de temps de la simulation (HH:MM:SS)"
+    )
+    optimisme_social: Optimisme = Optimisme.moyen
+    optimisme_ecologique: Optimisme = Optimisme.moyen
+
+    @validator('date_de_debut', 'date_de_fin', pre=True)
+    def parse_datetime(cls, value):
+        if isinstance(value, str):
+            try:
+                return datetime.fromisoformat(value)
+            except ValueError:
+                raise ValueError(f"Invalid datetime format: {value}")
+        return value
+    
+    @validator('pas_de_temps', pre=True)
+    def parse_timedelta(cls, value):
+        if isinstance(value, str):
+            try:
+                return isodate.parse_duration(value)
+            except ValueError:
+                raise ValueError(f"Invalid timedelta format: {value}")
+        return value
+
+class ScenarioCreate(ScenarioBase):
+    pass
+
+
+class ScenarioResponse(ScenarioBase):
+    id: int
+
+    class Config:
+        from_attributes = True
 
 
 class InfrastructureBase(PositionBase):
@@ -105,7 +188,7 @@ class InfrastructureBase(PositionBase):
     # TODO: Ajouter plus de champs
 
 
-class TypeGenerateur(Enum):
+class TypeGenerateur(PyEnum):
     A = 1
     B = 2
     C = 3

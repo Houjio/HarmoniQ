@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+import logging
 from typing import List, Optional
 from datetime import datetime
+import pandas as pd
 
-from harmoniq.db import schemas, engine
+from harmoniq.db import schemas, engine, CRUD
 from harmoniq.db.CRUD import (
     create_data,
     read_all_data,
@@ -14,6 +16,8 @@ from harmoniq.db.CRUD import (
 )
 from harmoniq.core import meteo
 from harmoniq.db.engine import get_db
+
+from harmoniq.modules.eolienne import InfraParcEolienne
 
 router = APIRouter(
     prefix="/api",
@@ -49,16 +53,6 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
     def create_endpoints(
         sql_class, base_class, create_class, response_class, table_name_lower
     ):
-        @class_router.get("/ping")
-        async def ping():
-            return {
-                "name": table_name_lower,
-                "base": base_class.__name__,
-                "create": create_class.__name__,
-                "response": response_class.__name__,
-                "ping": "pong",
-            }
-
         @class_router.post("/", response_model=response_class)
         async def create(item: create_class, db: Session = Depends(get_db)):
             result = create_data(db, sql_class, item)
@@ -159,6 +153,27 @@ def get_meteo_data(
 
 
 router.include_router(meteo_router)
+
+# Parc éolien
+parc_eolien_router = api_routers['eolienneparc']
+
+@parc_eolien_router.post("/{parc_eolien_id}/production")
+def calculer_production_parc_eolien(parc_eolien_id: int, scenario_id: int, db: Session = Depends(get_db)):
+    list_eolienne = engine.all_eoliennes_in_parc(db, parc_eolien_id)
+    scenario = CRUD.read_scenario_by_id(db, scenario_id)
+    if list_eolienne is None:
+        raise HTTPException(status_code=404, detail="Parc éolien not found")
+    
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+    
+    eolienne_infra = InfraParcEolienne(list_eolienne)
+    eolienne_infra.charger_scenario(scenario)
+    production:pd.DataFrame = eolienne_infra.calculer_production()
+
+    json_prod = production.to_json()
+
+    return json_prod
 
 
 # Ajout des routes aux endpoint

@@ -9,11 +9,6 @@ from harmoniq.db import schemas
 from harmoniq.db.CRUD import create_eolienne_parc, create_eolienne
 
 import argparse
-from harmoniq.db.engine import engine, get_db, create_eolienne_parc, create_eolienne
-from harmoniq.db.shemas import SQLBase
-from harmoniq.db import shemas
-
-import argparse
 
 
 def init_db(reset=False):
