@@ -318,54 +318,94 @@ def calculate_regional_residential_solar(coordinates_residential, population_rel
 
 def cost_solar_powerplant(energie_centrales):
     """
-    Calcule le coût total pour chaque centrale solaire basé sur leur production annuelle.
-    
-    Parameters
-    ----------
-    energie_wh : pandas.Series
-        Production d'énergie annuelle en Wh pour chaque emplacement.
-    
-    Returns
-    -------
-    float
-        Coûts en dollars
-    """
-    # Calcul de la puissance crête
-    heures_equivalent_pleine_puissance = 1200
-    puissance_crete_w = energie_centrales/ heures_equivalent_pleine_puissance
-    puissance_crete_kw = puissance_crete_w / 1000
-    puissance_crete_mw = puissance_crete_kw / 1000
-    
-    # Coût de référence par MW (40M$ / 9.5MW)
-    cout_par_mw = 40000000 / 9.5
-    couts = puissance_crete_mw * cout_par_mw
-    
-    # Ne retourner que les coûts
-    return couts
+    Calcule le coût total et le coût d'installation d'une centrale solaire selon sa production annuelle au Québec.
 
-def co2_emissions(energie_centrales):
-    """
-    Calcule les émissions de CO2 équivalent pour chaque centrale solaire.
-    
     Parameters
     ----------
-    energie_wh : pandas.Series
+    energie_centrales : pandas.Series
         Production d'énergie annuelle en Wh pour chaque emplacement.
-    
+
     Returns
     -------
-    pandas.Series
-        Émissions de CO2 en kg pour chaque emplacement.
+    tuple
+        (coût total en dollars, coût d'installation en dollars)
     """
-    # Convertir Wh en kWh
-    energie_kwh = energie_centrales / 1000
+    # Hypothèse : 1200 heures équivalentes pleine puissance par an
+    heures_equivalent_pleine_puissance = 1200
+    puissance_crete_w = energie_centrales / heures_equivalent_pleine_puissance
+    puissance_crete_mw = puissance_crete_w / 1_000_000  # Conversion en MW
+
+    # Coût de référence par MW pour le Québec
+    cout_par_mw_reference = 4_210_000  # Estimation moyenne des coûts actuels
+    facteur_echelle = 0.85  # Pour refléter les économies d'échelle
+
+    # Coût d'installation ajusté avec le facteur d'échelle
+    cout_installation = cout_par_mw_reference * (puissance_crete_mw ** facteur_echelle)
+
+    # Coût total prenant en compte les coûts indirects et opérationnels
+    cout_total = puissance_crete_mw * cout_par_mw_reference
+
+    return cout_total, cout_installation
+
+def calculate_lifetime(coordinates_centrales):
+    """
+    Estime la durée de vie des centrales solaires en fonction de leurs puissances installées.
+
+    Parameters
+    ----------
+    coordinates_centrales : list of tuples
+        Liste des coordonnées et puissances des centrales sous forme de tuples
+        (latitude, longitude, nom, altitude, timezone, puissance_kw)
+
+    Returns
+    -------
+    dict
+        Dictionnaire contenant la durée de vie estimée pour chaque centrale
+    """
+    durees_vie = {}
     
-    # Facteur d'émission en g CO2eq/kWh
-    facteur_emission = 64
-    emissions_g = energie_kwh * facteur_emission
-    emissions_kg = emissions_g / 1000
+    for centrale in coordinates_centrales:
+        nom = centrale[2]
+        puissance_mw = centrale[5] / 1000  # Conversion kW en MW
+        
+        if puissance_mw < 1:
+            duree_vie = 25  # Petites installations
+        elif 1 <= puissance_mw < 10:
+            duree_vie = 30  # Installations moyennes
+        else:
+            duree_vie = 35  # Grandes installations
+            
+        durees_vie[nom] = duree_vie
     
-    return emissions_kg
+    return durees_vie
+
+def co2_emissions_solar(coordinates_centrales, energie_centrales, facteur_emission=40):
+    """
+    Calcule les émissions de CO₂ équivalent pour chaque centrale solaire.
+
+    Parameters
+    ----------
+    coordinates_centrales : list of tuples
+        Liste des coordonnées et puissances des centrales
+    energie_centrales : dict
+        Dictionnaire contenant l'énergie produite par chaque centrale
+    facteur_emission : float, optional
+        Facteur d'émission en g CO₂eq/kWh basé sur l'ACV
+
+    Returns
+    -------
+    dict
+        Dictionnaire contenant les émissions de CO₂ en kg pour chaque centrale
+    """
+    emissions = {}
+    
+    for centrale in coordinates_centrales:
+        nom = centrale[2]
+        energie_kwh = energie_centrales[nom]['energie_annuelle_wh'] / 1000
+        emissions_g = energie_kwh * facteur_emission
+        emissions[nom] = emissions_g / 1000
+    
+    return emissions
 
 coordinates_residential = [
     (48.4808, -68.5210, 'Bas-Saint-Laurent', 0, 'Etc/GMT+5'),
@@ -407,13 +447,23 @@ population_relative = {
     "Centre-du-Quebec": 0.0291
 }
 
-Cout_centrales = cost_solar_powerplant(energie_centrales)
-CO2_centrales = co2_emissions(energie_centrales)
+# Utilisation des fonctions
+cout_total, cout_installation = cost_solar_powerplant(energie_centrales)
+durees_vie = calculate_lifetime(coordinates_centrales)
+emissions_co2 = co2_emissions(coordinates_centrales, resultats_centrales)
+
+# Affichage des résultats
+print("\n=== RÉSULTATS PAR CENTRALE ===")
+for centrale in coordinates_centrales:
+    nom = centrale[2]
+    print(f"\n{nom}:")
+    print(f"  Coût total : {cout_total:,.2f} $")
+    print(f"  Coût d'installation : {cout_installation:,.2f} $")
+    print(f"  Durée de vie estimée : {durees_vie[nom]} ans")
+    print(f"  Émissions CO₂ : {emissions_co2[nom]:,.2f} kg CO₂eq/an")
 
 end_time = time.time()
 
-print(f"Les coûts pour les centrales solaires sont de {Cout_centrales:,.2f} $")
-print(f"Le CO2 pour les centrales solaires est de {CO2_centrales:,.2f} kg")
 print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
 
 
