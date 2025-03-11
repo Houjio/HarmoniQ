@@ -42,13 +42,13 @@ weekly_production = production_df.groupby('week')['production_kwh'].sum()
 annual_nuclear_production = production_df['production_kwh'].sum()
 print(f"Production nucléaire annuelle totale : {annual_nuclear_production:.2f} kWh")
 
-# # Tracer le graphique de la production hebdomadaire
-# plt.figure(figsize=(10, 6))
-# plt.plot(weekly_production.index, weekly_production.values, marker='o', linestyle='-', color='b')
-# plt.title('Production Nucléaire Hebdomadaire')
-# plt.xlabel('Semaine de l\'année')
-# plt.ylabel('Production (kWh)')
-# plt.grid(True)
-# plt.xticks(range(1, 53))
-# plt.show()
+# Tracer le graphique de la production hebdomadaire
+plt.figure(figsize=(10, 6))
+plt.plot(weekly_production.index, weekly_production.values, marker='o', linestyle='-', color='b')
+plt.title('Production Nucléaire Hebdomadaire')
+plt.xlabel('Semaine de l\'année')
+plt.ylabel('Production (kWh)')
+plt.grid(True)
+plt.xticks(range(1, 53))
+plt.show()
 
