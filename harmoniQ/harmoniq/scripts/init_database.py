@@ -24,7 +24,6 @@ def fill_eoliennes():
     db = next(get_db())
 
     response = requests.get(EOLIENNE_URL)
-    response = requests.get(EOLIENNE_URL)
     response.raise_for_status()
     station_df = pd.read_excel(response.content)
     station_df = station_df[station_df["Province_Territoire"] == "Québec"]

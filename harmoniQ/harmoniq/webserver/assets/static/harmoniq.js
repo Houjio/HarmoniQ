@@ -12,14 +12,16 @@ function plot_results_parc_eolien(data) {
     let production = data.production
 
     let traces = [{
-        x: Object.keys(production).map(timestamp => moment.unix(parseInt(timestamp)).format('LLL')),
+        x: Object.keys(production).map(timestamp => new Date(parseInt(timestamp) * 1000).toLocaleString()),
         y: Object.values(production).map(value => value / 1000000), // Convert W to MW
         type: 'scatter',
         mode: 'lines+markers',
         name: 'Production'
     }];
 
+    layout.xaxis.tickformat = '%d-%m-%Y %H:%M'; // Format ticks to be more readable
     Plotly.newPlot('plots', traces, layout);
+
 }
 
 function simuler(id, type) {
