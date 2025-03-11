@@ -347,7 +347,7 @@ def cost_solar_powerplant(energie_centrales):
 
     return cout_total, cout_installation
 
-def calculate_lifetime(coordinates_centrales):
+def calculate_lifetime_solar(coordinates_centrales):
     """
     Estime la durée de vie des centrales solaires en fonction de leurs puissances installées.
 
@@ -449,8 +449,8 @@ population_relative = {
 
 # Utilisation des fonctions
 cout_total, cout_installation = cost_solar_powerplant(energie_centrales)
-durees_vie = calculate_lifetime(coordinates_centrales)
-emissions_co2 = co2_emissions(coordinates_centrales, resultats_centrales)
+durees_vie = calculate_lifetime_solar(coordinates_centrales)
+emissions_co2 = co2_emissions_solar(coordinates_centrales, resultats_centrales)
 
 # Affichage des résultats
 print("\n=== RÉSULTATS PAR CENTRALE ===")
