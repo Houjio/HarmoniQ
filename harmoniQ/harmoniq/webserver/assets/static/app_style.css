@@ -1,20 +1,39 @@
 div#main {
-    width: 100%;
-    /* display: grid; */
     padding: 1em;
-    height: calc(100vh - 5em);
+    gap: 1rem;
+    height: calc(100vh - 4.5em);
+    display: grid;
+    grid-template-areas:
+        "scenario  choix-infra plot"
+        "infra     choix-infra plot"
+        "infra     choix-infra plot";
+    grid-template-columns: 4fr 2fr 6fr;
+    grid-template-rows: 1fr 1fr 4fr;
 }
+
+@media (max-width: 768px) {
+    div#main {
+        grid-template-areas:
+            "scenario"
+            "infra"
+            "choix-infra"
+            "plot";
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr 2fr 3fr;
+    }
+}
+
+div#main div#infrastructures { grid-area: infra; }
+div#main div#scenario { grid-area: scenario; }
+div#main div#choix-infra { grid-area: choix-infra; }
+div#main div#plots { grid-area: plot; }
+
 
 div#main > div {
     border-radius: 15px;
     padding: 1em;
 }
 
-div#main div#sidebar, div#main div#scenario {
-    width: 50%;
-}
-
-div#main div#sidebar {
-    max-height: 50%;
+div#main div#infrastructures {
     overflow-y: auto;
 }

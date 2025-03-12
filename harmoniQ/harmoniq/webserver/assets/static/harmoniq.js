@@ -19,9 +19,10 @@ function plot_results_parc_eolien(data) {
         name: 'Production'
     }];
 
-    layout.xaxis.tickformat = '%d-%m-%Y %H:%M'; // Format ticks to be more readable
-    Plotly.newPlot('plots', traces, layout);
-
+    layout.xaxis.tickformat = '%d-%m-%Y %H:%M';
+    layout.width = '100%';
+    layout.height = '100%';
+    Plotly.newPlot('plot-box', traces, layout);
 }
 
 function simuler(id, type) {
@@ -168,61 +169,67 @@ function scenarioActif(id) {
     document.getElementById('scenario-' + id).querySelector('button.btn-primary').disabled = true;
 }
 
-function creerElementListScenario({ id, nom, description, date_de_debut, date_de_fin, pas_de_temps, optimisme_social, optimisme_ecologique }) {
-    // Convert the times and dates to a more readable format
-    date_de_debut = moment(date_de_debut).format('LL');
-    date_de_fin = moment(date_de_fin).format('LL');
-    pas_de_temps = moment.duration(pas_de_temps).humanize();
+// function creerElementListScenario({ id, nom, description, date_de_debut, date_de_fin, pas_de_temps, optimisme_social, optimisme_ecologique }) {
+//     // Convert the times and dates to a more readable format
+//     date_de_debut = moment(date_de_debut).format('LL');
+//     date_de_fin = moment(date_de_fin).format('LL');
+//     pas_de_temps = moment.duration(pas_de_temps).humanize();
 
-    // Convert the optimism values to a more readable format
-    switch (optimisme_social) {
-        case 1:
-            optimisme_social = 'Pessimisme social';
-            break;
-        case 2:
-            optimisme_social = 'Neutre social';
-            break;
-        case 3:
-            optimisme_social = 'Optimisme social';
-            break;
-    }
+//     // Convert the optimism values to a more readable format
+//     switch (optimisme_social) {
+//         case 1:
+//             optimisme_social = 'Pessimisme social';
+//             break;
+//         case 2:
+//             optimisme_social = 'Neutre social';
+//             break;
+//         case 3:
+//             optimisme_social = 'Optimisme social';
+//             break;
+//     }
 
-    switch (optimisme_ecologique) {
-        case 1:
-            optimisme_ecologique = 'Pessimisme écologique';
-            break;
-        case 2:
-            optimisme_ecologique = 'Neutre écologique';
-            break;
-        case 3:
-            optimisme_ecologique = 'Optimisme écologique';
-            break;
-    }
+//     switch (optimisme_ecologique) {
+//         case 1:
+//             optimisme_ecologique = 'Pessimisme écologique';
+//             break;
+//         case 2:
+//             optimisme_ecologique = 'Neutre écologique';
+//             break;
+//         case 3:
+//             optimisme_ecologique = 'Optimisme écologique';
+//             break;
+//     }
 
-    return `
-        <li class="list-group-item" id="scenario-${id}">
-            <div class="d-flex w-100 justify-content-between">
-                <p class="fw-bold">${nom}</p>
-                <p>${date_de_debut} à ${date_de_fin} (int. ${pas_de_temps})</p>
-            </div>
-            <div class="d-flex w-100 justify-content-between">
-                <p>${description}</p>
-                <p>${optimisme_social}, ${optimisme_ecologique}</p>
-            </div>
-            <div class="d-flex w-100 justify-content-end">
-                <button class="btn btn-danger mx-2" style="font-size: 0.75rem;" onclick="confirmDeleteScenario(${id}, '${nom}')"><i class="fa fa-trash"></i></button>
-                <button class="btn btn-primary" style="font-size: 0.75rem;" onclick="scenarioActif(${id})">Rendre Actif</button>
-        </li>
-    `;
-}   
+//     return `
+//         <li class="list-group-item" id="scenario-${id}">
+//             <div class="d-flex w-100 justify-content-between">
+//                 <p class="fw-bold">${nom}</p>
+//                 <p>${date_de_debut} à ${date_de_fin} (int. ${pas_de_temps})</p>
+//             </div>
+//             <div class="d-flex w-100 justify-content-between">
+//                 <p>${description}</p>
+//                 <p>${optimisme_social}, ${optimisme_ecologique}</p>
+//             </div>
+//             <div class="d-flex w-100 justify-content-end">
+//                 <button class="btn btn-danger mx-2" style="font-size: 0.75rem;" onclick="confirmDeleteScenario(${id}, '${nom}')"><i class="fa fa-trash"></i></button>
+//                 <button class="btn btn-primary" style="font-size: 0.75rem;" onclick="scenarioActif(${id})">Rendre Actif</button>
+//         </li>
+//     `;
+// }   
 
 
 function initialiserListeScenario() {
     fetch('/api/scenario')
         .then(response => response.json())
         .then(data => {
-            document.getElementById('scenario-list').innerHTML = data.map(creerElementListScenario).join('');
+            data.forEach(scenario => {
+                let option = document.createElement('option');
+                option.value = scenario.id;
+                option.textContent = scenario.nom;
+                document.getElementById('scenario-actif').appendChild(option);
+            });
         })
+        
         .catch(error => console.error('Erreur lors du chargement des scenario:', error));
 }
 

@@ -13,17 +13,30 @@
 <div id="main">
     <div id="scenario" class="bg-light card" scenario-actif="">
         <div class="card-body">
-            <div class="d-flex justify-content-between">
-                <h5 class="card-title">Scenario:</h5>
-                <span id="scenario-actif-text"></span>
+            <div class="d-flex w-100 mb-2 align-items-center">
+                <h5 style="white-space: nowrap;">Scénario actif:</h5>
+                <span class="mx-3"></span>
+                <select name="scenario-actif" id="scenario-actif" class="form-select flex-grow-1">
+                    <option value="-1"><i class="fa fa-plus"></i></option>
+                </select>
             </div>
-          <ul class="list-group mb-2" id="scenario-list">
-
-          </ul>
-          <button class="btn btn-primary" id="add-scenario">Nouveau scenario</button>
+            <div id="scenario-info" class="card">
+                Hello
+            </div>
+            <div class="d-flex w-100 justify-content-end">
+                <button class="btn btn-primary" id="add-scenario">Nouveau scenario</button>
+            </div>
         </div>
     </div>
-    <div id="sidebar" class="bg-light card accordion">
+    <div id="choix-infra" class="bg-light card" liste-infra-actif="">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <h5 class="card-title">Choix d'infrastructures:</h5>
+                <span id="choix-infra-actif-text"></span>
+            </div>
+        </div>
+    </div>
+    <div id="infrastructures" class="bg-light card accordion">
         <h5 class="card-title">Infrastructures:</h5>
         <div class="accordion-item">
             <h2 class="accordion-header" id="hydroHeading">
@@ -81,8 +94,12 @@
             </div>
         </div>
     </div>
-    <div id="plots" style="height: 100px;">
-        
+    <div id="plots" class="bg-light card">
+        <div class="card-body">
+            <div id="plot-box">
+
+            </div>
+        </div> 
     </div>
 </div>
 
