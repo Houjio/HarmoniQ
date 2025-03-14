@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Feb  7 10:31:19 2025
+Created on Fri Feb  28 10:31:19 2025
 
 @author: Jing Bo Zhang
 """
+
 import pandas as pd
+import csv
 
 def load_energy_data(csv_file):
     """
@@ -97,13 +99,23 @@ def main():
     transport_emissions = calculate_transport_emissions(energy_co2, percent_transport, length_km_total_qc)
     distribution_emissions = calculate_distribution_emissions(energy_co2, percent_distribution, total_energy_consumed)
     
+    # Prepare output data for CSV without brackets (values as floats, not lists)
+    results = {
+        "CO2 emissions for transport (kg/km)": transport_emissions,
+        "CO2 emissions for distribution (kg/kWh)": distribution_emissions,
+        "Total CO2 Emission for Transport and Distribution (kg)": transport_emissions * length_km_total_qc + distribution_emissions * total_energy_consumed
+    }
+    
     # Print results
     print(f"CO2 emissions for transport (kg/km): {transport_emissions:.10f}")
     print(f"CO2 emissions for distribution (kg/kWh): {distribution_emissions:.10f}")
+    print(f"Total CO2 Emission for Transport and Distribution: {transport_emissions * length_km_total_qc + distribution_emissions * total_energy_consumed:,.2f} kg")
     
-    # Compute total transport and distribution emissions
-    total_transport_distribution_emissions = transport_emissions * length_km_total_qc + distribution_emissions * total_energy_consumed
-    print(f"Total CO2 Emission for Transport and Distribution: {total_transport_distribution_emissions:,.2f} kg")
+    # Save the results to CSV
+    with open("emissions_results.csv", mode="w", newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=results.keys())
+        writer.writeheader()
+        writer.writerow(results)  # Write a single row without brackets
 
 # Run the script if executed as the main module
 if __name__ == "__main__":
