@@ -348,44 +348,36 @@ def cost_solar_powerplant(coordinates_centrales, resultats_centrales):
     
     return couts
 
-def calculate_installation_cost(coordinates_centrales):
+def calculate_installation_cost(coordinates_centrales, cout_total_par_mw=4_210_000):
     """
-    Calcule le coût d'installation pour chaque centrale solaire avec une estimation plus précise.
+    Calcule le coût d'installation pour chaque centrale solaire.
 
     Parameters
     ----------
     coordinates_centrales : list of tuples
-        Liste des coordonnées et puissances des centrales
+        Liste des centrales sous la forme (latitude, longitude, nom, ..., puissance_kW).
+    cout_total_par_mw : float, optional
+        Coût total estimé par MW (par défaut 4.21M$/MW).
 
     Returns
     -------
     dict
-        Dictionnaire contenant le coût d'installation pour chaque centrale
+        Dictionnaire contenant le coût d'installation pour chaque centrale.
     """
     couts_installation = {}
-    
+
     for centrale in coordinates_centrales:
-        nom = centrale[2]
-        puissance_mw = centrale[5] / 1000  # Conversion kW en MW
-        
-        # Coûts de base par MW selon la taille de l'installation
-        if puissance_mw < 1:
-            cout_base = 4_500_000  # Plus cher pour petites installations
-        elif 1 <= puissance_mw < 5:
-            cout_base = 4_210_000  # Coût moyen
-        else:
-            cout_base = 3_900_000  # Économies d'échelle pour grandes installations
-        
-        # Facteurs d'ajustement
-        facteur_echelle = 0.85  # Économies d'échelle
-        facteur_complexite = 1.1  # Complexité du site et infrastructure
-        
-        # Calcul du coût d'installation avec facteurs
-        cout_installation = cout_base * (puissance_mw ** facteur_echelle) * facteur_complexite
-        
+        nom = centrale[2]  # Nom de la centrale
+        puissance_mw = centrale[5] / 1000  # Conversion kW → MW
+
+        # Calcul du coût total et du coût d'installation
+        cout_total = puissance_mw * cout_total_par_mw
+        cout_installation = cout_total * 0.85  # 85% du coût total
+
         couts_installation[nom] = cout_installation
-    
+
     return couts_installation
+
 
 def calculate_lifetime(coordinates_centrales):
     """
