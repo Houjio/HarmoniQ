@@ -1,1 +1,5 @@
-from calculs_production_solaire import *
+from harmoniq.core.base import Infrastructure
+
+
+class Solaire(Infrastructure):
+    pass

@@ -2,6 +2,7 @@
 env
 harmoniq_env
 **/db.sqlite
+**/test_db.sqlite
 
 # Fichier python générés
 *.egg-info
