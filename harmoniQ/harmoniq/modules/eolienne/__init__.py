@@ -45,7 +45,7 @@ class InfraParcEolienne(Infrastructure):
 
     @necessite_scenario
     def calculer_production(self) -> pd.DataFrame:
-        # TODO: Ce code repete souvant les memes calcules, il faudrait le refactoriser
+        # TODO: Ce code repete souvent les memes calcules, il faudrait le refactoriser
 
         new_df = None
 
