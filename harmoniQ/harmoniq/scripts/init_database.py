@@ -2,11 +2,11 @@
 
 import requests
 import pandas as pd
-from io import StringIO
 
-from harmoniq.db.engine import engine, get_db, create_eolienne_parc, create_eolienne
-from harmoniq.db.shemas import SQLBase
-from harmoniq.db import shemas
+from harmoniq.db.engine import engine, get_db
+from harmoniq.db.schemas import SQLBase
+from harmoniq.db import schemas
+from harmoniq.db.CRUD import create_eolienne_parc, create_eolienne
 
 import argparse
 
@@ -41,7 +41,7 @@ def fill_eoliennes():
 
             project_capacity = project_capacity[0]
 
-            eolienne_parc = shemas.EolienneParcCreate(
+            eolienne_parc = schemas.EolienneParcCreate(
                 nom=project_name,
                 latitude=average_lat,
                 longitude=average_lon,
@@ -61,7 +61,7 @@ def fill_eoliennes():
                 if isinstance(commisioning, str) and "/" in commisioning:
                     commisioning = int(commisioning.split("/")[-1])
 
-                eolienne = shemas.EolienneCreate(
+                eolienne = schemas.EolienneCreate(
                     eolienne_nom=row["Turbine Identifier"],
                     latitude=row["Latitude"],
                     longitude=row["Longitude"],

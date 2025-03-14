@@ -16,10 +16,15 @@ dependencies = [
     # Général
     "numpy",
     "pandas",
+    "pandera",
     "matplotlib",
     "scipy",
     "openpyxl",
+    "scipy",
+    "openpyxl",
+    "isodate",
     # Web app dependencies
+    "flask",
     "fastapi",
     "uvicorn",
     "sqlalchemy",

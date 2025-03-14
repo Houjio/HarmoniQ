@@ -1,15 +1,45 @@
 from sqlalchemy import create_engine
-import sqlalchemy
-from sqlalchemy.sql import func
 from sqlalchemy.orm import Session, sessionmaker
-from typing import Optional
+
+import inspect
+from typing import Dict
+import pandas as pd
 
 from harmoniq import DB_PATH
-from harmoniq.db import shemas
+from harmoniq.db import schemas
 
 DATABASE__URL = f"sqlite:///{DB_PATH}"
 engine = create_engine(DATABASE__URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+def _get_sql_tables(module) -> Dict[type, Dict[str, type]]:
+    all_classes = [member for _, member in inspect.getmembers(module, inspect.isclass)]
+    base_classes = [
+        cls
+        for cls in all_classes
+        if issubclass(cls, schemas.SQLBase) and cls is not schemas.SQLBase
+    ]
+    # Get corresponding pydantic, create and response classes
+    sql_tables = {}
+    for cls in base_classes:
+        base_class = [c for c in all_classes if c.__name__ == f"{cls.__name__}Base"][0]
+        create_class = [
+            c for c in all_classes if c.__name__ == f"{cls.__name__}Create"
+        ][0]
+        response_class = [
+            c for c in all_classes if c.__name__ == f"{cls.__name__}Response"
+        ][0]
+        sql_tables[cls] = {
+            "base": base_class,
+            "create": create_class,
+            "response": response_class,
+        }
+    return sql_tables
+
+
+sql_tables = _get_sql_tables(schemas)
+
 
 def get_db():
     """
@@ -22,108 +52,23 @@ def get_db():
         db.close()
 
 
-def create_eolienne(db: Session, eolienne: shemas.EolienneCreate):
-    db_eolienne = shemas.Eolienne(**eolienne.model_dump())
-    db.add(db_eolienne)
-    db.commit()
-    db.refresh(db_eolienne)
-    return db_eolienne
-
-
-def read_eoliennes(db: Session, id: Optional[int] = None):
-    if id is not None:
-        return db.query(shemas.Eolienne).filter(shemas.Eolienne.id == id).all()
-    return db.query(shemas.Eolienne).all()
-
-
-def read_eolienne(db: Session, eolienne_id: int):
-    eolienne = (
-        db.query(shemas.Eolienne).filter(shemas.Eolienne.id == eolienne_id).first()
+def get_all_mrcs_population(db: Session, mrc_id: int) -> pd.DataFrame:
+    data = (
+        db.query(schemas.InstancePopulation)
+        .filter(schemas.InstancePopulation.mrc_id == mrc_id)
+        .all()
     )
-    return eolienne
 
-
-def update_eolienne(db: Session, eolienne_id: int, eolienne: shemas.EolienneCreate):
-    db_eolienne = (
-        db.query(shemas.Eolienne).filter(shemas.Eolienne.id == eolienne_id).first()
+    df = pd.DataFrame(
+        [{"annee": item.annee, "population": item.population} for item in data]
     )
-    if db_eolienne is None:
-        return None
-    for key, value in eolienne.dict().items():
-        setattr(db_eolienne, key, value)
-    db.commit()
-    db.refresh(db_eolienne)
-    return db_eolienne
-
-
-def delete_eolienne(db: Session, eolienne_id: int):
-    db_eolienne = (
-        db.query(shemas.Eolienne).filter(shemas.Eolienne.id == eolienne_id).first()
-    )
-    if db_eolienne is None:
-        return None
-    db.delete(db_eolienne)
-    db.commit()
-    return {"message": "Eolienne deleted successfully"}
-
-
-def create_eolienne_parc(db: Session, eolienne_parc: shemas.EolienneParcCreate):
-    db_eolienne_parc = shemas.EolienneParc(**eolienne_parc.model_dump())
-    db.add(db_eolienne_parc)
-    db.commit()
-    db.refresh(db_eolienne_parc)
-    return db_eolienne_parc
-
-
-def read_eolienne_parcs(db: Session, id: Optional[int] = None):
-    if id is not None:
-        return db.query(shemas.EolienneParc).filter(shemas.EolienneParc.id == id).all()
-    return db.query(shemas.EolienneParc).all()
-
-
-def read_eolienne_parc(db: Session, eolienne_parc_id: int):
-    eolienne_parc = (
-        db.query(shemas.EolienneParc)
-        .filter(shemas.EolienneParc.id == eolienne_parc_id)
-        .first()
-    )
-    return eolienne_parc
-
-
-def update_eolienne_parc(
-    db: Session, eolienne_parc_id: int, eolienne_parc: shemas.EolienneParcCreate
-):
-    db_eolienne_parc = (
-        db.query(shemas.EolienneParc)
-        .filter(shemas.EolienneParc.id == eolienne_parc_id)
-        .first()
-    )
-    if db_eolienne_parc is None:
-        return None
-    for key, value in eolienne_parc.dict().items():
-        setattr(db_eolienne_parc, key, value)
-    db.commit()
-    db.refresh(db_eolienne_parc)
-    return db_eolienne_parc
-
-
-def delete_eolienne_parc(db: Session, eolienne_parc_id: int):
-    db_eolienne_parc = (
-        db.query(shemas.EolienneParc)
-        .filter(shemas.EolienneParc.id == eolienne_parc_id)
-        .first()
-    )
-    if db_eolienne_parc is None:
-        return None
-    db.delete(db_eolienne_parc)
-    db.commit()
-    return {"message": "EolienneParc deleted successfully"}
+    return df
 
 
 def all_eoliennes_in_parc(db: Session, eolienne_parc_id: int):
     eoliennes = (
-        db.query(shemas.Eolienne)
-        .filter(shemas.Eolienne.eolienne_parc_id == eolienne_parc_id)
+        db.query(schemas.Eolienne)
+        .filter(schemas.Eolienne.eolienne_parc_id == eolienne_parc_id)
         .all()
     )
     return eoliennes
