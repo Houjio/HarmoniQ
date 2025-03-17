@@ -339,7 +339,6 @@ class Solaire(SQLBase):
     rendement_onduleur = Column(Integer, nullable=True)
     solaire_parc_id = Column(Integer, ForeignKey("solaire_parc_id"), nullable=True)
 
-    module_solaire = relationship("SolaireParc", back_populates="solaire")
 
 class SolaireParcBase(BaseModel):
     nom: str = Field(..., description="Nom du parc solaire")
@@ -370,8 +369,8 @@ class SolaireParc(SQLBase):
     latitude = Column(Float)
     longitude = Column(Float)
     nombre_panneaux = Column(Integer)
+    panneau_type = Column(String)
     capacite_total = Column(Float)
-    module_solaire = relationship("solaire", back_populates="Solaire_parc")
 
 class ThermiqueBase(InfrastructureBase):
     pass
