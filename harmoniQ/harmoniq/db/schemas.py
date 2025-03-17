@@ -290,8 +290,88 @@ class HydroelectriqueBase(InfrastructureBase):
 
 
 class SolaireBase(InfrastructureBase):
+    latitude: float
+    longitude: float
+    centrale_nom: str
+    surface_panneau: float
+    angle_panneau: int
+    orientation_panneau: int
+    puissance_nominal: float
+    panneau_id: int
+    modele_panneau: str
+    project_name: str
+    centrale_solaire_id: int
+    annee_commission: Optional[int] = None
+    rendement_onduleur: Optional[int] = None
+    panneau_type : Optional[str] = None
+    materiau_panneau: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class SolaireCreate(SolaireBase):
     pass
 
+
+class SolaireResponse(SolaireBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+class Solaire(SQLBase):
+    __tablename__ = "solaire"
+
+    id = Column(Integer, primary_key=True, index=True)
+    centrale_nom = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    angle_panneau = Column(int)
+    orientation_panneau = Column(int)
+    surface_panneau = Column(Float)
+    panneau_type_id = Column(Integer)
+    puissance_nominal = Column(Float)
+    modele_panneau = Column(String)
+    project_name = Column(String)
+    annee_commission = Column(Integer, nullable=True)
+    panneau_type = Column(str, nullable=True)
+    materiau_panenau = Column(String, nullable=True)
+    rendement_onduleur = Column(Integer, nullable=True)
+    solaire_parc_id = Column(Integer, ForeignKey("solaire_parc_id"), nullable=True)
+
+    module_solaire = relationship("SolaireParc", back_populates="solaire")
+
+class SolaireParcBase(BaseModel):
+    nom: str = Field(..., description="Nom du parc solaire")
+    latitude: float = Field(..., description="Latitude moyenne des panneaux solaires (degrés)")
+    longitude: float = Field(
+        ..., description="Longitude moyenne des panneaux solaires (degrés)"
+    )
+    nombre_panneau: int = Field(..., description="Nombre de panneaux solaire dans le parc")
+    capacite_total: float = Field(..., description="Capacité totale du parc (MW)")
+
+
+class SolaireParcCreate(SolaireParcBase):
+    pass
+
+
+class SolaireParcResponse(SolaireParcBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class SolaireParc(SQLBase):
+    __tablename__ = "Solaire_parc"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nom = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    nombre_panneaux = Column(Integer)
+    capacite_total = Column(Float)
+    module_solaire = relationship("solaire", back_populates="Solaire_parc")
 
 class ThermiqueBase(InfrastructureBase):
     pass
