@@ -373,7 +373,46 @@ class SolaireParc(SQLBase):
     capacite_total = Column(Float)
 
 class ThermiqueBase(InfrastructureBase):
+    latitude: float
+    longitude: float
+    centrale_thermique_nom: str
+    puissance_nominal: float
+    centrale_thermique_id: int
+    type_intrant: str
+    semaine_maintenance: int
+    annee_commission: Optional[int] = None
+    type_generateur: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class ThermiqueCreate(ThermiqueBase):
     pass
+
+
+class ThermiqueResponse(ThermiqueBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class Thermique(SQLBase):
+    __tablename__ = "thermique"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    centrale_thermique_nom = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    centrale_thermique_id = Column(Integer)
+    puissance_nominal = Column(Float)
+    type_intrant = Column(String)
+    semaine_maintenance = Column(int)
+    annee_commission = Column(Integer, nullable=True)
+    surface_balayee = Column(Float, nullable=True)
+    type_generateur = Column(Integer, nullable=True)
 
 
 class TransmissionBase(InfrastructureBase):
