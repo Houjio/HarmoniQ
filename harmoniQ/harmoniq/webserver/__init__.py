@@ -49,6 +49,9 @@ def documentation(request: Request):
 def application(request: Request):
     return templates.TemplateResponse(request=request, name="app.html")
 
+@app.get("/Eloise", response_class=HTMLResponse)
+def eloisepage(request: Request):
+    return templates.TemplateResponse(request=request, name="elo.html")
 
 @app.exception_handler(404)
 def not_found(request: Request, exc):

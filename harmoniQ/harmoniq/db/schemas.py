@@ -344,6 +344,110 @@ class TransmissionBase(InfrastructureBase):
     pass
 
 
+class BusControlType(str, PyEnum):
+    """Enumération des types de contrôle de bus"""
+    PV = "PV"
+    PQ = "PQ"
+    slack = "slack"
+
+class BusType(str, PyEnum):
+    """Enumération des types de bus"""
+    prod = "prod"
+    conso = "conso"
+    line = "line"
+
+class Bus(SQLBase):
+    __tablename__ = "bus"
+
+    name = Column(String, primary_key=True, index=True)
+    v_nom = Column(Integer)
+    type = Column(Enum(BusType))
+    x = Column(Float)
+    y = Column(Float)
+    control = Column(Enum(BusControlType))
+    
+    lines_from = relationship("Line", back_populates="bus_from", foreign_keys="Line.bus0")
+    lines_to = relationship("Line", back_populates="bus_to", foreign_keys="Line.bus1")
+
+class BusBase(BaseModel):
+    name: str
+    v_nom: int
+    type: BusType
+    x: float
+    y: float
+    control: BusControlType
+    
+    class Config:
+        from_attributes = True
+
+class BusCreate(BusBase):
+    pass
+
+class BusResponse(BusBase):
+    class Config:
+        from_attributes = True
+
+class LineType(SQLBase):
+    __tablename__ = "line_type"
+
+    name = Column(String, primary_key=True, index=True)
+    f_nom = Column(Integer)
+    r_per_length = Column(Float)
+    x_per_length = Column(Float)
+    
+    lines = relationship("Line", back_populates="line_type")
+
+class LineTypeBase(BaseModel):
+    name: str
+    f_nom: int
+    r_per_length: float
+    x_per_length: float
+    
+    class Config:
+        from_attributes = True
+
+class LineTypeCreate(LineTypeBase):
+    pass
+
+class LineTypeResponse(LineTypeBase):
+    class Config:
+        from_attributes = True
+
+class Line(SQLBase):
+    __tablename__ = "line"
+
+    name = Column(String, primary_key=True, index=True)
+    bus0 = Column(String, ForeignKey("bus.name"))
+    bus1 = Column(String, ForeignKey("bus.name"))
+    type = Column(String, ForeignKey("line_type.name"))
+    capital_cost = Column(Integer)
+    length = Column(Integer)
+    s_nom = Column(Integer)
+    
+    bus_from = relationship("Bus", back_populates="lines_from", foreign_keys=[bus0])
+    bus_to = relationship("Bus", back_populates="lines_to", foreign_keys=[bus1])
+    line_type = relationship("LineType", back_populates="lines")
+
+class LineBase(BaseModel):
+    name: str
+    bus0: str
+    bus1: str
+    type: str
+    capital_cost: int
+    length: int
+    s_nom: int
+    
+    class Config:
+        from_attributes = True
+
+class LineCreate(LineBase):
+    pass
+
+class LineResponse(LineBase):
+    class Config:
+        from_attributes = True
+
+
 weather_schema = pa.DataFrameSchema(
     columns={
         "longitude": pa.Column(
