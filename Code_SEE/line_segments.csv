@@ -1,0 +1,6 @@
+Start_Coordinates,End_Coordinates,Length_km,Line_Type
+A,B,300,AC735
+B,C,400,DC450
+C,D,250,AC735
+D,E,200,AC735
+E,F,150,DC450
