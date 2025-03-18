@@ -311,7 +311,7 @@ class BusType(str, PyEnum):
     """Enumération des types de bus"""
     prod = "prod"
     conso = "conso"
-    line = "line"
+    line = "ligne"
 
 class Bus(SQLBase):
     __tablename__ = "bus"
@@ -377,9 +377,9 @@ class Line(SQLBase):
     bus0 = Column(String, ForeignKey("bus.name"))
     bus1 = Column(String, ForeignKey("bus.name"))
     type = Column(String, ForeignKey("line_type.name"))
-    capital_cost = Column(Integer)
-    length = Column(Integer)
-    s_nom = Column(Integer)
+    capital_cost = Column(Float)
+    length = Column(Float)
+    s_nom = Column(Float)
     
     bus_from = relationship("Bus", back_populates="lines_from", foreign_keys=[bus0])
     bus_to = relationship("Bus", back_populates="lines_to", foreign_keys=[bus1])
@@ -390,9 +390,9 @@ class LineBase(BaseModel):
     bus0: str
     bus1: str
     type: str
-    capital_cost: int
-    length: int
-    s_nom: int
+    capital_cost: float
+    length: float
+    s_nom: float
     
     class Config:
         from_attributes = True
