@@ -1,3 +1,4 @@
 Line_Type,Cost_Per_Substation,Other_Costs,Years_of_Operation,Maintenance_Cost_Per_Year
 AC735,2000000,0,30,100000
 DC450,2500000,0,30,120000
+ACTEST,2500000,15,30,120000
