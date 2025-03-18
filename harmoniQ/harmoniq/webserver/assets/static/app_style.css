@@ -8,7 +8,18 @@ div#main {
         "infra     choix-infra plot"
         "infra     choix-infra plot";
     grid-template-columns: 4fr 2fr 6fr;
-    grid-template-rows: 1fr 1fr 4fr;
+    grid-template-rows: auto 1fr 4fr;
+}
+
+@media (max-width: 1250px) {
+    div#main {
+        grid-template-areas:
+            "scenario    plot"
+            "infra       plot"
+            "choix-infra plot";
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto 1fr 2fr;
+    }
 }
 
 @media (max-width: 768px) {
@@ -19,7 +30,7 @@ div#main {
             "choix-infra"
             "plot";
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr 2fr 3fr;
+        grid-template-rows: auto 1fr 2fr 3fr;
     }
 }
 

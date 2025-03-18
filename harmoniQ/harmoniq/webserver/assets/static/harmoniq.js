@@ -144,6 +144,7 @@ function deleteScenario(id) {
     .then(response => {
         console.log('Scenario supprimé avec succès:', response);
         document.getElementById('scenario-' + id).remove();
+        no_selection_scenario();
     })
     .catch(error => console.error('Erreur lors de la suppression du scenario:', error));
 }
@@ -154,70 +155,6 @@ function confirmDeleteScenario(id, nom) {
     }
 }
 
-function scenarioActif(id) {
-    $("#scenario-actif-text").text("Actif: " + $("#scenario-" + id).find("p").first().text());
-
-    
-    let prev_active = $("#scenario").attr("scenario-actif");
-    if (prev_active) {
-        document.getElementById('scenario-' + prev_active).classList.remove('alert-info');
-        document.getElementById('scenario-' + prev_active).querySelector('button.btn-primary').disabled = false;
-    }
-
-    document.getElementById('scenario-' + id).classList.add('alert-info');
-    $("#scenario").attr("scenario-actif", id);
-    document.getElementById('scenario-' + id).querySelector('button.btn-primary').disabled = true;
-}
-
-// function creerElementListScenario({ id, nom, description, date_de_debut, date_de_fin, pas_de_temps, optimisme_social, optimisme_ecologique }) {
-//     // Convert the times and dates to a more readable format
-//     date_de_debut = moment(date_de_debut).format('LL');
-//     date_de_fin = moment(date_de_fin).format('LL');
-//     pas_de_temps = moment.duration(pas_de_temps).humanize();
-
-//     // Convert the optimism values to a more readable format
-//     switch (optimisme_social) {
-//         case 1:
-//             optimisme_social = 'Pessimisme social';
-//             break;
-//         case 2:
-//             optimisme_social = 'Neutre social';
-//             break;
-//         case 3:
-//             optimisme_social = 'Optimisme social';
-//             break;
-//     }
-
-//     switch (optimisme_ecologique) {
-//         case 1:
-//             optimisme_ecologique = 'Pessimisme écologique';
-//             break;
-//         case 2:
-//             optimisme_ecologique = 'Neutre écologique';
-//             break;
-//         case 3:
-//             optimisme_ecologique = 'Optimisme écologique';
-//             break;
-//     }
-
-//     return `
-//         <li class="list-group-item" id="scenario-${id}">
-//             <div class="d-flex w-100 justify-content-between">
-//                 <p class="fw-bold">${nom}</p>
-//                 <p>${date_de_debut} à ${date_de_fin} (int. ${pas_de_temps})</p>
-//             </div>
-//             <div class="d-flex w-100 justify-content-between">
-//                 <p>${description}</p>
-//                 <p>${optimisme_social}, ${optimisme_ecologique}</p>
-//             </div>
-//             <div class="d-flex w-100 justify-content-end">
-//                 <button class="btn btn-danger mx-2" style="font-size: 0.75rem;" onclick="confirmDeleteScenario(${id}, '${nom}')"><i class="fa fa-trash"></i></button>
-//                 <button class="btn btn-primary" style="font-size: 0.75rem;" onclick="scenarioActif(${id})">Rendre Actif</button>
-//         </li>
-//     `;
-// }   
-
-
 function initialiserListeScenario() {
     fetch('/api/scenario')
         .then(response => response.json())
@@ -227,10 +164,90 @@ function initialiserListeScenario() {
                 option.value = scenario.id;
                 option.textContent = scenario.nom;
                 document.getElementById('scenario-actif').appendChild(option);
+                no_selection_scenario();
             });
         })
         
         .catch(error => console.error('Erreur lors du chargement des scenario:', error));
+}
+
+function initialiserListeInfra() {
+    fetch('/api/listeinfrastructures')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(groupeinfra => {
+                let option = document.createElement('option');
+                option.value = groupeinfra.id;
+                option.textContent = groupeinfra.nom;
+                document.getElementById('groupe-actif').appendChild(option);
+                no_slection_infra();
+            });
+        })
+        
+        .catch(error => console.error('Erreur lors du chargement des groupes d\'infrastructures:', error));
+}
+
+function no_selection_scenario() {
+    let scenario_card = $('#scenario-info');
+    scenario_card.hide();
+    $('#scenario-actif').val('');
+    $('#delete-scenario').hide();
+}
+
+function no_slection_infra() {
+    $("#groupe-actif").val('');
+}
+
+function changeScenario() {
+    let id = $("#scenario-actif").val();
+    
+    // Get data from the scenario id
+    fetch('/api/scenario/' + id)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Scenario actif:', data);
+            let scenario_card = $('#scenario-info');
+            scenario_card.show()
+            scenario_card.find('.scenario-nom').text(data.nom);
+            scenario_card.find('.description').text(data.description);  
+            scenario_card.find('.scenario-debut').text(
+                moment(data.date_de_debut).format('LL')
+            );
+            scenario_card.find('.scenario-fin').text(
+                moment(data.date_de_fin).format('LL')
+            );
+            scenario_card.find('.scenario-pas').text(
+                moment.duration(data.pas_de_temps).humanize()
+            );
+
+            switch (data.optimisme_ecologique) {
+                case 1:
+                    scenario_card.find('.optimisme-social').text("Pessimiste");
+                    break;
+                case 2:
+                    scenario_card.find('.optimisme-social').text("Moyen");
+                    break;
+                case 3:
+                    scenario_card.find('.optimisme-social').text("Optimiste");
+                    break;
+            }
+
+            switch (data.optimisme_ecologique) {
+                case 1:
+                    scenario_card.find('.optimisme-ecologique').text("Pessimiste");
+                    break;
+                case 2:
+                    scenario_card.find('.optimisme-ecologique').text("Moyen");
+                    break;
+                case 3:
+                    scenario_card.find('.optimisme-ecologique').text("Optimiste");
+                    break;
+            }
+
+            $("#delete-scenario").find("span").text(data.nom);
+            $("#delete-scenario").show();
+        })
+        .catch(error => console.error('Erreur lors du chargement du scenario:', error));
 }
 
 function nouveauScenario() {
@@ -350,7 +367,14 @@ $('#add-scenario').on('click', function() {
     nouveauScenario();
 });
 
+$('#delete-scenario').on('click', function() {
+    let id = $("#scenario-actif").val();
+    let nom = $("#scenario-actif option:selected").text();
+    confirmDeleteScenario(id, nom);
+});
+
 window.onload = function() {
     initialiserListeScenario();
+    initialiserListeInfra();
     initialiserListeParcEolienne();
 };

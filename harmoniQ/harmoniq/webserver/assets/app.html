@@ -11,87 +11,137 @@
 
 {% block content %}
 <div id="main">
-    <div id="scenario" class="bg-light card" scenario-actif="">
+    <div id="scenario" class="bg-light card">
         <div class="card-body">
             <div class="d-flex w-100 mb-2 align-items-center">
                 <h5 style="white-space: nowrap;">Scénario actif:</h5>
                 <span class="mx-3"></span>
-                <select name="scenario-actif" id="scenario-actif" class="form-select flex-grow-1">
-                    <option value="-1"><i class="fa fa-plus"></i></option>
+                <select name="scenario-actif" id="scenario-actif" class="form-select flex-grow-1" onchange="changeScenario()">
+
                 </select>
             </div>
-            <div id="scenario-info" class="card">
-                Hello
+            <div id="scenario-info" class="card p-2" style="display: none;">
+                <div class="card-title scenario-nom">
+                    <h5>Nom du scénario</h5>
+                </div>
+                <div class="card-body">
+                    <p class="description"></p>
+                    <table class="table table-borderless" s>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 2px; margin: 0;">Début:</td>
+                                <td class="scenario-debut" style="padding: 2px; margin: 0;"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 2px; margin: 0;">Fin:</td>
+                                <td class="scenario-fin" style="padding: 2px; margin: 0;"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 2px; margin: 0;">Pas de temps:</td>
+                                <td class="scenario-pas" style="padding: 2px; margin: 0;"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 2px; margin: 0;">Statue social:</td>
+                                <td class="optimisme-social" style="padding: 2px; margin: 0;"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 2px; margin: 0;">Statue écologique:</td>
+                                <td class="optimisme-ecologique" style="padding: 2px; margin: 0;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="d-flex w-100 justify-content-end">
+            <div class="d-flex w-100 justify-content-end mt-2">
+                <button class="btn btn-danger mx-2" id="delete-scenario" style="display: none;">
+                    Supprimer 
+                    <span class="nom-supprimer"></span>
+                </button>
                 <button class="btn btn-primary" id="add-scenario">Nouveau scenario</button>
             </div>
         </div>
     </div>
     <div id="choix-infra" class="bg-light card" liste-infra-actif="">
+        <div class="card-header">
+            <h5 class="card-title">Infrastructures active:</h5>
+        </div>
         <div class="card-body">
-            <div class="d-flex justify-content-between">
-                <h5 class="card-title">Choix d'infrastructures:</h5>
-                <span id="choix-infra-actif-text"></span>
+            <div class="d-flex w-100 justify-content-space-between align-items-center">
+                <label style="white-space: nowrap;">Groupe actif: </label>
+                <span class="mx-3"></span>
+                <select name="groupe-actif" id="groupe-actif" class="form-select" onchange="changeGroupe()">
+                
+                </select>
             </div>
         </div>
     </div>
-    <div id="infrastructures" class="bg-light card accordion">
-        <h5 class="card-title">Infrastructures:</h5>
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="hydroHeading">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hydroCollapse" aria-expanded="false" aria-controls="hydroCollapse">
-                    Barrage Hydro-Électrique
-                </button>
-            </h2>
-            <div id="hydroCollapse" class="accordion-collapse collapse" aria-labelledby="hydroHeading" data-bs-parent="#sidebar">
-                <div class="accordion-body">
-                </div>
-            </div>
+    <div id="infrastructures" class="bg-light card">
+        <div class="card-header">
+            <h5 class="card-title">Infrastructures:</h5>
         </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="windHeading">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#windCollapse" aria-expanded="false" aria-controls="windCollapse">
-                    Parc Éolien
-                </button>
-            </h2>
-            <div id="windCollapse" class="accordion-collapse collapse" aria-labelledby="windHeading" data-bs-parent="#sidebar">
-                <div id="list-parc-eolien" class="accordion-body">
-                </div>
-            </div>
+        <div class="d-flex w-100 justify-content-space-between align-items-center">
+            <label style="white-space: nowrap;">Groupe actif: </label>
+            <span class="mx-3"></span>
+            <select name="groupe-actif" id="groupe-actif" class="form-select" onchange="changeGroupe()">
+            
+            </select>
         </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="solarHeading">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#solarCollapse" aria-expanded="false" aria-controls="solarCollapse">
-                    Parc Solaire
-                </button>
-            </h2>
-            <div id="solarCollapse" class="accordion-collapse collapse" aria-labelledby="solarHeading" data-bs-parent="#sidebar">
-                <div class="accordion-body">
+        <div class="accordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="hydroHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hydroCollapse" aria-expanded="false" aria-controls="hydroCollapse">
+                        Barrage Hydro-Électrique
+                    </button>
+                </h2>
+                <div id="hydroCollapse" class="accordion-collapse collapse" aria-labelledby="hydroHeading" data-bs-parent="#sidebar">
+                    <div class="accordion-body">
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="thermalHeading">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#thermalCollapse" aria-expanded="false" aria-controls="thermalCollapse">
-                    Central Thermique
-                </button>
-            </h2>
-            <div id="thermalCollapse" class="accordion-collapse collapse" aria-labelledby="thermalHeading" data-bs-parent="#sidebar">
-                <div class="accordion-body">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="windHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#windCollapse" aria-expanded="false" aria-controls="windCollapse">
+                        Parc Éolien
+                    </button>
+                </h2>
+                <div id="windCollapse" class="accordion-collapse collapse" aria-labelledby="windHeading" data-bs-parent="#sidebar">
+                    <div id="list-parc-eolien" class="accordion-body">
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="transmissionHeading">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#transmissionCollapse" aria-expanded="false" aria-controls="transmissionCollapse">
-                    Réseaux de Transmission
-                </button>
-            </h2>
-            <div id="transmissionCollapse" class="accordion-collapse collapse" aria-labelledby="transmissionHeading" data-bs-parent="#sidebar">
-                <div class="accordion-body">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="solarHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#solarCollapse" aria-expanded="false" aria-controls="solarCollapse">
+                        Parc Solaire
+                    </button>
+                </h2>
+                <div id="solarCollapse" class="accordion-collapse collapse" aria-labelledby="solarHeading" data-bs-parent="#sidebar">
+                    <div class="accordion-body">
+                    </div>
                 </div>
             </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="thermalHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#thermalCollapse" aria-expanded="false" aria-controls="thermalCollapse">
+                        Central Thermique
+                    </button>
+                </h2>
+                <div id="thermalCollapse" class="accordion-collapse collapse" aria-labelledby="thermalHeading" data-bs-parent="#sidebar">
+                    <div class="accordion-body">
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="transmissionHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#transmissionCollapse" aria-expanded="false" aria-controls="transmissionCollapse">
+                        Réseaux de Transmission
+                    </button>
+                </h2>
+                <div id="transmissionCollapse" class="accordion-collapse collapse" aria-labelledby="transmissionHeading" data-bs-parent="#sidebar">
+                    <div class="accordion-body">
+                    </div>
+                </div>
+          </div>
         </div>
     </div>
     <div id="plots" class="bg-light card">

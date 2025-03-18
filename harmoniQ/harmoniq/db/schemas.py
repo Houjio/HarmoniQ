@@ -180,6 +180,49 @@ class ScenarioResponse(ScenarioBase):
         from_attributes = True
 
 
+class ListeInfrastructures(SQLBase):
+    __tablename__ = "liste_infrastructures"
+
+    id = Column(Integer, primary_key=True)
+    nom = Column(String)
+    parc_eoliens = Column(String, nullable=True)
+    parc_solaires = Column(String, nullable=True)
+    central_hydroelectriques = Column(String, nullable=True)
+    central_thermique = Column(String, nullable=True)
+
+    @property
+    def parc_eolien_list(self):
+        return self.parc_eolien.split(",") if self.parc_eolien else []
+
+    @property
+    def parc_solaire_list(self):
+        return self.parc_solaire.split(",") if self.parc_solaire else []
+
+    @property
+    def central_hydroelectriques_list(self):
+        return self.central_hydroelectriques.split(",") if self.central_hydroelectriques else []
+
+    @property
+    def central_thermique_list(self):
+        return self.central_thermique.split(",") if self.central_thermique else []
+
+class ListeInfrastructuresBase(BaseModel):
+    nom: str
+    parc_eoliens: Optional[str] = None
+    parc_solaires: Optional[str] = None
+    central_hydroelectriques: Optional[str] = None
+    central_thermique: Optional[str] = None
+
+class ListeInfrastructuresCreate(ListeInfrastructuresBase):
+    pass
+
+class ListeInfrastructuresResponse(ListeInfrastructuresBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
 class InfrastructureBase(PositionBase):
     nom: str
     type: TypeInfrastructures
