@@ -61,7 +61,7 @@
             </div>
         </div>
     </div>
-    <div id="choix-infra" class="bg-light card" liste-infra-actif="">
+    <!-- <div id="choix-infra" class="bg-light card" liste-infra-actif="">
         <div class="card-header">
             <h5 class="card-title">Infrastructures active:</h5>
         </div>
@@ -74,17 +74,19 @@
                 </select>
             </div>
         </div>
-    </div>
+    </div> -->
     <div id="infrastructures" class="bg-light card">
         <div class="card-header">
             <h5 class="card-title">Infrastructures:</h5>
         </div>
-        <div class="d-flex w-100 justify-content-space-between align-items-center">
+        <div class="d-flex w-100 justify-content-space-between align-items-center my-3">
             <label style="white-space: nowrap;">Groupe actif: </label>
-            <span class="mx-3"></span>
+            <span class="mx-2"></span>
             <select name="groupe-actif" id="groupe-actif" class="form-select" onchange="changeGroupe()">
             
             </select>
+            <span class="mx-2"></span>
+            <button class="btn btn-primary" id="add-infra-liste">Ajouter</button>
         </div>
         <div class="accordion">
             <div class="accordion-item">

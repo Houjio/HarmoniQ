@@ -13,7 +13,7 @@ function plot_results_parc_eolien(data) {
 
     let traces = [{
         x: Object.keys(production).map(timestamp => new Date(parseInt(timestamp) * 1000).toLocaleString()),
-        y: Object.values(production).map(value => value / 1000000), // Convert W to MW
+    y: Object.values(production).map(value => value / 1000000), // Convert W to MW
         type: 'scatter',
         mode: 'lines+markers',
         name: 'Production'
@@ -365,6 +365,10 @@ function nouveauScenario() {
 
 $('#add-scenario').on('click', function() {
     nouveauScenario();
+});
+
+$('#add-infra-liste').on('click', function() {
+    var nom = window.prompt("Nom du nouveaux groupe: ");
 });
 
 $('#delete-scenario').on('click', function() {
