@@ -1,10 +1,302 @@
 {% extends "template.html" %}
 
 {% block extra_head %}
-    <!-- Add any additional head content here -->
+    <link rel="stylesheet" href="/static/app_style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+
+    <!-- Date picker -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Fetch CSV file from /static folder
+            async function loadCSV() {
+                const response = await fetch("/static/data_sankey.csv");
+                const data = await response.text();
+                return data;
+            }
+        
+            // Parse CSV and filter by scenario/croissance/efficacité
+            function parseCSV(data, scenario, croissance, efficacite) {
+                const rows = data.split("\n").slice(1);
+                let filteredData = rows
+                    .map(row => row.split(","))
+                    .filter(row => row[0] === scenario && row[1] === croissance && row[2] === efficacite);
+        
+                return filteredData;
+            }
+        
+            // Generate Sankey Diagram
+            function generateSankey(filteredData) {
+                let source = [];
+                let target = [];
+                let value = [];
+        
+                // Define mappings for sectors and energy types
+                const sectorMap = {
+                    "Transport": 0,
+                    "Batiment": 1,
+                    "industrie": 2
+                };
+                const energyMap = {
+                    "gaz": 3,
+                    "electrique": 4
+                };
+        
+                // Create Sankey data
+                filteredData.forEach(row => {
+                    let secteur = row[3];
+                    let energie = row[4];
+                    let valeur = parseInt(row[5]);
+        
+                    source.push(sectorMap[secteur]);
+                    target.push(energyMap[energie]);
+                    value.push(valeur);
+                });
+        
+                // Sankey data structure
+                let data = {
+                    type: "sankey",
+                    orientation: "h",
+                    node: {
+                        pad: 15,
+                        thickness: 20,
+                        line: {
+                            color: "black",
+                            width: 0.5
+                        },
+                        label: ["Transport", "Bâtiment", "Industrie", "Gaz", "Électricité"],
+                        color: ["#FFA07A", "#20B2AA", "#778899", "#FF6347", "#4682B4"]
+                    },
+                    link: {
+                        source: source,
+                        target: target,
+                        value: value
+                    }
+                };
+        
+                let layout = {
+                    title: "Répartition de la Consommation Énergétique",
+                    font: {
+                        size: 14
+                    }
+                };
+        
+                Plotly.newPlot("sankeyDiagram", [data], layout);
+            }
+        
+            // Update Sankey when scenario changes
+            async function updateSankey() {
+                const scenario = document.getElementById("climateScenario").value;
+                const croissance = document.querySelector('input[name="growthScenario"]:checked').value.split("-")[0];
+                const efficacite = document.getElementById("transportEfficiency").value == 1 ? "Faible" :
+                                   document.getElementById("transportEfficiency").value == 2 ? "Moyen" : "Élevée";
+        
+                const csvData = await loadCSV();
+                const filteredData = parseCSV(csvData, scenario, croissance, efficacite);
+                generateSankey(filteredData);
+            }
+        
+            // Add event listeners to update the Sankey when inputs change
+            document.getElementById("climateScenario").addEventListener("change", updateSankey);
+            document.querySelectorAll('input[name="growthScenario"]').forEach(radio => {
+                radio.addEventListener("change", updateSankey);
+            });
+            document.getElementById("transportEfficiency").addEventListener("input", updateSankey);
+        
+            // Initial Sankey load
+            updateSankey();
+        });
+        </script>
+        
 {% endblock %}
 
 {% block content %}
-<h1>Hello, Eloise!</h1>
-<p>Welcome to the Eloise page.</p>
-{% endblock %}
+<div id="sankeyDiagram">
+    
+</div>
+
+<div id="main">
+    <div id="scenario" class="bg-light card">
+        <div class="card-body">
+            <h5 class="card-title">Sélection du Scénario</h5>
+
+            <!-- Scénario climatique -->
+            <label for="climateScenario" class="form-label">Scénario climatique:</label>
+            <select id="climateScenario" class="form-select">
+                <option value="optimiste">Optimiste</option>
+                <option value="neutre">Neutre</option>
+                <option value="pessimiste">Pessimiste</option>
+            </select>
+
+            <!-- Tableau de croissance (diagonal selection only) -->
+            <h5 class="mt-4">Scénario de croissance</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Faible Électrification</th>
+                            <th>Moyenne Électrification</th>
+                            <th>Élevée Électrification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Faible Population</th>
+                            <td><input type="radio" name="growthScenario" value="faible-faible"></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Moyenne Population</th>
+                            <td></td>
+                            <td><input type="radio" name="growthScenario" value="moyen-moyen"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Élevée Population</th>
+                            <td></td>
+                            <td></td>
+                            <td><input type="radio" name="growthScenario" value="eleve-eleve"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Slider for Transport Efficiency -->
+            <h5 class="mt-4">Efficacité du transport</h5>
+            <input type="range" id="transportEfficiency" class="form-range" min="1" max="3" step="1" value="2">
+            <div class="d-flex justify-content-between">
+                <span>Faible</span>
+                <span id="efficiencyLabel" class="fw-bold">Moyen</span>
+                <span>Élevé</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const transportEfficiency = document.getElementById("transportEfficiency");
+    const efficiencyLabel = document.getElementById("efficiencyLabel");
+
+    transportEfficiency.addEventListener("input", function() {
+        const labels = ["Faible", "Moyen", "Élevé"];
+        efficiencyLabel.textContent = labels[this.value - 1];
+    });
+});
+</script>
+
+<!--app-->
+<div id="main">
+    <div id="scenario" class="bg-light card" scenario-actif="">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <h5 class="card-title">Scenario:</h5>
+                <span id="scenario-actif-text"></span>
+            </div>
+          <ul class="list-group mb-2" id="scenario-list">
+
+          </ul>
+          <button class="btn btn-primary" id="add-scenario">Nouveau scenario</button>
+        </div>
+    </div>
+    <div id="sidebar" class="bg-light card accordion">
+        <h5 class="card-title">Infrastructures:</h5>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="hydroHeading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hydroCollapse" aria-expanded="false" aria-controls="hydroCollapse">
+                    Barrage Hydro-Électrique
+                </button>
+            </h2>
+            <div id="hydroCollapse" class="accordion-collapse collapse" aria-labelledby="hydroHeading" data-bs-parent="#sidebar">
+                <div class="accordion-body">
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="windHeading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#windCollapse" aria-expanded="false" aria-controls="windCollapse">
+                    Parc Éolien
+                </button>
+            </h2>
+            <div id="windCollapse" class="accordion-collapse collapse" aria-labelledby="windHeading" data-bs-parent="#sidebar">
+                <div id="list-parc-eolien" class="accordion-body">
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="solarHeading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#solarCollapse" aria-expanded="false" aria-controls="solarCollapse">
+                    Parc Solaire
+                </button>
+            </h2>
+            <div id="solarCollapse" class="accordion-collapse collapse" aria-labelledby="solarHeading" data-bs-parent="#sidebar">
+                <div class="accordion-body">
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="thermalHeading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#thermalCollapse" aria-expanded="false" aria-controls="thermalCollapse">
+                    Central Thermique
+                </button>
+            </h2>
+            <div id="thermalCollapse" class="accordion-collapse collapse" aria-labelledby="thermalHeading" data-bs-parent="#sidebar">
+                <div class="accordion-body">
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="transmissionHeading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#transmissionCollapse" aria-expanded="false" aria-controls="transmissionCollapse">
+                    Réseaux de Transmission
+                </button>
+            </h2>
+            <div id="transmissionCollapse" class="accordion-collapse collapse" aria-labelledby="transmissionHeading" data-bs-parent="#sidebar">
+                <div class="accordion-body">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="plots" style="height: 100px;">
+        
+    </div>
+</div>
+
+<div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.33.1/plotly.min.js" integrity="sha512-V0j9LhrK9IMNdFYZqh+IqU4cjo7wdxyHNyH+L0td4HryBuZ7Oq6QxP2/CWr6TituX31+gv5PnolvERuTbz8UNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment/locale/fr.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="/static/harmoniq.js"></script>
+
+<!--Sankey-->
+<div id="main">
+    <div id="scenario" class="bg-light card">
+        <div class="card-body">
+            <h5 class="card-title">Sélection du Scénario</h5>
+            
+            <!-- Scénario de consommation -->
+            <label for="consumptionScenario" class="form-label">Scénario de consommation:</label>
+            <select id="consumptionScenario" class="form-select">
+                <option value="optimiste">Optimiste</option>
+                <option value="neutre">Neutre</option>
+                <option value="pessimiste">Pessimiste</option>
+            </select>
+            
+            <button class="btn btn-primary mt-3" id="generateSankey">Générer le Diagramme Sankey</button>
+
+            <div id="sankeyChart" class="mt-5"></div>
+        </div>
+    </div>
+</div>
+<div id="sankeyDiagram" style="width: 100%; height: 500px;"></div>
+    {% endblock %}

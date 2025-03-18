@@ -11,7 +11,6 @@ ASSET_FILE = Path(__file__).parent / "assets"
 STATIC_FILE = ASSET_FILE / "static"
 TEMPLATES_FILE = ASSET_FILE / "templates"
 
-
 app = FastAPI(
     title="HarmoniQ",
     description="Outil de modélisation de production d'énergie au Québec",
@@ -29,21 +28,17 @@ app.mount("/static", StaticFiles(directory=STATIC_FILE), name="static")
 
 templates = Jinja2Templates(directory=ASSET_FILE)
 
-
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
-
 
 @app.get("/à-propos", response_class=HTMLResponse)
 def à_propos(request: Request):
     return templates.TemplateResponse(request=request, name="about.html")
 
-
 @app.get("/documentation", response_class=HTMLResponse)
 def documentation(request: Request):
     return templates.TemplateResponse(request=request, name="docs.html")
-
 
 @app.get("/app", response_class=HTMLResponse)
 def application(request: Request):
@@ -56,7 +51,6 @@ def eloisepage(request: Request):
 @app.exception_handler(404)
 def not_found(request: Request, exc):
     return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
-
 
 # Ajoute les endpoints de REST.py
 app.include_router(api_router)
