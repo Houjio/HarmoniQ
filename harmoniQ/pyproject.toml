@@ -9,20 +9,38 @@ description = "Librarie pour l'analyse de production d'énergie de Hydro-Québec
 requires-python = ">=3.8"
 authors = [
     {name = "Sébastien Dasys", email = "sebastien.dasys@polymtl.ca"},
+    {name = "Alec Mitchell", email = "alec.mitchell@polymtl.ca"},
     # Ajoute ton nom si tu contribues au code
 ]
 dependencies = [
     # Général
     "numpy",
     "pandas",
+    "pandera",
+    "matplotlib",
+    "scipy",
+    "openpyxl",
+    "scipy",
+    "openpyxl",
+    "isodate",
     # Web app dependencies
+    "flask",
     "fastapi",
     "uvicorn",
     "sqlalchemy",
     # Ajoute les dépendances nécessaires au fur et à mesure
+    # solaire dependencies
+    "pvlib",
+    # hydro dependencies
+    "HydroGenerate",
+    "nrel-pysam",
+    "windpowerlib",
+    "geopandas",
+    "env-canada"
 ]
 
 [project.scripts]
+init-db = "harmoniq.scripts.init_database:main"
 load-db = "harmoniq.scripts.load_database:main"
 launch-app = "harmoniq.scripts.lance_webserver:main"
 

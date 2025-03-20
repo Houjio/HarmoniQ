@@ -29,6 +29,7 @@ def reservoir_infill(Type_barrage, nb_turbines, Debit_nom, Volume_remplie, nom_b
     # Variable en sortie : 
     #   - pourcentage_réservoir : Pourcentage de remplissage du réservoir après une heure de production [float]
     #   - nbr_turb_maintenance : Nombre de turbines en maintenance pour le barrage [int] 
+
     if Type_barrage == "Fil de l'eau":
         print("Erreur : Le barrage entré n'est pas un barrage à réservoir")
     else:
