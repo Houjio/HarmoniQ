@@ -131,23 +131,23 @@ def fill_buses():
     
     count = 0
     for _, row in buses_df.iterrows():
-            existing = db.query(schemas.Bus).filter(schemas.Bus.name == row['name']).first()
-            if existing:
-                print(f"Bus {row['name']} existe déjà")
-                continue
-                      
-            db_bus = schemas.BusCreate(
-                name=row['name'],
-                v_nom=row['voltage'],
-                type=schemas.BusType(row['type']),
-                x=row['longitude'],
-                y=row['latitude'],
-                control=schemas.BusControlType(row['control'])
-            )
+        existing = db.query(schemas.Bus).filter(schemas.Bus.name == row['name']).first()
+        if existing:
+            print(f"Bus {row['name']} existe déjà")
+            continue
+                  
+        db_bus = schemas.BusCreate(
+            name=row['name'],
+            v_nom=row['voltage'],
+            type=schemas.BusType(row['type']),
+            x=row['longitude'],
+            y=row['latitude'],
+            control=schemas.BusControlType(row['control'])
+        )
 
-            count += 1
-            create_bus(db, db_bus)
-            print(f"Bus '{db_bus.name}' ajouté à la base de données")
+        count += 1
+        create_bus(db, db_bus)
+        print(f"Bus '{db_bus.name}' ajouté à la base de données")
     
     print(f"{count} bus ajoutés à la base de données")
 
