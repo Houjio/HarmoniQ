@@ -354,12 +354,13 @@ class BusType(str, PyEnum):
     """Enumération des types de bus"""
     prod = "prod"
     conso = "conso"
-    line = "line"
+    line = "ligne"
 
 class Bus(SQLBase):
     __tablename__ = "bus"
 
-    name = Column(String, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
     v_nom = Column(Integer)
     type = Column(Enum(BusType))
     x = Column(Float)
@@ -384,13 +385,16 @@ class BusCreate(BusBase):
     pass
 
 class BusResponse(BusBase):
+    id: int
+    
     class Config:
         from_attributes = True
 
 class LineType(SQLBase):
     __tablename__ = "line_type"
 
-    name = Column(String, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
     f_nom = Column(Integer)
     r_per_length = Column(Float)
     x_per_length = Column(Float)
@@ -410,19 +414,22 @@ class LineTypeCreate(LineTypeBase):
     pass
 
 class LineTypeResponse(LineTypeBase):
+    id: int
+    
     class Config:
         from_attributes = True
 
 class Line(SQLBase):
     __tablename__ = "line"
 
-    name = Column(String, primary_key=True, index=True)
-    bus0 = Column(String, ForeignKey("bus.name"))
-    bus1 = Column(String, ForeignKey("bus.name"))
-    type = Column(String, ForeignKey("line_type.name"))
-    capital_cost = Column(Integer)
-    length = Column(Integer)
-    s_nom = Column(Integer)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    bus0 = Column(Integer, ForeignKey("bus.name"))
+    bus1 = Column(Integer, ForeignKey("bus.name"))
+    type = Column(Integer, ForeignKey("line_type.name"))
+    capital_cost = Column(Float)
+    length = Column(Float)
+    s_nom = Column(Float)
     
     bus_from = relationship("Bus", back_populates="lines_from", foreign_keys=[bus0])
     bus_to = relationship("Bus", back_populates="lines_to", foreign_keys=[bus1])
@@ -433,9 +440,9 @@ class LineBase(BaseModel):
     bus0: str
     bus1: str
     type: str
-    capital_cost: int
-    length: int
-    s_nom: int
+    capital_cost: float
+    length: float
+    s_nom: float
     
     class Config:
         from_attributes = True
@@ -444,6 +451,8 @@ class LineCreate(LineBase):
     pass
 
 class LineResponse(LineBase):
+    id: int
+    
     class Config:
         from_attributes = True
 
