@@ -326,18 +326,21 @@ class Solaire(SQLBase):
     centrale_nom = Column(String)
     latitude = Column(Float)
     longitude = Column(Float)
-    angle_panneau = Column(int)
-    orientation_panneau = Column(int)
+    angle_panneau = Column(Integer)
+    orientation_panneau = Column(Integer)
     surface_panneau = Column(Float)
     panneau_type_id = Column(Integer)
     puissance_nominal = Column(Float)
     modele_panneau = Column(String)
     project_name = Column(String)
     annee_commission = Column(Integer, nullable=True)
-    panneau_type = Column(str, nullable=True)
+    panneau_type = Column(String, nullable=True)
     materiau_panenau = Column(String, nullable=True)
     rendement_onduleur = Column(Integer, nullable=True)
-    solaire_parc_id = Column(Integer, ForeignKey("solaire_parc_id"), nullable=True)
+    solaire_parc_id = Column(Integer, ForeignKey("solaire_parc.id"), nullable=True)
+
+    solaire_parc = relationship("SolaireParc", back_populates="solaire")
+    
 
 
 class SolaireParcBase(BaseModel):
@@ -362,7 +365,7 @@ class SolaireParcResponse(SolaireParcBase):
 
 
 class SolaireParc(SQLBase):
-    __tablename__ = "Solaire_parc"
+    __tablename__ = "solaire_parc"
 
     id = Column(Integer, primary_key=True, index=True)
     nom = Column(String)
@@ -371,6 +374,7 @@ class SolaireParc(SQLBase):
     nombre_panneaux = Column(Integer)
     panneau_type = Column(String)
     capacite_total = Column(Float)
+    module_solaire = relationship("Solaire", back_populates="solaire_parc")
 
 class ThermiqueBase(InfrastructureBase):
     latitude: float
@@ -409,7 +413,7 @@ class Thermique(SQLBase):
     centrale_thermique_id = Column(Integer)
     puissance_nominal = Column(Float)
     type_intrant = Column(String)
-    semaine_maintenance = Column(int)
+    semaine_maintenance = Column(Integer)
     annee_commission = Column(Integer, nullable=True)
     surface_balayee = Column(Float, nullable=True)
     type_generateur = Column(Integer, nullable=True)
