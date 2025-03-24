@@ -1,4 +1,4 @@
-from harmoniq.db.schemas import InfrastructureBase, ScenarioBase
+from harmoniq.db.schemas import ScenarioBase, BaseModel
 
 import numpy as np
 
@@ -13,7 +13,7 @@ def necessite_scenario(func):
 
 
 class Infrastructure:
-    def __init__(self, donnees: InfrastructureBase):
+    def __init__(self, donnees: BaseModel):
         self.donnees = donnees
         self.scenario = None
 

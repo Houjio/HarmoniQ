@@ -19,7 +19,10 @@ from harmoniq.db.engine import get_db
 
 from harmoniq.modules.eolienne import InfraParcEolienne
 
-router = APIRouter(prefix="/api", responses={404: {"description": "Not found"}},)
+router = APIRouter(
+    prefix="/api",
+    responses={404: {"description": "Not found"}},
+)
 
 
 @router.get("/ping")
@@ -113,7 +116,9 @@ async def read_eoliennes_in_parc(eolienne_parc_id: int, db: Session = Depends(ge
 
 # Meteo
 meteo_router = APIRouter(
-    prefix="/meteo", tags=["Meteo"], responses={404: {"description": "Not found"}},
+    prefix="/meteo",
+    tags=["Meteo"],
+    responses={404: {"description": "Not found"}},
 )
 
 

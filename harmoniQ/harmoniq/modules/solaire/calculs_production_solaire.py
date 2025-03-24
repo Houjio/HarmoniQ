@@ -82,7 +82,10 @@ def calculate_solar_parameters(
     pressure = pvlib.atmosphere.alt2pres(altitude)
     am_abs = pvlib.atmosphere.get_absolute_airmass(airmass, pressure)
     aoi = pvlib.irradiance.aoi(
-        surface_tilt, surface_orientation, solpos["apparent_zenith"], solpos["azimuth"],
+        surface_tilt,
+        surface_orientation,
+        solpos["apparent_zenith"],
+        solpos["azimuth"],
     )
     total_irradiance = pvlib.irradiance.get_total_irradiance(
         surface_tilt,
@@ -179,7 +182,7 @@ def calculate_energy_solar_plants(
     coordinates_centrales, surface_tilt=45, surface_orientation=180
 ):
     """
-    Calcule la production d'énergie annuelle pour des centrales solaires 
+    Calcule la production d'énergie annuelle pour des centrales solaires
     aux coordonnées données avec leurs puissances spécifiées.
 
     Parameters
@@ -272,11 +275,11 @@ def calculate_regional_residential_solar(
 ):
     """
     Calcule la production d'énergie solaire résidentielle potentielle par région administrative.
-    
+
     Parameters
     ----------
     coordinates_residential : list of tuples
-        Liste des coordonnées des régions sous forme de tuples 
+        Liste des coordonnées des régions sous forme de tuples
         (latitude, longitude, nom, altitude, timezone)
     population_relative : dict
         Dictionnaire contenant la population relative pour chaque région.
@@ -288,7 +291,7 @@ def calculate_regional_residential_solar(
         Angle d'inclinaison des panneaux en degrés. Par défaut 30°
     surface_azimuth : float, optional
         Orientation des panneaux en degrés (180° = sud). Par défaut 180°
-    
+
     Returns
     -------
     dict
@@ -428,7 +431,7 @@ def calculate_installation_cost(coordinates_centrales):
 
         # Calcul du coût d'installation avec facteurs
         cout_installation = (
-            cout_base * (puissance_mw ** facteur_echelle) * facteur_complexite
+            cout_base * (puissance_mw**facteur_echelle) * facteur_complexite
         )
 
         couts_installation[nom] = cout_installation

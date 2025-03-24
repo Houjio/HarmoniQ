@@ -16,8 +16,14 @@ app = FastAPI(
     title="HarmoniQ",
     description="Outil de modélisation de production d'énergie au Québec",
     version="0.1",
-    contact={"name": "Sébastien Dasys", "email": "sebastien.dasys@polymtl.ca",},
-    license_info={"name": "MIT", "url": "https://opensource.org/licenses/MIT",},
+    contact={
+        "name": "Sébastien Dasys",
+        "email": "sebastien.dasys@polymtl.ca",
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT",
+    },
 )
 app.mount("/static", StaticFiles(directory=STATIC_FILE), name="static")
 
