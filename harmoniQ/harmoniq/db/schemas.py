@@ -415,9 +415,48 @@ class Thermique(SQLBase):
     type_intrant = Column(String)
     semaine_maintenance = Column(Integer)
     annee_commission = Column(Integer, nullable=True)
-    surface_balayee = Column(Float, nullable=True)
     type_generateur = Column(Integer, nullable=True)
 
+class NucleaireBase(InfrastructureBase):
+    latitude: float
+    longitude: float
+    centrale_nucleaire_nom: str
+    puissance_nominal: float
+    centrale_thermique_id: int
+    type_intrant: str
+    semaine_maintenance: int
+    annee_commission: Optional[int] = None
+    type_generateur: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class NucleaireCreate(NucleaireBase):
+    pass
+
+
+class NucleaireResponse(NucleaireBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class Nucleaire(SQLBase):
+    __tablename__ = "nucleaire"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    centrale_nucleaire_nom = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    centrale_nucleaire_id = Column(Integer)
+    puissance_nominal = Column(Float)
+    type_intrant = Column(String)
+    semaine_maintenance = Column(Integer)
+    annee_commission = Column(Integer, nullable=True)
+    type_generateur = Column(Integer, nullable=True)
 
 class TransmissionBase(InfrastructureBase):
     pass
