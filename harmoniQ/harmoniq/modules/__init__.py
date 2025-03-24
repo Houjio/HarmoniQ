@@ -13,7 +13,7 @@ header = [
     "HOLIDAYS/DAYLIGHT SAVINGS,No,0,0,0",
     "COMMENTS 1,Generated weather file for testing",
     "COMMENTS 2,No real data",
-    "DATA PERIODS,1,1,Data,Sunday,1/1,12/31"
+    "DATA PERIODS,1,1,Data,Sunday,1/1,12/31",
 ]
 
 # Generate realistic mock data
@@ -21,7 +21,7 @@ header = [
 months = []
 days = []
 for month in range(1, 13):
-    days_in_month = pd.Period(f'2024-{month}').days_in_month
+    days_in_month = pd.Period(f"2024-{month}").days_in_month
     months.extend([month] * (24 * days_in_month))
     for day in range(1, days_in_month + 1):
         days.extend([day] * 24)
@@ -71,6 +71,7 @@ def format_row(row):
         else:
             formatted.append(str(value))
     return ",".join(formatted)
+
 
 # Combine header and data
 epw_data = header + [format_row(row) for _, row in df.iterrows()]

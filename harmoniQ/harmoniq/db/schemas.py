@@ -110,6 +110,7 @@ class DateTimeString(TypeDecorator):
             return datetime.fromisoformat(value)
         return value
 
+
 class TimeDeltaString(TypeDecorator):
     impl = String
 
@@ -122,6 +123,7 @@ class TimeDeltaString(TypeDecorator):
         if value is not None:
             return isodate.parse_duration(value)
         return value
+
 
 class Scenario(SQLBase):
     __tablename__ = "scenario"
@@ -151,7 +153,7 @@ class ScenarioBase(BaseModel):
     optimisme_social: Optimisme = Optimisme.moyen
     optimisme_ecologique: Optimisme = Optimisme.moyen
 
-    @validator('date_de_debut', 'date_de_fin', pre=True)
+    @validator("date_de_debut", "date_de_fin", pre=True)
     def parse_datetime(cls, value):
         if isinstance(value, str):
             try:
@@ -159,8 +161,8 @@ class ScenarioBase(BaseModel):
             except ValueError:
                 raise ValueError(f"Invalid datetime format: {value}")
         return value
-    
-    @validator('pas_de_temps', pre=True)
+
+    @validator("pas_de_temps", pre=True)
     def parse_timedelta(cls, value):
         if isinstance(value, str):
             try:
@@ -168,6 +170,7 @@ class ScenarioBase(BaseModel):
             except ValueError:
                 raise ValueError(f"Invalid timedelta format: {value}")
         return value
+
 
 class ScenarioCreate(ScenarioBase):
     pass
@@ -303,11 +306,12 @@ class SolaireBase(InfrastructureBase):
     centrale_solaire_id: int
     annee_commission: Optional[int] = None
     rendement_onduleur: Optional[int] = None
-    panneau_type : Optional[str] = None
+    panneau_type: Optional[str] = None
     materiau_panneau: Optional[str] = None
 
     class Config:
         from_attributes = True
+
 
 class SolaireCreate(SolaireBase):
     pass
@@ -318,6 +322,7 @@ class SolaireResponse(SolaireBase):
 
     class Config:
         from_attributes = True
+
 
 class Solaire(SQLBase):
     __tablename__ = "solaire"
@@ -340,16 +345,19 @@ class Solaire(SQLBase):
     solaire_parc_id = Column(Integer, ForeignKey("solaire_parc.id"), nullable=True)
 
     solaire_parc = relationship("SolaireParc", back_populates="solaire")
-    
 
 
 class SolaireParcBase(BaseModel):
     nom: str = Field(..., description="Nom du parc solaire")
-    latitude: float = Field(..., description="Latitude moyenne des panneaux solaires (degrés)")
+    latitude: float = Field(
+        ..., description="Latitude moyenne des panneaux solaires (degrés)"
+    )
     longitude: float = Field(
         ..., description="Longitude moyenne des panneaux solaires (degrés)"
     )
-    nombre_panneau: int = Field(..., description="Nombre de panneaux solaire dans le parc")
+    nombre_panneau: int = Field(
+        ..., description="Nombre de panneaux solaire dans le parc"
+    )
     capacite_total: float = Field(..., description="Capacité totale du parc (MW)")
 
 
@@ -375,6 +383,7 @@ class SolaireParc(SQLBase):
     panneau_type = Column(String)
     capacite_total = Column(Float)
     module_solaire = relationship("Solaire", back_populates="solaire_parc")
+
 
 class ThermiqueBase(InfrastructureBase):
     latitude: float
@@ -417,6 +426,7 @@ class Thermique(SQLBase):
     annee_commission = Column(Integer, nullable=True)
     type_generateur = Column(Integer, nullable=True)
 
+
 class NucleaireBase(InfrastructureBase):
     latitude: float
     longitude: float
@@ -457,6 +467,7 @@ class Nucleaire(SQLBase):
     semaine_maintenance = Column(Integer)
     annee_commission = Column(Integer, nullable=True)
     type_generateur = Column(Integer, nullable=True)
+
 
 class TransmissionBase(InfrastructureBase):
     pass

@@ -16,14 +16,8 @@ app = FastAPI(
     title="HarmoniQ",
     description="Outil de modélisation de production d'énergie au Québec",
     version="0.1",
-    contact={
-        "name": "Sébastien Dasys",
-        "email": "sebastien.dasys@polymtl.ca",
-    },
-    license_info={
-        "name": "MIT",
-        "url": "https://opensource.org/licenses/MIT",
-    },
+    contact={"name": "Sébastien Dasys", "email": "sebastien.dasys@polymtl.ca",},
+    license_info={"name": "MIT", "url": "https://opensource.org/licenses/MIT",},
 )
 app.mount("/static", StaticFiles(directory=STATIC_FILE), name="static")
 
@@ -49,9 +43,11 @@ def documentation(request: Request):
 def application(request: Request):
     return templates.TemplateResponse(request=request, name="app.html")
 
+
 @app.get("/Eloise", response_class=HTMLResponse)
 def eloisepage(request: Request):
     return templates.TemplateResponse(request=request, name="elo.html")
+
 
 @app.exception_handler(404)
 def not_found(request: Request, exc):

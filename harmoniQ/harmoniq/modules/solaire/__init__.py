@@ -1,7 +1,7 @@
 from harmoniq.core.base import Infrastructure, necessite_scenario
 from harmoniq.core.meteo import WeatherHelper, Granularity, EnergyType
 from harmoniq.db.schemas import ScenarioBase, SolaireBase, PositionBase
-from harmoniq.modules.solaire.calculs_production_solaire import *
+from harmoniq.modules.solaire.calculs_production_solaire import calculate_energy_solar_plants, calculate_regional_residential_solar
 
 from typing import List
 import pandas as pd
@@ -10,13 +10,13 @@ import logging
 logger = logging.getLogger("Solaire")
 
 class InfraParcSolaire(Infrastructure):
-    def __init__(self, donnees: List[SolaireBase]):
+    def __init__(self, donnees: SolaireBase):
         super().__init__(donnees)
 
     def _charger_meteo(self, scenario: ScenarioBase):
-
+        solaire = self.donnes
         pos = PositionBase(
-            latitude=solaire.latitude, longitude=solaire.latitude # COMMENT import ?
+            latitude=solaire.latitude, longitude=solaire.latitude 
         )
         granularite = (
             Granularity.HOURLY if scenario.pas_de_temps.days == 0 else Granularity.DAILY
@@ -43,31 +43,10 @@ class InfraParcSolaire(Infrastructure):
 
     @necessite_scenario
     def calculer_production(self) -> pd.DataFrame:
-        # TODO: Ce code repete souvent les memes calcules, il faudrait le refactoriser
-
-        new_df = None
-
-        keys = []
-
-        for eolienne in self.donnees:
-            nom = eolienne.eolienne_nom
-            keys.append(nom)
-
-            logger.info(f"Calcul de la production pour {nom}")
-            turbine_data = get_turbine_power(eolienne, self.meteo)
-
-            # Replace puissance with the name of the turbine
-            turbine_data = turbine_data.rename(columns={"puissance": nom})
-
-            turbine_data.rename(columns={"puissance": nom}, inplace=True)
-            if new_df is None:
-                new_df = turbine_data
-            else:
-                new_df[nom] = turbine_data[nom]
-
-        new_df["production"] = new_df[keys].sum(axis=1)
-
-        return new_df
+        if self.donnees.type_de_centrale == "Residentiel":
+            return calculate_regional_residential_solar(self.meteo, self.donnees)
+        else:
+            return calculate_energy_solar_plants(self.meteo, self.donnees)
 
 
 if __name__ == "__main__":

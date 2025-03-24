@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 def calculate_nuclear_production(power_kw, maintenance_week):
     """
     Calcule la production annuelle d'une centrale nucléaire en kWh.
@@ -18,17 +19,18 @@ def calculate_nuclear_production(power_kw, maintenance_week):
         DataFrame contenant la production horaire en kWh pour chaque heure de l'année.
     """
     # Créer un DataFrame avec une colonne pour chaque heure de l'année
-    date_range = pd.date_range(start='2023-01-01', end='2023-12-31 23:00:00', freq='H')
-    production_df = pd.DataFrame(index=date_range, columns=['production_kwh'])
-    
+    date_range = pd.date_range(start="2023-01-01", end="2023-12-31 23:00:00", freq="H")
+    production_df = pd.DataFrame(index=date_range, columns=["production_kwh"])
+
     # Calculer la production horaire en kWh (constante)
-    production_df['production_kwh'] = power_kw
-    production_df['week'] = production_df.index.isocalendar().week
-    
+    production_df["production_kwh"] = power_kw
+    production_df["week"] = production_df.index.isocalendar().week
+
     # Mettre la production à zéro pendant la semaine de maintenance
-    production_df.loc[production_df['week'] == maintenance_week, 'production_kwh'] = 0
-    
+    production_df.loc[production_df["week"] == maintenance_week, "production_kwh"] = 0
+
     return production_df
+
 
 # Paramètres de la centrale nucléaire
 power_kw = 1000  # Puissance nominale en kW
@@ -36,19 +38,24 @@ maintenance_week = 20  # Semaine de maintenance
 
 # Calculer la production annuelle et hebdomadaire
 production_df = calculate_nuclear_production(power_kw, maintenance_week)
-weekly_production = production_df.groupby('week')['production_kwh'].sum()
+weekly_production = production_df.groupby("week")["production_kwh"].sum()
 
 # Calculer la production annuelle totale en kWh
-annual_nuclear_production = production_df['production_kwh'].sum()
+annual_nuclear_production = production_df["production_kwh"].sum()
 print(f"Production nucléaire annuelle totale : {annual_nuclear_production:.2f} kWh")
 
 # Tracer le graphique de la production hebdomadaire
 plt.figure(figsize=(10, 6))
-plt.plot(weekly_production.index, weekly_production.values, marker='o', linestyle='-', color='b')
-plt.title('Production Nucléaire Hebdomadaire')
-plt.xlabel('Semaine de l\'année')
-plt.ylabel('Production (kWh)')
+plt.plot(
+    weekly_production.index,
+    weekly_production.values,
+    marker="o",
+    linestyle="-",
+    color="b",
+)
+plt.title("Production Nucléaire Hebdomadaire")
+plt.xlabel("Semaine de l'année")
+plt.ylabel("Production (kWh)")
 plt.grid(True)
 plt.xticks(range(1, 53))
 plt.show()
-

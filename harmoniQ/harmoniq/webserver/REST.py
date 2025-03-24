@@ -19,10 +19,7 @@ from harmoniq.db.engine import get_db
 
 from harmoniq.modules.eolienne import InfraParcEolienne
 
-router = APIRouter(
-    prefix="/api",
-    responses={404: {"description": "Not found"}},
-)
+router = APIRouter(prefix="/api", responses={404: {"description": "Not found"}},)
 
 
 @router.get("/ping")
@@ -116,9 +113,7 @@ async def read_eoliennes_in_parc(eolienne_parc_id: int, db: Session = Depends(ge
 
 # Meteo
 meteo_router = APIRouter(
-    prefix="/meteo",
-    tags=["Meteo"],
-    responses={404: {"description": "Not found"}},
+    prefix="/meteo", tags=["Meteo"], responses={404: {"description": "Not found"}},
 )
 
 
@@ -155,21 +150,24 @@ def get_meteo_data(
 router.include_router(meteo_router)
 
 # Parc éolien
-parc_eolien_router = api_routers['eolienneparc']
+parc_eolien_router = api_routers["eolienneparc"]
+
 
 @parc_eolien_router.post("/{parc_eolien_id}/production")
-def calculer_production_parc_eolien(parc_eolien_id: int, scenario_id: int, db: Session = Depends(get_db)):
+def calculer_production_parc_eolien(
+    parc_eolien_id: int, scenario_id: int, db: Session = Depends(get_db)
+):
     list_eolienne = engine.all_eoliennes_in_parc(db, parc_eolien_id)
     scenario = CRUD.read_scenario_by_id(db, scenario_id)
     if list_eolienne is None:
         raise HTTPException(status_code=404, detail="Parc éolien not found")
-    
+
     if scenario is None:
         raise HTTPException(status_code=404, detail="Scenario not found")
-    
+
     eolienne_infra = InfraParcEolienne(list_eolienne)
     eolienne_infra.charger_scenario(scenario)
-    production:pd.DataFrame = eolienne_infra.calculer_production()
+    production: pd.DataFrame = eolienne_infra.calculer_production()
 
     json_prod = production.to_json()
 
