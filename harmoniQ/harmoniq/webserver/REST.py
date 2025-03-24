@@ -30,6 +30,28 @@ async def ping():
     return {"ping": "pong"}
 
 
+@router.post("/simulation")
+async def simulation(
+    scenario_id: int, liste_infra_id: int, db: Session = Depends(get_db)
+):
+    print(f"Scenario ID: {scenario_id}")
+    print(f"Infrastructure ID: {liste_infra_id}")
+    scenario = CRUD.read_scenario_by_id(db, scenario_id)
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+
+    infra = CRUD.read_liste_infrastructures_by_id(db, liste_infra_id)
+    if infra is None:
+        raise HTTPException(status_code=404, detail="Infrastructure not found")
+
+    print("Scenario:")
+    print(scenario)
+    print("Infra:")
+    print(infra)
+
+    raise HTTPException(status_code=501, detail="Simulation not implemented")
+
+
 # Initialisation des fonctions CRUD des tables de la base de données
 api_routers = {}
 for sql_class, pydantic_classes in engine.sql_tables.items():
@@ -155,21 +177,24 @@ def get_meteo_data(
 router.include_router(meteo_router)
 
 # Parc éolien
-parc_eolien_router = api_routers['eolienneparc']
+parc_eolien_router = api_routers["eolienneparc"]
+
 
 @parc_eolien_router.post("/{parc_eolien_id}/production")
-def calculer_production_parc_eolien(parc_eolien_id: int, scenario_id: int, db: Session = Depends(get_db)):
+def calculer_production_parc_eolien(
+    parc_eolien_id: int, scenario_id: int, db: Session = Depends(get_db)
+):
     list_eolienne = engine.all_eoliennes_in_parc(db, parc_eolien_id)
     scenario = CRUD.read_scenario_by_id(db, scenario_id)
     if list_eolienne is None:
         raise HTTPException(status_code=404, detail="Parc éolien not found")
-    
+
     if scenario is None:
         raise HTTPException(status_code=404, detail="Scenario not found")
-    
+
     eolienne_infra = InfraParcEolienne(list_eolienne)
     eolienne_infra.charger_scenario(scenario)
-    production:pd.DataFrame = eolienne_infra.calculer_production()
+    production: pd.DataFrame = eolienne_infra.calculer_production()
 
     json_prod = production.to_json()
 

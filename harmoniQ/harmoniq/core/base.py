@@ -30,22 +30,22 @@ class Infrastructure:
     @necessite_scenario
     def calculer_production(self) -> np.ndarray:
         """Placeholder pour le calcul de la production"""
-        return
+        raise NotImplementedError
 
     @necessite_scenario
     def calculer_cout_construction(self) -> np.ndarray:
         """Placeholder pour le calcul du coût de construction"""
-        return
+        raise NotImplementedError
 
     @necessite_scenario
     def calculer_cout_pas_de_temps(self) -> np.ndarray:
         """Placeholder pour le calcul du coût par pas de temps"""
-        return
+        raise NotImplementedError
 
     def calculer_co2_eq_construction(self) -> np.ndarray:
         """Placeholder pour le calcul des émissions de CO2 équivalentes de la construction"""
-        return
+        raise NotImplementedError
 
     def calculer_co2_eq_pas_de_temps(self) -> np.ndarray:
         """Placeholder pour le calcul des émissions de CO2 équivalentes du fonctionnement"""
-        return
+        raise NotImplementedError
