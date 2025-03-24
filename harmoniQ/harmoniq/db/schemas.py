@@ -284,7 +284,7 @@ class EolienneParc(SQLBase):
     eoliennes = relationship("Eolienne", back_populates="eolienne_parc")
 
 
-class HydroelectriqueBase(InfrastructureBase):
+class HydroBase(InfrastructureBase):
     latitude: float
     longitude: float
     barrage_nom: str
@@ -299,6 +299,39 @@ class HydroelectriqueBase(InfrastructureBase):
     barrage_id: int
     annee_commission: Optional[int] = None
     materiau_conduite: Optional[str] = None
+    class Config:
+        from_attributes = True
+
+class HydroCreate(HydroBase):
+    pass
+
+class HydroResponse(HydroBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+class Hydro(SQLBase):
+    __tablename__ = "hydroelectriques"
+
+    id = Column(Integer, primary_key=True, index=True)
+    latitude = Column(Float, index=True)
+    longitude = Column(Float, index=True)
+    barrage_nom = Column(String, index=True)
+    nb_turbines = Column(Integer)
+    hauteur_chute = Column(Float)
+    Debits_nominal = Column(Float)
+    puissance_nominal = Column(Float)
+    turbine_id = Column(Integer)
+    modele_turbine = Column(String)
+    nb_turbines_maintenance = Column(Integer)
+    Volume_reservoir = Column(Float)
+    barrage_id = Column(Integer, ForeignKey("barrages.id"))  # Assuming a Barrage table exists
+    annee_commission = Column(Integer, nullable=True)
+    materiau_conduite = Column(String, nullable=True)
+
+    # Relationship with Barrage (if applicable)
+    barrage = relationship("Barrage", back_populates="hydroelectriques")  # Ensure Barrage has back_populates="hydroelectriques"
 
 
 class SolaireBase(InfrastructureBase):

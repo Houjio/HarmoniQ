@@ -4,7 +4,7 @@ import HydroGenerate as hg
 
 from HydroGenerate.hydropower_potential import calculate_hp_potential
 
-def reservoir_infill(Type_barrage, nb_turbines, Debit_nom, Volume_remplie, nom_barrage, besoin_puissance, info_puissance, pourcentage_reservoir, debit_entrant, nbr_turb_maintenance): #Ajouter débit entrant pour les réservoirs
+def reservoir_infill(Type_barrage, nb_turbines, Debit_nom, Volume_remplie, nom_barrage, besoin_puissance, info_puissance, pourcentage_reservoir, apport_naturel, nbr_turb_maintenance, debit_amont): #Ajouter débit entrant pour les réservoirs
 
     # La fonction reservoir_infill permet de calculer le pourcentage de remplissage du réservoir associé à un barrage 
     # en fonction du nombre turbines actives, du débit entrant dans le réservoir et du 
@@ -36,7 +36,7 @@ def reservoir_infill(Type_barrage, nb_turbines, Debit_nom, Volume_remplie, nom_b
         p = []
         d = []
         nb_turbines_a = []
-        Volume_reel = Volume_remplie*pourcentage_reservoir + debit_entrant*3600
+        Volume_reel = Volume_remplie*pourcentage_reservoir + apport_naturel*3600
         
         for i in range(1, nb_turbines+1-nbr_turb_maintenance):
         # Filter for Dam A and 1 active turbine
@@ -55,17 +55,33 @@ def reservoir_infill(Type_barrage, nb_turbines, Debit_nom, Volume_remplie, nom_b
                         if abs(d[k]/nb_turbines_a[k]-Debit_nom)<abs(variable_debits/nb_turbines_a[k]-Debit_nom):
                             variable_debits = d[k]
                             nb_turb_actif = nb_turbines_a[k]
-                elif i == 1 and besoin_puissance < df_dam_a["Power (MW)"].iloc[0]:
+                elif besoin_puissance < df_dam_a["Power (MW)"].iloc[0]:
                     variable_debits = Debit_nom
                     nb_turb_actif = 1
-        if Volume_reel + variable_debits*nb_turb_actif*3600 > Volume_remplie:
+        if Volume_reel - variable_debits*nb_turb_actif*3600 > Volume_remplie:
             pourcentage_reservoir = 1
             Volume_evacue = Volume_reel + variable_debits*nb_turb_actif*3600 - Volume_remplie
         else:
             pourcentage_reservoir = (Volume_reel-(variable_debits*nb_turb_actif*3600))/Volume_remplie
 
-    return pourcentage_reservoir, Volume_evacue # Possible d'ajouter une fonctionnalité permettant de calculer l'énergie perdue après l'utilisation d'un évacuateur de crue pour l'analyse de résultat
+        store_flows(Volume_evacue=Volume_evacue, debits_turb=variable_debits, )
 
+    return pourcentage_reservoir # Possible d'ajouter une fonctionnalité permettant de calculer l'énergie perdue après l'utilisation d'un évacuateur de crue pour l'analyse de résultat
+
+
+def store_flows(Volume_evacue, debits_turb, df_debit, id_barrage):
+    df_temp = pd.DataFrame({"id_barrage"})
+    df_debit.append() = Volume_evacue
+    df_debit.debits_turb = debits_turb
+
+    return df_debit
+
+def init_dfflows(self, start_time, end_time, pas_horaire):
+
+    df_flows = pd.DataFrame({"id_barrage" : , 'Volume_evacue': 0, "Debits"})
+    
+    return df_flows
+    
 def get_run_of_river_dam_power(Type_barrage, nom_barrage,type_turb, nb_turbines, head, Debits_nom, flow, nb_turbine_maintenance):
 
     if Type_barrage == "Reservoir":
