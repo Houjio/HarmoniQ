@@ -4,6 +4,9 @@
     <link rel="stylesheet" href="/static/app_style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
 
     <!-- Date picker -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
@@ -181,12 +184,24 @@
             <button class="btn btn-primary" id="add-infra-liste">Nouveau Groupe</button>
         </div>
     </div>
-    <div id="plots" class="bg-light card">
-        <div class="card-body">
-            <div id="plot-box">
-
+    <div id="plots" class="d-flex flex-column">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="map-tab" data-bs-toggle="tab" data-bs-target="#map" type="button" role="tab" aria-controls="map" aria-selected="true">Carte</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="plot-tab" data-bs-toggle="tab" data-bs-target="#plot" type="button" role="tab" aria-controls="plot" aria-selected="false">Graphique</button>
+            </li>
+        </ul>
+        <div class="tab-content flex-grow-1" id="myTabContent">
+            <div class="tab-pane show active h-100" id="map" role="tabpanel" aria-labelledby="map-tab">
+                <div id="map-box" style="width: 100%; height: 100%;">
+                </div>
             </div>
-        </div> 
+            <div class="tab-pane h-100" id="plot" role="tabpanel" aria-labelledby="plot-tab">
+                <div id="plot-box">Plot</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -200,5 +215,27 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment/locale/fr.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var map = L.map('map-box', {
+            zoomControl: false,
+            attributionControl: false
+        }).setView([52.9399, -73.5491], 6);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        var bounds = [
+            [45.0, -80.0], 
+            [62.0, -57.0] 
+        ];
+        map.setMaxBounds(bounds);
+        map.on('drag', function() {
+            map.panInsideBounds(bounds, { animate: false });
+        });
+    });
+</script>
+
 <script src="/static/harmoniq.js"></script>
 {% endblock %}
