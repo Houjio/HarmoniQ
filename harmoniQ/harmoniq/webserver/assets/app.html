@@ -220,15 +220,17 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var map = L.map('map-box', {
-            zoomControl: false,
-            attributionControl: false
-        }).setView([52.9399, -73.5491], 6);
+            zoomControl: true,
+            attributionControl: true,
+            maxZoom: 10, // Zoom maximal
+            minZoom: 5  // Zoom minimal pour permettre un zoom arrière maximal
+        }).setView([52.9399, -67], 4);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
         var bounds = [
-            [45.0, -80.0], 
-            [62.0, -57.0] 
+            [40.0, -90.0], 
+            [65.0, -50.0] 
         ];
         map.setMaxBounds(bounds);
         map.on('drag', function() {
