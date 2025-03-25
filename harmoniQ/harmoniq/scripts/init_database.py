@@ -21,6 +21,7 @@ import argparse
 CURRENT_DIR = Path(__file__).parent
 CSV_DIR = CURRENT_DIR / ".." / "db" / "CSVs"
 
+
 def init_db(reset=False):
     if reset:
         print("Réinitialisation de la base de données")
@@ -97,15 +98,11 @@ def fill_eoliennes():
 
 def fill_line_types():
     """Remplit la table line_type à partir du fichier CSV"""
-    import pandas as pd
-    import os
-    from pathlib import Path
     from harmoniq.db.schemas import LineType
 
     db = next(get_db())
 
-    script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-    file_path = script_dir / "data" / "line_types.csv"
+    file_path = CSV_DIR / "line_types.csv"
     line_types_df = pd.read_csv(file_path)
 
     count = 0
@@ -132,14 +129,9 @@ def fill_line_types():
 
 def fill_buses():
     """Remplit la table bus à partir du fichier CSV"""
-    import pandas as pd
-    import os
-    from pathlib import Path
-
     db = next(get_db())
 
-    script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-    file_path = script_dir / "data" / "buses.csv"
+    file_path = CSV_DIR / "buses.csv"
     buses_df = pd.read_csv(file_path)
 
     count = 0
@@ -167,14 +159,9 @@ def fill_buses():
 
 def fill_lines():
     """Remplit la table line à partir du fichier CSV"""
-    import pandas as pd
-    import os
-    from pathlib import Path
-
     db = next(get_db())
 
-    script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-    file_path = script_dir / "data" / "lines.csv"
+    file_path = CSV_DIR / "lines.csv"
     lines_df = pd.read_csv(file_path)
 
     count = 0
@@ -248,7 +235,7 @@ def fill_network():
 
 def populate_db():
     print("Collecte des éoliennes")
-    fill_eoliennes()
+    # fill_eoliennes()
 
     print("Collecte des données du réseau électrique :")
     fill_network()
