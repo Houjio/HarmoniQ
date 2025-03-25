@@ -337,21 +337,21 @@ class EolienneParc(SQLBase):
     eoliennes = relationship("Eolienne", back_populates="eolienne_parc")
 
 
-class HydroBase(InfrastructureBase):
-    latitude: float
+class HydroBase(BaseModel):
+    barrage_nom : str
     longitude: float
-    barrage_nom: str
-    nb_turbines: int
-    hauteur_chute: float
-    Debits_nominal: float
+    latitude: float
+    type_barrage: str
     puissance_nominal: float
-    turbine_id: int
+    hauteur_chute: float
+    nb_turbines: int
+    debits_nominal: float
     modele_turbine: str
+    volume_reservoir: int
     nb_turbines_maintenance: int
-    Volume_reservoir: float
-    barrage_id: int
     annee_commission: Optional[int] = None
     materiau_conduite: Optional[str] = None
+
     class Config:
         from_attributes = True
 
@@ -360,32 +360,26 @@ class HydroCreate(HydroBase):
 
 class HydroResponse(HydroBase):
     id: int
-
     class Config:
         from_attributes = True
 
 class Hydro(SQLBase):
-    __tablename__ = "hydroelectriques"
+    __tablename__ = "hydro"
 
     id = Column(Integer, primary_key=True, index=True)
-    latitude = Column(Float, index=True)
-    longitude = Column(Float, index=True)
-    barrage_nom = Column(String, index=True)
-    nb_turbines = Column(Integer)
-    hauteur_chute = Column(Float)
-    Debits_nominal = Column(Float)
+    barrage_nom = Column(String)
+    longitude = Column(Float)
+    latitude = Column(Float)
+    type_barrage = Column(String)
     puissance_nominal = Column(Float)
-    turbine_id = Column(Integer)
+    hauteur_chute = Column(Float)
+    nb_turbines = Column(Integer)
+    debits_nominal = Column(Float)
     modele_turbine = Column(String)
+    volume_reservoir = Column(Integer)
     nb_turbines_maintenance = Column(Integer)
-    Volume_reservoir = Column(Float)
-    barrage_id = Column(Integer, ForeignKey("barrages.id"))  # Assuming a Barrage table exists
     annee_commission = Column(Integer, nullable=True)
     materiau_conduite = Column(String, nullable=True)
-
-    # Relationship with Barrage (if applicable)
-    barrage = relationship("Barrage", back_populates="hydroelectriques")  # Ensure Barrage has back_populates="hydroelectriques"
-
 
 class SolaireBase(InfrastructureBase):
     pass
@@ -399,8 +393,6 @@ class TransmissionBase(InfrastructureBase):
     pass
 
 
-<<<<<<< HEAD
-=======
 class BusControlType(str, PyEnum):
     """Enumération des types de contrôle de bus"""
 
@@ -531,7 +523,6 @@ class LineResponse(LineBase):
         from_attributes = True
 
 
->>>>>>> d5a420fafcb4313b87081346b4e2e372fdc139e9
 weather_schema = pa.DataFrameSchema(
     columns={
         "longitude": pa.Column(

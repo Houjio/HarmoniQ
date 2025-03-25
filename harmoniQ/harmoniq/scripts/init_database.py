@@ -12,6 +12,7 @@ from harmoniq.db.CRUD import (
     create_bus,
     create_line,
     create_line_type,
+    create_hydro,
 )
 
 import argparse
@@ -101,13 +102,13 @@ def fill_hydro():
     barrages_df = pd.read_csv(file_path)
     
     count = 0
-    for _, row in barrage_df.iterrows():
+    for _, row in barrages_df.iterrows():
             existing = db.query(schemas.Hydro).filter(schemas.Hydro.barrage_nom == row['Nom']).first()
             if existing:
                 print(f"Barrage {row['Nom']} existe déjà")
                 continue
                       
-            db_bus = schemas.HydroCreate(
+            db_hydro = schemas.HydroCreate(
                 barrage_nom=row['Nom'],
                 puissance_nominal=row['Puissance_Installee_MW'],
                 type_barrage=row['Type'],
@@ -118,12 +119,12 @@ def fill_hydro():
                 modele_turbine=row['Type_turbine'],
                 nb_turbines = row['Nb_turbines'],
                 nb_turbines_maintenance=row['nb_turbines_maintenance'],
-                Volume_reservoir = row['Volume_reservoir']
+                volume_reservoir = row['Volume_reservoir']
             )
 
             count += 1
-            create_bus(db, db_bus)
-            print(f"Barrage '{db_bus.name}' ajouté à la base de données")
+            create_hydro(db, db_hydro)
+            print(f"Barrage '{db_hydro.barrage_nom}' ajouté à la base de données")
     
     print(f"{count} bus ajoutés à la base de données")
 
@@ -279,11 +280,14 @@ def fill_network():
 
 
 def populate_db():
-    print("Collecte des éoliennes")
-    fill_eoliennes()
+    # print("Collecte des éoliennes")
+    # fill_eoliennes()
 
-    print("Collecte des données du réseau électrique :")
-    fill_network()
+    # print("Collecte des données du réseau électrique :")
+    # fill_network()
+
+    print("Collecte des données du réseau hydro :")
+    fill_hydro()
 
 
 def main():
