@@ -3,6 +3,7 @@
 import requests
 import pandas as pd
 from pathlib import Path
+from pathlib import Path
 
 from harmoniq.db.engine import engine, get_db
 from harmoniq.db.schemas import SQLBase
@@ -13,7 +14,10 @@ from harmoniq.db.CRUD import (
     create_bus,
     create_line,
     create_line_type,
+    create_thermique,
+    create_solaire,
 )
+
 
 import argparse
 
@@ -30,13 +34,53 @@ def init_db(reset=False):
     SQLBase.metadata.create_all(bind=engine)
 
 
-def fill_eoliennes():
+def fill_thermique():
+    df = pd.read_csv(
+        CSV_DIR / "centrale_thermique.csv", delimiter=";", encoding="utf-8"
+    )
+
     db = next(get_db())
 
-    # EOLIENNE_URL = "https://ftp.cartes.canada.ca/pub/nrcan_rncan/Wind-energy_Energie-eolienne/wind_turbines_database/Wind_Turbine_Database_FGP.xlsx"
-    # response = requests.get(EOLIENNE_URL)
-    # response.raise_for_status()
-    # station_df = pd.read_excel(response.content)
+    for _, row in df.iterrows():
+        create_thermique(
+            db,
+            schemas.ThermiqueCreate(
+                nom=row["nom"],
+                latitude=row["latitude"],
+                longitude=row["longitude"],
+                puissance_nominal=row["puissance_MW"],
+                type_intrant=row["type"],
+                semaine_maintenance=row["semaine_maintenance"],
+            ),
+        )
+        print(f"Centrale {row['nom']} ajoutée à la base de données")
+
+
+def fill_solaire():
+    df = pd.read_csv(
+        CSV_DIR / "centrales_solaires.csv", delimiter=";", encoding="utf-8"
+    )
+
+    db = next(get_db())
+
+    for _, row in df.iterrows():
+        create_solaire(
+            db,
+            schemas.SolaireCreate(
+                nom=row["nom"],
+                latitude=row["latitude"],
+                longitude=row["longitude"],
+                puissance_nominal=row["puissance_nominal_MW"],
+                angle_panneau=row["angle_panneau"],
+                orientation_panneau=row["orientation_panneau"],  # Correction ici
+                nombre_panneau=row["nombre_panneau"],
+            ),
+        )
+        print(f"Centrale solaire {row['nom']} ajoutée à la base de données")
+
+
+def fill_eoliennes():
+    db = next(get_db())
 
     station_df = pd.read_excel(CSV_DIR / "Wind_Turbine_Database_FGP.xlsx")
     station_df = station_df[station_df["Province_Territoire"] == "Québec"]
@@ -235,10 +279,16 @@ def fill_network():
 
 def populate_db():
     print("Collecte des éoliennes")
-    # fill_eoliennes()
+    fill_eoliennes()
 
     print("Collecte des données du réseau électrique :")
     fill_network()
+
+    print("Collecte des centrales thermiques")
+    fill_thermique()
+
+    print("Collecte des centrales solaires")
+    fill_solaire()
 
 
 def main():
