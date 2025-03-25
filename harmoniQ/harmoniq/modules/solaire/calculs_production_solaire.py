@@ -113,8 +113,8 @@ def calculate_solar_parameters(
     )
     dc = pvlib.pvsystem.sapm(effective_irradiance, cell_temperature, module)
     ac = pvlib.inverter.sandia(dc["v_mp"], dc["p_mp"], inverter)
-    return ac
-
+    print(inverter)
+    return 
 
 def convert_solar(value, module, mode="surface_to_power"):
     """
