@@ -2,6 +2,7 @@
 
 import requests
 import pandas as pd
+from pathlib import Path
 
 from harmoniq.db.engine import engine, get_db
 from harmoniq.db.schemas import SQLBase
@@ -17,6 +18,9 @@ from harmoniq.db.CRUD import (
 import argparse
 
 
+CURRENT_DIR = Path(__file__).parent
+CSV_DIR = CURRENT_DIR / ".." / "db" / "CSVs"
+
 def init_db(reset=False):
     if reset:
         print("Réinitialisation de la base de données")
@@ -26,12 +30,14 @@ def init_db(reset=False):
 
 
 def fill_eoliennes():
-    EOLIENNE_URL = "https://ftp.cartes.canada.ca/pub/nrcan_rncan/Wind-energy_Energie-eolienne/wind_turbines_database/Wind_Turbine_Database_FGP.xlsx"
     db = next(get_db())
 
-    response = requests.get(EOLIENNE_URL)
-    response.raise_for_status()
-    station_df = pd.read_excel(response.content)
+    # EOLIENNE_URL = "https://ftp.cartes.canada.ca/pub/nrcan_rncan/Wind-energy_Energie-eolienne/wind_turbines_database/Wind_Turbine_Database_FGP.xlsx"
+    # response = requests.get(EOLIENNE_URL)
+    # response.raise_for_status()
+    # station_df = pd.read_excel(response.content)
+
+    station_df = pd.read_excel(CSV_DIR / "Wind_Turbine_Database_FGP.xlsx")
     station_df = station_df[station_df["Province_Territoire"] == "Québec"]
 
     # Get unique "Project Name"
