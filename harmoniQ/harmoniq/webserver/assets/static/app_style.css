@@ -4,36 +4,39 @@ div#main {
     height: calc(100vh - 4.5em);
     display: grid;
     grid-template-areas:
-        "scenario  choix-infra plot"
-        "infra     choix-infra plot"
-        "infra     choix-infra plot";
-    grid-template-columns: 4fr 2fr 6fr;
-    grid-template-rows: auto 1fr 4fr;
+        "gestion  infra plot"
+        "scenario infra plot";
+    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-rows: auto 1fr;
 }
 
 @media (max-width: 1250px) {
     div#main {
         grid-template-areas:
+            "gestion     plot"
             "scenario    plot"
             "infra       plot"
-            "choix-infra plot";
+            "infra       plot";
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto 1fr 2fr;
+        grid-template-rows: auto auto 1fr 2fr;
     }
 }
 
 @media (max-width: 768px) {
     div#main {
+        height: auto;
         grid-template-areas:
+            "gestion"
             "scenario"
             "infra"
             "choix-infra"
             "plot";
         grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr 2fr 3fr;
+        grid-template-rows: auto auto 1fr auto 1fr;
     }
 }
 
+div#main div#sgestion { grid-area: gestion; }
 div#main div#infrastructures { grid-area: infra; }
 div#main div#scenario { grid-area: scenario; }
 div#main div#choix-infra { grid-area: choix-infra; }
@@ -45,6 +48,6 @@ div#main > div {
     padding: 1em;
 }
 
-div#main div#infrastructures {
+div#main div#infrastructures div.accordion {
     overflow-y: auto;
 }
