@@ -266,7 +266,7 @@ energie_centrales = resultats_centrales["energie_totale_wh"]
 
 
 def calculate_regional_residential_solar(
-    coordinates_residential: List[tuple],
+    coordinates_residential: list[tuple],
     population_relative,
     total_clients,
     num_panels_per_client,

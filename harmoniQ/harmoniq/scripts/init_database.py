@@ -10,7 +10,8 @@ from harmoniq.db import schemas
 from harmoniq.db.CRUD import (
     create_eolienne_parc, 
     create_eolienne,
-    create_thermique
+    create_thermique,
+    create_solaire
 )
 
 import argparse
@@ -48,8 +49,31 @@ def fill_thermique():
             ),
         )
         print(f"Centrale {row['nom']} ajoutée à la base de données")
-                
 
+
+def fill_solaire():
+    df = pd.read_csv(
+        CSVs_DIR / "centrales_solaires.csv",
+        delimiter=";",
+        encoding="utf-8"
+    )
+
+    db = next(get_db())
+
+    for _, row in df.iterrows():
+        create_solaire(
+            db,
+            schemas.SolaireCreate(
+                nom=row["nom"],
+                latitude=row["latitude"],
+                longitude=row["longitude"],
+                puissance_nominal=row["puissance_nominal_MW"],
+                angle_panneau=row["angle_panneau"],
+                orientation_panneau=row["orientation_panneau"],  # Correction ici
+                nombre_panneau=row["nombre_panneau"],
+            ),
+        )
+        print(f"Centrale solaire {row['nom']} ajoutée à la base de données")
 
 def fill_eoliennes():
     EOLIENNE_URL = "https://ftp.cartes.canada.ca/pub/nrcan_rncan/Wind-energy_Energie-eolienne/wind_turbines_database/Wind_Turbine_Database_FGP.xlsx"
@@ -116,11 +140,14 @@ def fill_eoliennes():
 
 
 def populate_db():
-    print("Collecte des éolienne")
-    fill_eoliennes()
+    # print("Collecte des éolienne")
+    # fill_eoliennes()
 
     print("Collecte des centrales thermiques")
     fill_thermique()
+
+    print("Collecte des centrales solaires")
+    fill_solaire()
 
 
 def main():

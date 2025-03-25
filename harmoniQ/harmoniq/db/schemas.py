@@ -262,75 +262,33 @@ class EolienneParc(SQLBase):
     eoliennes = relationship("Eolienne", back_populates="eolienne_parc")
 
 
-class SolaireParcBase(BaseModel):
-    nom: str = Field(..., description="Nom du parc solaire")
-    latitude: float = Field(
-        ..., description="Latitude moyenne des panneaux solaires (degrés)"
-    )
-    longitude: float = Field(
-        ..., description="Longitude moyenne des panneaux solaires (degrés)"
-    )
-    nombre_panneaux: int = Field(
-        ..., description="Nombre de panneaux solaire dans le parc"
-    )
-    capacite_total: float = Field(..., description="Capacité totale du parc (MW)")
-
-class SolaireParcCreate(SolaireParcBase):
-    pass
-
-class SolaireParcResponse(SolaireParcBase):
-    id: int
-
-    class Config:
-        from_attributes = True
-
-class SolaireParc(SQLBase):
-    __tablename__ = "solaire_parc"
-
-    id = Column(Integer, primary_key=True, index=True)
-    nom = Column(String)
-    latitude = Column(Float)
-    longitude = Column(Float)
-    nombre_panneaux = Column(Integer)
-    panneau_type = Column(String)
-    capacite_total = Column(Float)
-    
-    module_solaire = relationship("Solaire", back_populates="solaire_parc")
 
 class Solaire(SQLBase):
     __tablename__ = "solaire"
 
     id = Column(Integer, primary_key=True, index=True)
-    parc_id = Column(Integer, ForeignKey("solaire_parc.id"))
     nom = Column(String)
     latitude = Column(Float)
     longitude = Column(Float)
     angle_panneau = Column(Integer)
     orientation_panneau = Column(Integer)
-    surface_panneau = Column(Float)
+    nombre_panneau = Column(Integer)
     puissance_nominal = Column(Float)
-    modele_panneau = Column(String)
-    project_name = Column(String)
     annee_commission = Column(Integer, nullable=True)
     panneau_type = Column(String, nullable=True)
-    materiau_panenau = Column(String, nullable=True)
-    rendement_onduleur = Column(Integer, nullable=True)
-    solaire_parc = relationship("SolaireParc", back_populates="module_solaire")
+    materiau_panneau = Column(String, nullable=True)
 
 class SolaireBase(BaseModel):
+    nom : str
     latitude: float
     longitude: float
     angle_panneau: int
     orientation_panneau: int
-    surface_panneau: float
     puissance_nominal: float
-    modele_panneau: str
-    project_name: str
-    parc_id: int
+    nombre_panneau: int
     annee_commission: Optional[int] = None
     panneau_type: Optional[str] = None
-    materiau_panenau: Optional[str] = None
-    rendement_onduleur: Optional[int] = None
+    materiau_panneau: Optional[str] = None
 
     class Config:
         from_attributes = True
