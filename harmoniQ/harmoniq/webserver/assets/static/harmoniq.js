@@ -349,6 +349,14 @@ function nouveauScenario() {
         `;
     }
 
+
+window.onload = function() {
+    initialiserListeScenario();
+    initialiserListeInfra();
+    initialiserListeParcEolienne();
+};
+
+
     document.getElementById('dataModal').innerHTML = creerModal();
 
     // Fonction pour initialiser le datepicker
