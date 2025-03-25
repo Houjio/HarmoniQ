@@ -110,6 +110,7 @@ class DateTimeString(TypeDecorator):
             return datetime.fromisoformat(value)
         return value
 
+
 class TimeDeltaString(TypeDecorator):
     impl = String
 
@@ -122,6 +123,7 @@ class TimeDeltaString(TypeDecorator):
         if value is not None:
             return isodate.parse_duration(value)
         return value
+
 
 class Scenario(SQLBase):
     __tablename__ = "scenario"
@@ -151,7 +153,7 @@ class ScenarioBase(BaseModel):
     optimisme_social: Optimisme = Optimisme.moyen
     optimisme_ecologique: Optimisme = Optimisme.moyen
 
-    @validator('date_de_debut', 'date_de_fin', pre=True)
+    @validator("date_de_debut", "date_de_fin", pre=True)
     def parse_datetime(cls, value):
         if isinstance(value, str):
             try:
@@ -159,8 +161,8 @@ class ScenarioBase(BaseModel):
             except ValueError:
                 raise ValueError(f"Invalid datetime format: {value}")
         return value
-    
-    @validator('pas_de_temps', pre=True)
+
+    @validator("pas_de_temps", pre=True)
     def parse_timedelta(cls, value):
         if isinstance(value, str):
             try:
@@ -169,11 +171,62 @@ class ScenarioBase(BaseModel):
                 raise ValueError(f"Invalid timedelta format: {value}")
         return value
 
+
 class ScenarioCreate(ScenarioBase):
     pass
 
 
 class ScenarioResponse(ScenarioBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class ListeInfrastructures(SQLBase):
+    __tablename__ = "liste_infrastructures"
+
+    id = Column(Integer, primary_key=True)
+    nom = Column(String)
+    parc_eoliens = Column(String, nullable=True)
+    parc_solaires = Column(String, nullable=True)
+    central_hydroelectriques = Column(String, nullable=True)
+    central_thermique = Column(String, nullable=True)
+
+    @property
+    def parc_eolien_list(self):
+        return self.parc_eolien.split(",") if self.parc_eolien else []
+
+    @property
+    def parc_solaire_list(self):
+        return self.parc_solaire.split(",") if self.parc_solaire else []
+
+    @property
+    def central_hydroelectriques_list(self):
+        return (
+            self.central_hydroelectriques.split(",")
+            if self.central_hydroelectriques
+            else []
+        )
+
+    @property
+    def central_thermique_list(self):
+        return self.central_thermique.split(",") if self.central_thermique else []
+
+
+class ListeInfrastructuresBase(BaseModel):
+    nom: str
+    parc_eoliens: Optional[str] = None
+    parc_solaires: Optional[str] = None
+    central_hydroelectriques: Optional[str] = None
+    central_thermique: Optional[str] = None
+
+
+class ListeInfrastructuresCreate(ListeInfrastructuresBase):
+    pass
+
+
+class ListeInfrastructuresResponse(ListeInfrastructuresBase):
     id: int
 
     class Config:
@@ -303,28 +356,36 @@ class TransmissionBase(InfrastructureBase):
 
 class BusControlType(str, PyEnum):
     """Enumération des types de contrôle de bus"""
+
     PV = "PV"
     PQ = "PQ"
     slack = "slack"
 
+
 class BusType(str, PyEnum):
     """Enumération des types de bus"""
+
     prod = "prod"
     conso = "conso"
-    line = "line"
+    line = "ligne"
+
 
 class Bus(SQLBase):
     __tablename__ = "bus"
 
-    name = Column(String, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
     v_nom = Column(Integer)
     type = Column(Enum(BusType))
     x = Column(Float)
     y = Column(Float)
     control = Column(Enum(BusControlType))
-    
-    lines_from = relationship("Line", back_populates="bus_from", foreign_keys="Line.bus0")
+
+    lines_from = relationship(
+        "Line", back_populates="bus_from", foreign_keys="Line.bus0"
+    )
     lines_to = relationship("Line", back_populates="bus_to", foreign_keys="Line.bus1")
+
 
 class BusBase(BaseModel):
     name: str
@@ -333,74 +394,92 @@ class BusBase(BaseModel):
     x: float
     y: float
     control: BusControlType
-    
+
     class Config:
         from_attributes = True
+
 
 class BusCreate(BusBase):
     pass
 
+
 class BusResponse(BusBase):
+    id: int
+
     class Config:
         from_attributes = True
+
 
 class LineType(SQLBase):
     __tablename__ = "line_type"
 
-    name = Column(String, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
     f_nom = Column(Integer)
     r_per_length = Column(Float)
     x_per_length = Column(Float)
-    
+
     lines = relationship("Line", back_populates="line_type")
+
 
 class LineTypeBase(BaseModel):
     name: str
     f_nom: int
     r_per_length: float
     x_per_length: float
-    
+
     class Config:
         from_attributes = True
+
 
 class LineTypeCreate(LineTypeBase):
     pass
 
+
 class LineTypeResponse(LineTypeBase):
+    id: int
+
     class Config:
         from_attributes = True
+
 
 class Line(SQLBase):
     __tablename__ = "line"
 
-    name = Column(String, primary_key=True, index=True)
-    bus0 = Column(String, ForeignKey("bus.name"))
-    bus1 = Column(String, ForeignKey("bus.name"))
-    type = Column(String, ForeignKey("line_type.name"))
-    capital_cost = Column(Integer)
-    length = Column(Integer)
-    s_nom = Column(Integer)
-    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    bus0 = Column(Integer, ForeignKey("bus.name"))
+    bus1 = Column(Integer, ForeignKey("bus.name"))
+    type = Column(Integer, ForeignKey("line_type.name"))
+    capital_cost = Column(Float)
+    length = Column(Float)
+    s_nom = Column(Float)
+
     bus_from = relationship("Bus", back_populates="lines_from", foreign_keys=[bus0])
     bus_to = relationship("Bus", back_populates="lines_to", foreign_keys=[bus1])
     line_type = relationship("LineType", back_populates="lines")
+
 
 class LineBase(BaseModel):
     name: str
     bus0: str
     bus1: str
     type: str
-    capital_cost: int
-    length: int
-    s_nom: int
-    
+    capital_cost: float
+    length: float
+    s_nom: float
+
     class Config:
         from_attributes = True
+
 
 class LineCreate(LineBase):
     pass
 
+
 class LineResponse(LineBase):
+    id: int
+
     class Config:
         from_attributes = True
 

@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -44,12 +44,16 @@ def documentation(request: Request):
 def application(request: Request):
     return templates.TemplateResponse(request=request, name="app.html")
 
+
 @app.get("/Eloise", response_class=HTMLResponse)
 def eloisepage(request: Request):
     return templates.TemplateResponse(request=request, name="elo.html")
 
+
 @app.exception_handler(404)
 def not_found(request: Request, exc):
+    if request.url.path.startswith("/api/"):
+        return JSONResponse(status_code=404, content={"message": "Not Found"})
     return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
 
 # Ajoute les endpoints de REST.py
