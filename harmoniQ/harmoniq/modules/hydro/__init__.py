@@ -11,10 +11,22 @@ class Hydro(Infrastructure):
         super().__init__(donnees)
 
     @necessite_scenario
-    def _charger_debit(self):
+    def _charger_debit(self,scenario):
+
+        pass
+
+    def _charger_scenario(self):
         # Ajouter un debit pour
         scenario: ScenarioBase = self.scenario
 
         date_debut = scenario.date_de_debut
         date_fin = scenario.date_fin
+
+        return
+
+    
+
+
+
+
     pass

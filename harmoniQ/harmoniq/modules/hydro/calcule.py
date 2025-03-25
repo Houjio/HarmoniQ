@@ -5,7 +5,7 @@ import HydroGenerate as hg
 from HydroGenerate.hydropower_potential import calculate_hp_potential
 
 
-def reservoir_infill(Type_barrage, nb_turbines, Debit_nom, Volume_remplie, nom_barrage, besoin_puissance, info_puissance, pourcentage_reservoir, debit_entrant, nbr_turb_maintenance): #Ajouter débit entrant pour les réservoirs
+def reservoir_infill(Type_barrage, nb_turbines, Debit_nom, Volume_remplie, nom_barrage, besoin_puissance, info_puissance, pourcentage_reservoir, apport_naturel, nbr_turb_maintenance): #Ajouter débit entrant pour les réservoirs
 
     # La fonction reservoir_infill permet de calculer le pourcentage de remplissage du réservoir associé à un barrage 
     # en fonction du nombre turbines actives, du débit entrant dans le réservoir et du 
@@ -36,7 +36,8 @@ def reservoir_infill(Type_barrage, nb_turbines, Debit_nom, Volume_remplie, nom_b
         p = []
         d = []
         nb_turbines_a = []
-        Volume_reel = Volume_remplie*pourcentage_reservoir + debit_entrant*3600
+        # debit_amont = get_upstream_flows(temps,df_debit,barrage_amont)
+        Volume_reel = Volume_remplie*pourcentage_reservoir + apport_naturel*3600 #Ajouter le debit en amont
         
         for i in range(1, nb_turbines+1-nbr_turb_maintenance):
         # Filter for Dam A and 1 active turbine
@@ -64,31 +65,36 @@ def reservoir_infill(Type_barrage, nb_turbines, Debit_nom, Volume_remplie, nom_b
         else:
             pourcentage_reservoir = (Volume_reel-(variable_debits*nb_turb_actif*3600))/Volume_remplie
 
+        # df_debit = store_flows()
+        #LRU 
+        #Liste de demande 
+
     return pourcentage_reservoir  # Possible d'ajouter une fonctionnalité permettant de calculer l'énergie perdue après l'utilisation d'un évacuateur de crue pour l'analyse de résultat
 
-def store_flows(Volume_evacue, debits_turb, df_debit, id_barrage): #pas implémenté
-    df_temp = pd.DataFrame({"id_barrage"})
-    df_debit.append() = Volume_evacue
-    df_debit.debits_turb = debits_turb
+# def store_flows(Volume_evacue, debits_turb, df_debit, id_barrage): #pas implémenté
 
-    return df_debit
+#     df_temp = pd.DataFrame({"id_barrage"})
+#     df_debit.append() = Volume_evacue
+#     df_debit.debits_turb = debits_turb
 
-def init_dfflows(self, start_time, end_time, pas_horaire): #Pas implémenté
+#     return df_debit
 
-    df_flows = pd.DataFrame({"id_barrage" : 0, 'Volume_evacue': 0, "Debits" : 0})
+# def get_upstream_flows(df_debit):
+
+#     flow = 
+
+#     return flow
     
-    return df_flows
-    
-def get_run_of_river_dam_power(Type_barrage, nom_barrage,type_turb, nb_turbines, head, Debits_nom, flow, nb_turbine_maintenance):
+def get_run_of_river_dam_power(type_barrage, nom_barrage,type_turb, nb_turbines, head, debits_nom, flow, nb_turbine_maintenance):
 
-    if Type_barrage == "Reservoir":
+    if type_barrage == "Reservoir":
         print("Erreur : Le barrage entré n'est pas un barrage au fil de l'eau")
     else:
         Units = "IS"
         hp_type = 'Diversion'
         flow[nom_barrage] /= nb_turbines
 
-        hp = calculate_hp_potential(flow = flow, flow_column = flow[nom_barrage], design_flow = Debits_nom, head = head, units = Units, 
+        hp = calculate_hp_potential(flow = flow, flow_column = flow[nom_barrage], design_flow = debits_nom, head = head, units = Units, 
                 hydropower_type= hp_type, turbine_type = type_turb, annual_caclulation=True, annual_maintenance_flag = False
             )
         
