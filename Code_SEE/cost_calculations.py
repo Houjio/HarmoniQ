@@ -2,14 +2,29 @@ import pandas as pd
 import math
 from collections import defaultdict
 
-def calculate_substations(length_km):
+def calculate_substations(length_km, line_type, cost_params):
     """
     @brief Calculates the number of substations needed for a given transmission line length.
     
     @param length_km The total length of the transmission line in kilometers.
-    @return int The number of substations (minimum 1, calculated as floor(length_km / 150)).
+    @param line_type The type of the transmission line (e.g., AC735, DC450).
+    @param cost_params A dictionary of cost parameters.
+    @return int The number of substations (calculated based on Km_Per_Substation).
     """
-    return max(1, math.floor(length_km / 150))
+    # Check if line_type exists in cost_params
+    if line_type not in cost_params:
+        raise ValueError(f"Line type '{line_type}' not found in cost parameters.")
+    
+    # Get Km_Per_Substation from the cost_params for the given line_type
+    km_per_substation = cost_params[line_type].get("Km_Per_Substation", None)
+    
+    # Handle the case where Km_Per_Substation is missing or invalid
+    if km_per_substation is None or pd.isna(km_per_substation):
+        raise ValueError(f"Km_Per_Substation is missing or invalid for line type '{line_type}'.")
+    
+    # Calculate and return the number of substations needed
+    return max(1, math.floor(length_km / km_per_substation))
+
 
 def calculate_annual_cost(row, cost_params):
     """
@@ -84,7 +99,7 @@ def process_cost_data(segment_csv, cost_csv, output_csv):
     df_costs = pd.read_csv(cost_csv)
 
     required_segment_cols = ["Start_Coordinates", "End_Coordinates", "Length_km", "Line_Type"]
-    required_cost_cols = ["Line_Type", "Cost_Per_Substation", "Other_Costs", "Years_of_Operation", "Maintenance_Cost_Per_Year"]
+    required_cost_cols = ["Line_Type", "Cost_Per_Substation", "Other_Costs", "Years_of_Operation", "Maintenance_Cost_Per_Year", "Km_Per_Substation"]
 
     if not all(col in df_segments.columns for col in required_segment_cols):
         print("Error: Missing required columns in segment CSV.")
@@ -104,7 +119,7 @@ def process_cost_data(segment_csv, cost_csv, output_csv):
     for group in line_groups:
         group_df = df_segments[df_segments['Start_Coordinates'].isin(group) | df_segments['End_Coordinates'].isin(group)]
         total_length = group_df['Length_km'].sum()
-        num_substations = calculate_substations(total_length)
+        num_substations = calculate_substations(total_length, group_df.iloc[0]["Line_Type"], cost_params)
         num_substations += group.count("Substation")
 
         line_types = group_df['Line_Type'].unique()
