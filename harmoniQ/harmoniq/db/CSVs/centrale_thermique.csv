@@ -1,3 +1,3 @@
-﻿nom;puissance_MW;annee;type
-becancour;411;1993;gaz
-autres;131;2000;diesel
+nom;puissance_MW;latitude;longitude;type;semaine_maintenance
+becancour;411;46.3365;-72.0840;gaz;22
+autres;131;45.3002;-733451;diesel;22

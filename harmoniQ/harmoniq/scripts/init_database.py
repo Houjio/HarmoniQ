@@ -2,14 +2,21 @@
 
 import requests
 import pandas as pd
+from pathlib import Path
 
 from harmoniq.db.engine import engine, get_db
 from harmoniq.db.schemas import SQLBase
 from harmoniq.db import schemas
-from harmoniq.db.CRUD import create_eolienne_parc, create_eolienne
+from harmoniq.db.CRUD import (
+    create_eolienne_parc, 
+    create_eolienne,
+    create_thermique
+)
 
 import argparse
 
+LOCAL_DIR = Path(__file__).parent
+CSVs_DIR = LOCAL_DIR / ".." / "db" / "CSVs"
 
 def init_db(reset=False):
     if reset:
@@ -17,6 +24,31 @@ def init_db(reset=False):
         SQLBase.metadata.drop_all(bind=engine)
 
     SQLBase.metadata.create_all(bind=engine)
+
+
+def fill_thermique():
+    df = pd.read_csv(
+        CSVs_DIR / "centrale_thermique.csv",
+        delimiter=";",
+        encoding="utf-8"
+    )
+
+    db = next(get_db())
+
+    for _, row in df.iterrows():
+        create_thermique(
+            db,
+            schemas.ThermiqueCreate(
+                nom=row["nom"],
+                latitude=row["latitude"],
+                longitude=row["longitude"],
+                puissance_nominal=row["puissance_MW"],
+                type_intrant=row["type"],
+                semaine_maintenance=row["semaine_maintenance"],
+            ),
+        )
+        print(f"Centrale {row['nom']} ajoutée à la base de données")
+                
 
 
 def fill_eoliennes():
@@ -86,6 +118,9 @@ def fill_eoliennes():
 def populate_db():
     print("Collecte des éolienne")
     fill_eoliennes()
+
+    print("Collecte des centrales thermiques")
+    fill_thermique()
 
 
 def main():

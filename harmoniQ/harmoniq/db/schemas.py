@@ -348,7 +348,7 @@ class SolaireResponse(SolaireBase):
 class ThermiqueBase(BaseModel):
     latitude: float
     longitude: float
-    centrale_thermique_nom: str
+    nom: str
     puissance_nominal: float
     type_intrant: str
     semaine_maintenance: int
@@ -375,7 +375,7 @@ class Thermique(SQLBase):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    centrale_thermique_nom = Column(String)
+    nom = Column(String)
     latitude = Column(Float)
     longitude = Column(Float)
     puissance_nominal = Column(Float)
