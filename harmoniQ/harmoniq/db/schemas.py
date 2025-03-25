@@ -70,17 +70,6 @@ class InstancePopulationResponse(InstancePopulationBase):
         from_attributes = True
 
 
-class TypeInfrastructures(str, PyEnum):
-    """Enumération des types d'infrastructures"""
-
-    eolienne = "éolienne"
-    solaire = "solaire"
-    hydro = "hydro"
-    thermique = "thermique"
-    transmission = "transmission"
-    stockage = "stockage"
-
-
 class PositionBase(BaseModel):
     """Pydantic modèle de base pour les positions"""
 
@@ -233,20 +222,6 @@ class ListeInfrastructuresResponse(ListeInfrastructuresBase):
         from_attributes = True
 
 
-class InfrastructureBase(PositionBase):
-    nom: str
-    type: TypeInfrastructures
-    cout_de_construction: Optional[float] = None
-    cout_de_maintenance_annuel: Optional[float] = None
-    # TODO: Ajouter plus de champs
-
-
-class TypeGenerateur(PyEnum):
-    A = 1
-    B = 2
-    C = 3
-
-
 class EolienneBase(BaseModel):
     latitude: float
     longitude: float
@@ -337,6 +312,41 @@ class EolienneParc(SQLBase):
     eoliennes = relationship("Eolienne", back_populates="eolienne_parc")
 
 
+class Solaire(SQLBase):
+    __tablename__ = "solaire"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nom = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    angle_panneau = Column(Integer)
+    orientation_panneau = Column(Integer)
+    nombre_panneau = Column(Integer)
+    puissance_nominal = Column(Float)
+    annee_commission = Column(Integer, nullable=True)
+    panneau_type = Column(String, nullable=True)
+    materiau_panneau = Column(String, nullable=True)
+
+
+class SolaireBase(BaseModel):
+    nom: str
+    latitude: float
+    longitude: float
+    angle_panneau: int
+    orientation_panneau: int
+    puissance_nominal: float
+    nombre_panneau: int
+    annee_commission: Optional[int] = None
+    panneau_type: Optional[str] = None
+    materiau_panneau: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class SolaireCreate(SolaireBase):
+    pass
+
 class HydroBase(BaseModel):
     barrage_nom : str
     longitude: float
@@ -381,16 +391,91 @@ class Hydro(SQLBase):
     annee_commission = Column(Integer, nullable=True)
     materiau_conduite = Column(String, nullable=True)
 
-class SolaireBase(InfrastructureBase):
+class SolaireResponse(SolaireBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class ThermiqueBase(BaseModel):
+    latitude: float
+    longitude: float
+    nom: str
+    puissance_nominal: float
+    type_intrant: str
+    semaine_maintenance: int
+    annee_commission: Optional[int] = None
+    type_generateur: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class ThermiqueCreate(ThermiqueBase):
     pass
 
 
-class ThermiqueBase(InfrastructureBase):
+class ThermiqueResponse(ThermiqueBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class Thermique(SQLBase):
+    __tablename__ = "thermique"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    nom = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    puissance_nominal = Column(Float)
+    type_intrant = Column(String)
+    semaine_maintenance = Column(Integer)
+    annee_commission = Column(Integer, nullable=True)
+    type_generateur = Column(Integer, nullable=True)
+
+
+class NucleaireBase(BaseModel):
+    latitude: float
+    longitude: float
+    centrale_nucleaire_nom: str
+    puissance_nominal: float
+    type_intrant: str
+    semaine_maintenance: int
+    annee_commission: Optional[int] = None
+    type_generateur: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class NucleaireCreate(NucleaireBase):
     pass
 
 
-class TransmissionBase(InfrastructureBase):
-    pass
+class NucleaireResponse(NucleaireBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class Nucleaire(SQLBase):
+    __tablename__ = "nucleaire"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    centrale_nucleaire_nom = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    puissance_nominal = Column(Float)
+    type_intrant = Column(String)
+    semaine_maintenance = Column(Integer)
+    annee_commission = Column(Integer, nullable=True)
+    type_generateur = Column(Integer, nullable=True)
 
 
 class BusControlType(str, PyEnum):

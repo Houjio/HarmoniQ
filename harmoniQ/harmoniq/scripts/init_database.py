@@ -2,6 +2,8 @@
 
 import requests
 import pandas as pd
+from pathlib import Path
+from pathlib import Path
 
 from harmoniq.db.engine import engine, get_db
 from harmoniq.db.schemas import SQLBase
@@ -13,9 +15,16 @@ from harmoniq.db.CRUD import (
     create_line,
     create_line_type,
     create_hydro,
+    create_thermique,
+    create_solaire,
 )
 
+
 import argparse
+
+
+CURRENT_DIR = Path(__file__).parent
+CSV_DIR = CURRENT_DIR / ".." / "db" / "CSVs"
 
 
 def init_db(reset=False):
@@ -26,13 +35,55 @@ def init_db(reset=False):
     SQLBase.metadata.create_all(bind=engine)
 
 
-def fill_eoliennes():
-    EOLIENNE_URL = "https://ftp.cartes.canada.ca/pub/nrcan_rncan/Wind-energy_Energie-eolienne/wind_turbines_database/Wind_Turbine_Database_FGP.xlsx"
+def fill_thermique():
+    df = pd.read_csv(
+        CSV_DIR / "centrale_thermique.csv", delimiter=";", encoding="utf-8"
+    )
+
     db = next(get_db())
 
-    response = requests.get(EOLIENNE_URL)
-    response.raise_for_status()
-    station_df = pd.read_excel(response.content)
+    for _, row in df.iterrows():
+        create_thermique(
+            db,
+            schemas.ThermiqueCreate(
+                nom=row["nom"],
+                latitude=row["latitude"],
+                longitude=row["longitude"],
+                puissance_nominal=row["puissance_MW"],
+                type_intrant=row["type"],
+                semaine_maintenance=row["semaine_maintenance"],
+            ),
+        )
+        print(f"Centrale {row['nom']} ajoutée à la base de données")
+
+
+def fill_solaire():
+    df = pd.read_csv(
+        CSV_DIR / "centrales_solaires.csv", delimiter=";", encoding="utf-8"
+    )
+
+    db = next(get_db())
+
+    for _, row in df.iterrows():
+        create_solaire(
+            db,
+            schemas.SolaireCreate(
+                nom=row["nom"],
+                latitude=row["latitude"],
+                longitude=row["longitude"],
+                puissance_nominal=row["puissance_nominal_MW"],
+                angle_panneau=row["angle_panneau"],
+                orientation_panneau=row["orientation_panneau"],  # Correction ici
+                nombre_panneau=row["nombre_panneau"],
+            ),
+        )
+        print(f"Centrale solaire {row['nom']} ajoutée à la base de données")
+
+
+def fill_eoliennes():
+    db = next(get_db())
+
+    station_df = pd.read_excel(CSV_DIR / "Wind_Turbine_Database_FGP.xlsx")
     station_df = station_df[station_df["Province_Territoire"] == "Québec"]
 
     # Get unique "Project Name"
@@ -130,15 +181,11 @@ def fill_hydro():
 
 def fill_line_types():
     """Remplit la table line_type à partir du fichier CSV"""
-    import pandas as pd
-    import os
-    from pathlib import Path
     from harmoniq.db.schemas import LineType
 
     db = next(get_db())
 
-    script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-    file_path = script_dir / "data" / "line_types.csv"
+    file_path = CSV_DIR / "line_types.csv"
     line_types_df = pd.read_csv(file_path)
 
     count = 0
@@ -165,14 +212,9 @@ def fill_line_types():
 
 def fill_buses():
     """Remplit la table bus à partir du fichier CSV"""
-    import pandas as pd
-    import os
-    from pathlib import Path
-
     db = next(get_db())
 
-    script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-    file_path = script_dir / "data" / "buses.csv"
+    file_path = CSV_DIR / "buses.csv"
     buses_df = pd.read_csv(file_path)
 
     count = 0
@@ -200,14 +242,9 @@ def fill_buses():
 
 def fill_lines():
     """Remplit la table line à partir du fichier CSV"""
-    import pandas as pd
-    import os
-    from pathlib import Path
-
     db = next(get_db())
 
-    script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-    file_path = script_dir / "data" / "lines.csv"
+    file_path = CSV_DIR / "lines.csv"
     lines_df = pd.read_csv(file_path)
 
     count = 0
@@ -288,6 +325,12 @@ def populate_db():
 
     print("Collecte des données du réseau hydro :")
     fill_hydro()
+
+    print("Collecte des centrales thermiques")
+    fill_thermique()
+
+    print("Collecte des centrales solaires")
+    fill_solaire()
 
 
 def main():
