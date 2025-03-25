@@ -82,10 +82,7 @@ def calculate_solar_parameters(
     pressure = pvlib.atmosphere.alt2pres(altitude)
     am_abs = pvlib.atmosphere.get_absolute_airmass(airmass, pressure)
     aoi = pvlib.irradiance.aoi(
-        surface_tilt,
-        surface_orientation,
-        solpos["apparent_zenith"],
-        solpos["azimuth"],
+        surface_tilt, surface_orientation, solpos["apparent_zenith"], solpos["azimuth"],
     )
     total_irradiance = pvlib.irradiance.get_total_irradiance(
         surface_tilt,
@@ -114,7 +111,8 @@ def calculate_solar_parameters(
     dc = pvlib.pvsystem.sapm(effective_irradiance, cell_temperature, module)
     ac = pvlib.inverter.sandia(dc["v_mp"], dc["p_mp"], inverter)
     print(inverter)
-    return 
+    return
+
 
 def convert_solar(value, module, mode="surface_to_power"):
     """
@@ -431,7 +429,7 @@ def calculate_installation_cost(coordinates_centrales):
 
         # Calcul du coût d'installation avec facteurs
         cout_installation = (
-            cout_base * (puissance_mw**facteur_echelle) * facteur_complexite
+            cout_base * (puissance_mw ** facteur_echelle) * facteur_complexite
         )
 
         couts_installation[nom] = cout_installation

@@ -14,13 +14,10 @@ from harmoniq.db.CRUD import (
     create_bus,
     create_line,
     create_line_type,
-)
-from harmoniq.db.CRUD import (
-    create_eolienne_parc, 
-    create_eolienne,
     create_thermique,
-    create_solaire
+    create_solaire,
 )
+
 
 import argparse
 
@@ -28,8 +25,6 @@ import argparse
 CURRENT_DIR = Path(__file__).parent
 CSV_DIR = CURRENT_DIR / ".." / "db" / "CSVs"
 
-LOCAL_DIR = Path(__file__).parent
-CSVs_DIR = LOCAL_DIR / ".." / "db" / "CSVs"
 
 def init_db(reset=False):
     if reset:
@@ -41,9 +36,7 @@ def init_db(reset=False):
 
 def fill_thermique():
     df = pd.read_csv(
-        CSVs_DIR / "centrale_thermique.csv",
-        delimiter=";",
-        encoding="utf-8"
+        CSV_DIR / "centrale_thermique.csv", delimiter=";", encoding="utf-8"
     )
 
     db = next(get_db())
@@ -65,9 +58,7 @@ def fill_thermique():
 
 def fill_solaire():
     df = pd.read_csv(
-        CSVs_DIR / "centrales_solaires.csv",
-        delimiter=";",
-        encoding="utf-8"
+        CSV_DIR / "centrales_solaires.csv", delimiter=";", encoding="utf-8"
     )
 
     db = next(get_db())
@@ -87,13 +78,9 @@ def fill_solaire():
         )
         print(f"Centrale solaire {row['nom']} ajoutée à la base de données")
 
+
 def fill_eoliennes():
     db = next(get_db())
-
-    # EOLIENNE_URL = "https://ftp.cartes.canada.ca/pub/nrcan_rncan/Wind-energy_Energie-eolienne/wind_turbines_database/Wind_Turbine_Database_FGP.xlsx"
-    # response = requests.get(EOLIENNE_URL)
-    # response.raise_for_status()
-    # station_df = pd.read_excel(response.content)
 
     station_df = pd.read_excel(CSV_DIR / "Wind_Turbine_Database_FGP.xlsx")
     station_df = station_df[station_df["Province_Territoire"] == "Québec"]
@@ -292,12 +279,10 @@ def fill_network():
 
 def populate_db():
     print("Collecte des éoliennes")
-    # fill_eoliennes()
+    fill_eoliennes()
 
     print("Collecte des données du réseau électrique :")
     fill_network()
-    # print("Collecte des éolienne")
-    # fill_eoliennes()
 
     print("Collecte des centrales thermiques")
     fill_thermique()

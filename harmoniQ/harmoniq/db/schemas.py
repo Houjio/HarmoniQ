@@ -100,7 +100,6 @@ class DateTimeString(TypeDecorator):
         return value
 
 
-
 class TimeDeltaString(TypeDecorator):
     impl = String
 
@@ -113,7 +112,6 @@ class TimeDeltaString(TypeDecorator):
         if value is not None:
             return isodate.parse_duration(value)
         return value
-
 
 
 class Scenario(SQLBase):
@@ -145,7 +143,6 @@ class ScenarioBase(BaseModel):
     optimisme_ecologique: Optimisme = Optimisme.moyen
 
     @validator("date_de_debut", "date_de_fin", pre=True)
-    @validator("date_de_debut", "date_de_fin", pre=True)
     def parse_datetime(cls, value):
         if isinstance(value, str):
             try:
@@ -155,8 +152,6 @@ class ScenarioBase(BaseModel):
         return value
 
     @validator("pas_de_temps", pre=True)
-
-    @validator("pas_de_temps", pre=True)
     def parse_timedelta(cls, value):
         if isinstance(value, str):
             try:
@@ -164,7 +159,6 @@ class ScenarioBase(BaseModel):
             except ValueError:
                 raise ValueError(f"Invalid timedelta format: {value}")
         return value
-
 
 
 class ScenarioCreate(ScenarioBase):
@@ -318,7 +312,6 @@ class EolienneParc(SQLBase):
     eoliennes = relationship("Eolienne", back_populates="eolienne_parc")
 
 
-
 class Solaire(SQLBase):
     __tablename__ = "solaire"
 
@@ -334,8 +327,9 @@ class Solaire(SQLBase):
     panneau_type = Column(String, nullable=True)
     materiau_panneau = Column(String, nullable=True)
 
+
 class SolaireBase(BaseModel):
-    nom : str
+    nom: str
     latitude: float
     longitude: float
     angle_panneau: int
@@ -349,8 +343,10 @@ class SolaireBase(BaseModel):
     class Config:
         from_attributes = True
 
+
 class SolaireCreate(SolaireBase):
     pass
+
 
 class SolaireResponse(SolaireBase):
     id: int
