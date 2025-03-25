@@ -1,10 +1,79 @@
 {% extends "template.html" %}
 
 {% block extra_head %}
-    <!-- Add any additional head content here -->
+    <!-- Include jQuery and Font Awesome -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Include Plotly for Sankey -->
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+
+    <!-- Include Custom CSS -->
+    <link rel="stylesheet" href="/static/app_style.css">
+
+    <!-- Include Custom JS -->
+    <script src="/static/elo.js"></script>
 {% endblock %}
 
 {% block content %}
-<h1>Hello, Eloise!</h1>
-<p>Welcome to the Eloise page.</p>
+<div id="main">
+    <div id="scenario" class="bg-light card">
+        <div class="card-body">
+            <h5 class="card-title">Sélection du Scénario</h5>
+
+            <!-- Scénario climatique -->
+            <label for="climateScenario" class="form-label">Scénario climatique:</label>
+            <select id="climateScenario" class="form-select">
+                <option value="optimiste">Optimiste</option>
+                <option value="neutre">Neutre</option>
+                <option value="pessimiste">Pessimiste</option>
+            </select>
+
+            <!-- Tableau de croissance (diagonal selection only) -->
+            <h5 class="mt-4">Scénario de croissance</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Faible Électrification</th>
+                            <th>Moyenne Électrification</th>
+                            <th>Élevée Électrification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Faible Population</th>
+                            <td><input type="radio" name="growthScenario" value="faible"></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Moyenne Population</th>
+                            <td></td>
+                            <td><input type="radio" name="growthScenario" value="moyen" checked></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Élevée Population</th>
+                            <td></td>
+                            <td></td>
+                            <td><input type="radio" name="growthScenario" value="elevee"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Slider for Transport Efficiency -->
+            <h5 class="mt-4">Efficacité du transport</h5>
+            <input type="range" id="transportEfficiency" class="form-range" min="1" max="3" step="1" value="2">
+            <div class="d-flex justify-content-between">
+                <span>Faible</span>
+                <span id="efficiencyLabel" class="fw-bold">Moyen</span>
+                <span>Élevé</span>
+            </div>
+            <div id="sankeyDiagram" style="width: 100%; height: 500px; margin-top: 30px;"></div>
+        </div>
+    </div>
+</div>
 {% endblock %}
