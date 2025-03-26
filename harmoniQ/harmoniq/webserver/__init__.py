@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -26,6 +26,11 @@ templates = Jinja2Templates(directory=ASSET_FILE)
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
+
+@app.get("/favicon.ico", response_class=FileResponse)
+def favicon():
+    print(STATIC_FILE / "favicon" / "favicon.ico")
+    return FileResponse(STATIC_FILE / "favicon" / "favicon.ico")
 
 
 @app.get("/à-propos", response_class=HTMLResponse)

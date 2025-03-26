@@ -1,9 +1,115 @@
-
-
 {% extends "template.html" %}
 
+{% block title %}
+    HarmoniQ - À propos
+{% endblock %}
+
 {% block content %}
-<div class="container text-center mt-5">
-    <h1>TODO</h1>
-</div>
-{% endblock %} 
+    <style>
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            background-image: linear-gradient( to bottom right, rgba(0, 0, 0, 0.45), rgba(141, 141, 141, 0.459)), url("https://images.pexels.com/photos/31326222/pexels-photo-31326222/free-photo-of-aerial-view-of-dam-structure-in-alma-wi.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"); 
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white; 
+        }
+
+        
+        .hero-section h1 {
+            font-size: 3em; 
+            font-weight: bold; 
+            margin-bottom: 20px; 
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+        }
+
+        
+        .hero-section p {
+            font-size: 1.5em; 
+            max-width: 800px; 
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+        }
+
+        
+        .content-section {
+            padding: 50px;
+            background-color: #f9f9f9; 
+            text-align: center;
+        }
+        
+        .content-section h2 {
+            font-size: 2.5em; 
+            margin-bottom: 20px; 
+            color: #333; 
+        }
+
+        
+        .content-section p, .content-section ul {
+            font-size: 1.4em; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            color: #555; 
+            line-height: 1.6; 
+        }
+
+        .content-section ul {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        div#nav button {
+            padding: 0.5em 1em; 
+            background: none; 
+            font-weight: bold; 
+            font-size: 1.5em; 
+            border: 2px solid black; 
+            color: black; 
+            border-radius: 15px; 
+            cursor: pointer; 
+            transition: background-color 0.3s ease, color 0.3s ease; 
+            margin: 0 0.2em; 
+        }
+        div#nav {
+            margin-top: 2em; 
+            display: flex; 
+            justify-content: center; 
+        }
+        div#nav button:hover {
+            background-color: rgb(255, 255, 255); 
+            color: rgb(97, 191, 235); 
+            border-color: rgb(97, 191, 235); 
+        }
+    </style>
+
+    <div class="hero-section">
+        <h1>À propos</h1>
+        <p>HarmoniQ est une interface développée par des étudiants de quatrième année de Polytechnique Montréal, en collaboration avec Hydro-Québec. Elle repose sur des modules Python open source, permettant ainsi à tous de les consulter librement.</p>
+    </div>
+
+    <div class="content-section">
+        <h2>Notre Mission</h2>
+        <hr style="border: 1px solid black; margin: 20px 0;"> 
+        <p>Permettre de vulgariser la production et la distribution d'électricité au Québec pour permettre au particulier de mieux comprendre les enjeux de la transition énergétique.</p>
+        <hr style="border: 1px solid black; margin: 20px 0;"> 
+    </div>
+
+    <div class="content-section">
+        <h2>Technologies</h2>
+        <hr style="border: 1px solid black; margin: 20px 0;"> 
+        <p>Les modèles de production et de distribution d'électricité sont basés sur des modèles open source développés en Python, avec:</p>
+        <ul>
+            <li><a href="https://inlsoftware.inl.gov/product/hydrogenerate">HydroGenerate</a> pour la production hydro-électrique</li>
+            <li>TODO...</li>
+        </ul>
+        <hr style="border: 1px solid black; margin: 20px 0;"> 
+    </div>
+
+
+
+{% endblock %}

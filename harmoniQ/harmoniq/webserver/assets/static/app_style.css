@@ -20,6 +20,10 @@ div#main {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: auto auto 1fr 2fr;
     }
+
+    table#gestion-table {
+        display: none;
+    }
 }
 
 @media (max-width: 768px) {
@@ -44,13 +48,11 @@ div#main div#plots { grid-area: plot; }
 
 
 div#main > div {
-    border-radius: 15px;
     padding: 1em;
 }
 
 div#main > div#plots {
     padding: 0;
-    border-radius: 0;
 }
 
 div#main div#infrastructures div.accordion {
