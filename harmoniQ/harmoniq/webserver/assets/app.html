@@ -1,9 +1,12 @@
 {% extends "template.html" %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="/static/app_style.css">
+    <link rel="stylesheet" href="{{ url_for('static', path='app_style.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
 
     <!-- Date picker -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
@@ -13,7 +16,7 @@
 <div id="main">
     <div id="gestion" class="bg-light card">
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-bordered table-sm text-center" id="gestion-table">
                 <thead>
                     <tr>
                         <th>Scénario Actif</th>
@@ -46,35 +49,24 @@
                 </select>
             </div>
             <div id="scenario-info" class="card p-2" style="display: none;">
-                <div class="card-title scenario-nom">
-                    <h5>Nom du scénario</h5>
-                </div>
                 <div class="card-body">
                     <p class="description"></p>
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td style="padding: 2px; margin: 0;">Début:</td>
-                                <td class="scenario-debut" style="padding: 2px; margin: 0;"></td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 2px; margin: 0;">Fin:</td>
-                                <td class="scenario-fin" style="padding: 2px; margin: 0;"></td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 2px; margin: 0;">Pas de temps:</td>
-                                <td class="scenario-pas" style="padding: 2px; margin: 0;"></td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 2px; margin: 0;">Statue social:</td>
-                                <td class="optimisme-social" style="padding: 2px; margin: 0;"></td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 2px; margin: 0;">Statue écologique:</td>
-                                <td class="optimisme-ecologique" style="padding: 2px; margin: 0;"></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <p>
+                        Du
+                        <span class="scenario-debut fw-bold"></span>
+                        au
+                        <span class="scenario-fin fw-bold"></span>
+                        avec un pas de temps de
+                        <span class="scenario-pas fw-bold"></span>
+                    </p>
+                    <p>
+                        Statut social: 
+                        <span class="optimisme-social fw-bold"></span>
+                    </p>
+                    <p>
+                        Statut écologique: 
+                        <span class="optimisme-ecologique fw-bold"></span>
+                    </p>
                 </div>
             </div>
             <div class="d-flex w-100 justify-content-end mt-2">
@@ -123,10 +115,9 @@
                 </h2>
                 <div id="windCollapse" class="accordion-collapse collapse" aria-labelledby="windHeading" data-bs-parent="#sidebar">
                     <div id="list-parc-eolien" class="accordion-body">
-                        <div class="d-flex w-100 justify-content-space-between align-items-center my-3">
-                            <button class="btn btn-primary select-all" id="select_all_eolien">Tout sélectionner</button>
-                            <button class="btn btn-primary select-none" id="select_none_eolien">Tout désélectionner</button>
-                            <!-- TODO add search filter ect -->
+                        <div class="d-flex w-100 justify-content-center my-2">
+                            <button class="btn btn-primary btn-sm select-all me-2" id="select_all_eolien">Tout sélectionner</button>
+                            <button class="btn btn-primary btn-sm select-none" id="select_none_eolien">Tout désélectionner</button>
                         </div>
                         <ul class="list-group">
 
@@ -141,9 +132,13 @@
                     </button>
                 </h2>
                 <div id="solarCollapse" class="accordion-collapse collapse" aria-labelledby="solarHeading" data-bs-parent="#sidebar">
-                    <div class="accordion-body">
+                    <div id="list-parc-solaire" class="accordion-body">
+                        <div class="d-flex w-100 justify-content-center my-2">
+                            <button class="btn btn-primary btn-sm select-all me-2" id="select_all_solaire">Tout sélectionner</button>
+                            <button class="btn btn-primary btn-sm select-none" id="select_none_solaire">Tout désélectionner</button>
+                        </div>
                         <ul class="list-group">
-                            
+
                         </ul>
                     </div>
                 </div>
@@ -155,9 +150,13 @@
                     </button>
                 </h2>
                 <div id="thermalCollapse" class="accordion-collapse collapse" aria-labelledby="thermalHeading" data-bs-parent="#sidebar">
-                    <div class="accordion-body">
+                    <div id="list-parc-thermique" class="accordion-body">
+                        <div class="d-flex w-100 justify-content-center my-2">
+                            <button class="btn btn-primary btn-sm select-all me-2" id="select_all_thermique">Tout sélectionner</button>
+                            <button class="btn btn-primary btn-sm select-none" id="select_none_thermique">Tout désélectionner</button>
+                        </div>
                         <ul class="list-group">
-                            
+
                         </ul>
                     </div>
                 </div>
@@ -177,16 +176,29 @@
                 </div>
           </div>
         </div>
-        <div class="w-100 d-flex justify-content-end my-3">
+        <div class="w-100 d-flex justify-content-end mt-2">
             <button class="btn btn-primary" id="add-infra-liste">Nouveau Groupe</button>
         </div>
     </div>
-    <div id="plots" class="bg-light card">
-        <div class="card-body">
-            <div id="plot-box">
-
+    <div id="plots" class="d-flex flex-column">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="map-tab" data-bs-toggle="tab" data-bs-target="#map" type="button" role="tab" aria-controls="map" aria-selected="true">Carte</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="plot-tab" data-bs-toggle="tab" data-bs-target="#plot" type="button" role="tab" aria-controls="plot" aria-selected="false">Graphique</button>
+            </li>
+        </ul>
+        <div class="tab-content flex-grow-1" id="myTabContent">
+            <div class="tab-pane show active h-100" id="map" role="tabpanel" aria-labelledby="map-tab">
+                <div id="map-box" style="width: 100%; height: 100%;">
+                </div>
             </div>
-        </div> 
+            <div class="tab-pane h-100" id="plot" role="tabpanel" aria-labelledby="plot-tab">
+                <div id="plot-box" style="width: 100%; height: 100%;">
+                    TODO: Graphique
+            </div>
+        </div>
     </div>
 </div>
 
@@ -200,5 +212,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment/locale/fr.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<script src="/static/harmoniq.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="{{ url_for('static', path='harmoniq.js') }}"></script>
 {% endblock %}

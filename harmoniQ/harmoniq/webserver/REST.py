@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+
 import logging
 from typing import List, Optional
 from datetime import datetime
@@ -24,12 +25,16 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 @router.get("/ping")
 async def ping():
     return {"ping": "pong"}
 
+
 @router.post("/simulation")
-async def simulation(scenario_id: int, liste_infra_id: int, db: Session = Depends(get_db)):
+async def simulation(
+    scenario_id: int, liste_infra_id: int, db: Session = Depends(get_db)
+):
     print(f"Scenario ID: {scenario_id}")
     print(f"Infrastructure ID: {liste_infra_id}")
     scenario = CRUD.read_scenario_by_id(db, scenario_id)
@@ -44,7 +49,6 @@ async def simulation(scenario_id: int, liste_infra_id: int, db: Session = Depend
     print(scenario)
     print("Infra:")
     print(infra)
-
 
     raise HTTPException(status_code=501, detail="Simulation not implemented")
 
@@ -64,7 +68,6 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
     class_router = APIRouter(
         prefix=f"/{table_name_lower}",
         tags=[table_name],
-        responses={404: {"description": f"{table_name} not found"}},
     )
     api_routers[table_name_lower] = class_router
 
@@ -72,7 +75,9 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
     def create_endpoints(
         sql_class, base_class, create_class, response_class, table_name_lower
     ):
-        @class_router.post("/", response_model=response_class)
+        @class_router.post(
+            "/", response_model=response_class, summary=f"Create a {table_name}"
+        )
         async def create(item: create_class, db: Session = Depends(get_db)):
             result = create_data(db, sql_class, item)
             if result is None:
@@ -81,12 +86,20 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
                 )
             return result
 
-        @class_router.get("/", response_model=List[response_class])
+        @class_router.get(
+            "/",
+            response_model=List[response_class],
+            summary=f"Read all {table_name_plural}",
+        )
         async def read_all(db: Session = Depends(get_db)):
             result = read_all_data(db, sql_class)
             return result
 
-        @class_router.get("/{item_id}", response_model=response_class)
+        @class_router.get(
+            "/{item_id}",
+            response_model=response_class,
+            summary=f"Read a {table_name} by id",
+        )
         async def read(item_id: int, db: Session = Depends(get_db)):
             result = read_data_by_id(db, sql_class, item_id)
             if result is None:
@@ -95,7 +108,11 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
                 )
             return result
 
-        @class_router.put("/{item_id}", response_model=response_class)
+        @class_router.put(
+            "/{item_id}",
+            response_model=response_class,
+            summary=f"Update a {table_name} by id",
+        )
         async def update(
             item_id: int, item: create_class, db: Session = Depends(get_db)
         ):
@@ -106,7 +123,7 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
                 )
             return result
 
-        @class_router.delete("/{item_id}")
+        @class_router.delete("/{item_id}", summary=f"Delete a {table_name} by id")
         async def delete(item_id: int, db: Session = Depends(get_db)):
             result = delete_data(db, sql_class, item_id)
             if result is None:
@@ -174,21 +191,24 @@ def get_meteo_data(
 router.include_router(meteo_router)
 
 # Parc éolien
-parc_eolien_router = api_routers['eolienneparc']
+parc_eolien_router = api_routers["eolienneparc"]
+
 
 @parc_eolien_router.post("/{parc_eolien_id}/production")
-def calculer_production_parc_eolien(parc_eolien_id: int, scenario_id: int, db: Session = Depends(get_db)):
+def calculer_production_parc_eolien(
+    parc_eolien_id: int, scenario_id: int, db: Session = Depends(get_db)
+):
     list_eolienne = engine.all_eoliennes_in_parc(db, parc_eolien_id)
     scenario = CRUD.read_scenario_by_id(db, scenario_id)
     if list_eolienne is None:
         raise HTTPException(status_code=404, detail="Parc éolien not found")
-    
+
     if scenario is None:
         raise HTTPException(status_code=404, detail="Scenario not found")
-    
+
     eolienne_infra = InfraParcEolienne(list_eolienne)
     eolienne_infra.charger_scenario(scenario)
-    production:pd.DataFrame = eolienne_infra.calculer_production()
+    production: pd.DataFrame = eolienne_infra.calculer_production()
 
     json_prod = production.to_json()
 

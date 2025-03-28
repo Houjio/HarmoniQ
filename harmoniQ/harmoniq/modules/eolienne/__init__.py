@@ -10,22 +10,25 @@ import matplotlib.pyplot as plt
 
 logger = logging.getLogger("Eolienne")
 
+
 class InfraParcEolienne(Infrastructure):
     def __init__(self, donnees: List[EolienneBase]):
         super().__init__(donnees)
 
     def _charger_meteo(self, scenario: ScenarioBase):
-        avrg_lat = sum([eolienne.latitude for eolienne in self.donnees]) / len(self.donnees)
-        avrg_lon = sum([eolienne.longitude for eolienne in self.donnees]) / len(self.donnees)
-
-        pos = PositionBase(
-            latitude=avrg_lat, longitude=avrg_lon
+        avrg_lat = sum([eolienne.latitude for eolienne in self.donnees]) / len(
+            self.donnees
         )
+        avrg_lon = sum([eolienne.longitude for eolienne in self.donnees]) / len(
+            self.donnees
+        )
+
+        pos = PositionBase(latitude=avrg_lat, longitude=avrg_lon)
         granularite = (
             Granularity.HOURLY if scenario.pas_de_temps.days == 0 else Granularity.DAILY
         )
         logger.info(f"Granularité de Meteo: {granularite}")
-        
+
         wind_energy = EnergyType.EOLIEN
 
         helper = WeatherHelper(
@@ -43,10 +46,9 @@ class InfraParcEolienne(Infrastructure):
         self.scenario: ScenarioBase = scenario
         self.meteo: pd.DataFrame = self._charger_meteo(scenario)
 
-
     @necessite_scenario
     def calculer_production(self) -> pd.DataFrame:
-        # TODO: Ce code repete souvant les memes calcules, il faudrait le refactoriser
+        # TODO: Ce code repete souvent les memes calcules, il faudrait le refactoriser
 
         new_df = None
 

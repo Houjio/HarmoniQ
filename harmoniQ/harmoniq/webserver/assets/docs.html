@@ -32,7 +32,7 @@
                 tagSection.className = "mb-4";
 
                 tagSection.innerHTML = `
-                    <h2 class="text-light border-bottom pb-2">${tag}</h2>
+                    <h2 class="border-bottom pb-2 text-primary">${tag}</h2>
                     <div id="tag-${tag.replace(/\s+/g, '-').toLowerCase()}" class="accordion"></div>
                 `;
 
@@ -41,24 +41,24 @@
                 tags[tag].forEach(({ path, method, endpoint }, index) => {
                     const sanitizedId = `${method}-${path.replace(/[\/{}]/g, '')}-${index}`;
                     const card = document.createElement("div");
-                    card.className = "accordion-item bg-dark border-secondary";
+                    card.className = "accordion-item bg-light border-secondary";
 
                     card.innerHTML = `
                         <h2 class="accordion-header">
-                            <button class="accordion-button collapsed bg-secondary text-light" data-bs-toggle="collapse" data-bs-target="#collapse-${sanitizedId}">
-                                <strong class="text-uppercase">${method}</strong> <code>${path}</code>
+                            <button class="accordion-button collapsed bg-primary text-white" data-bs-toggle="collapse" data-bs-target="#collapse-${sanitizedId}">
+                                <strong class="text-uppercase text-info">${method}</strong> <code class="text-light">${path}</code>
                             </button>
                         </h2>
                         <div id="collapse-${sanitizedId}" class="accordion-collapse collapse">
                             <div class="accordion-body">
-                                <p class="text-info">${endpoint.summary || "No summary available"}</p>
+                                <p class="text-dark">${endpoint.summary || "No summary available"}</p>
                                 ${endpoint.parameters && endpoint.parameters.length > 0 ? `
-                                <h6>Parameters:</h6>
+                                <h6 class="text-primary">Parameters:</h6>
                                 <ul>
                                     ${endpoint.parameters.map(param => `<li><strong>${param.name}</strong>: ${param.description || "No description"}</li>`).join("")}
                                 </ul>` : ""}
                                 ${Object.keys(endpoint.responses).length > 1 || !endpoint.responses["200"] ? `
-                                <h6>Responses:</h6>
+                                <h6 class="text-primary">Responses:</h6>
                                 <ul>
                                     ${Object.keys(endpoint.responses).map(status => `<li><strong>${status}</strong>: ${endpoint.responses[status].description || "No description"}</li>`).join("")}
                                 </ul>` : ""}
@@ -83,7 +83,7 @@
 
 {% block content %}
 <div class="container my-5">
-    <h1 id="api-title" class="text-center">Loading...</h1>
+    <h1 id="api-title" class="text-center text-primary">Loading...</h1>
     <p id="api-description" class="text-center text-muted"></p>
     
     <div id="api-content" class="mt-4"></div>
