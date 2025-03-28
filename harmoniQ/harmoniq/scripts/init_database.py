@@ -2,13 +2,29 @@
 
 import requests
 import pandas as pd
+from pathlib import Path
+from pathlib import Path
 
 from harmoniq.db.engine import engine, get_db
 from harmoniq.db.schemas import SQLBase
 from harmoniq.db import schemas
-from harmoniq.db.CRUD import create_eolienne_parc, create_eolienne, create_bus, create_line, create_line_type
+from harmoniq.db.CRUD import (
+    create_eolienne_parc,
+    create_eolienne,
+    create_bus,
+    create_line,
+    create_line_type,
+    create_hydro,
+    create_thermique,
+    create_solaire,
+)
+
 
 import argparse
+
+
+CURRENT_DIR = Path(__file__).parent
+CSV_DIR = CURRENT_DIR / ".." / "db" / "CSVs"
 
 
 def init_db(reset=False):
@@ -19,13 +35,55 @@ def init_db(reset=False):
     SQLBase.metadata.create_all(bind=engine)
 
 
-def fill_eoliennes():
-    EOLIENNE_URL = "https://ftp.cartes.canada.ca/pub/nrcan_rncan/Wind-energy_Energie-eolienne/wind_turbines_database/Wind_Turbine_Database_FGP.xlsx"
+def fill_thermique():
+    df = pd.read_csv(
+        CSV_DIR / "centrale_thermique.csv", delimiter=";", encoding="utf-8"
+    )
+
     db = next(get_db())
 
-    response = requests.get(EOLIENNE_URL)
-    response.raise_for_status()
-    station_df = pd.read_excel(response.content)
+    for _, row in df.iterrows():
+        create_thermique(
+            db,
+            schemas.ThermiqueCreate(
+                nom=row["nom"],
+                latitude=row["latitude"],
+                longitude=row["longitude"],
+                puissance_nominal=row["puissance_MW"],
+                type_intrant=row["type"],
+                semaine_maintenance=row["semaine_maintenance"],
+            ),
+        )
+        print(f"Centrale {row['nom']} ajoutée à la base de données")
+
+
+def fill_solaire():
+    df = pd.read_csv(
+        CSV_DIR / "centrales_solaires.csv", delimiter=";", encoding="utf-8"
+    )
+
+    db = next(get_db())
+
+    for _, row in df.iterrows():
+        create_solaire(
+            db,
+            schemas.SolaireCreate(
+                nom=row["nom"],
+                latitude=row["latitude"],
+                longitude=row["longitude"],
+                puissance_nominal=row["puissance_nominal_MW"],
+                angle_panneau=row["angle_panneau"],
+                orientation_panneau=row["orientation_panneau"],  # Correction ici
+                nombre_panneau=row["nombre_panneau"],
+            ),
+        )
+        print(f"Centrale solaire {row['nom']} ajoutée à la base de données")
+
+
+def fill_eoliennes():
+    db = next(get_db())
+
+    station_df = pd.read_excel(CSV_DIR / "Wind_Turbine_Database_FGP.xlsx")
     station_df = station_df[station_df["Province_Territoire"] == "Québec"]
 
     # Get unique "Project Name"
@@ -82,42 +140,7 @@ def fill_eoliennes():
 
         print(f"Projet {project_name} ajouté à la base de données")
 
-
-def fill_line_types():
-    """Remplit la table line_type à partir du fichier CSV"""
-    import pandas as pd
-    import os
-    from pathlib import Path
-    from harmoniq.db.schemas import LineType
-    
-    db = next(get_db())
-    
-    script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-    file_path = script_dir / "data" / "line_types.csv"
-    line_types_df = pd.read_csv(file_path)
-    
-    count = 0
-    for _, row in line_types_df.iterrows():
-        existing = db.query(LineType).filter(LineType.name == row['name']).first()
-        
-        if existing:
-            print(f"Type de ligne {row['name']} existe déjà")
-            continue
-            
-        db_line_type = schemas.LineTypeCreate(
-            name=row['name'],
-            f_nom=int(row['f_nom']),
-            r_per_length=float(row['r_per_length']),
-            x_per_length=float(row['x_per_length'])
-        )
-        
-        create_line_type(db, db_line_type)
-        count += 1
-        print(f"Type de ligne '{db_line_type.name}' ajouté à la base de données")
-    
-    print(f"{count} types de ligne ajoutés à la base de données")
-
-def fill_buses():
+def fill_hydro():
     """Remplit la table bus à partir du fichier CSV"""
     import pandas as pd
     import os
@@ -126,74 +149,151 @@ def fill_buses():
     db = next(get_db())
     
     script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-    file_path = script_dir / "data" / "buses.csv"
-    buses_df = pd.read_csv(file_path)
+    file_path = script_dir / "data" / "Info_Barrages.csv"
+    barrages_df = pd.read_csv(file_path)
     
     count = 0
+    for _, row in barrages_df.iterrows():
+            existing = db.query(schemas.Hydro).filter(schemas.Hydro.barrage_nom == row['Nom']).first()
+            if existing:
+                print(f"Barrage {row['Nom']} existe déjà")
+                continue
+                      
+            db_hydro = schemas.HydroCreate(
+                barrage_nom=row['Nom'],
+                puissance_nominal=row['Puissance_Installee_MW'],
+                type_barrage=row['Type'],
+                latitude=row['Longitude'],
+                longitude=row['Latitude'],
+                hauteur_chute=row['Hauteur_de_chute_m'],
+                debits_nominal=row['Debits_nom'],
+                modele_turbine=row['Type_turbine'],
+                nb_turbines = row['Nb_turbines'],
+                nb_turbines_maintenance=row['nb_turbines_maintenance'],
+                volume_reservoir = row['Volume_reservoir']
+            )
+
+            count += 1
+            create_hydro(db, db_hydro)
+            print(f"Barrage '{db_hydro.barrage_nom}' ajouté à la base de données")
+    
+    print(f"{count} barrage ajoutés à la base de données")
+
+def fill_line_types():
+    """Remplit la table line_type à partir du fichier CSV"""
+    from harmoniq.db.schemas import LineType
+
+    db = next(get_db())
+
+    file_path = CSV_DIR / "line_types.csv"
+    line_types_df = pd.read_csv(file_path)
+
+    count = 0
+    for _, row in line_types_df.iterrows():
+        existing = db.query(LineType).filter(LineType.name == row["name"]).first()
+
+        if existing:
+            print(f"Type de ligne {row['name']} existe déjà")
+            continue
+
+        db_line_type = schemas.LineTypeCreate(
+            name=row["name"],
+            f_nom=int(row["f_nom"]),
+            r_per_length=float(row["r_per_length"]),
+            x_per_length=float(row["x_per_length"]),
+        )
+
+        create_line_type(db, db_line_type)
+        count += 1
+        print(f"Type de ligne '{db_line_type.name}' ajouté à la base de données")
+
+    print(f"{count} types de ligne ajoutés à la base de données")
+
+
+def fill_buses():
+    """Remplit la table bus à partir du fichier CSV"""
+    db = next(get_db())
+
+    file_path = CSV_DIR / "buses.csv"
+    buses_df = pd.read_csv(file_path)
+
+    count = 0
     for _, row in buses_df.iterrows():
-        existing = db.query(schemas.Bus).filter(schemas.Bus.name == row['name']).first()
+        existing = db.query(schemas.Bus).filter(schemas.Bus.name == row["name"]).first()
         if existing:
             print(f"Bus {row['name']} existe déjà")
             continue
-                  
+
         db_bus = schemas.BusCreate(
-            name=row['name'],
-            v_nom=row['voltage'],
-            type=schemas.BusType(row['type']),
-            x=row['longitude'],
-            y=row['latitude'],
-            control=schemas.BusControlType(row['control'])
+            name=row["name"],
+            v_nom=row["voltage"],
+            type=schemas.BusType(row["type"]),
+            x=row["longitude"],
+            y=row["latitude"],
+            control=schemas.BusControlType(row["control"]),
         )
 
         count += 1
         create_bus(db, db_bus)
         print(f"Bus '{db_bus.name}' ajouté à la base de données")
-    
+
     print(f"{count} bus ajoutés à la base de données")
+
 
 def fill_lines():
     """Remplit la table line à partir du fichier CSV"""
-    import pandas as pd
-    import os
-    from pathlib import Path
-    
     db = next(get_db())
-    
-    script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-    file_path = script_dir / "data" / "lines.csv"
+
+    file_path = CSV_DIR / "lines.csv"
     lines_df = pd.read_csv(file_path)
-    
+
     count = 0
     for _, row in lines_df.iterrows():
         try:
-            existing = db.query(schemas.Line).filter(schemas.Line.name == row['name']).first()
+            existing = (
+                db.query(schemas.Line).filter(schemas.Line.name == row["name"]).first()
+            )
             if existing:
                 print(f"Ligne {row['name']} existe déjà")
                 continue
-            
-            bus_from = db.query(schemas.Bus).filter(schemas.Bus.name == row['bus0']).first()
+
+            bus_from = (
+                db.query(schemas.Bus).filter(schemas.Bus.name == row["bus0"]).first()
+            )
             if not bus_from:
-                print(f"Bus de départ {row['bus0']} non trouvé pour la ligne {row['name']}")
+                print(
+                    f"Bus de départ {row['bus0']} non trouvé pour la ligne {row['name']}"
+                )
                 continue
-                
-            bus_to = db.query(schemas.Bus).filter(schemas.Bus.name == row['bus1']).first()
+
+            bus_to = (
+                db.query(schemas.Bus).filter(schemas.Bus.name == row["bus1"]).first()
+            )
             if not bus_to:
-                print(f"Bus d'arrivée {row['bus1']} non trouvé pour la ligne {row['name']}")
+                print(
+                    f"Bus d'arrivée {row['bus1']} non trouvé pour la ligne {row['name']}"
+                )
                 continue
-                
-            line_type = db.query(schemas.LineType).filter(schemas.LineType.name == row['type']).first()
+
+            line_type = (
+                db.query(schemas.LineType)
+                .filter(schemas.LineType.name == row["type"])
+                .first()
+            )
             if not line_type:
-                print(f"Type de ligne {row['type']} non trouvé pour la ligne {row['name']}")
+                print(
+                    f"Type de ligne {row['type']} non trouvé pour la ligne {row['name']}"
+                )
                 continue
-            
+
             db_line = schemas.LineCreate(
-                name=row['name'],
-                bus0=row['bus0'],
-                bus1=row['bus1'],
-                type=row['type'],
-                length=row['length'],
-                capital_cost=row['capital_cost'],
-                s_nom=row['s_nom']
+                name=row["name"],
+                bus0=row["bus0"],
+                bus1=row["bus1"],
+                type=row["type"],
+                length=row["length"],
+                capital_cost=row["capital_cost"],
+                s_nom=row["s_nom"],
             )
             count += 1
             create_line(db, db_line)
@@ -203,23 +303,51 @@ def fill_lines():
 
     print(f"{count} lignes ajoutées à la base de données")
 
+def check_if_empty():
+    db = next(get_db())
+    tables = [
+        schemas.EolienneParc,
+        schemas.Eolienne,
+        schemas.Bus,
+        schemas.Line,
+        schemas.LineType,
+        schemas.Thermique,
+        schemas.Solaire,
+    ]
+
+    for table in tables:
+        if db.query(table).first():
+            return False
+
+    return True
+
 def fill_network():
     """Remplit les tables du réseau électrique (line_type, bus, line)"""
     print("Collecte des types de lignes...")
     fill_line_types()
-    
+
     print("Collecte des bus...")
     fill_buses()
-    
+
     print("Collecte des lignes...")
     fill_lines()
 
+
 def populate_db():
-    print("Collecte des éoliennes")
-    fill_eoliennes()
-    
-    print("Collecte des données du réseau électrique :")
-    fill_network()
+    # print("Collecte des éoliennes")
+    # fill_eoliennes()
+
+    # print("Collecte des données du réseau électrique :")
+    # fill_network()
+
+    print("Collecte des données du réseau hydro :")
+    fill_hydro()
+
+    print("Collecte des centrales thermiques")
+    fill_thermique()
+
+    print("Collecte des centrales solaires")
+    fill_solaire()
 
 
 def main():
@@ -229,6 +357,12 @@ def main():
     )
     parser.add_argument(
         "-R", "--reset", action="store_true", help="Réinitialise la base de données"
+    )
+    parser.add_argument(
+        "-f", 
+        "--fill",
+        action="store_true",
+        help="Remplit la base de données si elle est vide",
     )
     parser.add_argument(
         "-p",
@@ -241,6 +375,12 @@ def main():
 
     print("Initialisation de la base de données")
     init_db(args.reset)
+
+    if args.fill:
+        if check_if_empty():
+            populate_db()
+        else:
+            print("La base de données est déjà remplie")
 
     if args.populate:
         populate_db()
