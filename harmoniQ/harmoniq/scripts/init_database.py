@@ -177,7 +177,7 @@ def fill_hydro():
             create_hydro(db, db_hydro)
             print(f"Barrage '{db_hydro.barrage_nom}' ajouté à la base de données")
     
-    print(f"{count} bus ajoutés à la base de données")
+    print(f"{count} barrage ajoutés à la base de données")
 
 def fill_line_types():
     """Remplit la table line_type à partir du fichier CSV"""
@@ -303,6 +303,23 @@ def fill_lines():
 
     print(f"{count} lignes ajoutées à la base de données")
 
+def check_if_empty():
+    db = next(get_db())
+    tables = [
+        schemas.EolienneParc,
+        schemas.Eolienne,
+        schemas.Bus,
+        schemas.Line,
+        schemas.LineType,
+        schemas.Thermique,
+        schemas.Solaire,
+    ]
+
+    for table in tables:
+        if db.query(table).first():
+            return False
+
+    return True
 
 def fill_network():
     """Remplit les tables du réseau électrique (line_type, bus, line)"""
@@ -342,6 +359,12 @@ def main():
         "-R", "--reset", action="store_true", help="Réinitialise la base de données"
     )
     parser.add_argument(
+        "-f", 
+        "--fill",
+        action="store_true",
+        help="Remplit la base de données si elle est vide",
+    )
+    parser.add_argument(
         "-p",
         "--populate",
         action="store_true",
@@ -352,6 +375,12 @@ def main():
 
     print("Initialisation de la base de données")
     init_db(args.reset)
+
+    if args.fill:
+        if check_if_empty():
+            populate_db()
+        else:
+            print("La base de données est déjà remplie")
 
     if args.populate:
         populate_db()
