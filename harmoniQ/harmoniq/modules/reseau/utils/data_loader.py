@@ -54,6 +54,9 @@ import pandas as pd
 from pathlib import Path
 from typing import Optional
 
+from harmoniq.db.engine import get_db
+from harmoniq.db.CRUD import read_all_bus, read_all_line, read_all_line_type,read_all_eolienne
+
 
 class DataLoadError(Exception):
     """Exception levée lors d'erreurs de chargement des données."""
@@ -101,35 +104,47 @@ class NetworkDataLoader:
         """
         try:
             network = pypsa.Network()
+            db = next(get_db())
             
-            # Chargement des données régionales (buses)
-            buses_df = pd.read_csv(self.data_dir / "regions" / "buses.csv")
-            buses_df = buses_df.set_index('name')
-            
-            # Création des bus
-            for idx, row in buses_df.iterrows():
-                network.add("Bus", name=idx, **row.to_dict())
+            # Chargement des bus
+            buses = read_all_bus(db)
+            buses_df = pd.DataFrame([bus.__dict__ for bus in buses])
+            if not buses_df.empty:
+                buses_df = buses_df.drop(columns=['_sa_instance_state'], errors='ignore')
+                buses_df = buses_df.set_index('name')
                 
-                # Création des charges pour les bus de type "conso"
-                if row['type'] == 'conso':
-                    network.add("Load", 
-                              name=f"load_{idx}",
-                              bus=idx,
-                              # Valeurs par défaut qui seront écrasées par les séries temporelles
-                              p_set=0,  
-                              q_set=0
-                    )
+                # Création des bus
+                for idx, row in buses_df.iterrows():
+                    network.add("Bus", name=idx, **row.to_dict())
+                    
+                    # Création des charges pour les bus de type "conso"
+                    if row.get('type') == 'conso':
+                        network.add("Load", 
+                                  name=f"load_{idx}",
+                                  bus=idx,
+                                  p_set=0,  
+                                  q_set=0
+                        )
+            
+            # Chargement des types de lignes
+            line_types = read_all_line_type(db)
+            line_types_df = pd.DataFrame([lt.__dict__ for lt in line_types])
+            if not line_types_df.empty:
+                line_types_df = line_types_df.drop(columns=['_sa_instance_state'], errors='ignore')
+                line_types_df = line_types_df.set_index('name')
+                
+                for idx, row in line_types_df.iterrows():
+                    network.add("LineType", name=idx, **row.to_dict())
             
             # Chargement des lignes
-            line_types_df = pd.read_csv(self.data_dir / "topology" / "lines" / "line_types.csv")
-            line_types_df = line_types_df.set_index('name')
-            for idx, row in line_types_df.iterrows():
-                network.add("LineType", name=idx, **row.to_dict())
-            
-            lines_df = pd.read_csv(self.data_dir / "topology" / "lines" / "lines.csv")
-            lines_df = lines_df.set_index('name')
-            for idx, row in lines_df.iterrows():
-                network.add("Line", name=idx, **row.to_dict())
+            lines = read_all_line(db)
+            lines_df = pd.DataFrame([line.__dict__ for line in lines])
+            if not lines_df.empty:
+                lines_df = lines_df.drop(columns=['_sa_instance_state'], errors='ignore')
+                lines_df = lines_df.set_index('name')
+                
+                for idx, row in lines_df.iterrows():
+                    network.add("Line", name=idx, **row.to_dict())
 
             # Chargement des générateurs 
             carriers_df = pd.read_csv(self.data_dir / "topology" / "centrales" / "carriers.csv")
