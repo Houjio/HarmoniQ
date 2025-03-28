@@ -6,6 +6,7 @@ from harmoniq.modules.eolienne.calcule import get_turbine_power
 from typing import List
 import pandas as pd
 import logging
+import matplotlib.pyplot as plt
 
 logger = logging.getLogger("Eolienne")
 
