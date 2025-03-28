@@ -347,6 +347,49 @@ class SolaireBase(BaseModel):
 class SolaireCreate(SolaireBase):
     pass
 
+class HydroBase(BaseModel):
+    barrage_nom : str
+    longitude: float
+    latitude: float
+    type_barrage: str
+    puissance_nominal: float
+    hauteur_chute: float
+    nb_turbines: int
+    debits_nominal: float
+    modele_turbine: str
+    volume_reservoir: int
+    nb_turbines_maintenance: int
+    annee_commission: Optional[int] = None
+    materiau_conduite: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class HydroCreate(HydroBase):
+    pass
+
+class HydroResponse(HydroBase):
+    id: int
+    class Config:
+        from_attributes = True
+
+class Hydro(SQLBase):
+    __tablename__ = "hydro"
+
+    id = Column(Integer, primary_key=True, index=True)
+    barrage_nom = Column(String)
+    longitude = Column(Float)
+    latitude = Column(Float)
+    type_barrage = Column(String)
+    puissance_nominal = Column(Float)
+    hauteur_chute = Column(Float)
+    nb_turbines = Column(Integer)
+    debits_nominal = Column(Float)
+    modele_turbine = Column(String)
+    volume_reservoir = Column(Integer)
+    nb_turbines_maintenance = Column(Integer)
+    annee_commission = Column(Integer, nullable=True)
+    materiau_conduite = Column(String, nullable=True)
 
 class SolaireResponse(SolaireBase):
     id: int
