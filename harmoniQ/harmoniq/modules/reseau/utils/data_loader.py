@@ -53,9 +53,11 @@ import pypsa
 import pandas as pd
 from pathlib import Path
 from typing import Optional
+from .geo_utils import GeoUtils
 
 from harmoniq.db.engine import get_db
-from harmoniq.db.CRUD import read_all_bus, read_all_line, read_all_line_type,read_all_eolienne
+from harmoniq.db.CRUD import (read_all_bus, read_all_line, read_all_line_type,
+                              read_all_eolienne,read_all_solaire,read_all_hydro,read_all_nucleaire,read_all_thermique)
 
 
 class DataLoadError(Exception):
@@ -102,81 +104,73 @@ class NetworkDataLoader:
         Raises:
             DataLoadError: Si les données sont inaccessibles ou mal formatées.
         """
-        try:
-            network = pypsa.Network()
-            db = next(get_db())
-            
-            # Chargement des bus
-            buses = read_all_bus(db)
-            buses_df = pd.DataFrame([bus.__dict__ for bus in buses])
-            if not buses_df.empty:
-                buses_df = buses_df.drop(columns=['_sa_instance_state'], errors='ignore')
-                buses_df = buses_df.set_index('name')
-                
-                # Création des bus
-                for idx, row in buses_df.iterrows():
-                    network.add("Bus", name=idx, **row.to_dict())
-                    
-                    # Création des charges pour les bus de type "conso"
-                    if row.get('type') == 'conso':
-                        network.add("Load", 
-                                  name=f"load_{idx}",
-                                  bus=idx,
-                                  p_set=0,  
-                                  q_set=0
-                        )
-            
-            # Chargement des types de lignes
-            line_types = read_all_line_type(db)
-            line_types_df = pd.DataFrame([lt.__dict__ for lt in line_types])
-            if not line_types_df.empty:
-                line_types_df = line_types_df.drop(columns=['_sa_instance_state'], errors='ignore')
-                line_types_df = line_types_df.set_index('name')
-                
-                for idx, row in line_types_df.iterrows():
-                    network.add("LineType", name=idx, **row.to_dict())
-            
-            # Chargement des lignes
-            lines = read_all_line(db)
-            lines_df = pd.DataFrame([line.__dict__ for line in lines])
-            if not lines_df.empty:
-                lines_df = lines_df.drop(columns=['_sa_instance_state'], errors='ignore')
-                lines_df = lines_df.set_index('name')
-                
-                for idx, row in lines_df.iterrows():
-                    network.add("Line", name=idx, **row.to_dict())
 
-            # Chargement des générateurs 
-            carriers_df = pd.read_csv(self.data_dir / "topology" / "centrales" / "carriers.csv")
-            carriers_df = carriers_df.set_index('name')
-            for idx, row in carriers_df.iterrows():
-                network.add("Carrier", name=idx, **row.to_dict())
-
-            # Chargement des générateurs non pilotables
-            generators_non_pilotable_df = pd.read_csv(
-                self.data_dir / "topology" / "centrales" / "generators_non_pilotable.csv"
-            ).set_index('name')
-            for idx, row in generators_non_pilotable_df.iterrows():
-                network.add("Generator", name=idx, **row.to_dict())
-
-            # Chargement des générateurs pilotables
-            generators_pilotable_df = pd.read_csv(
-                self.data_dir / "topology" / "centrales" / "generators_pilotable.csv"
-            ).set_index('name')
-            for idx, row in generators_pilotable_df.iterrows():
-                network.add("Generator", name=idx, **row.to_dict())
+        network = pypsa.Network()
+        db = next(get_db())
+        
+        # Chargement des bus
+        buses = read_all_bus(db)
+        buses_df = pd.DataFrame([bus.__dict__ for bus in buses])
+        if not buses_df.empty:
+            buses_df = buses_df.drop(columns=['_sa_instance_state'], errors='ignore')
+            buses_df = buses_df.set_index('name')
             
-            # Chargement des contraintes
-            global_constraints_df = pd.read_csv(
-                self.data_dir / "topology" / "constraints" / "global_constraints.csv"
-            ).set_index('name')
-            for idx, row in global_constraints_df.iterrows():
-                network.add("GlobalConstraint", name=idx, **row.to_dict())
-                
-            return network
+            for idx, row in buses_df.iterrows():
+                network.add("Bus", name=idx, **row.to_dict())
+                # Création des charges pour les bus de type "conso"
+                if row.get('type') == 'conso':
+                    network.add("Load", 
+                              name=f"load_{idx}",
+                              bus=idx,
+                              p_set=0,  
+                              q_set=0
+                    )
+        
+        # Chargement des types de lignes
+        line_types = read_all_line_type(db)
+        line_types_df = pd.DataFrame([lt.__dict__ for lt in line_types])
+        if not line_types_df.empty:
+            line_types_df = line_types_df.drop(columns=['_sa_instance_state'], errors='ignore')
+            line_types_df = line_types_df.set_index('name')
             
-        except Exception as e:
-            raise DataLoadError(f"Erreur lors du chargement des données: {str(e)}")
+            for idx, row in line_types_df.iterrows():
+                network.add("LineType", name=idx, **row.to_dict())
+        
+        # Chargement des lignes
+        lines = read_all_line(db)
+        lines_df = pd.DataFrame([line.__dict__ for line in lines])
+        if not lines_df.empty:
+            lines_df = lines_df.drop(columns=['_sa_instance_state'], errors='ignore')
+            lines_df = lines_df.set_index('name')
+            
+            for idx, row in lines_df.iterrows():
+                network.add("Line", name=idx, **row.to_dict())
+
+        # Chargement des générateurs 
+        carriers_df = pd.read_csv(self.data_dir / "topology" / "centrales" / "carriers.csv")
+        carriers_df = carriers_df.set_index('name')
+        for idx, row in carriers_df.iterrows():
+            network.add("Carrier", name=idx, **row.to_dict())
+
+        # Chargement des générateurs non pilotables
+        network = self.fill_non_pilotable(network, "eolienne")
+        network = self.fill_non_pilotable(network, "solaire")
+        network = self.fill_non_pilotable(network, "hydro_fil")
+        network = self.fill_non_pilotable(network, "nucleaire")
+        
+        # Chargement des générateurs pilotables
+        network = self.fill_pilotable(network, "hydro_reservoir")
+        network = self.fill_pilotable(network, "thermique")
+        
+        # Chargement des contraintes
+        global_constraints_df = pd.read_csv(
+            self.data_dir / "topology" / "constraints" / "global_constraints.csv"
+        ).set_index('name')
+        for idx, row in global_constraints_df.iterrows():
+            network.add("GlobalConstraint", name=idx, **row.to_dict())
+            
+        return network
+            
 
     def load_timeseries_data(self, 
                            network: pypsa.Network,
@@ -205,7 +199,6 @@ class NetworkDataLoader:
             loads_df = pd.read_csv(loads_path, index_col=0, parse_dates=True)
             loads_df.columns = [f"load_{col}" for col in loads_df.columns]
             network.loads_t.p_set = loads_df
-
             
             # Chargement des coûts marginaux pour les générateurs pilotables
             gen_cost_path = self.data_dir / "timeseries" / year / "generation" / "generators-marginal_cost.csv"
@@ -225,6 +218,201 @@ class NetworkDataLoader:
         except Exception as e:
             raise DataLoadError(
                 f"Erreur lors du chargement des données temporelles: {str(e)}"
-            )
+            )       
+    def fill_non_pilotable(self, network: pypsa.Network, source_type: str) -> pypsa.Network:
+        """
+        Remplit les données de production pour les générateurs non pilotables.
         
-    # Add new method here
+        Args:
+            network: Le réseau PyPSA dans lequel ajouter les générateurs
+            source_type: Le type de source d'énergie non pilotable ('eolienne' ou 'solaire')
+            
+        Returns:
+            pypsa.Network: Réseau avec les générateurs ajoutés
+        """
+
+        db = next(get_db())
+        geo_utils = GeoUtils()
+        
+        if source_type == "eolienne":
+            centrales = read_all_eolienne(db)
+            df = pd.DataFrame([c.__dict__ for c in centrales])
+            if df.empty:
+                return network
+            
+            else:
+                # Mapping des colonnes pour éoliennes
+                df['name'] = df['eolienne_nom']
+                df['p_nom'] = df['puissance_nominal']
+                df['carrier'] = 'eolien'
+
+        elif source_type == "solaire":
+            centrales = read_all_solaire(db)
+            df = pd.DataFrame([c.__dict__ for c in centrales])
+            if df.empty:
+                return network
+            
+            else:
+                # Mapping des colonnes pour solaire
+                df['name'] = df['nom']
+                df['p_nom'] = df['puissance_nominal']
+                df['carrier'] = 'solaire'
+
+        elif source_type == "hydro_fil":
+            centrales = read_all_hydro(db)
+            df = pd.DataFrame([c.__dict__ for c in centrales])
+            if df.empty:
+                return network
+            
+            else:
+                df = df[df['type_barrage'] == "Fil de l'eau"]
+                # Mapping des colonnes pour les barrages au fil de l'eau
+                df['name'] = df['barrage_nom']
+                df['p_nom'] = df['puissance_nominal']
+                df['carrier'] = 'hydro_fil'
+
+        elif source_type == "nucleaire":
+            centrales = read_all_nucleaire(db)
+            df = pd.DataFrame([c.__dict__ for c in centrales])
+            if df.empty:
+                return network
+            
+            else :
+                # Mapping des colonnes pour nucléaires
+                df['name'] = df['centrale_nucleaire_nom']
+                df['p_nom'] = df['puissance_nominal']
+                df['carrier'] = 'nucléaire'
+        else:
+            raise DataLoadError(f"Type de centrale non pris en charge: {source_type}")
+            
+        if not df.empty:
+            df = df.drop(columns=['_sa_instance_state'], errors='ignore')
+            
+            # Création du DataFrame formaté pour PyPSA
+            generators_df = pd.DataFrame()
+            generators_df['name'] = df['name'] 
+            generators_df['bus'] = None  # Sera rempli par la recherche du bus le plus proche
+            generators_df['type'] = 'non_pilotable'
+            generators_df['p_nom'] = df['p_nom']
+            generators_df['p_nom_extendable'] = False
+            generators_df['p_nom_min'] = 0
+            generators_df['carrier'] = df['carrier']
+            generators_df['marginal_cost'] = 0.1
+            
+            # Trouver le bus le plus proche pour chaque centrale
+            for idx, row in df.iterrows():
+                if 'latitude' in df.columns and 'longitude' in df.columns:
+                    point = (row['latitude'], row['longitude'])
+                    nearest_bus, _ = geo_utils.find_nearest_bus(point, network)
+                    generators_df.loc[idx, 'bus'] = nearest_bus
+                    
+                    # Mise à jour du type de bus si nécessaire
+                    if nearest_bus is not None and nearest_bus in network.buses.index:
+                        bus_type = network.buses.at[nearest_bus, 'type']
+                        if bus_type != 'prod':
+                            network.buses.at[nearest_bus, 'type'] = 'prod'
+                            print(f"Bus {nearest_bus} mis à jour: type changé de '{bus_type}' à 'prod'")
+            
+            # Ajouter les générateurs au réseau
+            for _, row in generators_df.iterrows():
+                network.add("Generator", 
+                            name=row['name'],
+                            bus=row['bus'],
+                            type=row['type'],
+                            p_nom=row['p_nom'],
+                            p_nom_extendable=row['p_nom_extendable'],
+                            p_nom_min=row['p_nom_min'],
+                            carrier=row['carrier'],
+                            marginal_cost=row['marginal_cost'])
+            
+            return network
+
+        else:
+            return network  # Aucune centrale trouvée
+        
+    def fill_pilotable(self, network: pypsa.Network, source_type: str) -> pypsa.Network:
+        """
+        Remplit les données de production pour les générateurs pilotables.
+        
+        Args:
+            network: Le réseau PyPSA dans lequel ajouter les générateurs
+            source_type: Le type de source d'énergie pilotable ('hydro_reservoir' ou 'thermique')
+            
+        Returns:
+            pypsa.Network: Réseau avec les générateurs ajoutés
+        """
+        db = next(get_db())
+        geo_utils = GeoUtils()
+        
+        if source_type == "hydro_reservoir":
+            centrales = read_all_hydro(db)
+            df = pd.DataFrame([c.__dict__ for c in centrales])
+            if df.empty:
+                return network
+            
+            else:
+                df = df[df['type_barrage'] == "Reservoir"]
+                # Mapping des colonnes pour les barrages à réservoir
+                df['name'] = df['barrage_nom']
+                df['p_nom'] = df['puissance_nominal']
+                df['carrier'] = 'hydro_reservoir'
+
+        elif source_type == "thermique":
+            centrales = read_all_thermique(db)
+            df = pd.DataFrame([c.__dict__ for c in centrales])
+            if df.empty:
+                return network
+            
+            else:
+                # Mapping des colonnes pour thermiques
+                df['name'] = df['nom']
+                df['p_nom'] = df['puissance_nominal']
+                df['carrier'] = 'thermique'
+        else:
+            raise DataLoadError(f"Type de centrale pilotable non pris en charge: {source_type}")
+            
+        if not df.empty:
+            df = df.drop(columns=['_sa_instance_state'], errors='ignore')
+            
+            # Création du DataFrame formaté pour PyPSA
+            generators_df = pd.DataFrame()
+            generators_df['name'] = df['name'] 
+            generators_df['bus'] = None  # Sera rempli par la recherche du bus le plus proche
+            generators_df['type'] = 'pilotable'
+            generators_df['p_nom'] = df['p_nom']
+            generators_df['p_nom_extendable'] = True
+            generators_df['p_nom_min'] = 0
+            generators_df['p_nom_max'] = df['p_nom'] * 1.1  # 110% de la puissance nominale
+            generators_df['p_max_pu'] = 1.0
+            generators_df['carrier'] = df['carrier']
+            
+            # Trouver le bus le plus proche pour chaque centrale
+            for idx, row in df.iterrows():
+                if 'latitude' in df.columns and 'longitude' in df.columns:
+                    point = (row['latitude'], row['longitude'])
+                    nearest_bus, _ = geo_utils.find_nearest_bus(point, network)
+                    generators_df.loc[idx, 'bus'] = nearest_bus
+                    
+                    # Mise à jour du type de bus si nécessaire
+                    if nearest_bus is not None and nearest_bus in network.buses.index:
+                        bus_type = network.buses.at[nearest_bus, 'type']
+                        if bus_type != 'prod':
+                            network.buses.at[nearest_bus, 'type'] = 'prod'
+                            print(f"Bus {nearest_bus} mis à jour: type changé de '{bus_type}' à 'prod'")
+            
+            for _, row in generators_df.iterrows():
+                network.add("Generator", 
+                        name=row['name'],
+                        bus=row['bus'],
+                        type=row['type'],
+                        p_nom=row['p_nom'],
+                        p_nom_extendable=row['p_nom_extendable'],
+                        p_nom_min=row['p_nom_min'],
+                        p_nom_max=row['p_nom_max'],
+                        p_max_pu=row['p_max_pu'],
+                        carrier=row['carrier'])
+            
+            return network
+
+        else:
+            return network  # Aucune centrale trouvée

@@ -119,4 +119,45 @@ class GeoUtils:
             total_length += self.calculate_distance(points[i], points[i + 1])
         return total_length
     
-    # Add new method here
+    def find_nearest_bus(self, 
+                        point: Tuple[float, float], 
+                        buses) -> Tuple[str, float]:
+        """
+        Trouve le bus le plus proche d'un point géographique donné.
+        
+        Args:
+            point: Tuple (latitude, longitude) du point
+            buses: Soit un DataFrame pandas avec des colonnes 'name', 'x' et 'y',
+                soit un réseau PyPSA (network.buses)
+        
+        Returns:
+            Tuple (nom du bus le plus proche, distance en kilomètres)
+        
+        Example:
+            >>> import pandas as pd
+            >>> from network.utils import GeoUtils
+            >>> geo = GeoUtils()
+            >>> buses_df = pd.read_csv('data/regions/buses.csv')
+            >>> point = (45.5, -73.5)  # Point quelque part près de Montréal
+            >>> nearest_bus, distance = geo.find_nearest_bus(point, buses_df)
+            >>> print(f"Bus le plus proche: {nearest_bus}, distance: {distance:.2f} km")
+        """
+        min_distance = float('inf')
+        nearest_bus = None
+        
+        # Vérifier si l'entrée est un réseau PyPSA ou un DataFrame
+        if hasattr(buses, 'buses'):  # C'est un réseau PyPSA
+            buses_data = buses.buses
+        else:  # C'est un DataFrame pandas
+            buses_data = buses
+        
+        for idx, bus in buses_data.iterrows():
+            # Dans le format des données, x est longitude et y est latitude
+            bus_point = (bus['y'], bus['x'])
+            distance = self.calculate_distance(point, bus_point)
+            
+            if distance < min_distance:
+                min_distance = distance
+                nearest_bus = idx if hasattr(buses, 'buses') else bus['name']
+        
+        return nearest_bus, min_distance
