@@ -148,8 +148,7 @@ def fill_hydro():
     
     db = next(get_db())
     
-    script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-    file_path = script_dir / "data" / "Info_Barrages.csv"
+    file_path = CSV_DIR / "Info_Barrages.csv"
     barrages_df = pd.read_csv(file_path)
     
     count = 0

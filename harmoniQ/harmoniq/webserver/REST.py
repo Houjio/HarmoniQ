@@ -11,6 +11,7 @@ from harmoniq.db import schemas, engine, CRUD
 from harmoniq.db.CRUD import (
     create_data,
     read_all_data,
+    read_multiple_by_id,
     read_data_by_id,
     update_data,
     delete_data,
@@ -93,6 +94,22 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
         )
         async def read_all(db: Session = Depends(get_db)):
             result = read_all_data(db, sql_class)
+            return result
+        
+        @class_router.get(
+            "/multiple/{ids}",
+            response_model=List[response_class],
+            summary=f"Read multiple {table_name_plural} by id",
+        )
+        async def read_multiple(ids: str, db: Session = Depends(get_db)):
+            id_list = [int(i) for i in ids.split(",")]
+            result = read_multiple_by_id(db, sql_class, id_list)
+            if len(result) != len(id_list):
+                missing_ids = set(id_list) - {item.id for item in result}
+                raise HTTPException(
+                    status_code=200,
+                    detail=f"The following IDs were not found: {', '.join(map(str, missing_ids))}",
+                )
             return result
 
         @class_router.get(

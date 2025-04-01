@@ -195,9 +195,18 @@
                 </div>
             </div>
             <div class="tab-pane h-100" id="plot" role="tabpanel" aria-labelledby="plot-tab">
-                <div id="plot-box" style="width: 100%; height: 100%;">
-                    TODO: Graphique
-            </div>
+                <div class="grid-elem">
+                    <div id="production-plot"></div>
+                </div>
+                <div class="grid-elem">
+                    <div id="demande-plot"></div>
+                </div>
+                <div class="grid-elem">
+                    <div id="sankey-plot"></div>
+                </div>
+                <div class="grid-elem">
+                    <div id="cost-plot"></div>
+                </div>
         </div>
     </div>
 </div>
@@ -215,4 +224,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script src="{{ url_for('static', path='harmoniq.js') }}"></script>
+<script src="{{ url_for('static', path='graphiques.js') }}"></script>
 {% endblock %}
