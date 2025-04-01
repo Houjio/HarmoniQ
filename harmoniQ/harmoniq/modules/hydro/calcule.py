@@ -30,6 +30,9 @@ def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel): #
         nb_turbines = dam_data["nb_turbines"].values[0] - nb_turb_maintenance
         type_turb = dam_data["modele_turbine"].values[0]
         type_barrage = dam_data["type"].values[0]
+        barrage_amont = dam_data["amont"].values[0]
+
+        # debit_amont = barrages_df["id"== barrage_amont].values[0]
 
 
         if type_barrage == "Fil de l'eau":
@@ -66,8 +69,10 @@ def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel): #
                 results[dam_id] = (volume_reel-(debits_turb*nb_turbines_a*3600))/volume_remplie
 
             pourcentage_reservoir_df = pd.DataFrame([results])
+            # debit_turb_df = pd.DataFrame([debits_turb*nb_turbines_a*3600])
 
-    return pourcentage_reservoir_df  # Possible d'ajouter une fonctionnalité permettant de calculer l'énergie perdue après l'utilisation d'un évacuateur de crue pour l'analyse de résultat
+
+    return pourcentage_reservoir_df,  # Possible d'ajouter une fonctionnalité permettant de calculer l'énergie perdue après l'utilisation d'un évacuateur de crue pour l'analyse de résultat
 
 # def store_flows(Volume_evacue, debits_turb, df_debit, id_barrage): #pas implémenté
 
@@ -82,42 +87,42 @@ def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel): #
 #     flow = 
 
 #     return flow
-    
+
 def get_run_of_river_dam_power(barrage):
 
-    db = next(get_db())
-    barrages = read_all_hydro(db)
-    barrages_df = pd.DataFrame([barrages.__dict__ for barrage in barrages])
-    barrages_df = barrages_df[barrages_df["id"] == dam_id]
+    # db = next(get_db())
+    # barrages = read_all_hydro(db)
+    # barrages_df = pd.DataFrame([barrages.__dict__ for barrage in barrages])
+    # barrages_df = barrages_df[barrage.barrage_nom]
 
-    nom_barrage = barrage.nom # Changer pour un id
-    debit_nom = barrage.debits_nominal
-    head = barrage.hauteur_chute
-    nb_turb_maintenance = barrage.nb_turbines_maintenance
-    nb_turbines = barrage.nb_turbines - nb_turb_maintenance
-    type_turb = barrage.modele_turbine
-    type_barrage = barrage.type_barrage
-    flow = barrage.debit
+    nom_barrage = barrage.donnees.barrage_nom # Changer pour un id
+    debit_nom = barrage.donnees.debits_nominal
+    head = barrage.donnees.hauteur_chute
+    nb_turb_maintenance = barrage.donnees.nb_turbines_maintenance
+    nb_turbines = barrage.donnees.nb_turbines - nb_turb_maintenance
+    type_turb = barrage.donnees.modele_turbine
+    type_barrage = barrage.donnees.type_barrage
+    debit = barrage.debit
 
-    if type_barrage == "Reservoir":
-        print("Erreur : Le barrage entré n'est pas un barrage au fil de l'eau")
-    else:
-        Units = "IS"
-        hp_type = 'Diversion'
-        flow[nom_barrage] /= nb_turbines
-        flow = flow.set_index('dateTime')
+        if type_barrage == "Reservoir":
+            print("Erreur : Le barrage entré n'est pas un barrage au fil de l'eau")
+        else:
+            Units = "IS"
+            hp_type = 'Diversion'
+            debit[nom_barrage] /= nb_turbines
+            print(debit[nom_barrage])
 
-        hp = calculate_hp_potential(flow = flow, flow_column = flow[nom_barrage], design_flow = debit_nom, head = head, units = Units, 
-                hydropower_type= hp_type, turbine_type = type_turb, annual_caclulation=True, annual_maintenance_flag = False
-            )
-        
-        hp.dataframe_output["power_MW"] = (hp.dataframe_output["power_kW"] * (nb_turbines - nb_turb_maintenance)) / 1000
+            hp = calculate_hp_potential(flow = debit, flow_column = nom_barrage, design_flow = debit_nom, head = head, units = Units, 
+                    hydropower_type= hp_type, turbine_type = type_turb, annual_caclulation=True, annual_maintenance_flag = False
+                )
+
+            hp.dataframe_output["power_MW"] = (hp.dataframe_output["power_kW"] * (nb_turbines - nb_turb_maintenance)) / 1000
         
         return hp.dataframe_output["power_MW"]
     
 def get_facteur_de_charge(barrage, puissance):
-
-    pass
+    facteur_charge = (puissance["power_MW"].sum())/(barrage.puissance_nominal*len(puissance))
+    return facteur_charge
 
 
 def energy_loss(Volume_evacue, Debits_nom, type_turb, nb_turbines, head, nb_turbine_maintenance):

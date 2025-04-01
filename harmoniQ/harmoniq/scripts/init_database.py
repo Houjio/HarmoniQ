@@ -334,11 +334,11 @@ def fill_network():
 
 
 def populate_db():
-    # print("Collecte des éoliennes")
-    # fill_eoliennes()
+    print("Collecte des éoliennes")
+    fill_eoliennes()
 
-    # print("Collecte des données du réseau électrique :")
-    # fill_network()
+    print("Collecte des données du réseau électrique :")
+    fill_network()
 
     print("Collecte des données du réseau hydro :")
     fill_hydro()
