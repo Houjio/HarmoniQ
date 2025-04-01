@@ -65,7 +65,29 @@ function initialiserListeInfra() {
 // Initialize wind parks
 function initialiserListeParc(type, elementId) {
     const listeElement = document.getElementById(elementId).getElementsByTagName('ul')[0];
-
+    
+    const icons = {
+        eolien: L.icon({
+            iconUrl: '/static/icons/heolienne.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        }),
+        solaire: L.icon({
+            iconUrl: '/static/icons/solaire.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        }),
+        thermique: L.icon({
+            iconUrl: '/static/icons/thermique.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        }),
+        barrage: L.icon({
+            iconUrl: '/static/icons/barrage.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        })
+    };
     function createElement({ nom, id }) {
         return `
             <li class="list-group-item list-group-item-action" role="button" elementid=${id} onclick="add_infra(this)">
@@ -73,12 +95,24 @@ function initialiserListeParc(type, elementId) {
             </li>
         `;
     }
-
     fetch(`/api/${type}`)
         .then(response => response.json())
         .then(data => {
+            console.log(`Liste des ${type}:`, data);
             data.forEach(parc => {
                 listeElement.innerHTML += createElement(parc);
+
+                // Ajouter un marqueur sur la carte pour chaque parc
+                const { categorie, latitude, longitude, nom } = parc;
+
+                // Vérifier si la catégorie a une icône définie
+                if (icons[categorie]) {
+                    L.marker([latitude, longitude], { icon: icons[categorie] })
+                        .addTo(map)
+                        .bindPopup(`<b>${nom}</b><br>Catégorie: ${categorie}`);
+                } else {
+                    console.warn(`Aucune icône définie pour la catégorie: ${categorie}`);
+                }
             });
         })
         .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
