@@ -14,6 +14,7 @@ from harmoniq.db.CRUD import (
     create_bus,
     create_line,
     create_line_type,
+    create_hydro,
     create_thermique,
     create_solaire,
 )
@@ -139,6 +140,43 @@ def fill_eoliennes():
 
         print(f"Projet {project_name} ajouté à la base de données")
 
+def fill_hydro():
+    """Remplit la table bus à partir du fichier CSV"""
+    import pandas as pd
+    import os
+    from pathlib import Path
+    
+    db = next(get_db())
+    
+    file_path = CSV_DIR / "Info_Barrages.csv"
+    barrages_df = pd.read_csv(file_path)
+    
+    count = 0
+    for _, row in barrages_df.iterrows():
+            existing = db.query(schemas.Hydro).filter(schemas.Hydro.barrage_nom == row['Nom']).first()
+            if existing:
+                print(f"Barrage {row['Nom']} existe déjà")
+                continue
+                      
+            db_hydro = schemas.HydroCreate(
+                barrage_nom=row['Nom'],
+                puissance_nominal=row['Puissance_Installee_MW'],
+                type_barrage=row['Type'],
+                latitude=row['Longitude'],
+                longitude=row['Latitude'],
+                hauteur_chute=row['Hauteur_de_chute_m'],
+                debits_nominal=row['Debits_nom'],
+                modele_turbine=row['Type_turbine'],
+                nb_turbines = row['Nb_turbines'],
+                nb_turbines_maintenance=row['nb_turbines_maintenance'],
+                volume_reservoir = row['Volume_reservoir']
+            )
+
+            count += 1
+            create_hydro(db, db_hydro)
+            print(f"Barrage '{db_hydro.barrage_nom}' ajouté à la base de données")
+    
+    print(f"{count} barrage ajoutés à la base de données")
 
 def fill_line_types():
     """Remplit la table line_type à partir du fichier CSV"""
@@ -300,6 +338,9 @@ def populate_db():
 
     print("Collecte des données du réseau électrique :")
     fill_network()
+
+    print("Collecte des données du réseau hydro :")
+    fill_hydro()
 
     print("Collecte des centrales thermiques")
     fill_thermique()
