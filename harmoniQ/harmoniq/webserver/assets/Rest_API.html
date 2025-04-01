@@ -1,0 +1,93 @@
+{% extends "template.html" %}
+
+{% block extra_head %}
+<script>
+    async function loadOpenAPI() {
+        try {
+            const response = await fetch("/openapi.json");
+            const apiData = await response.json();
+
+            document.getElementById("api-title").textContent = apiData.info.title || "API Documentation";
+            document.getElementById("api-description").textContent = apiData.info.description || "";
+
+            const paths = apiData.paths;
+            const tags = {};
+
+            for (const path in paths) {
+                for (const method in paths[path]) {
+                    const endpoint = paths[path][method];
+                    const endpointTags = endpoint.tags || ["Non catégorisé"];
+                    
+                    endpointTags.forEach(tag => {
+                        if (!tags[tag]) tags[tag] = [];
+                        tags[tag].push({ path, method, endpoint });
+                    });
+                }
+            }
+
+            const apiContainer = document.getElementById("api-content");
+
+            for (const tag in tags) {
+                const tagSection = document.createElement("div");
+                tagSection.className = "mb-4";
+
+                tagSection.innerHTML = `
+                    <h2 class="border-bottom pb-2 text-primary">${tag}</h2>
+                    <div id="tag-${tag.replace(/\s+/g, '-').toLowerCase()}" class="accordion"></div>
+                `;
+
+                const tagContainer = tagSection.querySelector(".accordion");
+
+                tags[tag].forEach(({ path, method, endpoint }, index) => {
+                    const sanitizedId = `${method}-${path.replace(/[\/{}]/g, '')}-${index}`;
+                    const card = document.createElement("div");
+                    card.className = "accordion-item bg-light border-secondary";
+
+                    card.innerHTML = `
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-primary text-white" data-bs-toggle="collapse" data-bs-target="#collapse-${sanitizedId}">
+                                <strong class="text-uppercase text-info">${method}</strong> <code class="text-light">${path}</code>
+                            </button>
+                        </h2>
+                        <div id="collapse-${sanitizedId}" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <p class="text-dark">${endpoint.summary || "No summary available"}</p>
+                                ${endpoint.parameters && endpoint.parameters.length > 0 ? `
+                                <h6 class="text-primary">Parameters:</h6>
+                                <ul>
+                                    ${endpoint.parameters.map(param => `<li><strong>${param.name}</strong>: ${param.description || "No description"}</li>`).join("")}
+                                </ul>` : ""}
+                                ${Object.keys(endpoint.responses).length > 1 || !endpoint.responses["200"] ? `
+                                <h6 class="text-primary">Responses:</h6>
+                                <ul>
+                                    ${Object.keys(endpoint.responses).map(status => `<li><strong>${status}</strong>: ${endpoint.responses[status].description || "No description"}</li>`).join("")}
+                                </ul>` : ""}
+                            </div>
+                        </div>
+                    `;
+
+                    tagContainer.appendChild(card);
+                });
+
+                apiContainer.appendChild(tagSection);
+            }
+
+        } catch (error) {
+            console.error("Error loading OpenAPI JSON:", error);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadOpenAPI);
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 id="api-title" class="text-center text-primary">Loading...</h1>
+    <p id="api-description" class="text-center text-muted"></p>
+    
+    <div id="api-content" class="mt-4"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
