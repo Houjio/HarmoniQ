@@ -58,3 +58,18 @@ div#main > div#plots {
 div#main div#infrastructures div.accordion {
     overflow-y: auto;
 }
+
+/* Plot info */
+div#plot {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: auto;
+    height: 100%;
+    background-color: rebeccapurple;
+}
+
+div#plot-box div.grid-elem {
+    width: 100%;
+    height: 100%;
+}
