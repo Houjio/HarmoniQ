@@ -359,6 +359,7 @@ class HydroBase(BaseModel):
     modele_turbine: str
     volume_reservoir: int
     nb_turbines_maintenance: int
+    id_HQ: int
     annee_commission: Optional[int] = None
     materiau_conduite: Optional[str] = None
 
@@ -388,6 +389,7 @@ class Hydro(SQLBase):
     modele_turbine = Column(String)
     volume_reservoir = Column(Integer)
     nb_turbines_maintenance = Column(Integer)
+    id_HQ = Column(Integer)
     annee_commission = Column(Integer, nullable=True)
     materiau_conduite = Column(String, nullable=True)
 

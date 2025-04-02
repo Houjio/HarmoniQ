@@ -102,21 +102,19 @@ def get_run_of_river_dam_power(barrage):
     nb_turbines = barrage.donnees.nb_turbines - nb_turb_maintenance
     type_turb = barrage.donnees.modele_turbine
     type_barrage = barrage.donnees.type_barrage
-    debit = barrage.debit
+    debit = barrage.debit + barrage.apport
 
-        if type_barrage == "Reservoir":
-            print("Erreur : Le barrage entré n'est pas un barrage au fil de l'eau")
-        else:
-            Units = "IS"
-            hp_type = 'Diversion'
-            debit[nom_barrage] /= nb_turbines
-            print(debit[nom_barrage])
-
-            hp = calculate_hp_potential(flow = debit, flow_column = nom_barrage, design_flow = debit_nom, head = head, units = Units, 
-                    hydropower_type= hp_type, turbine_type = type_turb, annual_caclulation=True, annual_maintenance_flag = False
-                )
-
-            hp.dataframe_output["power_MW"] = (hp.dataframe_output["power_kW"] * (nb_turbines - nb_turb_maintenance)) / 1000
+    if type_barrage == "Reservoir":
+        print("Erreur : Le barrage entré n'est pas un barrage au fil de l'eau")
+    else:
+        Units = "IS"
+        hp_type = 'Diversion'
+        debit[nom_barrage] /= nb_turbines
+        print(debit[nom_barrage])
+        hp = calculate_hp_potential(flow = debit, flow_column = nom_barrage, design_flow = debit_nom, head = head, units = Units, 
+                hydropower_type= hp_type, turbine_type = type_turb, annual_caclulation=True, annual_maintenance_flag = False
+            )
+        hp.dataframe_output["power_MW"] = (hp.dataframe_output["power_kW"] * (nb_turbines - nb_turb_maintenance)) / 1000
         
         return hp.dataframe_output["power_MW"]
     

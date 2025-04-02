@@ -169,7 +169,8 @@ def fill_hydro():
                 modele_turbine=row['Type_turbine'],
                 nb_turbines = row['Nb_turbines'],
                 nb_turbines_maintenance=row['nb_turbines_maintenance'],
-                volume_reservoir = row['Volume_reservoir']
+                volume_reservoir = row['Volume_reservoir'],
+                id_HQ = row['id_HQ'],
             )
 
             count += 1
@@ -333,20 +334,20 @@ def fill_network():
 
 
 def populate_db():
-    print("Collecte des éoliennes")
-    fill_eoliennes()
+    # print("Collecte des éoliennes")
+    # fill_eoliennes()
 
-    print("Collecte des données du réseau électrique :")
-    fill_network()
+    # print("Collecte des données du réseau électrique :")
+    # fill_network()
 
     print("Collecte des données du réseau hydro :")
     fill_hydro()
 
-    print("Collecte des centrales thermiques")
-    fill_thermique()
+    # print("Collecte des centrales thermiques")
+    # fill_thermique()
 
-    print("Collecte des centrales solaires")
-    fill_solaire()
+    # print("Collecte des centrales solaires")
+    # fill_solaire()
 
 
 def main():
@@ -386,4 +387,6 @@ def main():
 
 
 if __name__ == "__main__":
+
+    populate_db()
     init_db()

@@ -51,8 +51,6 @@ class InfraHydro():
             else:
                 self.debit : pd.DataFrame = self._charger_debit()
 
-    
-
     def calculer_production(self) -> pd.DataFrame:
 
         if self.donnees.type_barrage == "Fil de l'eau":
@@ -83,6 +81,7 @@ if __name__ == "__main__":
     # scenario = read_all_scenario(db)[0]
 
     infraHydro._charger_debit()
+    infraHydro._charger_apport()
 
     production = infraHydro.calculer_production()
 
