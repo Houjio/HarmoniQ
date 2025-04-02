@@ -102,7 +102,12 @@ def get_run_of_river_dam_power(barrage):
     nb_turbines = barrage.donnees.nb_turbines - nb_turb_maintenance
     type_turb = barrage.donnees.modele_turbine
     type_barrage = barrage.donnees.type_barrage
-    debit = barrage.debit + barrage.apport
+    debit = barrage.debit
+    # barrage.apport['dateTime'] = pd.to_datetime(barrage.apport["dateTime"])
+    # barrage.apport = barrage.apport.set_index('dateTime')
+
+    debit[nom_barrage] += barrage.apport["streamflow"].values
+    # print(debit)
 
     if type_barrage == "Reservoir":
         print("Erreur : Le barrage entré n'est pas un barrage au fil de l'eau")
@@ -110,7 +115,6 @@ def get_run_of_river_dam_power(barrage):
         Units = "IS"
         hp_type = 'Diversion'
         debit[nom_barrage] /= nb_turbines
-        print(debit[nom_barrage])
         hp = calculate_hp_potential(flow = debit, flow_column = nom_barrage, design_flow = debit_nom, head = head, units = Units, 
                 hydropower_type= hp_type, turbine_type = type_turb, annual_caclulation=True, annual_maintenance_flag = False
             )
@@ -118,10 +122,13 @@ def get_run_of_river_dam_power(barrage):
         
         return hp.dataframe_output["power_MW"]
     
-def get_facteur_de_charge(barrage, puissance):
-    facteur_charge = (puissance["power_MW"].sum())/(barrage.puissance_nominal*len(puissance))
+def get_facteur_de_charge(barrage, production):
+    facteur_charge = (production.values.sum())/(barrage.donnees.puissance_nominal*len(production))
     return facteur_charge
 
+def get_energy(production):
+    energy_r = production.values.sum()
+    return energy_r
 
 def energy_loss(Volume_evacue, Debits_nom, type_turb, nb_turbines, head, nb_turbine_maintenance):
 
@@ -152,9 +159,9 @@ def energy_loss(Volume_evacue, Debits_nom, type_turb, nb_turbines, head, nb_turb
     return energy_loss
 
 # Fonction d'estimation basée sur la régression log-log
-def estimation_cout_barrage(puissance_demande):
+def estimation_cout_barrage(barrage):
     a, b = 0.9903508069996744, 14.917112141681883
-    return np.exp(b) * puissance_demande**a
+    return np.exp(b) * barrage.donnees.puissance_nominal**a
 
 def estimer_qualite_ecosysteme_futur(facteur_charge):
     """
@@ -210,22 +217,22 @@ def estimer_qualite_ecosysteme_futur(facteur_charge):
 
     return qualite_ecosysteme_futur
 
-def calculer_emissions_et_ressources(barrages):
+def calculer_emissions_et_ressources(barrage, energie, facteur_charge):
     # Mise à jour des facteurs d'émission
     FACTEUR_EMISSION = {
-        "fil de l'eau": 6,    # g éq CO2/kWh
-        "réservoir": 17       # g éq CO2/kWh
+        "Fil de l'eau": 6,    # g éq CO2/kWh
+        "Reservoir": 17       # g éq CO2/kWh
     }
     
     # Mise à jour des ressources minérales et énergies non renouvelables
     UTILISATION_MINERALES = {
-        "fil de l'eau": 0.019,  # mg Sb eq/kWh
-        "réservoir": 0.019
+        "Fil de l'eau": 0.019,  # mg Sb eq/kWh
+        "Reservoir": 0.019
     }
     
     UTILISATION_NON_RENOUVELABLES = {
-        "fil de l'eau": 0.03,   # MJ/kWh
-        "réservoir": 0.03
+        "Fil de l'eau": 0.03,   # MJ/kWh
+        "Reservoir": 0.03
     }
 
     # Valeurs de référence des ressources minérales déjà définies
@@ -234,48 +241,41 @@ def calculer_emissions_et_ressources(barrages):
     EXTRACTION_MINERALE = 0.031  # mg Sb/kWh pour l'extraction
     
     resultats = []
+
+    type_barrage = barrage.donnees.type_barrage
     
-    for barrage in barrages:
-        nom = barrage["nom"]
-        energie_theorique = max(barrage["energie_theorique"], 1)  # éviter division par zéro
-        energie_reelle = barrage["energie_reelle"]
-        type_barrage = barrage["type"]
-        
-        # Calcul du facteur de charge
-        facteur_de_charge = energie_reelle / energie_theorique
-        
-        # Sélection des bons facteurs
-        facteur_emission = FACTEUR_EMISSION.get(type_barrage, 0)
-        energie_minerale = UTILISATION_MINERALES.get(type_barrage, 0)
-        energie_non_renouvelable = UTILISATION_NON_RENOUVELABLES.get(type_barrage, 0)
-        
-        # Calcul des émissions de CO2
-        emissions = facteur_de_charge * energie_reelle * facteur_emission  # en grammes de CO2
-        emissions_tonnes = emissions / 1e6  # conversion en tonnes
-        
-        # Calcul de l'utilisation des ressources minérales (en tonnes)
-        ressources_minerales_utilisation = (
-            facteur_de_charge * energie_reelle * (UTILISATION_FIL_EAU if type_barrage == "fil de l'eau" else UTILISATION_RESERVOIR)
-        )
-        
-        # Calcul de l'extraction des ressources minérales (en kg Sb)
-        ressources_minerales_extraction = facteur_de_charge * energie_reelle * (EXTRACTION_MINERALE / 1e6)
-        
-        # Calcul de l'utilisation des énergies minérales (en kg Sb)
-        utilisation_energie_minerale = facteur_de_charge * energie_reelle * (energie_minerale / 1e3)  # conversion mg -> kg
-        
-        # Calcul de l'utilisation des énergies non renouvelables (en GJ)
-        utilisation_energie_non_renouvelable = facteur_de_charge * energie_reelle * (energie_non_renouvelable / 1e3)  # conversion MJ -> GJ
-        
-        resultats.append({
-            "Barrage": nom,
-            "Facteur de charge": round(facteur_de_charge, 3),
-            "Émissions (tonnes CO2/an)": round(emissions_tonnes, 2),
-            "Utilisation ressources minérales (tonnes/an)": round(ressources_minerales_utilisation, 6),
-            "Extraction ressources minérales (kg Sb/an)": round(ressources_minerales_extraction, 6),
-            "Utilisation des énergies minérales (kg Sb/an)": round(utilisation_energie_minerale, 6),
-            "Utilisation des énergies non renouvelables (GJ/an)": round(utilisation_energie_non_renouvelable, 6)
-        })
+    # Sélection des bons facteurs
+    facteur_emission = FACTEUR_EMISSION.get(type_barrage, 0)
+    energie_minerale = UTILISATION_MINERALES.get(type_barrage, 0)
+    energie_non_renouvelable = UTILISATION_NON_RENOUVELABLES.get(type_barrage, 0)
+    
+    # Calcul des émissions de CO2
+    emissions = facteur_charge * energie * facteur_emission  # en grammes de CO2
+    emissions_tonnes = emissions / 1e6  # conversion en tonnes
+    
+    # Calcul de l'utilisation des ressources minérales (en tonnes)
+    ressources_minerales_utilisation = (
+        facteur_charge * energie * (UTILISATION_FIL_EAU if type_barrage == "Fil de l'eau" else UTILISATION_RESERVOIR)
+    )
+    
+    # Calcul de l'extraction des ressources minérales (en kg Sb)
+    ressources_minerales_extraction = facteur_charge * energie * (EXTRACTION_MINERALE / 1e6)
+    
+    # Calcul de l'utilisation des énergies minérales (en kg Sb)
+    utilisation_energie_minerale = facteur_charge * energie * (energie_minerale / 1e3)  # conversion mg -> kg
+    
+    # Calcul de l'utilisation des énergies non renouvelables (en GJ)
+    utilisation_energie_non_renouvelable = facteur_charge * energie * (energie_non_renouvelable / 1e3)  # conversion MJ -> GJ
+    
+    resultats.append({
+        "Barrage": barrage.donnees.barrage_nom,
+        "Facteur de charge": round(facteur_charge, 3),
+        "Émissions (tonnes CO2/an)": round(emissions_tonnes, 2),
+        "Utilisation ressources minérales (tonnes/an)": round(ressources_minerales_utilisation, 6),
+        "Extraction ressources minérales (kg Sb/an)": round(ressources_minerales_extraction, 6),
+        "Utilisation des énergies minérales (kg Sb/an)": round(utilisation_energie_minerale, 6),
+        "Utilisation des énergies non renouvelables (GJ/an)": round(utilisation_energie_non_renouvelable, 6)
+    })
     
     return pd.DataFrame(resultats)
 
