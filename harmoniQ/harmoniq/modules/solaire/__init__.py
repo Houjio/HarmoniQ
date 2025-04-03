@@ -45,9 +45,12 @@ class InfraParcSolaire(Infrastructure):
     @necessite_scenario
     def calculer_production(self) -> pd.DataFrame:
         if self.donnees.type_de_centrale == "Residentiel":
-            return calculate_regional_residential_solar(self.meteo, self.donnees)
+            _, resultats_df = calculate_regional_residential_solar(self.donnees)
         else:
-            return calculate_energy_solar_plants(self.meteo, self.donnees)
+            _, resultats_df = calculate_energy_solar_plants(self.donnees)
+
+        return resultats_df
+        
 
 
 if __name__ == "__main__":
@@ -56,12 +59,11 @@ if __name__ == "__main__":
     from datetime import datetime, timedelta
 
     db = next(get_db())
-    eolienne_parc = read_all_eolienne_parc(db)[0]
-    eoliennes = all_eoliennes_in_parc(db, eolienne_parc.id)
-    infraEolienne = InfraParcEolienne(eoliennes)
+    # Récupérer la première centrale solaire
+    centrale_solaire = read_all_solaire_parc(db)[0]
+    infraSolaire = InfraParcSolaire(centrale_solaire)
 
+    # Charger le scénario
     scenario = read_all_scenario(db)[0]
-
-    infraEolienne.charger_scenario(scenario)
-
-    production = infraEolienne.calculer_production()
+    infraSolaire.charger_scenario(scenario)
+    production = infraSolaire.calculer_production()
