@@ -1,6 +1,6 @@
 from harmoniq.core.base import Infrastructure, necessite_scenario
 from harmoniq.core.meteo import WeatherHelper, Granularity, EnergyType
-from harmoniq.db.schemas import NucleaireBase, ScenarioBase
+from harmoniq.db.schemas import NucleaireBase, ScenarioBase, PositionBase
 from harmoniq.modules.nucleaire.calculs_production_nucleaire import calculate_nuclear_production
 
 from typing import List
