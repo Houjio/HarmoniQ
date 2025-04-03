@@ -7,19 +7,6 @@ from data_solaire import coordinates_centrales, coordinates_residential, populat
 
 
 def get_weather_data(coordinates_residential):
-    """
-    Récupère les données météorologiques pour les emplacements spécifiés.
-
-    Parameters
-    ----------
-    coordinates : list of tuples
-        Liste des coordonnées des emplacements sous forme de tuples (latitude, longitude, nom, altitude, fuseau horaire).
-
-    Returns
-    -------
-    list of DataFrame
-        Liste des DataFrames contenant les données météorologiques pour chaque emplacement.
-    """
     tmys = []
     for location in coordinates_residential:
         latitude, longitude, name, altitude, timezone = location
@@ -41,35 +28,6 @@ def calculate_solar_parameters(
     surface_tilt,
     surface_orientation,
 ):
-    """
-    Calcule les paramètres solaires et l'irradiance pour un emplacement donné.
-
-    Parameters
-    ----------
-    weather : DataFrame
-        Données météorologiques pour l'emplacement.
-    latitude : float
-        Latitude de l'emplacement.
-    longitude : float
-        Longitude de l'emplacement.
-    altitude : float
-        Altitude de l'emplacement en mètres.
-    temperature_model_parameters : dict
-        Paramètres du modèle de température.
-    module : dict
-        Paramètres du module solaire.
-    inverter : dict
-        Paramètres de l'onduleur.
-    surface_tilt : float
-        Angle d'inclinaison des panneaux solaires.
-    surface_azimuth : float
-        Orientation des panneaux solaires.
-
-    Returns
-    -------
-    Series
-        Puissance AC calculée pour chaque pas de temps.
-    """
     solpos = pvlib.solarposition.get_solarposition(
         time=weather.index,
         latitude=latitude,
@@ -118,23 +76,6 @@ def calculate_solar_parameters(
 
 
 def convert_solar(value, module, mode="surface_to_power"):
-    """
-    Convertit une surface disponible en puissance installée ou une puissance souhaitée en superficie nécessaire en utilisant les paramètres du module solaire.
-
-    Parameters
-    ----------
-    value : float
-        Surface disponible en mètres carrés (m²) ou puissance souhaitée en kilowatts (kW).
-    module : pandas.Series
-        Paramètres du module solaire.
-    mode : str, optional
-        Mode de conversion, soit 'surface_to_power' pour convertir une surface en puissance, soit 'power_to_surface' pour convertir une puissance en surface. Par défaut 'surface_to_power'.
-
-    Returns
-    -------
-    float
-        Puissance installée en kilowatts (kW) ou superficie nécessaire en mètres carrés (m²).
-    """
     panel_efficiency = module["Impo"] * module["Vmpo"] / (1000 * module["Area"])
 
     if mode == "surface_to_power":
@@ -151,28 +92,8 @@ def convert_solar(value, module, mode="surface_to_power"):
 start_time = time.time()
 
 
-def calculate_energy_solar_plants(
-    coordinates_centrales, surface_tilt=45, surface_orientation=180
-):
-    """
-    Calcule la production d'énergie annuelle pour des centrales solaires
-    aux coordonnées données avec leurs puissances spécifiées.
+def calculate_energy_solar_plants(coordinates_centrales, surface_tilt=45, surface_orientation=180):
 
-    Parameters
-    ----------
-    coordinates_centrales : list of tuples
-        Liste contenant (latitude, longitude, nom, altitude, timezone, puissance_kw)
-    surface_tilt : float, optional
-        Angle d'inclinaison des panneaux en degrés. Par défaut 45°
-    surface_orientation : float, optional
-        Orientation des panneaux en degrés (180° = sud). Par défaut 180°
-
-    Returns
-    -------
-    dict, pd.DataFrame
-        Dictionnaire contenant l'énergie annuelle (Wh) et les données horaires pour chaque centrale,
-        et un DataFrame contenant les mêmes informations sous forme tabulaire.
-    """
     # Initialisation des modèles
     sandia_modules = pvlib.pvsystem.retrieve_sam("SandiaMod")
     sapm_inverters = pvlib.pvsystem.retrieve_sam("cecinverter")
@@ -236,13 +157,9 @@ def calculate_energy_solar_plants(
         })
 
     resultats_centrales["energie_totale_wh"] = energie_totale
-
-    # Conversion des résultats en DataFrame
     resultats_centrales_df = pd.DataFrame(results_list)
 
     return resultats_centrales, resultats_centrales_df
-
-
 
 def calculate_regional_residential_solar(
     coordinates_residential: list[tuple],
@@ -252,35 +169,6 @@ def calculate_regional_residential_solar(
     surface_tilt,
     surface_orientation,
 ):
-    """
-    Calcule la production d'énergie solaire résidentielle potentielle par région administrative.
-
-    Parameters
-    ----------
-    coordinates_residential : list of tuples
-        Liste des coordonnées des régions sous forme de tuples
-        (latitude, longitude, nom, altitude, timezone)
-    population_relative : dict
-        Dictionnaire contenant la population relative pour chaque région.
-    total_clients : int
-        Nombre total de clients subventionnés.
-    num_panels_per_client : int, optional
-        Nombre de panneaux par client. Par défaut 4.
-    surface_tilt : float, optional
-        Angle d'inclinaison des panneaux en degrés. Par défaut 30°
-    surface_orientation : float, optional
-        Orientation des panneaux en degrés (180° = sud). Par défaut 180°
-
-    Returns
-    -------
-    dict, pd.DataFrame
-        - Dictionnaire contenant pour chaque région :
-          - énergie annuelle (kWh)
-          - puissance installée (kW)
-          - surface installée (m²)
-          - coordonnées (lat, lon)
-        - DataFrame contenant les mêmes informations sous forme tabulaire.
-    """
 
     # Initialisation des modèles
     sandia_modules = pvlib.pvsystem.retrieve_sam("SandiaMod")
@@ -341,7 +229,6 @@ def calculate_regional_residential_solar(
             "energie_annuelle_kwh": region_results["energie_annuelle_wh"] / 1000,
         })
 
-    # Conversion des résultats en DataFrame
     resultats_regions_df = pd.DataFrame(results_list)
 
     return resultats_regions, resultats_regions_df
@@ -489,35 +376,10 @@ def co2_emissions_solar(
     return emissions
 
 
-# Utilisation des fonctions
-resultats_centrales, resultats_centrales_df = calculate_energy_solar_plants(coordinates_centrales)
-energie_centrales = resultats_centrales["energie_totale_wh"]
-couts = cost_solar_powerplant(coordinates_centrales, resultats_centrales)
-couts_installation = calculate_installation_cost(coordinates_centrales)
-durees_vie = calculate_lifetime(coordinates_centrales)
-emissions_co2 = co2_emissions_solar(coordinates_centrales, resultats_centrales)
-
-# Affichage des résultats
-print("\n=== RÉSULTATS PAR CENTRALE ===")
-for centrale in coordinates_centrales:
-    nom = centrale[2]
-    duree_vie = durees_vie[nom]
-    print(f"\n{nom}:")
-    print(
-        f"  Production annuelle : {resultats_centrales[nom]['energie_annuelle_wh']/1000:,.2f} kWh"
-    )
-    print(f"  Puissance installée : {centrale[5]:,.2f} kW")
-    print(f"  Coût total : {couts[nom]:,.2f} $")
-    print(f"  Coût d'installation : {couts_installation[nom]:,.2f} $")
-    print(f"  Durée de vie estimée : {duree_vie} ans")
-    print(
-        f"  Émissions CO₂ totales : {emissions_co2[nom]:,.2f} kg CO₂eq sur {duree_vie} ans"
-    )
-
 # Exemple d'utilisation
 if __name__ == "__main__":
 
-        # Appel de la fonction
+        # Appel des fonction
     resultats_regions, resultats_regions_df = calculate_regional_residential_solar(
         coordinates_residential,
         population_relative,
@@ -527,21 +389,44 @@ if __name__ == "__main__":
         surface_orientation=180,
     )
     
-    # Affichage du résumé des résultats
-    print("\n=== RÉSUMÉ DES RÉSULTATS POUR TOUTES LES RÉGIONS ===")
-    energie_totale = 0
-    for nom_region, data in resultats_regions.items():
-        energie_totale += data["energie_annuelle_kwh"]
+    resultats_centrales, resultats_centrales_df = calculate_energy_solar_plants(coordinates_centrales)
+    energie_centrales = resultats_centrales["energie_totale_wh"]
+    couts = cost_solar_powerplant(coordinates_centrales, resultats_centrales)
+    couts_installation = calculate_installation_cost(coordinates_centrales)
+    durees_vie = calculate_lifetime(coordinates_centrales)
+    emissions_co2 = co2_emissions_solar(coordinates_centrales, resultats_centrales)
+
+    # # Affichage des résultats
+    # print("\n=== RÉSULTATS PAR CENTRALE ===")
+    # for centrale in coordinates_centrales:
+    #     nom = centrale[2]
+    #     duree_vie = durees_vie[nom]
+    #     print(f"\n{nom}:")
+    #     print(
+    #         f"  Production annuelle : {resultats_centrales[nom]['energie_annuelle_wh']/1000:,.2f} kWh"
+    #     )
+    #     print(f"  Puissance installée : {centrale[5]:,.2f} kW")
+    #     print(f"  Coût total : {couts[nom]:,.2f} $")
+    #     print(f"  Coût d'installation : {couts_installation[nom]:,.2f} $")
+    #     print(f"  Durée de vie estimée : {duree_vie} ans")
+    #     print(
+    #         f"  Émissions CO₂ totales : {emissions_co2[nom]:,.2f} kg CO₂eq sur {duree_vie} ans"
+    #     )
+
+
+    # print("\n=== RÉSUMÉ DES RÉSULTATS POUR TOUTES LES RÉGIONS ===")
+    # energie_totale = 0
+    # for nom_region, data in resultats_regions.items():
+    #     energie_totale += data["energie_annuelle_kwh"]
     
-    print(f"\nProduction totale pour toutes les régions : {energie_totale:,.2f} kWh")
+    # print(f"\nProduction totale pour toutes les régions : {energie_totale:,.2f} kWh")
 
 end_time = time.time()
-
 print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
 
 
 
-# #   Validation avec données réelles Hydro-Québec ##
+# # ------------   Validation avec données réelles Hydro-Québec ----------------------##
 # def load_csv(file_path):
 #     """
 #     Charge le fichier CSV contenant les données de production solaire.
