@@ -56,8 +56,10 @@ from typing import Optional
 from .geo_utils import GeoUtils
 
 from harmoniq.db.engine import get_db
+from harmoniq.db.schemas import Eolienne,Solaire,Hydro, Nucleaire, Thermique
 from harmoniq.db.CRUD import (read_all_bus, read_all_line, read_all_line_type,
-                              read_all_eolienne,read_all_solaire,read_all_hydro,read_all_nucleaire,read_all_thermique)
+                              read_all_eolienne,read_all_solaire,read_all_hydro,
+                              read_all_nucleaire,read_all_thermique,read_multiple_by_id)
 
 
 class DataLoadError(Exception):
@@ -90,6 +92,31 @@ class NetworkDataLoader:
         self.data_dir = Path(data_dir)
         if not self.data_dir.exists():
             raise DataLoadError(f"Le répertoire {data_dir} n'existe pas")
+        
+        self.eolienne_ids = None
+        self.solaire_ids = None
+        self.hydro_ids = None
+        self.thermique_ids = None
+        self.nucleaire_ids = None
+
+    def set_infrastructure_ids(self, liste_infra):
+        """
+        Configure les IDs des infrastructures à charger à partir d'un objet liste_infrastructures.
+        
+        Args:
+            liste_infra: Objet ListeInfrastructures contenant les IDs des infrastructures
+        """
+        if liste_infra.parc_eoliens:
+            self.eolienne_ids = [int(id) for id in liste_infra.parc_eoliens.split(',')]
+        
+        if liste_infra.parc_solaires:
+            self.solaire_ids = [int(id) for id in liste_infra.parc_solaires.split(',')]
+        
+        if liste_infra.central_hydroelectriques:
+            self.hydro_ids = [int(id) for id in liste_infra.central_hydroelectriques.split(',')]
+        
+        if liste_infra.central_thermique:
+            self.thermique_ids = [int(id) for id in liste_infra.central_thermique.split(',')]
 
     def load_network_data(self) -> pypsa.Network:
         """
@@ -193,10 +220,10 @@ class NetworkDataLoader:
             DataLoadError: Si les données sont inaccessibles ou mal formatées
         """
         try:
-            # Chargement des séries temporelles pour les charges (loads)
+            # Chargement des loads
             loads_path = self.data_dir / "timeseries" / year / "loads-p_set.csv"
-            #Les noms des colonnes dans les données et dans les loads doivent être identiques
             loads_df = pd.read_csv(loads_path, index_col=0, parse_dates=True)
+            #Les noms des colonnes dans les données et dans les loads doivent être identiques
             loads_df.columns = [f"load_{col}" for col in loads_df.columns]
             network.loads_t.p_set = loads_df
             
@@ -226,6 +253,7 @@ class NetworkDataLoader:
         Args:
             network: Le réseau PyPSA dans lequel ajouter les générateurs
             source_type: Le type de source d'énergie non pilotable ('eolienne' ou 'solaire')
+            ids: Liste des IDs des centrales à inclure (si None, toutes seront incluses)
             
         Returns:
             pypsa.Network: Réseau avec les générateurs ajoutés
@@ -235,7 +263,10 @@ class NetworkDataLoader:
         geo_utils = GeoUtils()
         
         if source_type == "eolienne":
-            centrales = read_all_eolienne(db)
+            if self.eolienne_ids:
+                centrales = read_multiple_by_id(db, Eolienne, self.eolienne_ids)
+            else:
+                centrales = read_all_eolienne(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if df.empty:
                 return network
@@ -247,7 +278,10 @@ class NetworkDataLoader:
                 df['carrier'] = 'eolien'
 
         elif source_type == "solaire":
-            centrales = read_all_solaire(db)
+            if self.solaire_ids:
+                centrales = read_multiple_by_id(db, Solaire, self.solaire_ids)
+            else:
+                centrales = read_all_solaire(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if df.empty:
                 return network
@@ -259,7 +293,10 @@ class NetworkDataLoader:
                 df['carrier'] = 'solaire'
 
         elif source_type == "hydro_fil":
-            centrales = read_all_hydro(db)
+            if self.hydro_ids:
+                centrales = read_multiple_by_id(db, Hydro, self.hydro_ids)
+            else:
+                centrales = read_all_hydro(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if df.empty:
                 return network
@@ -272,7 +309,10 @@ class NetworkDataLoader:
                 df['carrier'] = 'hydro_fil'
 
         elif source_type == "nucleaire":
-            centrales = read_all_nucleaire(db)
+            if self.nucleaire_ids:
+                centrales = read_multiple_by_id(db, Nucleaire, self.nucleaire_ids)
+            else:
+                centrales = read_all_nucleaire(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if df.empty:
                 return network
@@ -337,7 +377,6 @@ class NetworkDataLoader:
         Args:
             network: Le réseau PyPSA dans lequel ajouter les générateurs
             source_type: Le type de source d'énergie pilotable ('hydro_reservoir' ou 'thermique')
-            
         Returns:
             pypsa.Network: Réseau avec les générateurs ajoutés
         """
@@ -345,7 +384,10 @@ class NetworkDataLoader:
         geo_utils = GeoUtils()
         
         if source_type == "hydro_reservoir":
-            centrales = read_all_hydro(db)
+            if self.hydro_ids:
+                centrales = read_multiple_by_id(db, Hydro, self.hydro_ids)
+            else:
+                centrales = read_all_hydro(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if df.empty:
                 return network
@@ -358,7 +400,10 @@ class NetworkDataLoader:
                 df['carrier'] = 'hydro_reservoir'
 
         elif source_type == "thermique":
-            centrales = read_all_thermique(db)
+            if self.thermique_ids:
+                centrales = read_multiple_by_id(db, Thermique, self.thermique_ids)
+            else:
+                centrales = read_all_thermique(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if df.empty:
                 return network

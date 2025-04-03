@@ -10,6 +10,9 @@ parent_dir = Path(__file__).parent.parent
 sys.path.append(str(parent_dir))
 
 from utils import NetworkDataLoader, DataLoadError
+from harmoniq.db.engine import get_db
+from harmoniq.db.CRUD import read_data_by_id
+from harmoniq.db.schemas import ListeInfrastructures
 
 def test_network_data():
     """
@@ -19,8 +22,11 @@ def test_network_data():
     print("Démarrage du test de chargement des données réseau...")
     
     try:
-        data_loader = NetworkDataLoader(data_dir=str(parent_dir / "data"))
-        network = data_loader.load_network_data()
+        db = next(get_db())
+        liste_infra = read_data_by_id(db, ListeInfrastructures,1)
+        loader = NetworkDataLoader(data_dir=str(parent_dir / "data"))
+        loader.set_infrastructure_ids(liste_infra)
+        network = loader.load_network_data()
         
         # Vérification des bus
         print("\n=== BUS ===")
