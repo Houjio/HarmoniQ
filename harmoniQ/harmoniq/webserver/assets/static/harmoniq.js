@@ -96,27 +96,52 @@ function initialiserListeParc(type, elementId) {
         `;
     }
     fetch(`/api/${type}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log(`Liste des ${type}:`, data);
-            data.forEach(parc => {
-                listeElement.innerHTML += createElement(parc);
+    .then(response => {
+        if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+        return response.json();
+    })
+    .then(data => {
+        console.log(`Liste des ${type}:`, data);
 
-                // Ajouter un marqueur sur la carte pour chaque parc
-                const { categorie, latitude, longitude, nom } = parc;
+        // Vérifier si l'élément HTML existe
+        const listeElement = document.getElementById(elementId)?.getElementsByTagName('ul')[0];
+        if (!listeElement) {
+            console.error(`Élément avec l'ID "${elementId}" introuvable ou ne contient pas de <ul>.`);
+            return;
+        }
 
-                // Vérifier si la catégorie a une icône définie
-                if (icons[categorie]) {
-                    L.marker([latitude, longitude], { icon: icons[categorie] })
-                        .addTo(map)
-                        .bindPopup(`<b>${nom}</b><br>Catégorie: ${categorie}`);
-                } else {
-                    console.warn(`Aucune icône définie pour la catégorie: ${categorie}`);
-                }
-            });
-        })
-        .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
+        // Parcourir les données et ajouter les points sur la carte
+        data.forEach(parc => {
+            const { categorie, latitude, longitude, nom, id } = parc;
+
+            // Vérifier les données du parc
+            if (!latitude || !longitude || !categorie) {
+                console.warn(`Données manquantes pour le parc :`, parc);
+                return;
+            }
+
+            // Ajouter un élément à la liste HTML
+            listeElement.innerHTML += `
+                <li class="list-group-item list-group-item-action" role="button" elementid="${id}">
+                    ${nom}
+                </li>
+            `;
+
+            // Vérifier si une icône existe pour la catégorie
+            if (!icons[categorie]) {
+                console.warn(`Aucune icône définie pour la catégorie : ${categorie}`);
+                return;
+            }
+
+            // Ajouter un marqueur sur la carte
+            L.marker([latitude, longitude], { icon: icons[categorie] })
+                .addTo(map)
+                .bindPopup(`<b>${nom}</b><br>Catégorie: ${categorie}`);
+        });
+    })
+    .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
 }
+    
 
 function initialiserListeParcEolienne() {
     initialiserListeParc('eolienneparc', 'list-parc-eolien');
