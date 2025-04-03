@@ -3,51 +3,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+from data_solaire import coordinates_centrales, coordinates_residential, population_relative
 
-# Définition des centrales solaires avec leurs puissances
-coordinates_centrales = [
-    (45.4167, -73.4999, "La Prairie", 0, "Etc/GMT+5", 8000),  # 8 MW = 8000 kW
-    (45.6833, -73.4333, "Varennes", 0, "Etc/GMT+5", 1500),  # 1.5 MW = 1500 kW
-]
-coordinates_residential = [
-    (48.4808, -68.5210, "Bas-Saint-Laurent", 0, "Etc/GMT+5"),
-    (48.4284, -71.0683, "Saguenay-Lac-Saint-Jean", 0, "Etc/GMT+5"),
-    (46.8139, -71.2082, "Capitale-Nationale", 0, "Etc/GMT+5"),
-    (46.3420, -72.5477, "Mauricie", 0, "Etc/GMT+5"),
-    (45.4036, -71.8826, "Estrie", 0, "Etc/GMT+5"),
-    (45.5017, -73.5673, "Montreal", 0, "Etc/GMT+5"),
-    (45.4215, -75.6919, "Outaouais", 0, "Etc/GMT+5"),
-    (48.0703, -77.7600, "Abitibi-Temiscamingue", 0, "Etc/GMT+5"),
-    (50.0340, -66.9141, "Cote-Nord", 0, "Etc/GMT+5"),
-    (53.4667, -76.0000, "Nord-du-Quebec", 0, "Etc/GMT+5"),
-    (48.8360, -64.4931, "Gaspesie–Iles-de-la-Madeleine", 0, "Etc/GMT+5"),
-    (46.5000, -70.9000, "Chaudiere-Appalaches", 0, "Etc/GMT+5"),
-    (45.6066, -73.7124, "Laval", 0, "Etc/GMT+5"),
-    (46.0270, -73.4360, "Lanaudiere", 0, "Etc/GMT+5"),
-    (45.9990, -74.1428, "Laurentides", 0, "Etc/GMT+5"),
-    (45.4500, -73.3496, "Monteregie", 0, "Etc/GMT+5"),
-    (46.4043, -72.0169, "Centre-du-Quebec", 0, "Etc/GMT+5"),
-]
-
-population_relative = {
-    "Bas-Saint-Laurent": 0.0226,
-    "Saguenay-Lac-Saint-Jean": 0.0317,
-    "Capitale-Nationale": 0.0897,
-    "Mauricie": 0.0318,
-    "Estrie": 0.0580,
-    "Montreal": 0.2430,
-    "Outaouais": 0.0472,
-    "Abitibi-Temiscamingue": 0.0165,
-    "Cote-Nord": 0.0099,
-    "Nord-du-Quebec": 0.0052,
-    "Gaspesie–Iles-de-la-Madeleine": 0.0102,
-    "Chaudiere-Appalaches": 0.0503,
-    "Laval": 0.0508,
-    "Lanaudiere": 0.0620,
-    "Laurentides": 0.0744,
-    "Monteregie": 0.1675,
-    "Centre-du-Quebec": 0.0291,
-}
 
 def get_weather_data(coordinates_residential):
     """
@@ -193,16 +150,6 @@ def convert_solar(value, module, mode="surface_to_power"):
         )
 start_time = time.time()
 
-sandia_modules = pvlib.pvsystem.retrieve_sam("SandiaMod")
-module = sandia_modules["Canadian_Solar_CS5P_220M___2009_"]
-
-
-# Définition des centrales solaires avec leurs puissances
-coordinates_centrales = [
-    (45.4167, -73.4999, "La Prairie", 0, "Etc/GMT+5", 8000),  # 8 MW = 8000 kW
-    (45.6833, -73.4333, "Varennes", 0, "Etc/GMT+5", 1500),  # 1.5 MW = 1500 kW
-]
-
 
 def calculate_energy_solar_plants(
     coordinates_centrales, surface_tilt=45, surface_orientation=180
@@ -213,8 +160,8 @@ def calculate_energy_solar_plants(
 
     Parameters
     ----------
-    coordinates_centrales : tuple
-        Tuple contenant (latitude, longitude, nom, altitude, timezone, puissance_kw)
+    coordinates_centrales : list of tuples
+        Liste contenant (latitude, longitude, nom, altitude, timezone, puissance_kw)
     surface_tilt : float, optional
         Angle d'inclinaison des panneaux en degrés. Par défaut 45°
     surface_orientation : float, optional
@@ -222,8 +169,9 @@ def calculate_energy_solar_plants(
 
     Returns
     -------
-    dict
-        Dictionnaire contenant l'énergie annuelle (Wh) et les données horaires pour chaque centrale
+    dict, pd.DataFrame
+        Dictionnaire contenant l'énergie annuelle (Wh) et les données horaires pour chaque centrale,
+        et un DataFrame contenant les mêmes informations sous forme tabulaire.
     """
     # Initialisation des modèles
     sandia_modules = pvlib.pvsystem.retrieve_sam("SandiaMod")
@@ -236,6 +184,7 @@ def calculate_energy_solar_plants(
     ]["open_rack_glass_glass"]
 
     resultats_centrales = {}
+    results_list = []  # Liste pour stocker les résultats pour le DataFrame
     energie_totale = 0
 
     for centrale in coordinates_centrales:
@@ -268,7 +217,7 @@ def calculate_energy_solar_plants(
         annual_energy = ac_scaled.sum()
         energie_totale += annual_energy
 
-        # Stockage des résultats pour cette centrale
+        # Stockage des résultats pour cette centrale dans le dictionnaire
         resultats_centrales[name] = {
             "energie_annuelle_wh": annual_energy,
             "energie_horaire": ac_scaled,
@@ -276,13 +225,23 @@ def calculate_energy_solar_plants(
             "puissance_kw": puissance_kw,
         }
 
+        # Stockage des résultats pour cette centrale dans la liste pour le DataFrame
+        results_list.append({
+            "nom_centrale": name,
+            "latitude": latitude,
+            "longitude": longitude,
+            "puissance_kw": puissance_kw,
+            "energie_annuelle_kwh": annual_energy / 1000,  # Conversion en kWh
+            "nombre_modules": nombre_modules,
+        })
+
     resultats_centrales["energie_totale_wh"] = energie_totale
-    return resultats_centrales
 
+    # Conversion des résultats en DataFrame
+    resultats_centrales_df = pd.DataFrame(results_list)
 
-# Utilisation de la fonction
-resultats_centrales = calculate_energy_solar_plants(coordinates_centrales)
-energie_centrales = resultats_centrales["energie_totale_wh"]
+    return resultats_centrales, resultats_centrales_df
+
 
 
 def calculate_regional_residential_solar(
@@ -309,17 +268,18 @@ def calculate_regional_residential_solar(
         Nombre de panneaux par client. Par défaut 4.
     surface_tilt : float, optional
         Angle d'inclinaison des panneaux en degrés. Par défaut 30°
-    surface_azimuth : float, optional
+    surface_orientation : float, optional
         Orientation des panneaux en degrés (180° = sud). Par défaut 180°
 
     Returns
     -------
-    dict
-        Dictionnaire contenant pour chaque région:
-        - énergie annuelle (kWh)
-        - puissance installée (kW)
-        - surface installée (m²)
-        - coordonnées (lat, lon)
+    dict, pd.DataFrame
+        - Dictionnaire contenant pour chaque région :
+          - énergie annuelle (kWh)
+          - puissance installée (kW)
+          - surface installée (m²)
+          - coordonnées (lat, lon)
+        - DataFrame contenant les mêmes informations sous forme tabulaire.
     """
 
     # Initialisation des modèles
@@ -327,6 +287,7 @@ def calculate_regional_residential_solar(
     module = sandia_modules["Canadian_Solar_CS5P_220M___2009_"]
 
     resultats_regions = {}
+    results_list = []  # Liste pour stocker les résultats pour le DataFrame
 
     for coordinates in coordinates_residential:
         latitude, longitude, nom_region, altitude, timezone = coordinates
@@ -352,16 +313,16 @@ def calculate_regional_residential_solar(
         )
 
         # Calcul de la production d'énergie
-        production = calculate_energy_solar_plants(
+        production_dict, production_df = calculate_energy_solar_plants(
             [coordinates_with_power],  # Liste avec un seul tuple de coordonnées
             surface_tilt=surface_tilt,
             surface_orientation=surface_orientation,
         )
 
-        # Récupération des résultats pour cette région
-        region_results = production[nom_region]
+        # Récupération des résultats pour cette région à partir du dictionnaire
+        region_results = production_dict[nom_region]
 
-        # Stockage des résultats
+        # Stockage des résultats dans le dictionnaire
         resultats_regions[nom_region] = {
             "energie_annuelle_kwh": region_results["energie_annuelle_wh"] / 1000,
             "puissance_installee_kw": puissance_installee_kw,
@@ -369,8 +330,21 @@ def calculate_regional_residential_solar(
             "latitude": latitude,
             "longitude": longitude,
         }
-    return resultats_regions
 
+        # Stockage des résultats pour le DataFrame
+        results_list.append({
+            "nom_region": nom_region,
+            "latitude": latitude,
+            "longitude": longitude,
+            "puissance_installee_kw": puissance_installee_kw,
+            "surface_installee_m2": surface_panneau_region,
+            "energie_annuelle_kwh": region_results["energie_annuelle_wh"] / 1000,
+        })
+
+    # Conversion des résultats en DataFrame
+    resultats_regions_df = pd.DataFrame(results_list)
+
+    return resultats_regions, resultats_regions_df
 
 def cost_solar_powerplant(coordinates_centrales, resultats_centrales):
     """
@@ -516,6 +490,8 @@ def co2_emissions_solar(
 
 
 # Utilisation des fonctions
+resultats_centrales, resultats_centrales_df = calculate_energy_solar_plants(coordinates_centrales)
+energie_centrales = resultats_centrales["energie_totale_wh"]
 couts = cost_solar_powerplant(coordinates_centrales, resultats_centrales)
 couts_installation = calculate_installation_cost(coordinates_centrales)
 durees_vie = calculate_lifetime(coordinates_centrales)
@@ -540,10 +516,9 @@ for centrale in coordinates_centrales:
 
 # Exemple d'utilisation
 if __name__ == "__main__":
-    # Test avec une surface de 100 m²
-    surface_test = 100  # m²
 
-    resultats = calculate_regional_residential_solar(
+        # Appel de la fonction
+    resultats_regions, resultats_regions_df = calculate_regional_residential_solar(
         coordinates_residential,
         population_relative,
         total_clients=125000,
@@ -551,15 +526,14 @@ if __name__ == "__main__":
         surface_tilt=0,
         surface_orientation=180,
     )
-
+    
     # Affichage du résumé des résultats
     print("\n=== RÉSUMÉ DES RÉSULTATS POUR TOUTES LES RÉGIONS ===")
     energie_totale = 0
-    for nom_region, data in resultats.items():
+    for nom_region, data in resultats_regions.items():
         energie_totale += data["energie_annuelle_kwh"]
-
+    
     print(f"\nProduction totale pour toutes les régions : {energie_totale:,.2f} kWh")
-
 
 end_time = time.time()
 
@@ -567,89 +541,89 @@ print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
 
 
 
-#   Validation avec données réelles Hydro-Québec ##
-def load_csv(file_path):
-    """
-    Charge le fichier CSV contenant les données de production solaire.
+# #   Validation avec données réelles Hydro-Québec ##
+# def load_csv(file_path):
+#     """
+#     Charge le fichier CSV contenant les données de production solaire.
 
-    Parameters
-    ----------
-    file_path : str
-        Chemin vers le fichier CSV.
+#     Parameters
+#     ----------
+#     file_path : str
+#         Chemin vers le fichier CSV.
 
-    Returns
-    -------
-    DataFrame
-        DataFrame contenant les données de production solaire.
-    """
-    return pd.read_csv(file_path, sep=";")
-
-
-def plot_validation(resultats_centrales, real_data):
-    """
-    Superpose sur un graphique mensuel la production des centrales solaires simulée totale avec les données réelles.
-
-    Parameters
-    ----------
-    resultats_centrales : dict
-        Dictionnaire contenant les résultats des centrales solaires simulées.
-    real_data : DataFrame
-        DataFrame contenant les données de production solaire réelle.
-    """
-    # Combiner les données horaires de toutes les centrales simulées
-    simulated_data = pd.concat(
-        [
-            resultats_centrales[name]["energie_horaire"]
-            for name in resultats_centrales.keys()
-            if name != "energie_totale_wh"
-        ]
-    )
-    simulated_data = simulated_data.groupby(simulated_data.index).sum()
-
-    # Assurez-vous que simulated_data est un DataFrame et ajoutez la colonne 'production_kwh'
-    simulated_data = simulated_data.to_frame(name="production_kwh")
-    simulated_data["month"] = simulated_data.index.month
-
-    # Calculer la production mensuelle simulée
-    monthly_simulated = (
-        simulated_data.groupby("month")["production_kwh"].sum() / 1e6
-    )  # Conversion de Wh en MWh
-
-    real_data["Solaire"] = real_data["Solaire"]
-
-    # Calculer la production mensuelle réelle
-    real_data["month"] = pd.to_datetime(real_data["Date"]).dt.month
-    monthly_real = real_data.groupby("month")["Solaire"].sum()
-    # Tracer le graphique
-    plt.figure(figsize=(10, 6))
-    plt.plot(
-        monthly_simulated.index,
-        monthly_simulated.values,
-        marker="o",
-        linestyle="-",
-        color="b",
-        label="Production simulée",
-    )
-    plt.plot(
-        monthly_real.index,
-        monthly_real.values,
-        marker="o",
-        linestyle="-",
-        color="r",
-        label="Production réelle",
-    )
-    plt.title("Production Solaire Mensuelle")
-    plt.xlabel("Mois")
-    plt.ylabel("Production (MWh)")
-    plt.legend()
-    plt.grid(True)
-    plt.xticks(range(1, 13))
-    plt.show()
+#     Returns
+#     -------
+#     DataFrame
+#         DataFrame contenant les données de production solaire.
+#     """
+#     return pd.read_csv(file_path, sep=";")
 
 
-# Charger les données réelles
-file_path = "2022-sources-electricite-quebec.csv"
-real_data = load_csv(file_path)
+# def plot_validation(resultats_centrales, real_data):
+#     """
+#     Superpose sur un graphique mensuel la production des centrales solaires simulée totale avec les données réelles.
 
-# # Superposer les données simulées et réelles sur un graphique
-# plot_validation(resultats_centrales, real_data)
+#     Parameters
+#     ----------
+#     resultats_centrales : dict
+#         Dictionnaire contenant les résultats des centrales solaires simulées.
+#     real_data : DataFrame
+#         DataFrame contenant les données de production solaire réelle.
+#     """
+#     # Combiner les données horaires de toutes les centrales simulées
+#     simulated_data = pd.concat(
+#         [
+#             resultats_centrales[name]["energie_horaire"]
+#             for name in resultats_centrales.keys()
+#             if name != "energie_totale_wh"
+#         ]
+#     )
+#     simulated_data = simulated_data.groupby(simulated_data.index).sum()
+
+#     # Assurez-vous que simulated_data est un DataFrame et ajoutez la colonne 'production_kwh'
+#     simulated_data = simulated_data.to_frame(name="production_kwh")
+#     simulated_data["month"] = simulated_data.index.month
+
+#     # Calculer la production mensuelle simulée
+#     monthly_simulated = (
+#         simulated_data.groupby("month")["production_kwh"].sum() / 1e6
+#     )  # Conversion de Wh en MWh
+
+#     real_data["Solaire"] = real_data["Solaire"]
+
+#     # Calculer la production mensuelle réelle
+#     real_data["month"] = pd.to_datetime(real_data["Date"]).dt.month
+#     monthly_real = real_data.groupby("month")["Solaire"].sum()
+#     # Tracer le graphique
+#     plt.figure(figsize=(10, 6))
+#     plt.plot(
+#         monthly_simulated.index,
+#         monthly_simulated.values,
+#         marker="o",
+#         linestyle="-",
+#         color="b",
+#         label="Production simulée",
+#     )
+#     plt.plot(
+#         monthly_real.index,
+#         monthly_real.values,
+#         marker="o",
+#         linestyle="-",
+#         color="r",
+#         label="Production réelle",
+#     )
+#     plt.title("Production Solaire Mensuelle")
+#     plt.xlabel("Mois")
+#     plt.ylabel("Production (MWh)")
+#     plt.legend()
+#     plt.grid(True)
+#     plt.xticks(range(1, 13))
+#     plt.show()
+
+
+# # Charger les données réelles
+# file_path = "2022-sources-electricite-quebec.csv"
+# real_data = load_csv(file_path)
+
+# # # Superposer les données simulées et réelles sur un graphique
+# # plot_validation(resultats_centrales, real_data)
