@@ -102,7 +102,7 @@ def cost_nuclear_powerplant(power_kw):
     power_mw = power_kw / 1000
     
     # Coûts de référence basés sur des projets récents
-    cout_base_par_mw = 7_500_000  # 7.5M$ par MW (estimation conservatrice)
+    cout_base_par_mw = 4_000_000  # 4M$ par MW 
     
     # Facteurs d'ajustement
     facteur_echelle = 0.85  # Économies d'échelle
