@@ -4,6 +4,50 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 
+# Définition des centrales solaires avec leurs puissances
+coordinates_centrales = [
+    (45.4167, -73.4999, "La Prairie", 0, "Etc/GMT+5", 8000),  # 8 MW = 8000 kW
+    (45.6833, -73.4333, "Varennes", 0, "Etc/GMT+5", 1500),  # 1.5 MW = 1500 kW
+]
+coordinates_residential = [
+    (48.4808, -68.5210, "Bas-Saint-Laurent", 0, "Etc/GMT+5"),
+    (48.4284, -71.0683, "Saguenay-Lac-Saint-Jean", 0, "Etc/GMT+5"),
+    (46.8139, -71.2082, "Capitale-Nationale", 0, "Etc/GMT+5"),
+    (46.3420, -72.5477, "Mauricie", 0, "Etc/GMT+5"),
+    (45.4036, -71.8826, "Estrie", 0, "Etc/GMT+5"),
+    (45.5017, -73.5673, "Montreal", 0, "Etc/GMT+5"),
+    (45.4215, -75.6919, "Outaouais", 0, "Etc/GMT+5"),
+    (48.0703, -77.7600, "Abitibi-Temiscamingue", 0, "Etc/GMT+5"),
+    (50.0340, -66.9141, "Cote-Nord", 0, "Etc/GMT+5"),
+    (53.4667, -76.0000, "Nord-du-Quebec", 0, "Etc/GMT+5"),
+    (48.8360, -64.4931, "Gaspesie–Iles-de-la-Madeleine", 0, "Etc/GMT+5"),
+    (46.5000, -70.9000, "Chaudiere-Appalaches", 0, "Etc/GMT+5"),
+    (45.6066, -73.7124, "Laval", 0, "Etc/GMT+5"),
+    (46.0270, -73.4360, "Lanaudiere", 0, "Etc/GMT+5"),
+    (45.9990, -74.1428, "Laurentides", 0, "Etc/GMT+5"),
+    (45.4500, -73.3496, "Monteregie", 0, "Etc/GMT+5"),
+    (46.4043, -72.0169, "Centre-du-Quebec", 0, "Etc/GMT+5"),
+]
+
+population_relative = {
+    "Bas-Saint-Laurent": 0.0226,
+    "Saguenay-Lac-Saint-Jean": 0.0317,
+    "Capitale-Nationale": 0.0897,
+    "Mauricie": 0.0318,
+    "Estrie": 0.0580,
+    "Montreal": 0.2430,
+    "Outaouais": 0.0472,
+    "Abitibi-Temiscamingue": 0.0165,
+    "Cote-Nord": 0.0099,
+    "Nord-du-Quebec": 0.0052,
+    "Gaspesie–Iles-de-la-Madeleine": 0.0102,
+    "Chaudiere-Appalaches": 0.0503,
+    "Laval": 0.0508,
+    "Lanaudiere": 0.0620,
+    "Laurentides": 0.0744,
+    "Monteregie": 0.1675,
+    "Centre-du-Quebec": 0.0291,
+}
 
 def get_weather_data(coordinates_residential):
     """
@@ -134,26 +178,19 @@ def convert_solar(value, module, mode="surface_to_power"):
     float
         Puissance installée en kilowatts (kW) ou superficie nécessaire en mètres carrés (m²).
     """
-    # Efficacité du module solaire
     panel_efficiency = module["Impo"] * module["Vmpo"] / (1000 * module["Area"])
 
     if mode == "surface_to_power":
-        # Calcul de la puissance installée en watts (W)
         power_w = value * panel_efficiency * 1000
-        # Conversion de la puissance en kilowatts (kW)
         power_kw = power_w / 1000
         return power_kw
     elif mode == "power_to_surface":
-        # Calcul de la superficie nécessaire en mètres carrés (m²)
         surface_m2 = value * 1000 / (panel_efficiency * 1000)
         return surface_m2
     else:
         raise ValueError(
             "Mode invalide. Utilisez 'surface_to_power' ou 'power_to_surface'."
         )
-
-
-# Initialisation des modèles solaires
 start_time = time.time()
 
 sandia_modules = pvlib.pvsystem.retrieve_sam("SandiaMod")
@@ -179,7 +216,7 @@ def calculate_energy_solar_plants(
     coordinates_centrales : tuple
         Tuple contenant (latitude, longitude, nom, altitude, timezone, puissance_kw)
     surface_tilt : float, optional
-        Angle d'inclinaison des panneaux en degrés. Par défaut 30°
+        Angle d'inclinaison des panneaux en degrés. Par défaut 45°
     surface_orientation : float, optional
         Orientation des panneaux en degrés (180° = sud). Par défaut 180°
 
@@ -478,46 +515,6 @@ def co2_emissions_solar(
     return emissions
 
 
-coordinates_residential = [
-    (48.4808, -68.5210, "Bas-Saint-Laurent", 0, "Etc/GMT+5"),
-    (48.4284, -71.0683, "Saguenay-Lac-Saint-Jean", 0, "Etc/GMT+5"),
-    (46.8139, -71.2082, "Capitale-Nationale", 0, "Etc/GMT+5"),
-    (46.3420, -72.5477, "Mauricie", 0, "Etc/GMT+5"),
-    (45.4036, -71.8826, "Estrie", 0, "Etc/GMT+5"),
-    (45.5017, -73.5673, "Montreal", 0, "Etc/GMT+5"),
-    (45.4215, -75.6919, "Outaouais", 0, "Etc/GMT+5"),
-    (48.0703, -77.7600, "Abitibi-Temiscamingue", 0, "Etc/GMT+5"),
-    (50.0340, -66.9141, "Cote-Nord", 0, "Etc/GMT+5"),
-    (53.4667, -76.0000, "Nord-du-Quebec", 0, "Etc/GMT+5"),
-    (48.8360, -64.4931, "Gaspesie–Iles-de-la-Madeleine", 0, "Etc/GMT+5"),
-    (46.5000, -70.9000, "Chaudiere-Appalaches", 0, "Etc/GMT+5"),
-    (45.6066, -73.7124, "Laval", 0, "Etc/GMT+5"),
-    (46.0270, -73.4360, "Lanaudiere", 0, "Etc/GMT+5"),
-    (45.9990, -74.1428, "Laurentides", 0, "Etc/GMT+5"),
-    (45.4500, -73.3496, "Monteregie", 0, "Etc/GMT+5"),
-    (46.4043, -72.0169, "Centre-du-Quebec", 0, "Etc/GMT+5"),
-]
-
-population_relative = {
-    "Bas-Saint-Laurent": 0.0226,
-    "Saguenay-Lac-Saint-Jean": 0.0317,
-    "Capitale-Nationale": 0.0897,
-    "Mauricie": 0.0318,
-    "Estrie": 0.0580,
-    "Montreal": 0.2430,
-    "Outaouais": 0.0472,
-    "Abitibi-Temiscamingue": 0.0165,
-    "Cote-Nord": 0.0099,
-    "Nord-du-Quebec": 0.0052,
-    "Gaspesie–Iles-de-la-Madeleine": 0.0102,
-    "Chaudiere-Appalaches": 0.0503,
-    "Laval": 0.0508,
-    "Lanaudiere": 0.0620,
-    "Laurentides": 0.0744,
-    "Monteregie": 0.1675,
-    "Centre-du-Quebec": 0.0291,
-}
-
 # Utilisation des fonctions
 couts = cost_solar_powerplant(coordinates_centrales, resultats_centrales)
 couts_installation = calculate_installation_cost(coordinates_centrales)
@@ -525,21 +522,21 @@ durees_vie = calculate_lifetime(coordinates_centrales)
 emissions_co2 = co2_emissions_solar(coordinates_centrales, resultats_centrales)
 
 # Affichage des résultats
-# print("\n=== RÉSULTATS PAR CENTRALE ===")
-# for centrale in coordinates_centrales:
-#     nom = centrale[2]
-#     duree_vie = durees_vie[nom]
-#     print(f"\n{nom}:")
-#     print(
-#         f"  Production annuelle : {resultats_centrales[nom]['energie_annuelle_wh']/1000:,.2f} kWh"
-#     )
-#     print(f"  Puissance installée : {centrale[5]:,.2f} kW")
-#     print(f"  Coût total : {couts[nom]:,.2f} $")
-#     print(f"  Coût d'installation : {couts_installation[nom]:,.2f} $")
-#     print(f"  Durée de vie estimée : {duree_vie} ans")
-#     print(
-#         f"  Émissions CO₂ totales : {emissions_co2[nom]:,.2f} kg CO₂eq sur {duree_vie} ans"
-#     )
+print("\n=== RÉSULTATS PAR CENTRALE ===")
+for centrale in coordinates_centrales:
+    nom = centrale[2]
+    duree_vie = durees_vie[nom]
+    print(f"\n{nom}:")
+    print(
+        f"  Production annuelle : {resultats_centrales[nom]['energie_annuelle_wh']/1000:,.2f} kWh"
+    )
+    print(f"  Puissance installée : {centrale[5]:,.2f} kW")
+    print(f"  Coût total : {couts[nom]:,.2f} $")
+    print(f"  Coût d'installation : {couts_installation[nom]:,.2f} $")
+    print(f"  Durée de vie estimée : {duree_vie} ans")
+    print(
+        f"  Émissions CO₂ totales : {emissions_co2[nom]:,.2f} kg CO₂eq sur {duree_vie} ans"
+    )
 
 # Exemple d'utilisation
 if __name__ == "__main__":
@@ -563,93 +560,96 @@ if __name__ == "__main__":
 
     print(f"\nProduction totale pour toutes les régions : {energie_totale:,.2f} kWh")
 
+
 end_time = time.time()
 
 print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
 
-# #   Validation avec données réelles Hydro-Québec ##
-# def load_csv(file_path):
-#     """
-#     Charge le fichier CSV contenant les données de production solaire.
-
-#     Parameters
-#     ----------
-#     file_path : str
-#         Chemin vers le fichier CSV.
-
-#     Returns
-#     -------
-#     DataFrame
-#         DataFrame contenant les données de production solaire.
-#     """
-#     return pd.read_csv(file_path, sep=";")
 
 
-# def plot_validation(resultats_centrales, real_data):
-#     """
-#     Superpose sur un graphique mensuel la production des centrales solaires simulée totale avec les données réelles.
+#   Validation avec données réelles Hydro-Québec ##
+def load_csv(file_path):
+    """
+    Charge le fichier CSV contenant les données de production solaire.
 
-#     Parameters
-#     ----------
-#     resultats_centrales : dict
-#         Dictionnaire contenant les résultats des centrales solaires simulées.
-#     real_data : DataFrame
-#         DataFrame contenant les données de production solaire réelle.
-#     """
-#     # Combiner les données horaires de toutes les centrales simulées
-#     simulated_data = pd.concat(
-#         [
-#             resultats_centrales[name]["energie_horaire"]
-#             for name in resultats_centrales.keys()
-#             if name != "energie_totale_wh"
-#         ]
-#     )
-#     simulated_data = simulated_data.groupby(simulated_data.index).sum()
+    Parameters
+    ----------
+    file_path : str
+        Chemin vers le fichier CSV.
 
-#     # Assurez-vous que simulated_data est un DataFrame et ajoutez la colonne 'production_kwh'
-#     simulated_data = simulated_data.to_frame(name="production_kwh")
-#     simulated_data["month"] = simulated_data.index.month
-
-#     # Calculer la production mensuelle simulée
-#     monthly_simulated = (
-#         simulated_data.groupby("month")["production_kwh"].sum() / 1e6
-#     )  # Conversion de Wh en MWh
-
-#     real_data["Solaire"] = real_data["Solaire"]
-
-#     # Calculer la production mensuelle réelle
-#     real_data["month"] = pd.to_datetime(real_data["Date"]).dt.month
-#     monthly_real = real_data.groupby("month")["Solaire"].sum()
-#     # Tracer le graphique
-#     plt.figure(figsize=(10, 6))
-#     plt.plot(
-#         monthly_simulated.index,
-#         monthly_simulated.values,
-#         marker="o",
-#         linestyle="-",
-#         color="b",
-#         label="Production simulée",
-#     )
-#     plt.plot(
-#         monthly_real.index,
-#         monthly_real.values,
-#         marker="o",
-#         linestyle="-",
-#         color="r",
-#         label="Production réelle",
-#     )
-#     plt.title("Production Solaire Mensuelle")
-#     plt.xlabel("Mois")
-#     plt.ylabel("Production (MWh)")
-#     plt.legend()
-#     plt.grid(True)
-#     plt.xticks(range(1, 13))
-#     plt.show()
+    Returns
+    -------
+    DataFrame
+        DataFrame contenant les données de production solaire.
+    """
+    return pd.read_csv(file_path, sep=";")
 
 
-# # Charger les données réelles
-# file_path = "2022-sources-electricite-quebec.csv"
-# real_data = load_csv(file_path)
+def plot_validation(resultats_centrales, real_data):
+    """
+    Superpose sur un graphique mensuel la production des centrales solaires simulée totale avec les données réelles.
+
+    Parameters
+    ----------
+    resultats_centrales : dict
+        Dictionnaire contenant les résultats des centrales solaires simulées.
+    real_data : DataFrame
+        DataFrame contenant les données de production solaire réelle.
+    """
+    # Combiner les données horaires de toutes les centrales simulées
+    simulated_data = pd.concat(
+        [
+            resultats_centrales[name]["energie_horaire"]
+            for name in resultats_centrales.keys()
+            if name != "energie_totale_wh"
+        ]
+    )
+    simulated_data = simulated_data.groupby(simulated_data.index).sum()
+
+    # Assurez-vous que simulated_data est un DataFrame et ajoutez la colonne 'production_kwh'
+    simulated_data = simulated_data.to_frame(name="production_kwh")
+    simulated_data["month"] = simulated_data.index.month
+
+    # Calculer la production mensuelle simulée
+    monthly_simulated = (
+        simulated_data.groupby("month")["production_kwh"].sum() / 1e6
+    )  # Conversion de Wh en MWh
+
+    real_data["Solaire"] = real_data["Solaire"]
+
+    # Calculer la production mensuelle réelle
+    real_data["month"] = pd.to_datetime(real_data["Date"]).dt.month
+    monthly_real = real_data.groupby("month")["Solaire"].sum()
+    # Tracer le graphique
+    plt.figure(figsize=(10, 6))
+    plt.plot(
+        monthly_simulated.index,
+        monthly_simulated.values,
+        marker="o",
+        linestyle="-",
+        color="b",
+        label="Production simulée",
+    )
+    plt.plot(
+        monthly_real.index,
+        monthly_real.values,
+        marker="o",
+        linestyle="-",
+        color="r",
+        label="Production réelle",
+    )
+    plt.title("Production Solaire Mensuelle")
+    plt.xlabel("Mois")
+    plt.ylabel("Production (MWh)")
+    plt.legend()
+    plt.grid(True)
+    plt.xticks(range(1, 13))
+    plt.show()
+
+
+# Charger les données réelles
+file_path = "2022-sources-electricite-quebec.csv"
+real_data = load_csv(file_path)
 
 # # Superposer les données simulées et réelles sur un graphique
 # plot_validation(resultats_centrales, real_data)
