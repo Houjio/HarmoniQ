@@ -54,6 +54,7 @@ import pandas as pd
 from pathlib import Path
 from typing import Optional
 from .geo_utils import GeoUtils
+from harmoniq.modules.eolienne import InfraParcEolienne
 
 from harmoniq.db.engine import get_db
 from harmoniq.db.schemas import Eolienne,Solaire,Hydro, Nucleaire, Thermique
@@ -201,6 +202,7 @@ class NetworkDataLoader:
 
     def load_timeseries_data(self, 
                            network: pypsa.Network,
+                           scenario,
                            year: str,
                            start_date: Optional[str] = None,
                            end_date: Optional[str] = None) -> pypsa.Network:
@@ -220,25 +222,35 @@ class NetworkDataLoader:
             DataLoadError: Si les données sont inaccessibles ou mal formatées
         """
         try:
-            # Chargement des loads
-            loads_path = self.data_dir / "timeseries" / year / "loads-p_set.csv"
-            loads_df = pd.read_csv(loads_path, index_col=0, parse_dates=True)
-            #Les noms des colonnes dans les données et dans les loads doivent être identiques
-            loads_df.columns = [f"load_{col}" for col in loads_df.columns]
-            network.loads_t.p_set = loads_df
+            # Création de l'index temporel
+            snapshots = pd.date_range(
+                start=scenario.date_de_debut, 
+                end=scenario.date_de_fin, 
+                freq=scenario.pas_de_temps
+            )
+            network.set_snapshots(snapshots)
             
-            # Chargement des coûts marginaux pour les générateurs pilotables
-            gen_cost_path = self.data_dir / "timeseries" / year / "generation" / "generators-marginal_cost.csv"
-            gen_cost_df = pd.read_csv(gen_cost_path, index_col=0, parse_dates=True)
-            network.generators_t.marginal_cost = gen_cost_df
-
-            # Chargement de la production maximale (p_max_pu) pour les générateurs non pilotables
-            gen_pmax_path = self.data_dir / "timeseries" / year / "generation" / "generators-p_max_pu.csv"
-            gen_pmax_df = pd.read_csv(gen_pmax_path, index_col=0, parse_dates=True)
-            network.generators_t.p_max_pu = gen_pmax_df
+            if year:
+                loads_path = self.data_dir / "timeseries" / year / "loads-p_set.csv"
+                loads_df = pd.read_csv(loads_path, index_col=0, parse_dates=True)
+                loads_df.columns = [f"load_{col}" for col in loads_df.columns]
+                network.loads_t.p_set = loads_df
+                
+                gen_cost_path = self.data_dir / "timeseries" / year / "generation" / "generators-marginal_cost.csv"
+                gen_cost_df = pd.read_csv(gen_cost_path, index_col=0, parse_dates=True)
+                network.generators_t.marginal_cost = gen_cost_df
             
-            # Définition des snapshots
-            network.set_snapshots(loads_df.index)
+            p_max_pu_df = self.generate_non_pilotable_timeseries(network, scenario)
+            
+            if year and hasattr(network.generators_t, 'p_max_pu') and network.generators_t.p_max_pu is not None:
+                existing_cols = network.generators_t.p_max_pu.columns
+                p_max_pu_df = pd.concat([
+                    network.generators_t.p_max_pu.drop(columns=p_max_pu_df.columns, errors='ignore'),
+                    p_max_pu_df
+                ], axis=1)
+            
+            # Mise à jour des données temporelles
+            network.generators_t.p_max_pu = p_max_pu_df
             
             return network
             
@@ -461,3 +473,43 @@ class NetworkDataLoader:
 
         else:
             return network  # Aucune centrale trouvée
+        
+    def generate_non_pilotable_timeseries(self, network: pypsa.Network, scenario) -> pd.DataFrame:
+        """
+        Génère les données temporelles pour les générateurs non pilotables en utilisant les modules
+        de calcul spécifiques à chaque type d'énergie.
+        
+        Args:
+            network: Le réseau PyPSA
+            scenario: Le scénario contenant les paramètres de simulation
+            
+        Returns:
+            pd.DataFrame: DataFrame contenant les p_max_pu pour chaque générateur non pilotable
+        """
+        db = next(get_db())
+        p_max_pu_df = pd.DataFrame(index=pd.date_range(
+            start=scenario.date_de_debut,
+            end=scenario.date_de_fin,
+            freq=scenario.pas_de_temps
+        ))
+        
+        if self.eolienne_ids:
+            eoliennes = read_multiple_by_id(db, Eolienne, self.eolienne_ids)
+            if eoliennes:
+                infra_eolienne = InfraParcEolienne(eoliennes)
+                infra_eolienne.charger_scenario(scenario)
+                production_df = infra_eolienne.calculer_production()
+                production_df = production_df.fillna(0)
+                
+                for eolienne in eoliennes:
+                    nom = eolienne.eolienne_nom
+                    if nom in production_df.columns and nom in network.generators.index:
+                        # Calcul du p_max_pu = production / puissance_nominale
+                        p_nom = eolienne.puissance_nominal
+                        p_max_pu_df[nom] = production_df[nom] / p_nom
+                        print(f"Série temporelle générée pour l'éolienne {nom}")
+        
+        # TODO: Ajouter le code pour le solaire et l'hydro au fil de l'eau
+        # Similaire à l'implémentation pour les éoliennes
+        
+        return p_max_pu_df

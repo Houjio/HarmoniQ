@@ -12,7 +12,7 @@ sys.path.append(str(parent_dir))
 from utils import NetworkDataLoader, DataLoadError
 from harmoniq.db.engine import get_db
 from harmoniq.db.CRUD import read_data_by_id
-from harmoniq.db.schemas import ListeInfrastructures
+from harmoniq.db.schemas import ListeInfrastructures,Scenario
 
 def test_network_data():
     """
@@ -157,5 +157,85 @@ def test_network_data():
     except Exception as e:
         print(f"Erreur inattendue: {e}")
 
+def test_timeseries_data():
+    """
+    Teste le chargement et la génération des données temporelles du réseau.
+    Vérifie spécifiquement la génération des p_max_pu pour les éoliennes.
+    """
+    print("Démarrage du test de chargement des données temporelles...")
+    
+    try:
+        db = next(get_db())
+        liste_infra = read_data_by_id(db, ListeInfrastructures, 1)
+        scenario = read_data_by_id(db, Scenario, 1)
+        
+        loader = NetworkDataLoader(data_dir=str(parent_dir / "data"))
+        loader.set_infrastructure_ids(liste_infra)
+        
+        # Chargement des données statiques
+        network = loader.load_network_data()
+        
+        # Chargement des données temporelles
+        network = loader.load_timeseries_data(network, scenario, year="2024")
+        
+        # Vérification des snapshots
+        print("\n=== SNAPSHOTS ===")
+        snapshots = network.snapshots
+        print(f"Nombre de snapshots: {len(snapshots)}")
+        print(f"Début: {snapshots[0]}, Fin: {snapshots[-1]}")
+        
+        # Vérification des p_max_pu pour les générateurs non pilotables
+        print("\n=== P_MAX_PU GÉNÉRÉS ===")
+        p_max_pu = network.generators_t.p_max_pu
+        if p_max_pu is not None:
+            print(f"Nombre de séries temporelles: {p_max_pu.shape[1]}")
+            print(f"Période couverte: {p_max_pu.index[0]} - {p_max_pu.index[-1]}")
+            
+            # Vérification des éoliennes
+            eolien_gens = network.generators[network.generators.carrier == 'eolien']
+            eolien_names = eolien_gens.index.tolist()
+            
+            eolien_series = [col for col in p_max_pu.columns if col in eolien_names]
+            print(f"\nSéries temporelles pour les éoliennes: {len(eolien_series)}/{len(eolien_names)}")
+            
+            for name in eolien_names:
+                if name in p_max_pu.columns:
+                    serie = p_max_pu[name]
+                    print(f"- {name}: min={serie.min():.4f}, max={serie.max():.4f}, moyenne={serie.mean():.4f}")
+                else:
+                    print(f"- {name}: ❌ Pas de série temporelle")
+            
+            # Vérification des valeurs
+            invalid_values = (p_max_pu < 0).sum().sum() + (p_max_pu > 1).sum().sum()
+            if invalid_values > 0:
+                print(f"ERREUR: {invalid_values} valeurs hors de l'intervalle [0,1]")
+            else:
+                print("✓ Toutes les valeurs sont dans l'intervalle [0,1]")
+            
+            # Affichage d'un échantillon
+            print("\nÉchantillon des premières valeurs:")
+            print(p_max_pu.iloc[300:306])
+        else:
+            print("ERREUR: Aucune série temporelle p_max_pu n'a été générée")
+        
+        # Vérification des charges
+        print("\n=== CHARGES ===")
+        if hasattr(network, 'loads_t') and hasattr(network.loads_t, 'p_set'):
+            loads = network.loads_t.p_set
+            print(f"Nombre de séries temporelles pour les charges: {loads.shape[1]}")
+            print(f"Échantillon des premières valeurs:")
+            print(loads.head())
+        else:
+            print("AVERTISSEMENT: Aucune série temporelle pour les charges n'a été chargée")
+        
+        print("\nTest des séries temporelles terminé avec succès!")
+        
+    except Exception as e:
+        print(f"Erreur lors du test des séries temporelles: {e}")
+        import traceback
+        traceback.print_exc()
+
 if __name__ == "__main__":
-    test_network_data()
+    # test_network_data()
+    test_timeseries_data()
+
