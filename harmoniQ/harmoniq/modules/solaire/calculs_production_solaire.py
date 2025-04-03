@@ -82,7 +82,10 @@ def calculate_solar_parameters(
     pressure = pvlib.atmosphere.alt2pres(altitude)
     am_abs = pvlib.atmosphere.get_absolute_airmass(airmass, pressure)
     aoi = pvlib.irradiance.aoi(
-        surface_tilt, surface_orientation, solpos["apparent_zenith"], solpos["azimuth"],
+        surface_tilt,
+        surface_orientation,
+        solpos["apparent_zenith"],
+        solpos["azimuth"],
     )
     total_irradiance = pvlib.irradiance.get_total_irradiance(
         surface_tilt,
@@ -155,8 +158,6 @@ start_time = time.time()
 
 sandia_modules = pvlib.pvsystem.retrieve_sam("SandiaMod")
 module = sandia_modules["Canadian_Solar_CS5P_220M___2009_"]
-
-
 
 
 # Définition des centrales solaires avec leurs puissances
@@ -237,7 +238,6 @@ def calculate_energy_solar_plants(
             "nombre_modules": nombre_modules,
             "puissance_kw": puissance_kw,
         }
-
 
     resultats_centrales["energie_totale_wh"] = energie_totale
     return resultats_centrales
@@ -402,7 +402,7 @@ def calculate_installation_cost(coordinates_centrales):
 
         # Calcul du coût d'installation avec facteurs
         cout_installation = (
-            cout_base * (puissance_mw ** facteur_echelle) * facteur_complexite
+            cout_base * (puissance_mw**facteur_echelle) * facteur_complexite
         )
 
         couts_installation[nom] = cout_installation
@@ -546,7 +546,6 @@ if __name__ == "__main__":
     # Test avec une surface de 100 m²
     surface_test = 100  # m²
 
-   
     resultats = calculate_regional_residential_solar(
         coordinates_residential,
         population_relative,
@@ -654,4 +653,3 @@ print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
 
 # # Superposer les données simulées et réelles sur un graphique
 # plot_validation(resultats_centrales, real_data)
-

@@ -4,14 +4,13 @@ from harmoniq.db.schemas import HydroBase, ScenarioBase
 from typing import List
 
 
-
 class Hydro(Infrastructure):
 
     def __init__(self, donnees: List[HydroBase]):
         super().__init__(donnees)
 
     @necessite_scenario
-    def _charger_debit(self,scenario):
+    def _charger_debit(self, scenario):
 
         pass
 
@@ -23,10 +22,5 @@ class Hydro(Infrastructure):
         date_fin = scenario.date_fin
 
         return
-
-    
-
-
-
 
     pass

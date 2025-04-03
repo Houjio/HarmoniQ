@@ -79,10 +79,6 @@ function initialiserListeParc(type, elementId) {
         .then(data => {
             data.forEach(parc => {
                 listeElement.innerHTML += createElement(parc);
-
-                console.log('Parc éolien:', parc);
-                console.log('parc lat:', parc.latitude);
-                console.log('parc long:', parc.longitude);
             });
         })
         .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
@@ -114,12 +110,6 @@ function changeInfra() {
     const selectedId = $("#groupe-actif option:selected").val();
     fetchData(`/api/listeinfrastructures/${selectedId}`)
         .then(data => {
-            const sanitizedData = {
-                parc_eoliens: data.parc_eoliens || "",
-                parc_solaires: data.parc_solaires || "",
-                central_thermique: data.central_thermique || ""
-            };
-
             const categories = [
                 { elementId: "list-parc-eolien", activeIds: data.parc_eoliens.split(',') },
                 { elementId: "solarCollapse", activeIds: data.parc_solaires.split(',') },
@@ -174,28 +164,31 @@ function unblock_run() {
 }
 
 function lancer_simulation() {
-    let scenario = parseInt($('#scenario-actif').val(), 10);
-    let groupe = parseInt($('#groupe-actif').val(), 10);
+    let scenario = parseInt($('#scenario-actif').val());
+    let groupe = parseInt($('#groupe-actif').val());
 
     if (scenario === '' || scenario === null || groupe === '' || groupe === null) {
         alert('Veuillez sélectionner un scenario et un groupe d\'infrastructures');
         return;
     }
 
-    $.ajax({
-        type: 'POST',
-        url: `/api/simulation?scenario_id=${scenario}&liste_infra_id=${groupe}`,
-        contentType: 'application/json',
-        success: function(response) {
-            console.log('Simulation lancée avec succès:', response);
-        },
-        error: function(error) {
-            if (error.status === 501) {
-                alert('Fonctionnalité non implémentée');
-            }
-            console.error('Erreur lors du lancement de la simulation:', error);
-        }
-    });
+    alert("Le graphique est purement à titre indicatif et ne représente pas les données réelles.");
+    charger_production(scenario);
+
+    // $.ajax({
+    //     type: 'POST',
+    //     url: `/api/simulation?scenario_id=${scenario}&liste_infra_id=${groupe}`,
+    //     contentType: 'application/json',
+    //     success: function(response) {
+    //         console.log('Simulation lancée avec succès:', response);
+    //     },
+    //     error: function(error) {
+    //         if (error.status === 501) {
+    //             unimplemented();
+    //         }
+    //         console.error('Erreur lors du lancement de la simulation:', error);
+    //     }
+    // });
 }
 
 function add_infra(element) {
@@ -339,12 +332,6 @@ function changeInfra() {
         .then(response => response.json())
         .then(data => {
             console.log('Groupe d\'infrastructures actif:', data);
-
-            Object.keys(data).forEach(key => {
-                if (data[key] === null) {
-                    data[key] = "";
-                }
-            });
 
             const categories = [
                 { elementId: "list-parc-eolien", activeIds: data.parc_eoliens.split(',') },
