@@ -173,10 +173,9 @@ def fill_hydro():
                 volume_reservoir = row['Volume_reservoir'],
                 id_HQ = row['id_HQ'],
             )
-
-        count += 1
-        create_hydro(db, db_hydro)
-        print(f"Barrage '{db_hydro.barrage_nom}' ajouté à la base de données")
+            count += 1
+            create_hydro(db, db_hydro)
+            print(f"Barrage '{db_hydro.barrage_nom}' ajouté à la base de données")
 
     print(f"{count} barrage ajoutés à la base de données")
 

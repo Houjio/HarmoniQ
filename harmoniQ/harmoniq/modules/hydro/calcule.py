@@ -7,7 +7,6 @@ from harmoniq.db.engine import get_db
 from harmoniq.db.CRUD import read_all_hydro
 
 
-<<<<<<< HEAD
 def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel):
     db = next(get_db())
     barrages = read_all_hydro(db)
@@ -55,96 +54,6 @@ def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel):
                         nb_turbines_a = nb_turbines_actives[i]
                         debits_turb = hp.flow[i]
                         break
-=======
-def reservoir_infill(
-    Type_barrage,
-    nb_turbines,
-    Debit_nom,
-    Volume_remplie,
-    nom_barrage,
-    besoin_puissance,
-    info_puissance,
-    pourcentage_reservoir,
-    apport_naturel,
-    nbr_turb_maintenance,
-):  # Ajouter débit entrant pour les réservoirs
-
-    # La fonction reservoir_infill permet de calculer le pourcentage de remplissage du réservoir associé à un barrage
-    # en fonction du nombre turbines actives, du débit entrant dans le réservoir et du
-    # pourcentage de remplissage du réservoir actuel.
-    # Variable en entrée :
-    #   - info_barrage : Dataframe contenant les informations des barrages extraite du csv Info_Barrages.csv. Les colonnes du dataframe utilisées dans la fonction sont les suivantes
-    #       - Nom : Nom du barrage [string]
-    #       - Type : Type du barrage ["Fil de l'eau" vs "Reservoir" (string)]
-    #       - Debits_nom : Debit d'équipement des turbines en m^3/s [float]
-    #       - Nb_turbines : Nombre de turbines installée dans le barrage [float]
-    #       - Volume_reservoir : Volume du réservoir associé au barrage à réservoir en m^3 [float]
-    #   - nom_barrage : Nom du barrage étudié [string]
-    #   - besoin_puissanve : Besoin en puissance demandé pour le barrage étudié en MW [float]
-    #   - info_puissance : Dataframe contenant une simulation de la puissance produite pour chaque barrage à réservoir en
-    #                      fonction du débits turbinés et du nombre de turbines actives. Les colonnes du dataframe sont les suivantes :
-    #       - Nom : Nom du barrage [string]. Doit être la même nomenclature que pour info_barrage
-    #       - Actives turbines : Nombre de turbines activées dans le barrage [int]
-    #       - FLow (m3/s) : Débits turbinés pour toute les turbines actives en m3/s [float]
-    #       - Power (MW) : Puissance générés par les turbines actives en MW [float]
-    #   - pourcentage_reservoir : Pourcentage de remplissage actuel du réservoir associé au barrage [float]
-    #   - debit_entrant : débit entrant dans le réservoir (calculé à l'aide de xhydro)
-    # Variable en sortie :
-    #   - pourcentage_réservoir : Pourcentage de remplissage du réservoir après une heure de production [float]
-    #   - nbr_turb_maintenance : Nombre de turbines en maintenance pour le barrage [int]
-    if Type_barrage == "Fil de l'eau":
-        print("Erreur : Le barrage entré n'est pas un barrage à réservoir")
-    else:
-        p = []
-        d = []
-        nb_turbines_a = []
-        # debit_amont = get_upstream_flows(temps,df_debit,barrage_amont)
-        Volume_reel = (
-            Volume_remplie * pourcentage_reservoir + apport_naturel * 3600
-        )  # Ajouter le debit en amont
-
-        for i in range(1, nb_turbines + 1 - nbr_turb_maintenance):
-            # Filter for Dam A and 1 active turbine
-            df_dam_a = info_puissance[
-                (info_puissance["Nom"] == nom_barrage)
-                & (info_puissance["Active Turbines"] == i)
-            ]
-            # Loop through each row and access values
-            for index, row in df_dam_a.iterrows():
-                debit = row["Flow (m3/s)"]
-                puissance = row["Power (MW)"]
-                if (
-                    abs(puissance / (besoin_puissance + 0.01) - 1) < 0.05
-                    and puissance > besoin_puissance
-                ):  # Erreur de 0.01 fonctionne mais pas avec 0.001 pour 100 variables par nombre de turbines actives dans le csv
-                    # Le +0.01 est la pour empecher la division par 0 au cas ou la demande est nulle
-                    p.append(puissance)
-                    d.append(debit)
-                    nb_turbines_a.append(i)
-                    variable_debits = 10 ^ 6
-                    for k in range(0, len(p)):
-                        if abs(d[k] / nb_turbines_a[k] - Debit_nom) < abs(
-                            variable_debits / nb_turbines_a[k] - Debit_nom
-                        ):
-                            variable_debits = d[k]
-                            nb_turb_actif = nb_turbines_a[k]
-                elif i == 1 and besoin_puissance < df_dam_a["Power (MW)"].iloc[0]:
-                    variable_debits = Debit_nom
-                    nb_turb_actif = 1
-        if Volume_reel + variable_debits * nb_turb_actif * 3600 > Volume_remplie:
-            pourcentage_reservoir = 1
-            Volume_evacue = (
-                Volume_reel + variable_debits * nb_turb_actif * 3600 - Volume_remplie
-            )
-        else:
-            pourcentage_reservoir = (
-                Volume_reel - (variable_debits * nb_turb_actif * 3600)
-            ) / Volume_remplie
-
-        # df_debit = store_flows()
-        # LRU
-        # Liste de demande
->>>>>>> 075ce1e919a59608e13a2dd80834502baffab2a9
 
                     elif besoin_puissance>hp.power[-1]:
                         nb_turbines_a = nb_turbines
@@ -178,7 +87,6 @@ def reservoir_infill(
 
 #     return flow
 
-<<<<<<< HEAD
 def get_run_of_river_dam_power(barrage):
 
     # db = next(get_db())
@@ -199,25 +107,11 @@ def get_run_of_river_dam_power(barrage):
 
     debit[nom_barrage] += barrage.apport["streamflow"].values
     # print(debit)
-=======
-
-def get_run_of_river_dam_power(
-    type_barrage,
-    nom_barrage,
-    type_turb,
-    nb_turbines,
-    head,
-    debits_nom,
-    flow,
-    nb_turbine_maintenance,
-):
->>>>>>> 075ce1e919a59608e13a2dd80834502baffab2a9
 
     if type_barrage == "Reservoir":
         print("Erreur : Le barrage entré n'est pas un barrage au fil de l'eau")
     else:
         Units = "IS"
-<<<<<<< HEAD
         hp_type = 'Diversion'
         debit[nom_barrage] /= nb_turbines
         hp = calculate_hp_potential(flow = debit, flow_column = nom_barrage, design_flow = debit_nom, head = head, units = Units, 
@@ -225,27 +119,6 @@ def get_run_of_river_dam_power(
             )
         hp.dataframe_output["power_MW"] = (hp.dataframe_output["power_kW"] * (nb_turbines - nb_turb_maintenance)) / 1000
         
-=======
-        hp_type = "Diversion"
-        flow[nom_barrage] /= nb_turbines
-
-        hp = calculate_hp_potential(
-            flow=flow,
-            flow_column=flow[nom_barrage],
-            design_flow=debits_nom,
-            head=head,
-            units=Units,
-            hydropower_type=hp_type,
-            turbine_type=type_turb,
-            annual_caclulation=True,
-            annual_maintenance_flag=False,
-        )
-
-        hp.dataframe_output["power_MW"] = (
-            hp.dataframe_output["power_kW"] * (nb_turbines - nb_turbine_maintenance)
-        ) / 1000
-
->>>>>>> 075ce1e919a59608e13a2dd80834502baffab2a9
         return hp.dataframe_output["power_MW"]
     
 def get_facteur_de_charge(barrage, production):
@@ -293,7 +166,6 @@ def energy_loss(
     energy_loss = hp.power[-1] * (nb_turbines - nb_turbine_maintenance) / 1000
 
     return energy_loss
-<<<<<<< HEAD
 
 # Fonction d'estimation basée sur la régression log-log
 def estimation_cout_barrage(barrage):
@@ -469,5 +341,3 @@ def estimer_daly_futur(facteur_charge):
     daly_futur = X[0] * production_future
 
     return daly_futur
-=======
->>>>>>> 075ce1e919a59608e13a2dd80834502baffab2a9
