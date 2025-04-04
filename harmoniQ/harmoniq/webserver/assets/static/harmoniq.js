@@ -1,3 +1,5 @@
+var map;
+
 // Utility function to fetch data and handle errors
 function fetchData(url, method = 'GET', data = null) {
     return fetch(url, {
@@ -65,7 +67,29 @@ function initialiserListeInfra() {
 // Initialize wind parks
 function initialiserListeParc(type, elementId) {
     const listeElement = document.getElementById(elementId).getElementsByTagName('ul')[0];
-
+    
+    const icons = {
+        eolienneparc: L.icon({
+            iconUrl: '/static/icons/heolienne.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        }),
+        solaire: L.icon({
+            iconUrl: '/static/icons/solaire.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        }),
+        thermique: L.icon({
+            iconUrl: '/static/icons/thermique.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        }),
+        barrage: L.icon({
+            iconUrl: '/static/icons/barrage.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        })
+    };
     function createElement({ nom, id }) {
         return `
             <li class="list-group-item list-group-item-action" role="button" elementid=${id} onclick="add_infra(this)">
@@ -73,16 +97,27 @@ function initialiserListeParc(type, elementId) {
             </li>
         `;
     }
-
     fetch(`/api/${type}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+            return response.json();
+        })
         .then(data => {
+            console.log(`Liste des ${type}:`, data);
+
+            // Parcourir les données et ajouter les points sur la carte
             data.forEach(parc => {
                 listeElement.innerHTML += createElement(parc);
-            });
-        })
-        .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
+                console.log(parc.latitude, parc.longitude, type);
+                // Ajouter un marqueur sur la carte
+                L.marker([parc.latitude, parc.longitude], { icon: icons[type] })
+                    .addTo(map)
+                    .bindPopup(`<b>${parc.nom}</b><br>Catégorie: ${type}`);
+        });
+    })
+    .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
 }
+    
 
 function initialiserListeParcEolienne() {
     initialiserListeParc('eolienneparc', 'list-parc-eolien');
@@ -573,7 +608,7 @@ $('#delete-scenario').on('click', function() {
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-    var map = L.map('map-box', {
+    map = L.map('map-box', {
         zoomControl: true,
         attributionControl: true,
         maxZoom: 10,

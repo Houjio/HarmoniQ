@@ -1,0 +1,20 @@
+div#main {
+    width: 100%;
+    /* display: grid; */
+    padding: 1em;
+    height: calc(100vh - 5em);
+}
+
+div#main > div {
+    border-radius: 15px;
+    padding: 1em;
+}
+
+div#main div#sidebar, div#main div#scenario {
+    width: 50%;
+}
+
+div#main div#sidebar {
+    max-height: 50%;
+    overflow-y: auto;
+}
