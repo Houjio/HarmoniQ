@@ -195,6 +195,11 @@
         <div class="tab-content flex-grow-1" id="myTabContent">
             <div class="tab-pane show active h-100" id="map" role="tabpanel" aria-labelledby="map-tab">
                 <div id="map-box" style="width: 100%; height: 100%;">
+                    <div id="icon-box" style="position: absolute; bottom: 10px; left: 10px; background: white; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 1000;">
+                        <img src="/static/icons/solaire.png" class="draggable-icon" data-type="solaire" style="width: 40px; cursor: grab;" />
+                        <img src="/static/icons/barrage.png" class="draggable-icon" data-type="barrage" style="width: 40px; cursor: grab;" />
+                        <img src="/static/icons/thermique.png" class="draggable-icon" data-type="thermique" style="width: 40px; cursor: grab;" />
+                        <img src="/static/icons/heolienne.png" class="draggable-icon" data-type="eolienne" style="width: 40px; cursor: grab;" />
                 </div>
             </div>
             <div class="tab-pane show h-100" id="sankey" role="tabpanel" aria-labelledby="sankey-tab">
@@ -218,6 +223,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment/locale/fr.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
 <script src="{{ url_for('static', path='graphiques.js') }}"></script>
 <script src="{{ url_for('static', path='harmoniq.js') }}"></script>
