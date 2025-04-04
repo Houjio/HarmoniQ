@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+import numpy as np # for eq9
 from pathlib import Path
 
 from harmoniq.webserver.REST import router as api_router
@@ -15,8 +16,14 @@ app = FastAPI(
     title="HarmoniQ",
     description="Outil de modélisation de production d'énergie au Québec",
     version="0.1",
-    contact={"name": "Sébastien Dasys", "email": "sebastien.dasys@polymtl.ca",},
-    license_info={"name": "MIT", "url": "https://opensource.org/licenses/MIT",},
+    contact={
+        "name": "Sébastien Dasys",
+        "email": "sebastien.dasys@polymtl.ca",
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT",
+    },
 )
 app.mount("/static", StaticFiles(directory=STATIC_FILE), name="static")
 
@@ -26,6 +33,7 @@ templates = Jinja2Templates(directory=ASSET_FILE)
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
+
 
 @app.get("/favicon.ico", response_class=FileResponse)
 def favicon():
@@ -47,6 +55,9 @@ def documentation(request: Request):
 def application(request: Request):
     return templates.TemplateResponse(request=request, name="app.html")
 
+@app.get("/eq9")
+def application(request: Request):
+    return {"données": np.random.uniform(0.2e12, 1.2e12, 8000).tolist()}
 
 @app.get("/Eloise", response_class=HTMLResponse)
 def eloisepage(request: Request):

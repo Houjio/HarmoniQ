@@ -31,7 +31,7 @@ def calculate_thermal_production(power_kw, maintenance_week):
     return production_df
 
 # Paramètres de la centrale nucléaire
-power_kw = 1000  # Puissance nominale en kW
+power_kw = 400*1000  # Puissance nominale d'une centrale thermique moyenne en kW (400 MW)
 maintenance_week = 22  # Semaine de maintenance
 
 # Calculer la production annuelle et hebdomadaire

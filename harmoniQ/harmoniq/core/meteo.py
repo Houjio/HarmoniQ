@@ -171,7 +171,9 @@ class WeatherHelper:
         return new_data
 
     def _get_nearest_station(
-        self, radius: Optional[int] = 200, limit: Optional[int] = 100,
+        self,
+        radius: Optional[int] = 200,
+        limit: Optional[int] = 100,
     ) -> pd.DataFrame:
         if self._nearby_stations is not None:
             return self._nearby_stations
@@ -240,9 +242,9 @@ class WeatherHelper:
             clean_df["neige_accumulee_cm"] = data["Snow on Grnd (cm)"]
             clean_df["direction_vent"] = data["Dir of Max Gust (10s deg)"]
             clean_df["vitesse_vent_kmh"] = data["Spd of Max Gust (km/h)"]
-            clean_df["humidite"] = clean_df["pression"] = clean_df[
-                "point_de_rosee"
-            ] = np.nan
+            clean_df["humidite"] = clean_df["pression"] = clean_df["point_de_rosee"] = (
+                np.nan
+            )
 
         return clean_df
 
@@ -282,7 +284,10 @@ class WeatherHelper:
         asyncio.run(historical.update())
         return pd.read_csv(historical.station_data)
 
-    def _get_historical_data_range(self, station_id: int,) -> pd.DataFrame:
+    def _get_historical_data_range(
+        self,
+        station_id: int,
+    ) -> pd.DataFrame:
         if self._granularity == Granularity.HOURLY:
             date_range = pd.date_range(
                 start=self.start_time, end=self.end_time, freq="MS"
@@ -305,13 +310,20 @@ class WeatherHelper:
         return data
 
     def _get_historical_data_hourly(
-        self, station_id: int, year: int, month: int,
+        self,
+        station_id: int,
+        year: int,
+        month: int,
     ) -> pd.DataFrame:
         return self._get_historical_data(
             station_id, granularity=1, year=year, month=month
         )
 
-    def _get_historical_data_daily(self, station_id: int, year: int,) -> pd.DataFrame:
+    def _get_historical_data_daily(
+        self,
+        station_id: int,
+        year: int,
+    ) -> pd.DataFrame:
         return self._get_historical_data(station_id, timeframe=2, year=year)
 
 
