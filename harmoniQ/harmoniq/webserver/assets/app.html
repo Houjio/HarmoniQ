@@ -195,10 +195,45 @@
         <div class="tab-content flex-grow-1" id="myTabContent">
             <div class="tab-pane show active h-100" id="map" role="tabpanel" aria-labelledby="map-tab">
                 <div id="map-box" style="width: 100%; height: 100%;">
+                    <div id="icon-box" style="position: absolute; bottom: 10px; left: 10px; background: white; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 1000; width: 200px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h5 style="margin: 0; font-weight: bold;">Légende</h5>
+                            <button id="toggle-legend" style="background: none; border: none; font-size: 16px; cursor: pointer;">−</button>
+                        </div>
+                        <div id="legend-content">
+                            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                                <img src="/static/icons/heolienne.png" style="width: 45px; height: 45px; margin-right: 8px;"> Parc Éolien
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                                <img src="/static/icons/solaire.png" style="width: 45px; height: 45px; margin-right: 8px;"> Parc Solaire
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                                <img src="/static/icons/thermique.png" style="width: 45px; height: 45px; margin-right: 8px;"> Centrale Thermique
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <img src="/static/icons/barrage.png" style="width: 45px; height: 45px; margin-right: 8px;"> Barrage Hydro-Électrique
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const toggleButton = document.getElementById("toggle-legend");
+                            const legendContent = document.getElementById("legend-content");
+                    
+                            toggleButton.addEventListener("click", function () {
+                                if (legendContent.style.display === "none") {
+                                    // Afficher la légende
+                                    legendContent.style.display = "block";
+                                    toggleButton.textContent = "−"; // Changer le bouton pour "réduire"
+                                } else {
+                                    // Réduire la légende
+                                    legendContent.style.display = "none";
+                                    toggleButton.textContent = "+"; // Changer le bouton pour "afficher"
+                                }
+                            });
+                        });
+                    </script>
                 </div>
-            </div>
-            <div class="tab-pane show h-100" id="sankey" role="tabpanel" aria-labelledby="sankey-tab">
-                <div id="sankey-plot" style="height: 100%; width: 100%;"></div>
             </div>
             <div class="tab-pane show h-100" id="production" role="tabpanel" aria-labelledby="production-tab">
                 <div id="production-plot" style="height: 100%; width: 100%;"></div>
