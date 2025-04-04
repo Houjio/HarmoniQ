@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
-import logging
 from typing import List, Optional
 from datetime import datetime
 import pandas as pd
@@ -18,6 +17,7 @@ from harmoniq.db.CRUD import (
 )
 from harmoniq.core import meteo
 from harmoniq.db.engine import get_db
+from harmoniq.core.fausse_données import production_aleatoire
 
 from harmoniq.modules.eolienne import InfraParcEolienne
 
@@ -95,7 +95,7 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
         async def read_all(db: Session = Depends(get_db)):
             result = read_all_data(db, sql_class)
             return result
-        
+
         @class_router.get(
             "/multiple/{ids}",
             response_model=List[response_class],
@@ -230,6 +230,25 @@ def calculer_production_parc_eolien(
     json_prod = production.to_json()
 
     return json_prod
+
+
+# Fausses données
+faker_router = APIRouter(
+    prefix="/faker",
+    tags=["Faker"],
+    responses={404: {"description": "Not found"}},
+)
+api_routers["faker"] = faker_router
+
+
+@faker_router.post("/production")
+def get_production_aleatoire(scenario_id: int, db: Session = Depends(get_db)):
+    scenario = read_data_by_id(db, schemas.Scenario, scenario_id)
+    if scenario is None:
+        raise HTTPException(status_code=200, detail="Scenario not found")
+
+    production = production_aleatoire(scenario)
+    return production
 
 
 # Ajout des routes aux endpoint

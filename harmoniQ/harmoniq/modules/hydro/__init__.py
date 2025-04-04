@@ -7,7 +7,6 @@ import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
 from typing import List
-
 CURRENT_DIR = Path(__file__).parent
 DEBIT_DIR = CURRENT_DIR / "debits"
 APPORT_DIR = CURRENT_DIR / "apport_naturel"

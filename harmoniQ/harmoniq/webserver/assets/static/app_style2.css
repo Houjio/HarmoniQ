@@ -1,0 +1,83 @@
+/* Main Layout */
+div#main {
+    padding: 1em;
+    gap: 1rem;
+    display: grid;
+    grid-template-areas:
+        "scenario plot";
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto;
+    /* Let the content expand naturally, no forced height */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1250px) {
+    div#main {
+        grid-template-areas:
+            "scenario"
+            "plot";
+        grid-template-columns: 1fr;
+    }
+
+    div#plots #sankeyDiagram {
+        height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    div#main {
+        height: auto;
+        grid-template-areas:
+            "scenario"
+            "plot";
+        grid-template-columns: 1fr;
+    }
+
+    div#plots #sankeyDiagram {
+        height: 300px;
+    }
+}
+
+/* Ensure smooth layout for scenario section */
+div#scenario {
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+    padding: 1em;
+    overflow-y: auto;
+    max-width: 800px;
+}
+
+/* Center the Sankey diagram and prevent overflow */
+div#sankeyContainer {
+    width: 100%;
+    height: 100%;
+    max-width: 900px;
+    margin: auto;
+    padding: 1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div#sankeyDiagram {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+}
+
+/* Improve Table Layout */
+.table {
+    font-size: 14px;
+}
+
+.table-responsive {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* Improve button styling */
+button#generateButton {
+    font-size: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+}

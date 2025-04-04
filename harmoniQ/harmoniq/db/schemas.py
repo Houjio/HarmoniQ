@@ -347,8 +347,9 @@ class SolaireBase(BaseModel):
 class SolaireCreate(SolaireBase):
     pass
 
+
 class HydroBase(BaseModel):
-    barrage_nom : str
+    barrage_nom: str
     longitude: float
     latitude: float
     type_barrage: str
@@ -366,13 +367,17 @@ class HydroBase(BaseModel):
     class Config:
         from_attributes = True
 
+
 class HydroCreate(HydroBase):
     pass
 
+
 class HydroResponse(HydroBase):
     id: int
+
     class Config:
         from_attributes = True
+
 
 class Hydro(SQLBase):
     __tablename__ = "hydro"
@@ -392,6 +397,7 @@ class Hydro(SQLBase):
     id_HQ = Column(Integer)
     annee_commission = Column(Integer, nullable=True)
     materiau_conduite = Column(String, nullable=True)
+
 
 class SolaireResponse(SolaireBase):
     id: int

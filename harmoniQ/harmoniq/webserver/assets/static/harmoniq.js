@@ -1,3 +1,5 @@
+var map;
+
 // Utility function to fetch data and handle errors
 function fetchData(url, method = 'GET', data = null) {
     return fetch(url, {
@@ -65,7 +67,29 @@ function initialiserListeInfra() {
 // Initialize wind parks
 function initialiserListeParc(type, elementId) {
     const listeElement = document.getElementById(elementId).getElementsByTagName('ul')[0];
-
+    
+    const icons = {
+        eolienneparc: L.icon({
+            iconUrl: '/static/icons/heolienne.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        }),
+        solaire: L.icon({
+            iconUrl: '/static/icons/solaire.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        }),
+        thermique: L.icon({
+            iconUrl: '/static/icons/thermique.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        }),
+        barrage: L.icon({
+            iconUrl: '/static/icons/barrage.png',
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        })
+    };
     function createElement({ nom, id }) {
         return `
             <li class="list-group-item list-group-item-action" role="button" elementid=${id} onclick="add_infra(this)">
@@ -73,20 +97,27 @@ function initialiserListeParc(type, elementId) {
             </li>
         `;
     }
-
     fetch(`/api/${type}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+            return response.json();
+        })
         .then(data => {
+            console.log(`Liste des ${type}:`, data);
+
+            // Parcourir les données et ajouter les points sur la carte
             data.forEach(parc => {
                 listeElement.innerHTML += createElement(parc);
-
-                console.log('Parc éolien:', parc);
-                console.log('parc lat:', parc.latitude);
-                console.log('parc long:', parc.longitude);
-            });
-        })
-        .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
+                console.log(parc.latitude, parc.longitude, type);
+                // Ajouter un marqueur sur la carte
+                L.marker([parc.latitude, parc.longitude], { icon: icons[type] })
+                    .addTo(map)
+                    .bindPopup(`<b>${parc.nom}</b><br>Catégorie: ${type}`);
+        });
+    })
+    .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
 }
+    
 
 function initialiserListeParcEolienne() {
     initialiserListeParc('eolienneparc', 'list-parc-eolien');
@@ -114,12 +145,6 @@ function changeInfra() {
     const selectedId = $("#groupe-actif option:selected").val();
     fetchData(`/api/listeinfrastructures/${selectedId}`)
         .then(data => {
-            const sanitizedData = {
-                parc_eoliens: data.parc_eoliens || "",
-                parc_solaires: data.parc_solaires || "",
-                central_thermique: data.central_thermique || ""
-            };
-
             const categories = [
                 { elementId: "list-parc-eolien", activeIds: data.parc_eoliens.split(',') },
                 { elementId: "solarCollapse", activeIds: data.parc_solaires.split(',') },
@@ -174,28 +199,31 @@ function unblock_run() {
 }
 
 function lancer_simulation() {
-    let scenario = parseInt($('#scenario-actif').val(), 10);
-    let groupe = parseInt($('#groupe-actif').val(), 10);
+    let scenario = parseInt($('#scenario-actif').val());
+    let groupe = parseInt($('#groupe-actif').val());
 
     if (scenario === '' || scenario === null || groupe === '' || groupe === null) {
         alert('Veuillez sélectionner un scenario et un groupe d\'infrastructures');
         return;
     }
 
-    $.ajax({
-        type: 'POST',
-        url: `/api/simulation?scenario_id=${scenario}&liste_infra_id=${groupe}`,
-        contentType: 'application/json',
-        success: function(response) {
-            console.log('Simulation lancée avec succès:', response);
-        },
-        error: function(error) {
-            if (error.status === 501) {
-                alert('Fonctionnalité non implémentée');
-            }
-            console.error('Erreur lors du lancement de la simulation:', error);
-        }
-    });
+    alert("Le graphique est purement à titre indicatif et ne représente pas les données réelles.");
+    charger_production(scenario);
+
+    // $.ajax({
+    //     type: 'POST',
+    //     url: `/api/simulation?scenario_id=${scenario}&liste_infra_id=${groupe}`,
+    //     contentType: 'application/json',
+    //     success: function(response) {
+    //         console.log('Simulation lancée avec succès:', response);
+    //     },
+    //     error: function(error) {
+    //         if (error.status === 501) {
+    //             unimplemented();
+    //         }
+    //         console.error('Erreur lors du lancement de la simulation:', error);
+    //     }
+    // });
 }
 
 function add_infra(element) {
@@ -339,12 +367,6 @@ function changeInfra() {
         .then(response => response.json())
         .then(data => {
             console.log('Groupe d\'infrastructures actif:', data);
-
-            Object.keys(data).forEach(key => {
-                if (data[key] === null) {
-                    data[key] = "";
-                }
-            });
 
             const categories = [
                 { elementId: "list-parc-eolien", activeIds: data.parc_eoliens.split(',') },
@@ -589,7 +611,7 @@ $('#delete-scenario').on('click', function() {
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-    var map = L.map('map-box', {
+    map = L.map('map-box', {
         zoomControl: true,
         attributionControl: true,
         maxZoom: 10,
