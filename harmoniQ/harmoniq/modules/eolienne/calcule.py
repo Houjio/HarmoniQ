@@ -109,7 +109,7 @@ def get_turbine_power(eolienne: Eolienne, meteo: pd.DataFrame) -> pd.DataFrame:
 
     # Apply directional losses
     directional_losses = apply_directional_losses(meteo["direction_vent"])
-    power_output_direction = piecewise_power_curve(
+    power_output = piecewise_power_curve(
         vitesse_vents,
         turbine_data["cut_in_wind_speed"],
         (turbine_data["cut_in_wind_speed"] + turbine_data["cut_out_wind_speed"])
@@ -118,11 +118,11 @@ def get_turbine_power(eolienne: Eolienne, meteo: pd.DataFrame) -> pd.DataFrame:
         eolienne.puissance_nominal,
     )
 
-    power_with_output_direction = power_output_direction * directional_losses
+    #power_with_output_direction = power_output_direction *directional_losses 
 
     # Apply wake losses
     wake_losses = apply_wake_losses(meteo["direction_vent"])
-    power_with_wake_losses = power_with_output_direction * wake_losses
+    power_with_wake_losses = power_output * wake_losses
 
     # Apply ice losses
     ice_losses = ice_loss_factor(meteo["temperature"])
