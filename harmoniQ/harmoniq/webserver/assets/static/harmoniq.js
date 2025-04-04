@@ -69,7 +69,7 @@ function initialiserListeParc(type, elementId) {
     const listeElement = document.getElementById(elementId).getElementsByTagName('ul')[0];
     
     const icons = {
-        eolien: L.icon({
+        eolienneparc: L.icon({
             iconUrl: '/static/icons/heolienne.png',
             iconSize: [40, 40],
             iconAnchor: [20, 20]
@@ -110,9 +110,9 @@ function initialiserListeParc(type, elementId) {
                 listeElement.innerHTML += createElement(parc);
                 console.log(parc.latitude, parc.longitude, type);
                 // Ajouter un marqueur sur la carte
-                L.marker([parc.latitude, parc.longitude], { icon: icons["eolien"] })
+                L.marker([parc.latitude, parc.longitude], { icon: icons[type] })
                     .addTo(map)
-                    .bindPopup(`<b>${parc.nom}</b><br>Catégorie: eolien`);
+                    .bindPopup(`<b>${parc.nom}</b><br>Catégorie: ${type}`);
         });
     })
     .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
