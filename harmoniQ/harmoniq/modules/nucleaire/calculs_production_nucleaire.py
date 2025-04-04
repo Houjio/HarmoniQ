@@ -33,7 +33,7 @@ def calculate_nuclear_production(power_kw, maintenance_week):
 
 
 # Paramètres de la centrale nucléaire
-power_kw = 1000  # Puissance nominale en kW
+power_kw = 300*1000  # Puissance nominale en kW (300MW pour un réacteur SMR)
 maintenance_week = 20  # Semaine de maintenance
 
 # Calculer la production annuelle et hebdomadaire

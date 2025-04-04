@@ -6,12 +6,15 @@ from HydroGenerate.hydropower_potential import calculate_hp_potential
 
 
 def reservoir_infill(
-    info_barrage,
+    Type_barrage,
+    nb_turbines,
+    Debit_nom,
+    Volume_remplie,
     nom_barrage,
     besoin_puissance,
     info_puissance,
     pourcentage_reservoir,
-    debit_entrant,
+    apport_naturel,
     nbr_turb_maintenance,
 ):  # Ajouter débit entrant pour les réservoirs
 
@@ -38,29 +41,16 @@ def reservoir_infill(
     # Variable en sortie :
     #   - pourcentage_réservoir : Pourcentage de remplissage du réservoir après une heure de production [float]
     #   - nbr_turb_maintenance : Nombre de turbines en maintenance pour le barrage [int]
-    Type_barrage = info_barrage.loc[info_barrage["Nom"] == nom_barrage, "Type"].iloc[0]
     if Type_barrage == "Fil de l'eau":
         print("Erreur : Le barrage entré n'est pas un barrage à réservoir")
     else:
         p = []
         d = []
         nb_turbines_a = []
-        nb_turbines = info_barrage.loc[
-            info_barrage["Nom"] == nom_barrage, "Nb_turbines"
-        ].iloc[0]
-        Debit_nom = info_barrage.loc[
-            info_barrage["Nom"] == nom_barrage, "Debits_nom"
-        ].iloc[0]
-        Volume_remplie = info_barrage.loc[
-            info_barrage["Nom"] == nom_barrage, "Volume_reservoir"
-        ].iloc[0]
+        # debit_amont = get_upstream_flows(temps,df_debit,barrage_amont)
         Volume_reel = (
-            info_barrage.loc[
-                info_barrage["Nom"] == nom_barrage, "Volume_reservoir"
-            ].iloc[0]
-            * pourcentage_reservoir
-            + debit_entrant * 3600
-        )
+            Volume_remplie * pourcentage_reservoir + apport_naturel * 3600
+        )  # Ajouter le debit en amont
 
         for i in range(1, nb_turbines + 1 - nbr_turb_maintenance):
             # Filter for Dam A and 1 active turbine
@@ -100,38 +90,50 @@ def reservoir_infill(
                 Volume_reel - (variable_debits * nb_turb_actif * 3600)
             ) / Volume_remplie
 
-    return (
-        pourcentage_reservoir,
-        Volume_evacue,
-    )  # Possible d'ajouter une fonctionnalité permettant de calculer l'énergie perdue après l'utilisation d'un évacuateur de crue pour l'analyse de résultat
+        # df_debit = store_flows()
+        # LRU
+        # Liste de demande
+
+    return pourcentage_reservoir  # Possible d'ajouter une fonctionnalité permettant de calculer l'énergie perdue après l'utilisation d'un évacuateur de crue pour l'analyse de résultat
 
 
-def get_run_of_river_dam_power(nom_barrage, info_barrage, flow, nb_turbine_maintenance):
+# def store_flows(Volume_evacue, debits_turb, df_debit, id_barrage): #pas implémenté
 
-    Type_barrage = info_barrage.loc[info_barrage["Nom"] == nom_barrage, "Type"].iloc[0]
-    if Type_barrage == "Reservoir":
+#     df_temp = pd.DataFrame({"id_barrage"})
+#     df_debit.append() = Volume_evacue
+#     df_debit.debits_turb = debits_turb
+
+#     return df_debit
+
+# def get_upstream_flows(df_debit):
+
+#     flow =
+
+#     return flow
+
+
+def get_run_of_river_dam_power(
+    type_barrage,
+    nom_barrage,
+    type_turb,
+    nb_turbines,
+    head,
+    debits_nom,
+    flow,
+    nb_turbine_maintenance,
+):
+
+    if type_barrage == "Reservoir":
         print("Erreur : Le barrage entré n'est pas un barrage au fil de l'eau")
     else:
         Units = "IS"
         hp_type = "Diversion"
-        Debits_nom = info_barrage.loc[
-            info_barrage["Nom"] == nom_barrage, "Debits_nom"
-        ].iloc[0]
-        type_turb = info_barrage.loc[
-            info_barrage["Nom"] == nom_barrage, "Type_turbine"
-        ].iloc[0]
-        nb_turbines = info_barrage.loc[
-            info_barrage["Nom"] == nom_barrage, "Nb_turbines"
-        ].iloc[0]
-        flow["Debits"] /= nb_turbines
-        head = info_barrage.loc[
-            info_barrage["Nom"] == nom_barrage, "Hauteur_de_chute_m"
-        ].iloc[0]
+        flow[nom_barrage] /= nb_turbines
 
         hp = calculate_hp_potential(
             flow=flow,
-            flow_column="Debits",
-            design_flow=Debits_nom,
+            flow_column=flow[nom_barrage],
+            design_flow=debits_nom,
             head=head,
             units=Units,
             hydropower_type=hp_type,
@@ -147,7 +149,9 @@ def get_run_of_river_dam_power(nom_barrage, info_barrage, flow, nb_turbine_maint
         return hp.dataframe_output["power_MW"]
 
 
-def energy_loss(Volume_evacue, nom_barrage, info_barrage, nb_turbine_maintenance):
+def energy_loss(
+    Volume_evacue, Debits_nom, type_turb, nb_turbines, head, nb_turbine_maintenance
+):
 
     # Fonction permettant de calculer la perte d'énergie causé par l'activation d'un évacuateur de crue en MWh
     # Variable en entrée :
@@ -165,18 +169,6 @@ def energy_loss(Volume_evacue, nom_barrage, info_barrage, nb_turbine_maintenance
 
     Units = "IS"
     hp_type = "Diversion"
-    Debits_nom = info_barrage.loc[
-        info_barrage["Nom"] == nom_barrage, "Debits_nom"
-    ].iloc[0]
-    type_turb = info_barrage.loc[
-        info_barrage["Nom"] == nom_barrage, "Type_turbine"
-    ].iloc[0]
-    nb_turbines = info_barrage.loc[
-        info_barrage["Nom"] == nom_barrage, "Nb_turbines"
-    ].iloc[0]
-    head = info_barrage.loc[
-        info_barrage["Nom"] == nom_barrage, "Hauteur_de_chute_m"
-    ].iloc[0]
     Debit = Volume_evacue / (
         3600 * nb_turbines
     )  # Conversion du débit évacué de m^3/h en m^3/s pour le calcul de puissance

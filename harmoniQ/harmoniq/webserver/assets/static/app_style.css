@@ -58,3 +58,7 @@ div#main > div#plots {
 div#main div#infrastructures div.accordion {
     overflow-y: auto;
 }
+
+#sankey-plot {
+    background-color: rebeccapurple;
+}

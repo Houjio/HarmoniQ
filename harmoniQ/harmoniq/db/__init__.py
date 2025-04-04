@@ -27,6 +27,9 @@ def _create_crud_methods(crud_class, table_name, sql_class):
         f"read_{table_name}_by_id": lambda db, id: crud_class.read_data_by_id(
             db, sql_class, id
         ),
+        f"read_multiple_{table_name}_by_id": lambda db, ids: crud_class.read_multiple_by_id(
+            db, sql_class, ids
+        ),
         f"update_{table_name}": lambda db, id, data: crud_class.update_data(
             db, sql_class, id, data
         ),

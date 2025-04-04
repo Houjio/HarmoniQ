@@ -1,6 +1,7 @@
 from sqlalchemy import Table
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
+from typing import List
 
 from harmoniq.db.engine import sql_tables
 
@@ -19,6 +20,10 @@ def create_data(db: Session, table: Table, data: BaseModel):
 
 def read_data_by_id(db: Session, table: Table, id: int):
     return db.query(table).filter(table.id == id).first()
+
+
+def read_multiple_by_id(db: Session, table: Table, ids: List[int]):
+    return db.query(table).filter(table.id.in_(ids)).all()
 
 
 def update_data(db: Session, table: Table, id: int, data: BaseModel):

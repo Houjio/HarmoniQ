@@ -14,8 +14,7 @@ authors = [
 ]
 dependencies = [
     # Général
-    "urllib3==1.26.6",
-    "numpy",
+    "numpy==1.26.4",
     "pandas",
     "pandera",
     "matplotlib",
