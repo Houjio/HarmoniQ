@@ -7,8 +7,7 @@ from harmoniq.db.engine import get_db
 from harmoniq.db.CRUD import read_all_hydro
 
 
-def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel): #Ajouter débit entrant pour les réservoirs
-
+def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel):
     db = next(get_db())
     barrages = read_all_hydro(db)
     barrages_df = pd.DataFrame([barrages.__dict__ for barrage in barrages])
@@ -30,8 +29,7 @@ def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel): #
         nb_turbines = dam_data["nb_turbines"].values[0] - nb_turb_maintenance
         type_turb = dam_data["modele_turbine"].values[0]
         type_barrage = dam_data["type"].values[0]
-        barrage_amont = dam_data["amont"].values[0]
-
+        # barrage_amont = dam_data["amont"].values[0]
         # debit_amont = barrages_df["id"== barrage_amont].values[0]
 
 
@@ -72,7 +70,7 @@ def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel): #
             # debit_turb_df = pd.DataFrame([debits_turb*nb_turbines_a*3600])
 
 
-    return pourcentage_reservoir_df,  # Possible d'ajouter une fonctionnalité permettant de calculer l'énergie perdue après l'utilisation d'un évacuateur de crue pour l'analyse de résultat
+    return pourcentage_reservoir_df  # Possible d'ajouter une fonctionnalité permettant de calculer l'énergie perdue après l'utilisation d'un évacuateur de crue pour l'analyse de résultat
 
 # def store_flows(Volume_evacue, debits_turb, df_debit, id_barrage): #pas implémenté
 
@@ -103,8 +101,8 @@ def get_run_of_river_dam_power(barrage):
     type_turb = barrage.donnees.modele_turbine
     type_barrage = barrage.donnees.type_barrage
     debit = barrage.debit
-    # barrage.apport['dateTime'] = pd.to_datetime(barrage.apport["dateTime"])
-    # barrage.apport = barrage.apport.set_index('dateTime')
+    barrage.apport['dateTime'] = pd.to_datetime(barrage.apport["dateTime"])
+    barrage.apport = barrage.apport.set_index('dateTime')
 
     debit[nom_barrage] += barrage.apport["streamflow"].values
     # print(debit)
