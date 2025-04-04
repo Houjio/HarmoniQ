@@ -1,3 +1,5 @@
+var map;
+
 // Utility function to fetch data and handle errors
 function fetchData(url, method = 'GET', data = null) {
     return fetch(url, {
@@ -96,47 +98,21 @@ function initialiserListeParc(type, elementId) {
         `;
     }
     fetch(`/api/${type}`)
-    .then(response => {
-        if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
-        return response.json();
-    })
-    .then(data => {
-        console.log(`Liste des ${type}:`, data);
+        .then(response => {
+            if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log(`Liste des ${type}:`, data);
 
-        // Vérifier si l'élément HTML existe
-        const listeElement = document.getElementById(elementId)?.getElementsByTagName('ul')[0];
-        if (!listeElement) {
-            console.error(`Élément avec l'ID "${elementId}" introuvable ou ne contient pas de <ul>.`);
-            return;
-        }
-
-        // Parcourir les données et ajouter les points sur la carte
-        data.forEach(parc => {
-            const { categorie, latitude, longitude, nom, id } = parc;
-
-            // Vérifier les données du parc
-            if (!latitude || !longitude || !categorie) {
-                console.warn(`Données manquantes pour le parc :`, parc);
-                return;
-            }
-
-            // Ajouter un élément à la liste HTML
-            listeElement.innerHTML += `
-                <li class="list-group-item list-group-item-action" role="button" elementid="${id}">
-                    ${nom}
-                </li>
-            `;
-
-            // Vérifier si une icône existe pour la catégorie
-            if (!icons[categorie]) {
-                console.warn(`Aucune icône définie pour la catégorie : ${categorie}`);
-                return;
-            }
-
-            // Ajouter un marqueur sur la carte
-            L.marker([latitude, longitude], { icon: icons[categorie] })
-                .addTo(map)
-                .bindPopup(`<b>${nom}</b><br>Catégorie: ${categorie}`);
+            // Parcourir les données et ajouter les points sur la carte
+            data.forEach(parc => {
+                listeElement.innerHTML += createElement(parc);
+                console.log(parc.latitude, parc.longitude, type);
+                // Ajouter un marqueur sur la carte
+                L.marker([parc.latitude, parc.longitude], { icon: icons["eolien"] })
+                    .addTo(map)
+                    .bindPopup(`<b>${parc.nom}</b><br>Catégorie: eolien`);
         });
     })
     .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
@@ -632,7 +608,7 @@ $('#delete-scenario').on('click', function() {
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-    var map = L.map('map-box', {
+    map = L.map('map-box', {
         zoomControl: true,
         attributionControl: true,
         maxZoom: 10,
