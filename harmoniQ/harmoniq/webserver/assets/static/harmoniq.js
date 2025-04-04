@@ -614,7 +614,7 @@ document.addEventListener("DOMContentLoaded", function() {
     map = L.map('map-box', {
         zoomControl: true,
         attributionControl: true,
-        maxZoom: 10,
+        maxZoom: 15,
         minZoom: 5
     }).setView([52.9399, -67], 4);
 
