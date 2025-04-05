@@ -140,17 +140,18 @@ def fill_eoliennes():
 
         print(f"Projet {project_name} ajouté à la base de données")
 
+
 def fill_hydro():
     """Remplit la table bus à partir du fichier CSV"""
     import pandas as pd
     import os
     from pathlib import Path
-    
+
     db = next(get_db())
-    
+
     file_path = CSV_DIR / "Info_Barrages.csv"
     barrages_df = pd.read_csv(file_path)
-    
+
     count = 0
     for _, row in barrages_df.iterrows():
             existing = db.query(schemas.Hydro).filter(schemas.Hydro.barrage_nom == row['Nom']).first()
@@ -169,14 +170,15 @@ def fill_hydro():
                 modele_turbine=row['Type_turbine'],
                 nb_turbines = row['Nb_turbines'],
                 nb_turbines_maintenance=row['nb_turbines_maintenance'],
-                volume_reservoir = row['Volume_reservoir']
+                volume_reservoir = row['Volume_reservoir'],
+                id_HQ = row['id_HQ'],
             )
-
             count += 1
             create_hydro(db, db_hydro)
             print(f"Barrage '{db_hydro.barrage_nom}' ajouté à la base de données")
-    
+
     print(f"{count} barrage ajoutés à la base de données")
+
 
 def fill_line_types():
     """Remplit la table line_type à partir du fichier CSV"""
@@ -302,6 +304,7 @@ def fill_lines():
 
     print(f"{count} lignes ajoutées à la base de données")
 
+
 def check_if_empty():
     db = next(get_db())
     tables = [
@@ -320,6 +323,7 @@ def check_if_empty():
 
     return True
 
+
 def fill_network():
     """Remplit les tables du réseau électrique (line_type, bus, line)"""
     print("Collecte des types de lignes...")
@@ -333,20 +337,20 @@ def fill_network():
 
 
 def populate_db():
-    print("Collecte des éoliennes")
-    fill_eoliennes()
+    # print("Collecte des éoliennes")
+    # fill_eoliennes()
 
-    print("Collecte des données du réseau électrique :")
-    fill_network()
+    # print("Collecte des données du réseau électrique :")
+    # fill_network()
 
     print("Collecte des données du réseau hydro :")
     fill_hydro()
 
-    print("Collecte des centrales thermiques")
-    fill_thermique()
+    # print("Collecte des centrales thermiques")
+    # fill_thermique()
 
-    print("Collecte des centrales solaires")
-    fill_solaire()
+    # print("Collecte des centrales solaires")
+    # fill_solaire()
 
 
 def main():
@@ -358,7 +362,7 @@ def main():
         "-R", "--reset", action="store_true", help="Réinitialise la base de données"
     )
     parser.add_argument(
-        "-f", 
+        "-f",
         "--fill",
         action="store_true",
         help="Remplit la base de données si elle est vide",
@@ -386,4 +390,6 @@ def main():
 
 
 if __name__ == "__main__":
+
+    populate_db()
     init_db()
