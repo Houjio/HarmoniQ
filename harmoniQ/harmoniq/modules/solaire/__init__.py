@@ -50,7 +50,6 @@ class InfraParcSolaire(Infrastructure):
             _, resultats_df = calculate_energy_solar_plants(self.donnees)
 
         return resultats_df
-        
 
 
 if __name__ == "__main__":
