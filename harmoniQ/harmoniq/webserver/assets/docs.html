@@ -126,11 +126,11 @@
         <p>Fonctions utilisées :</p>
         <ul>
             <li><strong class="cliquable" onclick="toggleDetail('adjust_wind_speed')">adjust_wind_speed()</strong></li>
-            <div id="adjust_wind_speed" class="function-detail">Cette fonction ajuste la vitesse du vent mesurée à z_ref (m) à la hauteur du moyeu z_hub (m) en utilisant la loi du profil logarithmique du vent. Elle prend en entrée :
-                <li class="marge">v_ref : </li>
-                <li class="marge">z_ref : </li>
-                <li class="marge">z_hub : </li>
-                <li class="marge">z0 : </li>
+            <div id="adjust_wind_speed" class="function-detail">Cette fonction ajuste la vitesse du vent mesurée à une hauteur de référence (z_ref) pour l'estimer à la hauteur du moyeu (z_hub) d'une éolienne en utilisant la loi logarithmique du profil de vent. Elle prend en entrée :
+                <li class="marge">v_ref : Vitesse du vent mesurée à z_ref (en m/s)</li>
+                <li class="marge">z_ref : Hauteur de référence où la vitesse du vent a été mesurée (en mètres)</li>
+                <li class="marge">z_hub : Hauteur du moyeu de l'éolienne (en mètres)</li>
+                <li class="marge">z0 : Rugosité du sol (en mètres), valeur par défaut 0.03</li>
             </div>
             <li><strong class="cliquable" onclick="toggleDetail('air_density')">air_density()</strong></li>
             <div id="air_density" class="function-detail">Cette fonction calcule la densité de l'air (kg/m³) en utilisant la loi des gaz parfaits. Elle prend en entrée :
@@ -147,22 +147,21 @@
                 <li class="marge">power_shape_exponent : Exposant pour la montée de puissance (par défaut 3, ce qui correspond à une relation cubique typique)</li>
             </div>
             <li><strong class="cliquable" onclick="toggleDetail('apply_directional_losses')">apply_directional_losses()</strong></li>
-            <div id="apply_directional_losses" class="function-detail">Cette fonction  Elle prend en entrée :
-                <li class="marge"></li>
-                <li class="marge"></li>
-                <li class="marge"></li>
+            <div id="apply_directional_losses" class="function-detail">Cette fonction calcule un facteur de perte directionnelle pour un ensemble de directions de vent, en supposant que l'orientation optimale d'une éolienne est de 180°. Elle prend en entrée :
+                <li class="marge">direction_series : Une série de valeurs indiquant la direction du vent en degrés (0 à 360°)</li>
             </div>
-            <li><strong class="cliquable" onclick="toggleDetail('')">()</strong></li>
-            <div id="" class="function-detail">Cette fonction  Elle prend en entrée :
-                <li class="marge"></li>
-                <li class="marge"></li>
-                <li class="marge"></li>
+            <li><strong class="cliquable" onclick="toggleDetail('apply_wake_losses')">apply_wake_losses()</strong></li>
+            <div id="apply_wake_losses" class="function-detail">Cette fonction applique un facteur de perte dû aux effets de sillage en fonction de la direction du vent. Elle prend en entrée :
+                <li class="marge">direction_series : Une série de valeurs indiquant la direction du vent en degrés (0 à 360°)</li>
             </div>
-            <li><strong class="cliquable" onclick="toggleDetail('')">()</strong></li>
-            <div id="" class="function-detail">Cette fonction  Elle prend en entrée :
-                <li class="marge"></li>
-                <li class="marge"></li>
-                <li class="marge"></li>
+            <li><strong class="cliquable" onclick="toggleDetail('ice_loss_factor')">ice_loss_factor()</strong></li>
+            <div id="ice_loss_factor" class="function-detail">Cette fonction applique un facteur de perte dû au givre en fonction de la température. Elle prend en entrée :
+                <li class="marge">t : Un tableau contenant des températures en Kelvin</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('get_turbine_power')">get_turbine_power()</strong></li>
+            <div id="get_turbine_power" class="function-detail">Cette fonction calcule la puissance produite par une éolienne en fonction des données météorologiques. Elle prend en entrée :
+                <li class="marge">eolienne : Un objet contenant les caractéristiques de l'éolienne (modèle, hauteur, puissance nominale, etc.)</li>
+                <li class="marge">meteo : Un DataFrame contenant les données météo (vitesse du vent en km/h, direction du vent, température en degrés Celsius)</li>
             </div>
         </ul>
     </div>
@@ -278,10 +277,11 @@
         <h3>Thermique</h3>
         <p>Fonctions utilisées :</p>
         <ul>
-            <li><strong class="cliquable" onclick="toggleDetail('combustion')">calcul_combustion()</strong></li>
-            <div id="combustion" class="function-detail">Analyse l'efficacité de la combustion dans une centrale thermique.</div>
-            <li><strong class="cliquable" onclick="toggleDetail('emissions_co2')">calcul_emissions_co2()</strong></li>
-            <div id="emissions_co2" class="function-detail">Évalue les émissions de CO2 produites par la combustion des carburants fossiles.</div>
+            <li><strong class="cliquable" onclick="toggleDetail('calculate_thermal_production')">calculate_thermal_production()</strong></li>
+            <div id="calculate_thermal_production" class="function-detail">Cette fonction simule la production d'électricité annuelle d'une centrale thermique (ex. centrale à gaz, charbon), en tenant compte d'une semaine de maintenance où la production est arrêtée. Elle prend en entrée :
+                <li class="marge">power_kw : Puissance nominale de la centrale en kilowatts</li>
+                <li class="marge">maintenance_week : Semaine de l'année (1 à 52) pendant laquelle la centrale est en maintenance (pas de production)</li>
+            </div>
         </ul>
     </div>
 </div>

@@ -571,3 +571,22 @@ $('#delete-scenario').on('click', function() {
     confirmDeleteScenario(id, nom);
 });
 
+document.addEventListener("DOMContentLoaded", function() {
+    map = L.map('map-box', {
+        zoomControl: true,
+        attributionControl: true,
+        maxZoom: 15,
+        minZoom: 5
+    }).setView([52.9399, -67], 4);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    var bounds = [
+        [40.0, -90.0], 
+        [65.0, -50.0] 
+    ];
+    map.setMaxBounds(bounds);
+    map.on('drag', function() {
+        map.panInsideBounds(bounds, { animate: false });
+    });
+});
