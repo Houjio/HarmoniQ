@@ -15,61 +15,6 @@ from enum import Enum as PyEnum
 SQLBase = declarative_base()
 
 
-class MRC(SQLBase):
-    __tablename__ = "mrc"
-
-    id = Column(Integer, primary_key=True)  # CDUID
-    nom = Column(String)
-    longitude_centre = Column(Float)
-    latitude_centre = Column(Float)
-
-    instances_population = relationship("InstancePopulation", back_populates="mrc")
-
-
-class MRCBase(BaseModel):
-    id: int
-    nom: str
-    longitude_centre: float
-    latitude_centre: float
-
-
-class MRCCreate(MRCBase):
-    pass
-
-
-class MRCResponse(MRCBase):
-    class Config:
-        from_attributes = True
-
-
-class InstancePopulation(SQLBase):
-    __tablename__ = "instance_population"
-
-    id = Column(Integer, primary_key=True)
-    annee = Column(Integer)
-    population = Column(Integer)
-    mrc_id = Column(Integer, ForeignKey("mrc.id"))
-
-    mrc = relationship("MRC", back_populates="instances_population")
-
-
-class InstancePopulationBase(BaseModel):
-    annee: int
-    population: int
-    mrc_id: int
-
-
-class InstancePopulationCreate(InstancePopulationBase):
-    pass
-
-
-class InstancePopulationResponse(InstancePopulationBase):
-    id: int
-
-    class Config:
-        from_attributes = True
-
-
 class PositionBase(BaseModel):
     """Pydantic modèle de base pour les positions"""
 
@@ -85,6 +30,14 @@ class Optimisme(PyEnum):
     moyen = 2
     optimiste = 3
 
+class Weather(PyEnum):
+    warm = 1
+    typical = 2
+    cold = 3
+
+class Consomation(PyEnum):
+    PV = 1 # Typique
+    UB = 2 # Conservateur
 
 class DateTimeString(TypeDecorator):
     impl = String
@@ -123,6 +76,8 @@ class Scenario(SQLBase):
     date_de_debut = Column(DateTimeString)
     date_de_fin = Column(DateTimeString)
     pas_de_temps = Column(TimeDeltaString)
+    weather = Column(Enum(Weather))
+    consomation = Column(Enum(Consomation))
     optimisme_social = Column(Enum(Optimisme))
     optimisme_ecologique = Column(Enum(Optimisme))
 
@@ -139,6 +94,8 @@ class ScenarioBase(BaseModel):
     pas_de_temps: timedelta = Field(
         ..., description="Pas de temps de la simulation (HH:MM:SS)"
     )
+    weather: Weather = Weather.typical
+    consomation: Consomation = Consomation.PV
     optimisme_social: Optimisme = Optimisme.moyen
     optimisme_ecologique: Optimisme = Optimisme.moyen
 

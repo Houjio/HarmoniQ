@@ -143,10 +143,6 @@ def fill_eoliennes():
 
 def fill_hydro():
     """Remplit la table bus à partir du fichier CSV"""
-    import pandas as pd
-    import os
-    from pathlib import Path
-
     db = next(get_db())
 
     file_path = CSV_DIR / "Info_Barrages.csv"
