@@ -3,6 +3,8 @@ env
 harmoniq_env
 **/db.sqlite
 **/test_db.sqlite
+**/demande.db
+**/demande.db.zip
 
 # Fichier python générés
 *.egg-info

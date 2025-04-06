@@ -15,12 +15,12 @@ except ImportError as e:
     exit(1)
 
 LOCAL_DB_DIR = Path(__file__).resolve().parents[1] / "db"
-LOCAL_DB_NAME = "db.sqlite"
+LOCAL_DB_NAME = "demande.db.zip"
 
 SHAREPOINT_SITE_URL = "https://polymtlca0.sharepoint.com/sites/2024-MEC8370-08-09"
 SHAREPOINT_FOLDER = "Documents"
 SHAREPOINT_SUBFOLDER = "Groupe 08 - Produit et base de données"
-SHAREPOINT_FILE = "db.sqlite"
+SHAREPOINT_FILE = "demande.db.zip"
 
 
 def get_credentials() -> Tuple[str, str]:

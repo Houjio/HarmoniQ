@@ -15,6 +15,7 @@ from harmoniq.db.CRUD import (
     update_data,
     delete_data,
 )
+from harmoniq.db.demande import read_demande_data
 from harmoniq.core import meteo
 from harmoniq.db.engine import get_db
 from harmoniq.core.fausse_données import production_aleatoire
@@ -167,13 +168,33 @@ async def read_eoliennes_in_parc(eolienne_parc_id: int, db: Session = Depends(ge
     return result
 
 
+# Demande
+demande_router =  APIRouter(
+    prefix="/demande",
+    tags=["Demande"],
+    responses={404: {"description": "Not found"}},
+)
+@demande_router.post("/")
+async def read_demande(
+    scenario_id: int,
+    CUID: Optional[int] = None,
+    db: Session = Depends(get_db),
+):
+    scenario = read_data_by_id(db, schemas.Scenario, scenario_id)
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+
+    demande = read_demande_data(scenario, CUID)
+    return demande
+
+router.include_router(demande_router)
+
 # Meteo
 meteo_router = APIRouter(
     prefix="/meteo",
     tags=["Meteo"],
     responses={404: {"description": "Not found"}},
 )
-
 
 @meteo_router.post("/get_data")
 def get_meteo_data(
@@ -238,8 +259,6 @@ faker_router = APIRouter(
     tags=["Faker"],
     responses={404: {"description": "Not found"}},
 )
-api_routers["faker"] = faker_router
-
 
 @faker_router.post("/production")
 def get_production_aleatoire(scenario_id: int, db: Session = Depends(get_db)):
@@ -249,6 +268,8 @@ def get_production_aleatoire(scenario_id: int, db: Session = Depends(get_db)):
 
     production = production_aleatoire(scenario)
     return production
+
+router.include_router(faker_router)
 
 
 # Ajout des routes aux endpoint
