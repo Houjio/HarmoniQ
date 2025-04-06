@@ -9,14 +9,14 @@ CURRENT_DIR = Path(__file__).parent
 APPORT_DIR = CURRENT_DIR / "apport_naturel"
 
 
-def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel):
+def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel, timestamp):
     db = next(get_db())
     barrages = read_all_hydro(db)
     Units = "IS"
     hp_type = "Diversion"
     results = {}
 
-    for i in range(0,3):
+    for i in range(0,len(barrages)):
         type_barrage = barrages[i].type_barrage
         # barrage_amont = dam_data["amont"].values[0]
         # debit_amont = barrages_df["id"== barrage_amont].values[0]
@@ -34,9 +34,10 @@ def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel):
             nb_turb_maintenance = dam_data.nb_turbines_maintenance
             nb_turbines = dam_data.nb_turbines - nb_turb_maintenance
             type_turb = dam_data.modele_turbine
+            apport = apport_naturel.loc[timestamp, nom]
             # debit_amont = get_upstream_flows(temps,df_debit,barrage_amont)
             volume_reel = (
-                volume_remplie * pourcentage_reservoir + apport_naturel * 3600
+                volume_remplie * pourcentage_reservoir + apport * 3600
             )  # Ajouter le debit en amont
 
             hp = calculate_hp_potential(
@@ -112,6 +113,7 @@ def charger_apport_reservoir(start_date, end_date): #Pour réseau pas utiliser d
                 df_apport = apport_re
             else:                
                 df_apport = pd.merge(df_apport, apport_re, on = "time", how = "outer")
+    df_apport.set_index("time")
     
     return df_apport
 
