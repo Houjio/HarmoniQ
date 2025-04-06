@@ -71,7 +71,7 @@ function initialiserListeParc(type, elementId) {
     const icons = {
         eolienneparc: L.icon({
             iconUrl: '/static/icons/heolienne.png',
-            iconSize: [40, 40],
+            iconSize: [30, 30],
             iconAnchor: [20, 20]
         }),
         solaire: L.icon({
