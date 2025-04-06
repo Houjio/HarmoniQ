@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 from typing import Tuple
 import getpass
+import zipfile
 
 from harmoniq import DB_PATH
 
@@ -15,12 +16,13 @@ except ImportError as e:
     exit(1)
 
 LOCAL_DB_DIR = Path(__file__).resolve().parents[1] / "db"
-LOCAL_DB_NAME = "db.sqlite"
+LOCAL_DB_NAME = "demande.db.zip"
+LOCAL_UNZIPPED_DB_NAME = "demande.db"
 
 SHAREPOINT_SITE_URL = "https://polymtlca0.sharepoint.com/sites/2024-MEC8370-08-09"
 SHAREPOINT_FOLDER = "Documents"
 SHAREPOINT_SUBFOLDER = "Groupe 08 - Produit et base de données"
-SHAREPOINT_FILE = "db.sqlite"
+SHAREPOINT_FILE = "demande.db.zip"
 
 
 def get_credentials() -> Tuple[str, str]:
@@ -56,18 +58,21 @@ def get_sharepoint_folder(ctx: ClientContext) -> Folder:
 
 
 def upload_db():
-    print("Téléversement de la base de données...")
+    print("Compression de la base de données...")
+    with zipfile.ZipFile(DB_PATH, "w") as zip_ref:
+        zip_ref.write(LOCAL_DB_DIR / LOCAL_UNZIPPED_DB_NAME, LOCAL_DB_NAME)
+    
+    print("Compression terminée, téléversement de la base de données... (cela peut prendre du temps)")
     ctx = get_sharepoint_user()
     folder = get_sharepoint_folder(ctx)
     with open(DB_PATH, "rb") as local_file:
-        file_content = local_file.read()
-        file = folder.upload_file(SHAREPOINT_FILE, file_content)
-        file.execute_query()
+        file = folder.upload_file(LOCAL_DB_NAME, local_file).execute_query()
+
     print("Téléversement terminé")
 
 
 def download_db():
-    print("Téléchargement de la base de données...")
+    print("Téléchargement de la base de données... (cela peut prendre du temps)")
     ctx = get_sharepoint_user()
     folder = get_sharepoint_folder(ctx)
     items = folder.files.get().execute_query()
@@ -83,7 +88,11 @@ def download_db():
     file_content = file_object.value
     with open(DB_PATH, "wb") as local_file:
         local_file.write(file_content)
-    print("Téléchargement terminé")
+
+    print("Téléchargement terminé, décompression de la base de données...")
+    with zipfile.ZipFile(DB_PATH, "r") as zip_ref:
+        zip_ref.extractall(LOCAL_DB_DIR)
+    print("Décompression terminée, base de données prête à l'emploi")
 
 
 def main():

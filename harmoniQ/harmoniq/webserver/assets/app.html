@@ -60,6 +60,9 @@
                         <span class="scenario-pas fw-bold"></span>
                     </p>
                     <p>
+                        Scénario de consomation <span class="consommation-scenario fw-bold"></span> avec une météo concidéré <span class="meteo-scenario fw-bold"></span>
+                    </p>
+                    <p>
                         Statut social: 
                         <span class="optimisme-social fw-bold"></span>
                     </p>
@@ -89,9 +92,6 @@
             
             </select>
         </div>
-        <button class="btn btn-primary w-100" style="display: none" disabled id="enregistrer-groupe" onclick="save_groupe()">
-            Enregistrer changement
-        </button>
         <div class="accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="hydroHeading">
@@ -100,7 +100,11 @@
                     </button>
                 </h2>
                 <div id="hydroCollapse" class="accordion-collapse collapse" aria-labelledby="hydroHeading" data-bs-parent="#sidebar">
-                    <div class="accordion-body">
+                    <div id="list-parc-hydro" class="accordion-body">
+                        <div class="d-flex w-100 justify-content-center my-2">
+                            <button class="btn btn-primary btn-sm select-all me-2" id="select_all_hydro">Tout sélectionner</button>
+                            <button class="btn btn-primary btn-sm select-none" id="select_none_hydro">Tout désélectionner</button>
+                        </div>
                         <ul class="list-group">
                             
                         </ul>

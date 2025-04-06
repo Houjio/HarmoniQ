@@ -3,7 +3,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-from data_solaire import coordinates_centrales, coordinates_residential, population_relative
+from data_solaire import (
+    coordinates_centrales,
+    coordinates_residential,
+    population_relative,
+)
+from typing import List
 
 
 def get_weather_data(coordinates_residential):
@@ -89,10 +94,14 @@ def convert_solar(value, module, mode="surface_to_power"):
         raise ValueError(
             "Mode invalide. Utilisez 'surface_to_power' ou 'power_to_surface'."
         )
+
+
 start_time = time.time()
 
 
-def calculate_energy_solar_plants(coordinates_centrales, surface_tilt=45, surface_orientation=180):
+def calculate_energy_solar_plants(
+    coordinates_centrales, surface_tilt=45, surface_orientation=180
+):
 
     # Initialisation des modèles
     sandia_modules = pvlib.pvsystem.retrieve_sam("SandiaMod")
@@ -147,22 +156,25 @@ def calculate_energy_solar_plants(coordinates_centrales, surface_tilt=45, surfac
         }
 
         # Stockage des résultats pour cette centrale dans la liste pour le DataFrame
-        results_list.append({
-            "nom_centrale": name,
-            "latitude": latitude,
-            "longitude": longitude,
-            "puissance_kw": puissance_kw,
-            "energie_annuelle_kwh": annual_energy / 1000,  # Conversion en kWh
-            "nombre_modules": nombre_modules,
-        })
+        results_list.append(
+            {
+                "nom_centrale": name,
+                "latitude": latitude,
+                "longitude": longitude,
+                "puissance_kw": puissance_kw,
+                "energie_annuelle_kwh": annual_energy / 1000,  # Conversion en kWh
+                "nombre_modules": nombre_modules,
+            }
+        )
 
     resultats_centrales["energie_totale_wh"] = energie_totale
     resultats_centrales_df = pd.DataFrame(results_list)
 
     return resultats_centrales, resultats_centrales_df
 
+
 def calculate_regional_residential_solar(
-    coordinates_residential: list[tuple],
+    coordinates_residential: List[tuple],
     population_relative,
     total_clients,
     num_panels_per_client,
@@ -220,18 +232,21 @@ def calculate_regional_residential_solar(
         }
 
         # Stockage des résultats pour le DataFrame
-        results_list.append({
-            "nom_region": nom_region,
-            "latitude": latitude,
-            "longitude": longitude,
-            "puissance_installee_kw": puissance_installee_kw,
-            "surface_installee_m2": surface_panneau_region,
-            "energie_annuelle_kwh": region_results["energie_annuelle_wh"] / 1000,
-        })
+        results_list.append(
+            {
+                "nom_region": nom_region,
+                "latitude": latitude,
+                "longitude": longitude,
+                "puissance_installee_kw": puissance_installee_kw,
+                "surface_installee_m2": surface_panneau_region,
+                "energie_annuelle_kwh": region_results["energie_annuelle_wh"] / 1000,
+            }
+        )
 
     resultats_regions_df = pd.DataFrame(results_list)
 
     return resultats_regions, resultats_regions_df
+
 
 def cost_solar_powerplant(coordinates_centrales, resultats_centrales):
     """
@@ -379,7 +394,7 @@ def co2_emissions_solar(
 # Exemple d'utilisation
 if __name__ == "__main__":
 
-        # Appel des fonction
+    # Appel des fonction
     resultats_regions, resultats_regions_df = calculate_regional_residential_solar(
         coordinates_residential,
         population_relative,
@@ -388,8 +403,10 @@ if __name__ == "__main__":
         surface_tilt=0,
         surface_orientation=180,
     )
-    
-    resultats_centrales, resultats_centrales_df = calculate_energy_solar_plants(coordinates_centrales)
+
+    resultats_centrales, resultats_centrales_df = calculate_energy_solar_plants(
+        coordinates_centrales
+    )
     energie_centrales = resultats_centrales["energie_totale_wh"]
     couts = cost_solar_powerplant(coordinates_centrales, resultats_centrales)
     couts_installation = calculate_installation_cost(coordinates_centrales)
@@ -413,17 +430,15 @@ if __name__ == "__main__":
     #         f"  Émissions CO₂ totales : {emissions_co2[nom]:,.2f} kg CO₂eq sur {duree_vie} ans"
     #     )
 
-
     # print("\n=== RÉSUMÉ DES RÉSULTATS POUR TOUTES LES RÉGIONS ===")
     # energie_totale = 0
     # for nom_region, data in resultats_regions.items():
     #     energie_totale += data["energie_annuelle_kwh"]
-    
+
     # print(f"\nProduction totale pour toutes les régions : {energie_totale:,.2f} kWh")
 
 end_time = time.time()
 print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
-
 
 
 # # ------------   Validation avec données réelles Hydro-Québec ----------------------##

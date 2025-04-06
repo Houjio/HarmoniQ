@@ -24,9 +24,17 @@ def main():
     )
 
     args = parser.parse_args()
-    uvicorn.run(
-        "harmoniq.webserver:app", host=args.host, port=int(args.port), reload=args.debug
-    )
+    if args.debug:
+        uvicorn.run(
+            "harmoniq.webserver:app", host=args.host, port=int(args.port), reload=True
+        )
+    else:
+        uvicorn.run(
+            "harmoniq.webserver:app",
+            host=args.host,
+            port=int(args.port),
+            workers=4,
+        )
 
 
 if __name__ == "__main__":

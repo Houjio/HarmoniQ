@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
@@ -5,6 +6,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 import pandas as pd
+import time
 
 from harmoniq.db import schemas, engine, CRUD
 from harmoniq.db.CRUD import (
@@ -15,6 +17,7 @@ from harmoniq.db.CRUD import (
     update_data,
     delete_data,
 )
+from harmoniq.db.demande import read_demande_data
 from harmoniq.core import meteo
 from harmoniq.db.engine import get_db
 from harmoniq.core.fausse_données import production_aleatoire
@@ -80,7 +83,7 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
             "/", response_model=response_class, summary=f"Create a {table_name}"
         )
         async def create(item: create_class, db: Session = Depends(get_db)):
-            result = create_data(db, sql_class, item)
+            result = await create_data(db, sql_class, item)
             if result is None:
                 raise HTTPException(
                     status_code=404, detail=f"{table_name_lower} not found"
@@ -93,7 +96,7 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
             summary=f"Read all {table_name_plural}",
         )
         async def read_all(db: Session = Depends(get_db)):
-            result = read_all_data(db, sql_class)
+            result = await read_all_data(db, sql_class)
             return result
 
         @class_router.get(
@@ -103,7 +106,7 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
         )
         async def read_multiple(ids: str, db: Session = Depends(get_db)):
             id_list = [int(i) for i in ids.split(",")]
-            result = read_multiple_by_id(db, sql_class, id_list)
+            result = await read_multiple_by_id(db, sql_class, id_list)
             if len(result) != len(id_list):
                 missing_ids = set(id_list) - {item.id for item in result}
                 raise HTTPException(
@@ -118,7 +121,7 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
             summary=f"Read a {table_name} by id",
         )
         async def read(item_id: int, db: Session = Depends(get_db)):
-            result = read_data_by_id(db, sql_class, item_id)
+            result = await read_data_by_id(db, sql_class, item_id)
             if result is None:
                 raise HTTPException(
                     status_code=404, detail=f"{table_name_lower} {item_id} not found"
@@ -133,7 +136,7 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
         async def update(
             item_id: int, item: create_class, db: Session = Depends(get_db)
         ):
-            result = update_data(db, sql_class, item_id, item)
+            result = await update_data(db, sql_class, item_id, item)
             if result is None:
                 raise HTTPException(
                     status_code=404, detail=f"{table_name_lower} {item_id} not found"
@@ -142,7 +145,7 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
 
         @class_router.delete("/{item_id}", summary=f"Delete a {table_name} by id")
         async def delete(item_id: int, db: Session = Depends(get_db)):
-            result = delete_data(db, sql_class, item_id)
+            result = await delete_data(db, sql_class, item_id)
             if result is None:
                 raise HTTPException(
                     status_code=404, detail=f"{table_name_lower} {item_id} not found"
@@ -163,9 +166,33 @@ if eolienne_router is None:
 
 @eolienne_router.get("/parc/{eolienne_parc_id}")
 async def read_eoliennes_in_parc(eolienne_parc_id: int, db: Session = Depends(get_db)):
-    result = engine.all_eoliennes_in_parc(db, eolienne_parc_id)
+    result = await engine.all_eoliennes_in_parc(db, eolienne_parc_id)
     return result
 
+
+# Demande
+demande_router = APIRouter(
+    prefix="/demande",
+    tags=["Demande"],
+    responses={404: {"description": "Not found"}},
+)
+
+
+@demande_router.post("/")
+async def read_demande(
+    scenario_id: int,
+    CUID: Optional[int] = None,
+    db: Session = Depends(get_db),
+):
+    scenario = await read_data_by_id(db, schemas.Scenario, scenario_id)
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+
+    demande = await read_demande_data(scenario, CUID)
+    return demande
+
+
+router.include_router(demande_router)
 
 # Meteo
 meteo_router = APIRouter(
@@ -238,17 +265,19 @@ faker_router = APIRouter(
     tags=["Faker"],
     responses={404: {"description": "Not found"}},
 )
-api_routers["faker"] = faker_router
 
 
 @faker_router.post("/production")
-def get_production_aleatoire(scenario_id: int, db: Session = Depends(get_db)):
+async def get_production_aleatoire(scenario_id: int, db: Session = Depends(get_db)):
     scenario = read_data_by_id(db, schemas.Scenario, scenario_id)
     if scenario is None:
         raise HTTPException(status_code=200, detail="Scenario not found")
 
-    production = production_aleatoire(scenario)
+    production = await asyncio.to_thread(production_aleatoire, scenario)
     return production
+
+
+router.include_router(faker_router)
 
 
 # Ajout des routes aux endpoint
