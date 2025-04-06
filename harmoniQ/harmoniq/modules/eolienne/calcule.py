@@ -88,7 +88,8 @@ def ice_loss_factor(t: np.ndarray) -> np.ndarray:
     generate a random value [0.5, 1.0], otherwise 1.0.
     """
     # TODO @Zineb: PQ on génère un random ici ?
-    return np.where(t > 273, 1.0, np.random.uniform(0.5, 1.0, size=t.shape))
+    t = t + 273.15  # Convert to Kelvin
+    return np.where(t < 273, 1.0, np.random.uniform(0.5, 1.0, size=t.shape))
 
 
 def get_turbine_power(eolienne: Eolienne, meteo: pd.DataFrame) -> pd.DataFrame:
