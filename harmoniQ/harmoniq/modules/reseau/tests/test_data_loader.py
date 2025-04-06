@@ -204,7 +204,21 @@ def test_timeseries_data():
                     print(f"- {name}: min={serie.min():.4f}, max={serie.max():.4f}, moyenne={serie.mean():.4f}")
                 else:
                     print(f"- {name}: ❌ Pas de série temporelle")
+
+            # Vérification des éoliennes
+            solaire_gens = network.generators[network.generators.carrier == 'solaire']
+            solaire_names = solaire_gens.index.tolist()
             
+            solaire_series = [col for col in p_max_pu.columns if col in solaire_names]
+            print(f"\nSéries temporelles pour les éoliennes: {len(solaire_series)}/{len(solaire_names)}")
+            
+            for name in solaire_names:
+                if name in p_max_pu.columns:
+                    serie = p_max_pu[name]
+                    print(f"- {name}: min={serie.min():.4f}, max={serie.max():.4f}, moyenne={serie.mean():.4f}")
+                else:
+                    print(f"- {name}: ❌ Pas de série temporelle")
+                    
             # Vérification des valeurs
             invalid_values = (p_max_pu < 0).sum().sum() + (p_max_pu > 1).sum().sum()
             if invalid_values > 0:

@@ -55,6 +55,7 @@ from pathlib import Path
 from typing import Optional
 from .geo_utils import GeoUtils
 from harmoniq.modules.eolienne import InfraParcEolienne
+from harmoniq.modules.solaire import InfraParcSolaire
 
 from harmoniq.db.engine import get_db
 from harmoniq.db.schemas import Eolienne,Solaire,Hydro, Nucleaire, Thermique
@@ -507,9 +508,23 @@ class NetworkDataLoader:
                         # Calcul du p_max_pu = production / puissance_nominale
                         p_nom = eolienne.puissance_nominal
                         p_max_pu_df[nom] = production_df[nom] / p_nom
-                        print(f"Série temporelle générée pour l'éolienne {nom}")
+
+        if self.solaire_ids:
+            solaires = read_multiple_by_id(db, Solaire, self.solaire_ids)
+            if solaires:
+                infra_solaire = InfraParcSolaire(solaires)
+                infra_solaire.charger_scenario(scenario)
+                production_df = infra_solaire.calculer_production()
+                production_df = production_df.fillna(0)
+                
+                for solaire in solaires:
+                    nom = solaire.nom
+                    if nom in production_df.columns and nom in network.generators.index:
+                        # Calcul du p_max_pu = production / puissance_nominale
+                        p_nom = solaire.puissance_nominal
+                        p_max_pu_df[nom] = production_df[nom] / p_nom
         
-        # TODO: Ajouter le code pour le solaire et l'hydro au fil de l'eau
+        # TODO: Ajouter le code pour l'hydro au fil de l'eau
         # Similaire à l'implémentation pour les éoliennes
         
         return p_max_pu_df

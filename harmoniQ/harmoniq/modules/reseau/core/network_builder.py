@@ -63,30 +63,29 @@ class NetworkBuilder:
         self.data_loader = NetworkDataLoader(data_dir)
         self.current_network = None
 
-    def create_network(self, year: str,
-                      start_date: Optional[str] = None,
-                      end_date: Optional[str] = None) -> pypsa.Network:
+    def create_network(self, scenario, year: str = None) -> pypsa.Network:
         """
-        Crée et configure le réseau à partir des données CSV.
+        Crée et configure le réseau à partir des données CSV et d'un scénario.
 
         Args:
-            year: Année des données (ex: '2024')
-            start_date: Date de début optionnelle
-            end_date: Date de fin optionnelle
+            scenario: Objet scénario contenant les paramètres temporels (dates début/fin et pas de temps)
+            year: Année des données (ex: '2024') pour les données statiques optionnelles
 
         Returns:
             network: Réseau PyPSA configuré
 
         Example:
-            >>> network = builder.create_network('2024')
-            >>> network = builder.create_network('2024', '2024-01-01', '2024-12-31')
+            >>> scenario = read_scenario_by_id(db, 1)
+            >>> network = builder.create_network(scenario, '2024')
         """
         # Chargement des données statiques
         network = self.data_loader.load_network_data()
         
         # Ajout des séries temporelles
         network = self.data_loader.load_timeseries_data(
-            network, year, start_date, end_date
+            network=network, 
+            scenario=scenario,
+            year=year
         )
         
         self.current_network = network
