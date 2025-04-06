@@ -1,3 +1,5 @@
+import asyncio
+
 from harmoniq.db import CRUD
 from harmoniq.db.engine import sql_tables
 
@@ -20,21 +22,23 @@ def _format_table_name(table_name):
 
 def _create_crud_methods(crud_class, table_name, sql_class):
     methods = {
-        f"create_{table_name}": lambda db, data: crud_class.create_data(
-            db, sql_class, data
+        f"create_{table_name}": lambda db, data: asyncio.run(
+            crud_class.create_data(db, sql_class, data)
         ),
-        f"read_all_{table_name}": lambda db: crud_class.read_all_data(db, sql_class),
-        f"read_{table_name}_by_id": lambda db, id: crud_class.read_data_by_id(
-            db, sql_class, id
+        f"read_all_{table_name}": lambda db: asyncio.run(
+            crud_class.read_all_data(db, sql_class)
         ),
-        f"read_multiple_{table_name}_by_id": lambda db, ids: crud_class.read_multiple_by_id(
-            db, sql_class, ids
+        f"read_{table_name}_by_id": lambda db, id: asyncio.run(
+            crud_class.read_data_by_id(db, sql_class, id)
         ),
-        f"update_{table_name}": lambda db, id, data: crud_class.update_data(
-            db, sql_class, id, data
+        f"read_multiple_{table_name}_by_id": lambda db, ids: asyncio.run(
+            crud_class.read_multiple_by_id(db, sql_class, ids)
         ),
-        f"delete_{table_name}": lambda db, id: crud_class.delete_data(
-            db, sql_class, id
+        f"update_{table_name}": lambda db, id, data: asyncio.run(
+            crud_class.update_data(db, sql_class, id, data)
+        ),
+        f"delete_{table_name}": lambda db, id: asyncio.run(
+            crud_class.delete_data(db, sql_class, id)
         ),
     }
 
