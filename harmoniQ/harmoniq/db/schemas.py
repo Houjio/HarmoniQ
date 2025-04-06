@@ -15,72 +15,6 @@ from enum import Enum as PyEnum
 SQLBase = declarative_base()
 
 
-class MRC(SQLBase):
-    __tablename__ = "mrc"
-
-    id = Column(Integer, primary_key=True)  # CDUID
-    nom = Column(String)
-    longitude_centre = Column(Float)
-    latitude_centre = Column(Float)
-
-    instances_population = relationship("InstancePopulation", back_populates="mrc")
-
-
-class MRCBase(BaseModel):
-    id: int
-    nom: str
-    longitude_centre: float
-    latitude_centre: float
-
-
-class MRCCreate(MRCBase):
-    pass
-
-
-class MRCResponse(MRCBase):
-    class Config:
-        from_attributes = True
-
-
-class InstancePopulation(SQLBase):
-    __tablename__ = "instance_population"
-
-    id = Column(Integer, primary_key=True)
-    annee = Column(Integer)
-    population = Column(Integer)
-    mrc_id = Column(Integer, ForeignKey("mrc.id"))
-
-    mrc = relationship("MRC", back_populates="instances_population")
-
-
-class InstancePopulationBase(BaseModel):
-    annee: int
-    population: int
-    mrc_id: int
-
-
-class InstancePopulationCreate(InstancePopulationBase):
-    pass
-
-
-class InstancePopulationResponse(InstancePopulationBase):
-    id: int
-
-    class Config:
-        from_attributes = True
-
-
-class TypeInfrastructures(str, PyEnum):
-    """Enumération des types d'infrastructures"""
-
-    eolienne = "éolienne"
-    solaire = "solaire"
-    hydro = "hydro"
-    thermique = "thermique"
-    transmission = "transmission"
-    stockage = "stockage"
-
-
 class PositionBase(BaseModel):
     """Pydantic modèle de base pour les positions"""
 
@@ -96,6 +30,14 @@ class Optimisme(PyEnum):
     moyen = 2
     optimiste = 3
 
+class Weather(PyEnum):
+    warm = 1
+    typical = 2
+    cold = 3
+
+class Consomation(PyEnum):
+    PV = 1 # Typique
+    UB = 2 # Conservateur
 
 class DateTimeString(TypeDecorator):
     impl = String
@@ -110,6 +52,7 @@ class DateTimeString(TypeDecorator):
             return datetime.fromisoformat(value)
         return value
 
+
 class TimeDeltaString(TypeDecorator):
     impl = String
 
@@ -123,6 +66,7 @@ class TimeDeltaString(TypeDecorator):
             return isodate.parse_duration(value)
         return value
 
+
 class Scenario(SQLBase):
     __tablename__ = "scenario"
 
@@ -132,6 +76,8 @@ class Scenario(SQLBase):
     date_de_debut = Column(DateTimeString)
     date_de_fin = Column(DateTimeString)
     pas_de_temps = Column(TimeDeltaString)
+    weather = Column(Enum(Weather))
+    consomation = Column(Enum(Consomation))
     optimisme_social = Column(Enum(Optimisme))
     optimisme_ecologique = Column(Enum(Optimisme))
 
@@ -148,10 +94,12 @@ class ScenarioBase(BaseModel):
     pas_de_temps: timedelta = Field(
         ..., description="Pas de temps de la simulation (HH:MM:SS)"
     )
+    weather: Weather = Weather.typical
+    consomation: Consomation = Consomation.PV
     optimisme_social: Optimisme = Optimisme.moyen
     optimisme_ecologique: Optimisme = Optimisme.moyen
 
-    @validator('date_de_debut', 'date_de_fin', pre=True)
+    @validator("date_de_debut", "date_de_fin", pre=True)
     def parse_datetime(cls, value):
         if isinstance(value, str):
             try:
@@ -159,8 +107,8 @@ class ScenarioBase(BaseModel):
             except ValueError:
                 raise ValueError(f"Invalid datetime format: {value}")
         return value
-    
-    @validator('pas_de_temps', pre=True)
+
+    @validator("pas_de_temps", pre=True)
     def parse_timedelta(cls, value):
         if isinstance(value, str):
             try:
@@ -168,6 +116,7 @@ class ScenarioBase(BaseModel):
             except ValueError:
                 raise ValueError(f"Invalid timedelta format: {value}")
         return value
+
 
 class ScenarioCreate(ScenarioBase):
     pass
@@ -180,18 +129,54 @@ class ScenarioResponse(ScenarioBase):
         from_attributes = True
 
 
-class InfrastructureBase(PositionBase):
+class ListeInfrastructures(SQLBase):
+    __tablename__ = "liste_infrastructures"
+
+    id = Column(Integer, primary_key=True)
+    nom = Column(String)
+    parc_eoliens = Column(String, nullable=True)
+    parc_solaires = Column(String, nullable=True)
+    central_hydroelectriques = Column(String, nullable=True)
+    central_thermique = Column(String, nullable=True)
+
+    @property
+    def parc_eolien_list(self):
+        return self.parc_eolien.split(",") if self.parc_eolien else []
+
+    @property
+    def parc_solaire_list(self):
+        return self.parc_solaire.split(",") if self.parc_solaire else []
+
+    @property
+    def central_hydroelectriques_list(self):
+        return (
+            self.central_hydroelectriques.split(",")
+            if self.central_hydroelectriques
+            else []
+        )
+
+    @property
+    def central_thermique_list(self):
+        return self.central_thermique.split(",") if self.central_thermique else []
+
+
+class ListeInfrastructuresBase(BaseModel):
     nom: str
-    type: TypeInfrastructures
-    cout_de_construction: Optional[float] = None
-    cout_de_maintenance_annuel: Optional[float] = None
-    # TODO: Ajouter plus de champs
+    parc_eoliens: Optional[str] = None
+    parc_solaires: Optional[str] = None
+    central_hydroelectriques: Optional[str] = None
+    central_thermique: Optional[str] = None
 
 
-class TypeGenerateur(PyEnum):
-    A = 1
-    B = 2
-    C = 3
+class ListeInfrastructuresCreate(ListeInfrastructuresBase):
+    pass
+
+
+class ListeInfrastructuresResponse(ListeInfrastructuresBase):
+    id: int
+
+    class Config:
+        from_attributes = True
 
 
 class EolienneBase(BaseModel):
@@ -284,47 +269,212 @@ class EolienneParc(SQLBase):
     eoliennes = relationship("Eolienne", back_populates="eolienne_parc")
 
 
-class HydroelectriqueBase(InfrastructureBase):
-    fils_de_l_eau: bool
+class Solaire(SQLBase):
+    __tablename__ = "solaire"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nom = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    angle_panneau = Column(Integer)
+    orientation_panneau = Column(Integer)
+    nombre_panneau = Column(Integer)
+    puissance_nominal = Column(Float)
+    annee_commission = Column(Integer, nullable=True)
+    panneau_type = Column(String, nullable=True)
+    materiau_panneau = Column(String, nullable=True)
+
+
+class SolaireBase(BaseModel):
+    nom: str
+    latitude: float
+    longitude: float
+    angle_panneau: int
+    orientation_panneau: int
+    puissance_nominal: float
+    nombre_panneau: int
+    annee_commission: Optional[int] = None
+    panneau_type: Optional[str] = None
+    materiau_panneau: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class SolaireCreate(SolaireBase):
     pass
 
 
-class SolaireBase(InfrastructureBase):
+class HydroBase(BaseModel):
+    barrage_nom: str
+    longitude: float
+    latitude: float
+    type_barrage: str
+    puissance_nominal: float
+    hauteur_chute: float
+    nb_turbines: int
+    debits_nominal: float
+    modele_turbine: str
+    volume_reservoir: int
+    nb_turbines_maintenance: int
+    id_HQ: int
+    annee_commission: Optional[int] = None
+    materiau_conduite: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class HydroCreate(HydroBase):
     pass
 
 
-class ThermiqueBase(InfrastructureBase):
+class HydroResponse(HydroBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class Hydro(SQLBase):
+    __tablename__ = "hydro"
+
+    id = Column(Integer, primary_key=True, index=True)
+    barrage_nom = Column(String)
+    longitude = Column(Float)
+    latitude = Column(Float)
+    type_barrage = Column(String)
+    puissance_nominal = Column(Float)
+    hauteur_chute = Column(Float)
+    nb_turbines = Column(Integer)
+    debits_nominal = Column(Float)
+    modele_turbine = Column(String)
+    volume_reservoir = Column(Integer)
+    nb_turbines_maintenance = Column(Integer)
+    id_HQ = Column(Integer)
+    annee_commission = Column(Integer, nullable=True)
+    materiau_conduite = Column(String, nullable=True)
+
+
+class SolaireResponse(SolaireBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class ThermiqueBase(BaseModel):
+    latitude: float
+    longitude: float
+    nom: str
+    puissance_nominal: float
+    type_intrant: str
+    semaine_maintenance: int
+    annee_commission: Optional[int] = None
+    type_generateur: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class ThermiqueCreate(ThermiqueBase):
     pass
 
 
-class TransmissionBase(InfrastructureBase):
+class ThermiqueResponse(ThermiqueBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class Thermique(SQLBase):
+    __tablename__ = "thermique"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    nom = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    puissance_nominal = Column(Float)
+    type_intrant = Column(String)
+    semaine_maintenance = Column(Integer)
+    annee_commission = Column(Integer, nullable=True)
+    type_generateur = Column(Integer, nullable=True)
+
+
+class NucleaireBase(BaseModel):
+    latitude: float
+    longitude: float
+    centrale_nucleaire_nom: str
+    puissance_nominal: float
+    type_intrant: str
+    semaine_maintenance: int
+    annee_commission: Optional[int] = None
+    type_generateur: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class NucleaireCreate(NucleaireBase):
     pass
+
+
+class NucleaireResponse(NucleaireBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+class Nucleaire(SQLBase):
+    __tablename__ = "nucleaire"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    centrale_nucleaire_nom = Column(String)
+    latitude = Column(Float)
+    longitude = Column(Float)
+    puissance_nominal = Column(Float)
+    type_intrant = Column(String)
+    semaine_maintenance = Column(Integer)
+    annee_commission = Column(Integer, nullable=True)
+    type_generateur = Column(Integer, nullable=True)
 
 
 class BusControlType(str, PyEnum):
     """Enumération des types de contrôle de bus"""
+
     PV = "PV"
     PQ = "PQ"
     slack = "slack"
 
+
 class BusType(str, PyEnum):
     """Enumération des types de bus"""
+
     prod = "prod"
     conso = "conso"
-    line = "line"
+    line = "ligne"
+
 
 class Bus(SQLBase):
     __tablename__ = "bus"
 
-    name = Column(String, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
     v_nom = Column(Integer)
     type = Column(Enum(BusType))
     x = Column(Float)
     y = Column(Float)
     control = Column(Enum(BusControlType))
-    
-    lines_from = relationship("Line", back_populates="bus_from", foreign_keys="Line.bus0")
+
+    lines_from = relationship(
+        "Line", back_populates="bus_from", foreign_keys="Line.bus0"
+    )
     lines_to = relationship("Line", back_populates="bus_to", foreign_keys="Line.bus1")
+
 
 class BusBase(BaseModel):
     name: str
@@ -333,74 +483,92 @@ class BusBase(BaseModel):
     x: float
     y: float
     control: BusControlType
-    
+
     class Config:
         from_attributes = True
+
 
 class BusCreate(BusBase):
     pass
 
+
 class BusResponse(BusBase):
+    id: int
+
     class Config:
         from_attributes = True
+
 
 class LineType(SQLBase):
     __tablename__ = "line_type"
 
-    name = Column(String, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
     f_nom = Column(Integer)
     r_per_length = Column(Float)
     x_per_length = Column(Float)
-    
+
     lines = relationship("Line", back_populates="line_type")
+
 
 class LineTypeBase(BaseModel):
     name: str
     f_nom: int
     r_per_length: float
     x_per_length: float
-    
+
     class Config:
         from_attributes = True
+
 
 class LineTypeCreate(LineTypeBase):
     pass
 
+
 class LineTypeResponse(LineTypeBase):
+    id: int
+
     class Config:
         from_attributes = True
+
 
 class Line(SQLBase):
     __tablename__ = "line"
 
-    name = Column(String, primary_key=True, index=True)
-    bus0 = Column(String, ForeignKey("bus.name"))
-    bus1 = Column(String, ForeignKey("bus.name"))
-    type = Column(String, ForeignKey("line_type.name"))
-    capital_cost = Column(Integer)
-    length = Column(Integer)
-    s_nom = Column(Integer)
-    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    bus0 = Column(Integer, ForeignKey("bus.name"))
+    bus1 = Column(Integer, ForeignKey("bus.name"))
+    type = Column(Integer, ForeignKey("line_type.name"))
+    capital_cost = Column(Float)
+    length = Column(Float)
+    s_nom = Column(Float)
+
     bus_from = relationship("Bus", back_populates="lines_from", foreign_keys=[bus0])
     bus_to = relationship("Bus", back_populates="lines_to", foreign_keys=[bus1])
     line_type = relationship("LineType", back_populates="lines")
+
 
 class LineBase(BaseModel):
     name: str
     bus0: str
     bus1: str
     type: str
-    capital_cost: int
-    length: int
-    s_nom: int
-    
+    capital_cost: float
+    length: float
+    s_nom: float
+
     class Config:
         from_attributes = True
+
 
 class LineCreate(LineBase):
     pass
 
+
 class LineResponse(LineBase):
+    id: int
+
     class Config:
         from_attributes = True
 

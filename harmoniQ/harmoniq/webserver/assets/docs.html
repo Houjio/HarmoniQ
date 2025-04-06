@@ -1,93 +1,329 @@
 {% extends "template.html" %}
 
-{% block extra_head %}
-<script>
-    async function loadOpenAPI() {
-        try {
-            const response = await fetch("/openapi.json");
-            const apiData = await response.json();
+{% block content %}
 
-            document.getElementById("api-title").textContent = apiData.info.title || "API Documentation";
-            document.getElementById("api-description").textContent = apiData.info.description || "";
-
-            const paths = apiData.paths;
-            const tags = {};
-
-            for (const path in paths) {
-                for (const method in paths[path]) {
-                    const endpoint = paths[path][method];
-                    const endpointTags = endpoint.tags || ["Non catégorisé"];
-                    
-                    endpointTags.forEach(tag => {
-                        if (!tags[tag]) tags[tag] = [];
-                        tags[tag].push({ path, method, endpoint });
-                    });
-                }
-            }
-
-            const apiContainer = document.getElementById("api-content");
-
-            for (const tag in tags) {
-                const tagSection = document.createElement("div");
-                tagSection.className = "mb-4";
-
-                tagSection.innerHTML = `
-                    <h2 class="text-light border-bottom pb-2">${tag}</h2>
-                    <div id="tag-${tag.replace(/\s+/g, '-').toLowerCase()}" class="accordion"></div>
-                `;
-
-                const tagContainer = tagSection.querySelector(".accordion");
-
-                tags[tag].forEach(({ path, method, endpoint }, index) => {
-                    const sanitizedId = `${method}-${path.replace(/[\/{}]/g, '')}-${index}`;
-                    const card = document.createElement("div");
-                    card.className = "accordion-item bg-dark border-secondary";
-
-                    card.innerHTML = `
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed bg-secondary text-light" data-bs-toggle="collapse" data-bs-target="#collapse-${sanitizedId}">
-                                <strong class="text-uppercase">${method}</strong> <code>${path}</code>
-                            </button>
-                        </h2>
-                        <div id="collapse-${sanitizedId}" class="accordion-collapse collapse">
-                            <div class="accordion-body">
-                                <p class="text-info">${endpoint.summary || "No summary available"}</p>
-                                ${endpoint.parameters && endpoint.parameters.length > 0 ? `
-                                <h6>Parameters:</h6>
-                                <ul>
-                                    ${endpoint.parameters.map(param => `<li><strong>${param.name}</strong>: ${param.description || "No description"}</li>`).join("")}
-                                </ul>` : ""}
-                                ${Object.keys(endpoint.responses).length > 1 || !endpoint.responses["200"] ? `
-                                <h6>Responses:</h6>
-                                <ul>
-                                    ${Object.keys(endpoint.responses).map(status => `<li><strong>${status}</strong>: ${endpoint.responses[status].description || "No description"}</li>`).join("")}
-                                </ul>` : ""}
-                            </div>
-                        </div>
-                    `;
-
-                    tagContainer.appendChild(card);
-                });
-
-                apiContainer.appendChild(tagSection);
-            }
-
-        } catch (error) {
-            console.error("Error loading OpenAPI JSON:", error);
-        }
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+        text-align: center;
+        margin: 0;
+        padding: 0;
     }
 
-    document.addEventListener("DOMContentLoaded", loadOpenAPI);
-</script>
-{% endblock %}
+    .hero-section {
+        position: relative;
+        height: 100vh;
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+        transition: background-image 0.5s ease-in-out;
+    }
 
-{% block content %}
-<div class="container my-5">
-    <h1 id="api-title" class="text-center">Loading...</h1>
-    <p id="api-description" class="text-center text-muted"></p>
-    
-    <div id="api-content" class="mt-4"></div>
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.45), rgba(141, 141, 141, 0.459));
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    select {
+        font-size: 1.4em;
+        padding: 10px;
+        border-radius: 10px;
+        border: 2px solid #555;
+        background: white;
+        cursor: pointer;
+        transition: 0.3s ease-in-out;
+        outline: none;
+    }
+
+    select:hover {
+        border-color: rgb(97, 191, 235);
+    }
+
+    .description {
+        display: none;
+        background: white;
+        margin: 30px auto;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        text-align: left;
+        line-height: 1.6;
+        animation: fadeIn 0.4s ease-in-out;
+        position: relative;
+        z-index: 2;
+    }
+    .function-detail {
+        display: none;
+        margin-top: 10px;
+        padding: 10px;
+        border-left: 4px solid #007bff;
+        background-color: #eef4ff;
+        border-radius: 5px;
+    }
+    .cliquable {
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.2s ease-in-out;
+    }
+    .cliquable:hover {
+    color: #3498db;
+    transform: scale(1.1);
+    }
+    .marge {
+        margin-left: 0.5cm;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="hero-section">
+    <div class="hero-content">
+        <h2>Sélectionnez un moyen de production électrique</h2>
+        <select id="productionSelect">
+            <option value="">-- Choisissez une option --</option>
+            <option value="eolienne">Éolienne</option>
+            <option value="hydro">Hydro-électrique</option>
+            <option value="nucleaire">Nucléaire</option>
+            <option value="solaire">Solaire</option>
+            <option value="thermique">Thermique</option>
+        </select>
+    </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<div id="descriptions">
+    <div id="eolienne" class="description">
+        <h3>Éolienne</h3>
+        <p>Fonctions utilisées :</p>
+        <ul>
+            <li><strong class="cliquable" onclick="toggleDetail('adjust_wind_speed')">adjust_wind_speed()</strong></li>
+            <div id="adjust_wind_speed" class="function-detail">Cette fonction ajuste la vitesse du vent mesurée à z_ref (m) à la hauteur du moyeu z_hub (m) en utilisant la loi du profil logarithmique du vent. Elle prend en entrée :
+                <li class="marge">v_ref : </li>
+                <li class="marge">z_ref : </li>
+                <li class="marge">z_hub : </li>
+                <li class="marge">z0 : </li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('air_density')">air_density()</strong></li>
+            <div id="air_density" class="function-detail">Cette fonction calcule la densité de l'air (kg/m³) en utilisant la loi des gaz parfaits. Elle prend en entrée :
+                <li class="marge">temperature : Température en Kelvin</li>
+                <li class="marge">pressure : Pression en Pascal</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('piecewise_power_curve')">piecewise_power_curve()</strong></li>
+            <div id="piecewise_power_curve" class="function-detail">Cette fonction modélise la courbe de puissance d'une éolienne en fonction de la vitesse du vent. Elle prend en entrée :
+                <li class="marge">v : Vitesse du vent (m/s)</li>
+                <li class="marge">cut_in_speed : Vitesse de démarrage (l'éolienne commence à produire de l'électricité)</li>
+                <li class="marge">rated_speed : Vitesse nominale (puissance maximale atteinte)</li>
+                <li class="marge">cut_out_speed : Vitesse d'arrêt (l'éolienne s'éteint pour éviter des dommages)</li>
+                <li class="marge">rated_power : Puissance nominale (puissance maximale de l'éolienne, en Watts)</li>
+                <li class="marge">power_shape_exponent : Exposant pour la montée de puissance (par défaut 3, ce qui correspond à une relation cubique typique)</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('apply_directional_losses')">apply_directional_losses()</strong></li>
+            <div id="apply_directional_losses" class="function-detail">Cette fonction  Elle prend en entrée :
+                <li class="marge"></li>
+                <li class="marge"></li>
+                <li class="marge"></li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('')">()</strong></li>
+            <div id="" class="function-detail">Cette fonction  Elle prend en entrée :
+                <li class="marge"></li>
+                <li class="marge"></li>
+                <li class="marge"></li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('')">()</strong></li>
+            <div id="" class="function-detail">Cette fonction  Elle prend en entrée :
+                <li class="marge"></li>
+                <li class="marge"></li>
+                <li class="marge"></li>
+            </div>
+        </ul>
+    </div>
+    <div id="hydro" class="description">
+        <h3>Hydro-électrique</h3>
+        <p>Fonctions utilisées :</p>
+        <ul>
+            <li><strong class="cliquable" onclick="toggleDetail('debit_turbine')">reservoir_infill()</strong></li>
+            <div id="debit_turbine" class="function-detail">Cette fonction permet de calculer le pourcentage de remplissage du réservoir associé à un barrage en fonction du nombre turbines actives, du débit entrant dans le réservoir et du pourcentage de remplissage du réservoir actuel. Elle prend en entrée : 
+                <li class="marge">info_barrage : Dataframe contenant les informations des barrages extraite du csv Info_Barrages.csv </li> 
+                <li class="marge">nom_barrage : Nom du barrage étudié </li> 
+                <li class="marge">besoin_puissance : Besoin en puissance demandé pour le barrage étudié en MW </li>
+                <li class="marge">info_puissance : Dataframe contenant une simulation de la puissance produite pour chaque barrage à réservoir en fonction du débits turbinés et du nombre de turbines actives</li>
+                <li class="marge">pourcentage_reservoir : Pourcentage de remplissage actuel du réservoir associé au barrage</li> 
+                <li class="marge">debit_entrant : Débit entrant dans le réservoir, calculé à l'aide de xhydro</li>
+                <li class="marge">nbr_turb_maintenance : Nombre de turbine en maintenance pour le barrage</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('puissance_hydro')">get_run_of_river_dam_power()</strong></li>
+            <div id="puissance_hydro" class="function-detail">Cette fonction calcule la puissance électrique d'un barrage au fil de l'eau (run-of-river dam) en tenant compte du débit, du nombre de turbines en fonctionnement et de la hauteur de chute. Elle prend en entrée :
+                <li class="marge">nom_barrage : Nom du barrage</li>
+                <li class="marge">info_barrage : Dataframe contenant les informations sur le barrage au fil de l'eau</li>
+                <li class="marge">flow : Débit</li>
+                <li class="marge">nb_turbine_maintenance : Nombre de turbine en maintenance</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('puissance_perdue')">energy_loss()</strong></li>
+            <div id="puissance_perdue" class="function-detail">Cette fonction calcule la perte d'énergie causée par l'activation d'un évacuateur de crue en MWh. Elle prend en entrée :
+                <li class="marge">Volume_evacue : Volume d'eau évacué sur une heure par l'évacuateur de crue en m^3/h</li>
+                <li class="marge">nom_barrage : Nom du barrage</li>
+                <li class="marge">info_barrage : Dataframe contenant les informations sur le barrage</li>
+                <li class="marge">nb_turbine_maintenance : Nombre de turbine en maintenance</li>
+            </div>
+        </ul>
+    </div>
+    <div id="nucleaire" class="description">
+        <h3>Nucléaire</h3>
+        <p>Fonctions utilisées :</p>
+        <ul>
+            <li><strong class="cliquable" onclick="toggleDetail('reaction_nucleaire')">calculate_nuclear_production()</strong></li>
+            <div id="reaction_nucleaire" class="function-detail">Cette fonction calcule la production annuelle d'une centrale nucléaire en kWh. Elle prend en entrée :
+                <li class="marge">power_kw : Puissance nominale de la centrale en kilowatts (kW)</li>
+                <li class="marge">maintenance_week : Semaine de l'année où la production est nulle (1-52)</li>
+            </div>
+        </ul>
+    </div>
+    <div id="solaire" class="description">
+        <h3>Solaire</h3>
+        <p>Fonctions utilisées :</p>
+        <ul>
+            <li><strong class="cliquable" onclick="toggleDetail('get_weather_data')">get_weather_data()</strong></li>
+            <div id="get_weather_data" class="function-detail">Cette fonction récupère les données météorologiques pour les emplacements spécifiés. Elle prend en entrée :
+                <li class="marge">coordinates_residential : Liste des coordonnées des emplacements sous forme de tuples (latitude, longitude, nom, altitude, fuseau horaire)</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('calculate_solar_parameters')">calculate_solar_parameters()</strong></li>
+            <div id="calculate_solar_parameters" class="function-detail">Cette fonction calcule les paramètres solaires et l'irradiance pour un emplacement donné. Elle prend en entrée :
+                <li class="marge">weather : Données météorologiques pour l'emplacement</li>
+                <li class="marge">latitude : Latitude de l'emplacement</li>
+                <li class="marge">longitude : Longitude de l'emplacement</li>
+                <li class="marge">altitude : Altitude de l'emplacement en mètres</li>
+                <li class="marge">temperature_model_parameters : Paramètres du modèle de température</li>
+                <li class="marge">module : Paramètres du module solaire</li>
+                <li class="marge">inverter : Paramètres de l'onduleur</li>
+                <li class="marge">surface_tilt : Angle d'inclinaison des panneaux solaires</li>
+                <li class="marge">surface_orientation : Orientation des panneaux solaires</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('convert_solar')">convert_solar()</strong></li>
+            <div id="convert_solar" class="function-detail">Cette fonction convertit une surface disponible en puissance installée ou une puissance souhaitée en superficie nécessaire en utilisant les paramètres du module solaire. Elle prend en entrée :
+                <li class="marge">value : Surface disponible en mètres carrés (m²) ou puissance souhaitée en kilowatts (kW)</li>
+                <li class="marge">module : Paramètres du module solaire</li>
+                <li class="marge">mode : Mode de conversion, soit 'surface_to_power' pour convertir une surface en puissance, soit 'power_to_surface' pour convertir une puissance en surface. Par défaut 'surface_to_power'</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('calculate_energy_solar_plants')">calculate_energy_solar_plants()</strong></li>
+            <div id="calculate_energy_solar_plants" class="function-detail">Cette fonction calcule la production d'énergie annuelle pour des centrales solaires aux coordonnées données avec leurs puissances spécifiées. Elle prend en entrée :
+                <li class="marge">coordinates_centrales : Tuple contenant (latitude, longitude, nom, altitude, timezone, puissance_kw)</li>
+                <li class="marge">surface_tilt : Angle d'inclinaison des panneaux en degrés. Par défaut 30°</li>
+                <li class="marge">surface_orientation : Orientation des panneaux en degrés (180° = sud). Par défaut 180°</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('calculate_regional_residential_solar')">calculate_regional_residential_solar()</strong></li>
+            <div id="calculate_regional_residential_solar" class="function-detail">Cette fonction calcule la production d'énergie solaire résidentielle potentielle par région administrative. Elle prend en entrée :
+                <li class="marge">coordinates_residential : Liste des coordonnées des régions sous forme de tuples (latitude, longitude, nom, altitude, timezone)</li>
+                <li class="marge">population_relative : Dictionnaire contenant la population relative pour chaque région</li>
+                <li class="marge">total_clients : Nombre total de clients subventionnés</li>
+                <li class="marge">num_panels_per_client : Nombre de panneaux par client. Par défaut 4</li>
+                <li class="marge">surface_tilt : Angle d'inclinaison des panneaux en degrés. Par défaut 30°</li>
+                <li class="marge">surface_orientation : Orientation des panneaux en degrés (180° = sud). Par défaut 180°</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('cost_solar_powerplant')">cost_solar_powerplant()</strong></li>
+            <div id="cost_solar_powerplant" class="function-detail">Cette fonction calcule le coût total pour chaque centrale solaire. Elle prend en entrée :
+                <li class="marge">coordinates_centrales : Liste des coordonnées et puissances des centrales</li>
+                <li class="marge">resultats_centrales : Dictionnaire contenant l'énergie produite par chaque centrale</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('calculate_installation_cost')">calculate_installation_cost()</strong></li>
+            <div id="calculate_installation_cost" class="function-detail">Cette fonction calcule le coût d'installation pour chaque centrale solaire avec une estimation plus précise. Elle prend en entrée :
+                <li class="marge">coordinates_centrales : Liste des coordonnées et puissances des centrales</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('calculate_lifetime')">calculate_lifetime()</strong></li>
+            <div id="calculate_lifetime" class="function-detail">Cette fonction estime la durée de vie des centrales solaires en fonction de leurs puissances installées. Elle prend en entrée :
+                <li class="marge">coordinates_centrales : Liste des coordonnées et puissances des centrales sous forme de tuples (latitude, longitude, nom, altitude, timezone, puissance_kw)</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('co2_emissions_solar')">co2_emissions_solar()</strong></li>
+            <div id="co2_emissions_solar" class="function-detail">Cette fonction calcule les émissions totales de CO₂ équivalent pour chaque centrale solaire sur toute sa durée de vie. Elle prend en entrée :
+                <li class="marge">coordinates_centrales : Liste des coordonnées et puissances des centrales</li>
+                <li class="marge">resultats_centrales : Dictionnaire contenant l'énergie produite par chaque centrale</li>
+                <li class="marge">facteur_emission : Facteur d'émission en g CO₂eq/kWh basé sur l'ACV</li>
+            </div>
+            <li><strong class="cliquable" onclick="toggleDetail('plot_validation')">plot_validation()</strong></li>
+            <div id="plot_validation" class="function-detail">Cette fonction superpose sur un graphique mensuel la production des centrales solaires simulée totale avec les données réelles. Elle prend en entrée :
+                <li class="marge">resultats_centrales : Dictionnaire contenant les résultats des centrales solaires simulées</li>
+                <li class="marge">real_data : DataFrame contenant les données de production solaire réelle</li>
+            </div>
+        </ul>
+    </div>
+    <div id="thermique" class="description">
+        <h3>Thermique</h3>
+        <p>Fonctions utilisées :</p>
+        <ul>
+            <li><strong class="cliquable" onclick="toggleDetail('combustion')">calcul_combustion()</strong></li>
+            <div id="combustion" class="function-detail">Analyse l'efficacité de la combustion dans une centrale thermique.</div>
+            <li><strong class="cliquable" onclick="toggleDetail('emissions_co2')">calcul_emissions_co2()</strong></li>
+            <div id="emissions_co2" class="function-detail">Évalue les émissions de CO2 produites par la combustion des carburants fossiles.</div>
+        </ul>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("productionSelect").addEventListener("change", afficherDescription);
+    });
+
+    function afficherDescription() {
+        let descriptions = document.querySelectorAll('.description');
+        descriptions.forEach(desc => desc.style.display = 'none');
+
+        let selection = document.getElementById('productionSelect').value;
+        if (selection) {
+            document.getElementById(selection).style.display = 'block';
+        }
+
+        let heroSection = document.querySelector('.hero-section');
+        if (heroSection) {
+            let images = {
+                "eolienne": "https://images.pexels.com/photos/414837/pexels-photo-414837.jpeg",
+                "hydro": "https://images.pexels.com/photos/31326222/pexels-photo-31326222/free-photo-of-aerial-view-of-dam-structure-in-alma-wi.jpeg",
+                "nucleaire": "https://images.pexels.com/photos/257700/pexels-photo-257700.jpeg",
+                "solaire": "https://images.pexels.com/photos/356036/pexels-photo-356036.jpeg",
+                "thermique": "https://images.pexels.com/photos/3044472/pexels-photo-3044472.jpeg"
+            };
+            heroSection.style.backgroundImage = selection ?
+                `linear-gradient(to bottom right, rgba(0, 0, 0, 0.45), rgba(141, 141, 141, 0.459)), url('${images[selection]}')`
+                : 'none';
+            }
+            
+    }
+    function toggleDetail(id) {
+        let detail = document.getElementById(id);
+        if (detail.style.display === 'block') {
+            detail.style.display = 'none';
+        } else {
+            detail.style.display = 'block';
+        }
+    }
+    
+</script>
+
 {% endblock %}

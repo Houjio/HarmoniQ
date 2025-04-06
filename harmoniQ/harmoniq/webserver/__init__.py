@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -10,7 +10,6 @@ from harmoniq.webserver.REST import router as api_router
 ASSET_FILE = Path(__file__).parent / "assets"
 STATIC_FILE = ASSET_FILE / "static"
 TEMPLATES_FILE = ASSET_FILE / "templates"
-
 
 app = FastAPI(
     title="HarmoniQ",
@@ -35,6 +34,12 @@ def index(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
 
 
+@app.get("/favicon.ico", response_class=FileResponse)
+def favicon():
+    print(STATIC_FILE / "favicon" / "favicon.ico")
+    return FileResponse(STATIC_FILE / "favicon" / "favicon.ico")
+
+
 @app.get("/à-propos", response_class=HTMLResponse)
 def à_propos(request: Request):
     return templates.TemplateResponse(request=request, name="about.html")
@@ -49,12 +54,16 @@ def documentation(request: Request):
 def application(request: Request):
     return templates.TemplateResponse(request=request, name="app.html")
 
+
 @app.get("/Eloise", response_class=HTMLResponse)
 def eloisepage(request: Request):
     return templates.TemplateResponse(request=request, name="elo.html")
 
+
 @app.exception_handler(404)
 def not_found(request: Request, exc):
+    if request.url.path.startswith("/api/"):
+        return JSONResponse(status_code=404, content={"message": "Not Found"})
     return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
 
 

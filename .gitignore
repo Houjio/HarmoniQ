@@ -3,9 +3,13 @@ env
 harmoniq_env
 **/db.sqlite
 **/test_db.sqlite
+**/demande.db
+**/demande.db.zip
 
 # Fichier python générés
 *.egg-info
 __pycache__
 _version.py
-*.pyc
+*.pyc.DS_Store
+__pycache__/
+.vscode/
