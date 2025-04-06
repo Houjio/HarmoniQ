@@ -88,7 +88,8 @@ def ice_loss_factor(t: np.ndarray) -> np.ndarray:
     generate a random value [0.5, 1.0], otherwise 1.0.
     """
     # TODO @Zineb: PQ on génère un random ici ?
-    return np.where(t > 273, 1.0, np.random.uniform(0.5, 1.0, size=t.shape))
+    t = t + 273.15  # Convert to Kelvin
+    return np.where(t < 273, 1.0, np.random.uniform(0.5, 1.0, size=t.shape))
 
 
 def get_turbine_power(eolienne: Eolienne, meteo: pd.DataFrame) -> pd.DataFrame:
@@ -118,11 +119,11 @@ def get_turbine_power(eolienne: Eolienne, meteo: pd.DataFrame) -> pd.DataFrame:
         eolienne.puissance_nominal,
     )
 
-    power_with_output_direction = power_output_direction * directional_losses
+    #power_with_output_direction = power_output_direction * directional_losses # On ne considère pas la direction pour le moment
 
     # Apply wake losses
     wake_losses = apply_wake_losses(meteo["direction_vent"])
-    power_with_wake_losses = power_with_output_direction * wake_losses
+    power_with_wake_losses = power_output_direction * wake_losses
 
     # Apply ice losses
     ice_losses = ice_loss_factor(meteo["temperature"])
