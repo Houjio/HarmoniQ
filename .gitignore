@@ -13,3 +13,6 @@ _version.py
 *.pyc.DS_Store
 __pycache__/
 .vscode/
+
+# Remove build files
+build/
