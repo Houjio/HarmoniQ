@@ -103,13 +103,8 @@ function initialiserListeParc(type, elementId) {
             return response.json();
         })
         .then(data => {
-            console.log(`Liste des ${type}:`, data);
-
-            // Parcourir les données et ajouter les points sur la carte
             data.forEach(parc => {
                 listeElement.innerHTML += createElement(parc);
-                console.log(parc.latitude, parc.longitude, type);
-                // Ajouter un marqueur sur la carte
                 L.marker([parc.latitude, parc.longitude], { icon: icons[type] })
                     .addTo(map)
                     .bindPopup(`<b>${parc.nom}</b><br>Catégorie: ${type}`);
@@ -131,58 +126,35 @@ function initialiserListeThermique() {
     initialiserListeParc('thermique', 'list-parc-thermique');
 }
 
+function loadMap() {
+    map = L.map('map-box', {
+        zoomControl: true,
+        attributionControl: true,
+        maxZoom: 10,
+        minZoom: 5
+    }).setView([52.9399, -67], 4);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    var bounds = [
+        [40.0, -90.0], 
+        [65.0, -50.0] 
+    ];
+    map.setMaxBounds(bounds);
+    map.on('drag', function() {
+        map.panInsideBounds(bounds, { animate: false });
+    });
+}
+
 window.onload = function() {
     initialiserListeScenario();
     initialiserListeInfra();
     initialiserListeParcEolienne();
     initialiserListeParcSolaire();
     initialiserListeThermique();
+
+    loadMap();
 };
-
-
-
-function changeInfra() {
-    const selectedId = $("#groupe-actif option:selected").val();
-    fetchData(`/api/listeinfrastructures/${selectedId}`)
-        .then(data => {
-            const categories = [
-                { elementId: "list-parc-eolien", activeIds: data.parc_eoliens.split(',') },
-                { elementId: "solarCollapse", activeIds: data.parc_solaires.split(',') },
-                { elementId: "list-parc-thermique", activeIds: data.central_thermique.split(',') }
-            ];
-
-            categories.forEach(({ elementId, activeIds }) => {
-                const elements = document.getElementById(elementId).getElementsByTagName("li");
-                updateListItems(elements, Array.from(elements), activeIds);
-            });
-
-            $("#active-groupe-title").text(data.nom).removeClass('text-muted');
-            $("#enregistrer-groupe").show();
-            unblock_run();
-        })
-        .catch(error => console.error('Error loading infrastructure group:', error));
-}
-
-function changeScenario() {
-    const id = $("#scenario-actif").val();
-    fetchData(`/api/scenario/${id}`)
-        .then(data => {
-            const scenarioCard = $('#scenario-info');
-            scenarioCard.show();
-            scenarioCard.find('.scenario-nom').text(data.nom);
-            scenarioCard.find('.description').text(data.description);
-            scenarioCard.find('.scenario-debut').text(moment(data.date_de_debut).format('LL'));
-            scenarioCard.find('.scenario-fin').text(moment(data.date_de_fin).format('LL'));
-            scenarioCard.find('.scenario-pas').text(moment.duration(data.pas_de_temps).humanize());
-            scenarioCard.find('.optimisme-social').text(['Pessimiste', 'Moyen', 'Optimiste'][data.optimisme_social - 1]);
-            scenarioCard.find('.optimisme-ecologique').text(['Pessimiste', 'Moyen', 'Optimiste'][data.optimisme_ecologique - 1]);
-
-            $("#active-scenario-title").text(data.nom).removeClass('text-muted');
-            $("#delete-scenario").find("span").text(data.nom).show();
-            unblock_run();
-        })
-        .catch(error => console.error('Error loading scenario:', error));
-}
 
 function save_groupe() {
     const values = load_groupe_ids();
@@ -322,25 +294,6 @@ function load_groupe_ids() {
     return data;
 }
 
-function save_groupe() {
-    var values = load_groupe_ids();
-
-    $.ajax({
-        type: 'PUT',
-        url: '/api/listeinfrastructures/' + $("#groupe-actif").val(),
-        data: JSON.stringify(values),
-        contentType: 'application/json',
-        success: function(response) {
-            console.log('Groupe d\'infrastructures enregistré avec succès:', response);
-        },
-        error: function(error) {
-            console.error('Erreur lors de l\'enregistrement du groupe d\'infrastructures:', error);
-        }
-    });
-
-    $("#enregistrer-groupe").prop("disabled", true);
-}
-
 function no_selection_scenario() {
     let scenario_card = $('#scenario-info');
     scenario_card.hide();
@@ -369,9 +322,9 @@ function changeInfra() {
             console.log('Groupe d\'infrastructures actif:', data);
 
             const categories = [
-                { elementId: "list-parc-eolien", activeIds: data.parc_eoliens.split(',') },
-                { elementId: "list-parc-solaire", activeIds: data.parc_solaires.split(',') },
-                { elementId: "list-parc-thermique", activeIds: data.central_thermique.split(',') }
+                { elementId: "list-parc-eolien", activeIds: data.parc_eoliens ? data.parc_eoliens.split(',') : [] },
+                { elementId: "list-parc-solaire", activeIds: data.parc_solaires ? data.parc_solaires.split(',') : [] },
+                { elementId: "list-parc-thermique", activeIds: data.central_thermique ? data.central_thermique.split(',') : [] }
             ];
 
             categories.forEach(({ elementId, activeIds }) => {
@@ -407,7 +360,6 @@ function changeScenario() {
     fetch('/api/scenario/' + id)
         .then(response => response.json())
         .then(data => {
-            console.log('Scenario actif:', data);
             let scenario_card = $('#scenario-info');
             scenario_card.show();
             scenario_card.find('.description').text(data.description);  
@@ -419,6 +371,12 @@ function changeScenario() {
             );
             scenario_card.find('.scenario-pas').text(
                 moment.duration(data.pas_de_temps).humanize()
+            );
+            scenario_card.find('.consommation-scenario').text(
+                data.consomation === 1 ? 'Normal' : 'Conservateur'
+            );
+            scenario_card.find('.meteo-scenario').text(
+                data.weather === 1 ? 'Chaude' : data.weather === 2 ? 'Typique' : 'Froide'
             );
 
             updateOptimismeText(scenario_card, 'social', data.optimisme_social);
@@ -434,16 +392,6 @@ function changeScenario() {
         .catch(error => console.error('Erreur lors du chargement du scenario:', error));
 }
 
-function unblock_run() {
-    let scenarioActif = $('#scenario-actif').val();
-    let groupeActif = $('#groupe-actif').val();
-
-    if (scenarioActif && groupeActif) {
-        $('#run').prop('disabled', false);
-    } else {
-        $('#run').prop('disabled', true);
-    }
-}
 
 function nouveauScenario() {
     function creerModal() {
@@ -472,6 +420,17 @@ function nouveauScenario() {
                                 <option value="PT4H">4 heures</option>
                                 <option value="P1D">1 jour</option>
                                 <opton value="P7D">7 jours</option>
+                            </select>
+                            <label for="weather">Meteo (consomation)</label>
+                            <select class="form-control" id="scenario-weather">
+                                <option value="3">Froid</option>
+                                <option value="2" selected>Typique</option>
+                                <option value="1">Chaud</option>
+                            </select>
+                            <label for="consomation">Modèle de consomation</label>
+                            <select class="form-control" id="scenario-consomation">
+                                <option value="2">Conservateur</option>
+                                <option value="1" selected>Normal</option>
                             </select>
                             <label for="optimisme_social">Optimisme social</label>
                             <select class="form-control" id="scenario-optimisme_social">
@@ -519,6 +478,8 @@ function nouveauScenario() {
         let pas_de_temps = $('#scenario-pas_de_temps').val();
         let date_de_debut = $('#scenario-etendue_de_temps').data('daterangepicker').startDate.format('YYYY-MM-DD');
         let date_de_fin = $('#scenario-etendue_de_temps').data('daterangepicker').endDate.format('YYYY-MM-DD');
+        let weather = parseInt($('#scenario-weather').val());
+        let consomation = parseInt($('#scenario-consomation').val());
         let optimisme_social = parseInt($('#scenario-optimisme_social').val());
         let optimisme_ecologique = parseInt($('#scenario-optimisme_ecologique').val());
 
@@ -533,7 +494,7 @@ function nouveauScenario() {
         };
 
         // Validation des données
-        if (nom === '' || description === '' || pas_de_temps === '' || date_de_debut === '' || date_de_fin === '') {
+        if (nom === '' || pas_de_temps === '' || date_de_debut === '' || date_de_fin === '') {
             alert('Veuillez remplir tous les champs');
             return;
         }
@@ -610,22 +571,3 @@ $('#delete-scenario').on('click', function() {
     confirmDeleteScenario(id, nom);
 });
 
-document.addEventListener("DOMContentLoaded", function() {
-    map = L.map('map-box', {
-        zoomControl: true,
-        attributionControl: true,
-        maxZoom: 10,
-        minZoom: 5
-    }).setView([52.9399, -67], 4);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-    var bounds = [
-        [40.0, -90.0], 
-        [65.0, -50.0] 
-    ];
-    map.setMaxBounds(bounds);
-    map.on('drag', function() {
-        map.panInsideBounds(bounds, { animate: false });
-    });
-});

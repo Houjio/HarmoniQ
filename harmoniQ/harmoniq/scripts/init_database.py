@@ -143,10 +143,6 @@ def fill_eoliennes():
 
 def fill_hydro():
     """Remplit la table bus à partir du fichier CSV"""
-    import pandas as pd
-    import os
-    from pathlib import Path
-
     db = next(get_db())
 
     file_path = CSV_DIR / "Info_Barrages.csv"
@@ -154,32 +150,28 @@ def fill_hydro():
 
     count = 0
     for _, row in barrages_df.iterrows():
-        existing = (
-            db.query(schemas.Hydro)
-            .filter(schemas.Hydro.barrage_nom == row["Nom"])
-            .first()
-        )
-        if existing:
-            print(f"Barrage {row['Nom']} existe déjà")
-            continue
-
-        db_hydro = schemas.HydroCreate(
-            barrage_nom=row["Nom"],
-            puissance_nominal=row["Puissance_Installee_MW"],
-            type_barrage=row["Type"],
-            latitude=row["Longitude"],
-            longitude=row["Latitude"],
-            hauteur_chute=row["Hauteur_de_chute_m"],
-            debits_nominal=row["Debits_nom"],
-            modele_turbine=row["Type_turbine"],
-            nb_turbines=row["Nb_turbines"],
-            nb_turbines_maintenance=row["nb_turbines_maintenance"],
-            volume_reservoir=row["Volume_reservoir"],
-        )
-
-        count += 1
-        create_hydro(db, db_hydro)
-        print(f"Barrage '{db_hydro.barrage_nom}' ajouté à la base de données")
+            existing = db.query(schemas.Hydro).filter(schemas.Hydro.barrage_nom == row['Nom']).first()
+            if existing:
+                print(f"Barrage {row['Nom']} existe déjà")
+                continue
+                      
+            db_hydro = schemas.HydroCreate(
+                barrage_nom=row['Nom'],
+                puissance_nominal=row['Puissance_Installee_MW'],
+                type_barrage=row['Type'],
+                latitude=row['Longitude'],
+                longitude=row['Latitude'],
+                hauteur_chute=row['Hauteur_de_chute_m'],
+                debits_nominal=row['Debits_nom'],
+                modele_turbine=row['Type_turbine'],
+                nb_turbines = row['Nb_turbines'],
+                nb_turbines_maintenance=row['nb_turbines_maintenance'],
+                volume_reservoir = row['Volume_reservoir'],
+                id_HQ = row['id_HQ'],
+            )
+            count += 1
+            create_hydro(db, db_hydro)
+            print(f"Barrage '{db_hydro.barrage_nom}' ajouté à la base de données")
 
     print(f"{count} barrage ajoutés à la base de données")
 
@@ -341,20 +333,20 @@ def fill_network():
 
 
 def populate_db():
-    print("Collecte des éoliennes")
-    fill_eoliennes()
+    # print("Collecte des éoliennes")
+    # fill_eoliennes()
 
-    print("Collecte des données du réseau électrique :")
-    fill_network()
+    # print("Collecte des données du réseau électrique :")
+    # fill_network()
 
     print("Collecte des données du réseau hydro :")
     fill_hydro()
 
-    print("Collecte des centrales thermiques")
-    fill_thermique()
+    # print("Collecte des centrales thermiques")
+    # fill_thermique()
 
-    print("Collecte des centrales solaires")
-    fill_solaire()
+    # print("Collecte des centrales solaires")
+    # fill_solaire()
 
 
 def main():
@@ -394,4 +386,6 @@ def main():
 
 
 if __name__ == "__main__":
+
+    populate_db()
     init_db()

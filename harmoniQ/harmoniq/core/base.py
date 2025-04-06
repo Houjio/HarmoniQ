@@ -31,6 +31,9 @@ class Infrastructure:
     def calculer_production(self) -> np.ndarray:
         """Placeholder pour le calcul de la production"""
         raise NotImplementedError
+    
+    def charger_debit(self):
+        raise NotImplementedError
 
     @necessite_scenario
     def calculer_cout_construction(self) -> np.ndarray:
