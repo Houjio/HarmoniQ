@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 from data_solaire import coordinates_centrales, coordinates_residential, population_relative
-
+from typing import List
 
 def get_weather_data(coordinates_residential):
     tmys = []
@@ -162,7 +162,7 @@ def calculate_energy_solar_plants(coordinates_centrales, surface_tilt=45, surfac
     return resultats_centrales, resultats_centrales_df
 
 def calculate_regional_residential_solar(
-    coordinates_residential: list[tuple],
+    coordinates_residential: List[tuple],
     population_relative,
     total_clients,
     num_panels_per_client,
