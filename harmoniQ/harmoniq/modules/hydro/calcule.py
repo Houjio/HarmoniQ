@@ -1,34 +1,23 @@
 import pandas as pd
 import numpy as np
 import HydroGenerate as hg
-
+from pathlib import Path
 from HydroGenerate.hydropower_potential import calculate_hp_potential
 from harmoniq.db.engine import get_db
 from harmoniq.db.CRUD import read_all_hydro
+CURRENT_DIR = Path(__file__).parent
+APPORT_DIR = CURRENT_DIR / "apport_naturel"
 
 
 def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel):
     db = next(get_db())
     barrages = read_all_hydro(db)
-    barrages_df = pd.DataFrame([barrages.__dict__ for barrage in barrages])
-    barrages_df = barrages_df[barrages_df["type_barrage"] != "Fil de l'eau"]
     Units = "IS"
     hp_type = 'Diversion'
     results = {}
 
-    for dam_id in besoin_puissance.columns:
-        besoin_puissance = besoin_puissance[dam_id].iloc[0]  # Get power needs for this dam
-
-        # Get dam-specific values from barrages_df
-        dam_data = barrages_df[barrages_df["id"] == dam_id]    
-
-        volume_remplie = dam_data["volume_reservoir"].values[0]
-        debit_nom = dam_data["debits_nominal"].values[0]
-        head = dam_data["hauteur_chute"].values[0]
-        nb_turb_maintenance = dam_data["nb_turb_maintenance"].values[0]
-        nb_turbines = dam_data["nb_turbines"].values[0] - nb_turb_maintenance
-        type_turb = dam_data["modele_turbine"].values[0]
-        type_barrage = dam_data["type"].values[0]
+    for i in range(0,3):
+        type_barrage = barrages[i].type_barrage
         # barrage_amont = dam_data["amont"].values[0]
         # debit_amont = barrages_df["id"== barrage_amont].values[0]
 
@@ -36,35 +25,45 @@ def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel):
         if type_barrage == "Fil de l'eau":
             print("Erreur : Le barrage entré n'est pas un barrage à réservoir")
         else:
+            nom = barrages[i].barrage_nom
+            besoin = besoin_puissance[nom].iloc[0]  # Get power needs for this dam
+            # Get dam-specific values from barrages_df
+            dam_data = barrages[i]  
+            volume_remplie = dam_data.volume_reservoir
+            debit_nom = dam_data.debits_nominal
+            head = dam_data.hauteur_chute
+            nb_turb_maintenance = dam_data.nb_turbines_maintenance
+            nb_turbines = dam_data.nb_turbines - nb_turb_maintenance
+            type_turb = dam_data.modele_turbine
             # debit_amont = get_upstream_flows(temps,df_debit,barrage_amont)
-            volume_reel = volume_remplie*pourcentage_reservoir + apport_naturel*3600 #Ajouter le debit en amont
+            volume_reel = volume_remplie*pourcentage_reservoir + apport_naturel*3600
 
             hp = calculate_hp_potential(flow = debit_nom, design_flow = debit_nom, head = head, units = Units, 
                     hydropower_type= hp_type, turbine_type = type_turb, annual_maintenance_flag = False
                     )
             hp.power /= 1000 #MW
             for i in range(0,len(hp.power)):
-                if besoin_puissance<hp.power[0]: #Toujours une turbine active pour que la rivière puisse continuer à 
+                if besoin<hp.power[0]: #Toujours une turbine active pour que la rivière puisse continuer à 
                     nb_turbines_a = 1
                     debits_turb = debit_nom
                     break
                 else:
-                    nb_turbines_actives = hp.power/besoin_puissance
-                    if nb_turbines>nb_turbines_actives[i] and hp.flow[i]-debit_nom<0.1 and hp.flow[i]-debit_nom>0 and besoin_puissance<hp.power[-1]:
+                    nb_turbines_actives = hp.power/besoin
+                    if nb_turbines>nb_turbines_actives[i] and hp.flow[i]-debit_nom<0.1 and hp.flow[i]-debit_nom>0 and besoin<hp.power[-1]:
                         nb_turbines_a = nb_turbines_actives[i]
                         debits_turb = hp.flow[i]
                         break
 
-                    elif besoin_puissance>hp.power[-1]:
+                    elif besoin>hp.power[-1]:
                         nb_turbines_a = nb_turbines
                         debits_turb = hp.flow[-1]
                         break
 
             if volume_reel - debits_turb*nb_turbines_a*3600 > volume_remplie:
-                results[dam_id] = 1
+                results[nom] = 1
                 Volume_evacue = volume_reel + debits_turb*nb_turbines_a*3600 - volume_remplie
             else:
-                results[dam_id] = (volume_reel-(debits_turb*nb_turbines_a*3600))/volume_remplie
+                results[nom] = (volume_reel-(debits_turb*nb_turbines_a*3600))/volume_remplie
 
             pourcentage_reservoir_df = pd.DataFrame([results])
             # debit_turb_df = pd.DataFrame([debits_turb*nb_turbines_a*3600])
@@ -72,6 +71,32 @@ def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel):
 
     return pourcentage_reservoir_df  # Possible d'ajouter une fonctionnalité permettant de calculer l'énergie perdue après l'utilisation d'un évacuateur de crue pour l'analyse de résultat
 
+def charger_apport_reservoir(start_date, end_date): #Pour réseau pas utiliser dans la classe Hydro
+    db = next(get_db())
+    barrages = read_all_hydro(db)
+    # barrages_df = pd.DataFrame([vars(b) for b in barrages])
+    df_apport = pd.DataFrame()
+    for i in range(0, len(barrages)):
+        if barrages[i].type_barrage == "Reservoir":
+            data_barrage = barrages[i]
+            id_HQ = data_barrage.id_HQ
+            nom_fichier = str(id_HQ) + ".csv"
+            apport = pd.read_csv(filepath_or_buffer=APPORT_DIR /nom_fichier)
+            apport["time"] = pd.to_datetime(apport["time"])
+            apport= apport[(apport["time"] >= start_date) & (apport["time"] <= end_date)]
+            if i == 0:
+                df_apport["time"] = apport["time"]       
+            date_repetee = np.repeat(apport["time"].values,24)
+            offset = np.tile(pd.to_timedelta(np.arange(24), unit="h"), len(apport))
+            temps = date_repetee + offset
+            apport_repete = np.repeat(apport["streamflow"].values, 24)
+            apport_re = pd.DataFrame({"time" : temps,data_barrage.barrage_nom : apport_repete}) 
+            if df_apport.empty:
+                df_apport = apport_re
+            else:                
+                df_apport = pd.merge(df_apport, apport_re, on = "time", how = "outer")
+    
+    return df_apport
 
 # def store_flows(Volume_evacue, debits_turb, df_debit, id_barrage): #pas implémenté
 
