@@ -26,6 +26,14 @@ const map_icons = {
     })
 };
 
+var prettyNames = {
+    eolienneparc: "Parc éolien",
+    solaire: "Parc solaire",
+    thermique: "Centale thermique",
+    hydro: "Barrage hydroélectrique"
+}
+
+
 // Utility function to fetch data and handle errors
 function fetchData(url, method = 'GET', data = null, signal = null) {
     return fetch(url, {
@@ -96,7 +104,7 @@ function addMarker(lat, lon, type, data) {
     const icon = map_icons[type];
     const marker = L.marker([lat, lon], { icon: icon })
         .addTo(map)
-        .bindPopup(`<b>${data.nom}</b><br>Catégorie: ${type}`);
+        .bindPopup(`<b>${data.nom}</b><br>Catégorie: ${prettyNames[type]}`);
     marker.on('click', function() {
         this.openPopup();
     });
