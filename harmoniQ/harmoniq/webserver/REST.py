@@ -155,19 +155,6 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
         sql_class, base_class, create_class, response_class, table_name_lower
     )
 
-
-# Éolienne
-eolienne_router = api_routers.get("eolienne")
-if eolienne_router is None:
-    raise Exception("Eolienne router not found")
-
-
-@eolienne_router.get("/parc/{eolienne_parc_id}")
-async def read_eoliennes_in_parc(eolienne_parc_id: int, db: Session = Depends(get_db)):
-    result = engine.all_eoliennes_in_parc(db, eolienne_parc_id)
-    return result
-
-
 # Demande
 demande_router =  APIRouter(
     prefix="/demande",
