@@ -256,7 +256,7 @@ faker_router = APIRouter(
 
 @faker_router.post("/production")
 async def get_production_aleatoire(scenario_id: int, db: Session = Depends(get_db)):
-    scenario = read_data_by_id(db, schemas.Scenario, scenario_id)
+    scenario = await read_data_by_id(db, schemas.Scenario, scenario_id)
     if scenario is None:
         raise HTTPException(status_code=200, detail="Scenario not found")
 
