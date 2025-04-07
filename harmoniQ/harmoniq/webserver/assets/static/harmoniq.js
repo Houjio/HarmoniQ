@@ -71,7 +71,7 @@ function initialiserListeParc(type, elementId) {
     const icons = {
         eolienneparc: L.icon({
             iconUrl: '/static/icons/heolienne.png',
-            iconSize: [40, 40],
+            iconSize: [30, 30],
             iconAnchor: [20, 20]
         }),
         solaire: L.icon({
@@ -614,7 +614,7 @@ document.addEventListener("DOMContentLoaded", function() {
     map = L.map('map-box', {
         zoomControl: true,
         attributionControl: true,
-        maxZoom: 10,
+        maxZoom: 15,
         minZoom: 5
     }).setView([52.9399, -67], 4);
 
