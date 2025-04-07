@@ -169,6 +169,24 @@
                     </div>
                 </div>
             </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="nuclearHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#nuclearCollapse" aria-expanded="false" aria-controls="nuclearCollapse">
+                        Centrale Nucléaire
+                    </button>
+                </h2>
+                <div id="nuclearCollapse" class="accordion-collapse collapse" aria-labelledby="nuclearHeading" data-bs-parent="#sidebar">
+                    <div id="list-parc-nucleaire" class="accordion-body">
+                        <div class="d-flex w-100 justify-content-center my-2">
+                            <button class="btn btn-primary btn-sm select-all me-2" id="select_all_nucleaire">Tout sélectionner</button>
+                            <button class="btn btn-primary btn-sm select-none" id="select_none_nucleaire">Tout désélectionner</button>
+                        </div>
+                        <ul class="list-group">
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div id="plots" class="d-flex flex-column">
@@ -192,6 +210,7 @@
                     <img src="/static/icons/eolienne.png" class="icon-draggable" createClass="EolienneParcCreate" createApi="/api/eolienneparc" draggable="true" />
                     <img src="/static/icons/solaire.png" class="icon-draggable" createClass="SolaireCreate" createApi="/api/solaire" draggable="true" />
                     <img src="/static/icons/thermique.png" class="icon-draggable" createClass="ThermiqueCreate" createApi="/api/thermique" draggable="true" />
+                    <img src="/static/icons/nucelaire.png" class="icon-draggable" createClass="NucleaireCreate" createApi="/api/nucleaire" draggable="true" />
                 </div>
             </div>
             <div class="tab-pane show h-100" id="sankey" role="tabpanel" aria-labelledby="sankey-tab">

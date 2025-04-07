@@ -74,6 +74,7 @@ class WeatherHelper:
             raise ValueError("Data not loaded")
         return self._data
 
+    
     def load(self) -> None:
         if self._data is not None:
             return self._data

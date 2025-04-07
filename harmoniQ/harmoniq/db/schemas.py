@@ -141,6 +141,7 @@ class ListeInfrastructures(SQLBase):
     parc_solaires = Column(String, nullable=True)
     central_hydroelectriques = Column(String, nullable=True)
     central_thermique = Column(String, nullable=True)
+    central_nucleaire = Column(String, nullable=True)
 
     @property
     def parc_eolien_list(self):
@@ -161,6 +162,10 @@ class ListeInfrastructures(SQLBase):
     @property
     def central_thermique_list(self):
         return self.central_thermique.split(",") if self.central_thermique else []
+    
+    @property
+    def central_nucleaire_list(self):
+        return self.central_nucleaire.split(",") if self.central_nucleaire else []
 
 
 class ListeInfrastructuresBase(BaseModel):
@@ -169,6 +174,7 @@ class ListeInfrastructuresBase(BaseModel):
     parc_solaires: Optional[str] = None
     central_hydroelectriques: Optional[str] = None
     central_thermique: Optional[str] = None
+    central_nucleaire: Optional[str] = None
 
 
 class ListeInfrastructuresCreate(ListeInfrastructuresBase):
@@ -373,9 +379,9 @@ class SolaireResponse(SolaireBase):
 
 
 class ThermiqueBase(BaseModel):
+    nom: str = Field(..., description="Nom de la centrale thermique")
     latitude: float = Field(..., description="Latitude de la centrale thermique (degrés)")
     longitude: float = Field(..., description="Longitude de la centrale thermique (degrés)")
-    nom: str = Field(..., description="Nom de la centrale thermique")
     puissance_nominal: float = Field(..., description="Puissance nominale de la centrale thermique (kW)")
     type_intrant: str = Field(..., description="Type d'intrant de la centrale thermique")
     semaine_maintenance: int = Field(..., description="Semaine de maintenance où la centrale thermique est à l'arrêt")
@@ -413,9 +419,9 @@ class Thermique(SQLBase):
 
 
 class NucleaireBase(BaseModel):
+    nom: str = Field(..., description="Nom de la centrale nucléaire")
     latitude: float = Field(..., description="Latitude de la centrale nucléaire (degrés)")
     longitude: float = Field(..., description="Longitude de la centrale nucléaire (degrés)")
-    centrale_nucleaire_nom: str = Field(..., description="Nom de la centrale nucléaire")
     puissance_nominal: float = Field(..., description="Puissance nominale de la centrale nucléaire (kW)")
     type_intrant: str = Field(..., description="Type d'intrant de la centrale nucléaire")
     semaine_maintenance: int = Field(..., description="Semaine de maintenance où la centrale nucléaire est à l'arrêt")
@@ -441,7 +447,7 @@ class Nucleaire(SQLBase):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    centrale_nucleaire_nom = Column(String)
+    nom = Column(String)
     latitude = Column(Float)
     longitude = Column(Float)
     puissance_nominal = Column(Float)
