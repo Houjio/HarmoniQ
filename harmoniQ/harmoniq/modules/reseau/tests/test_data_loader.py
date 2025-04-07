@@ -13,6 +13,7 @@ from utils import NetworkDataLoader, DataLoadError
 from harmoniq.db.engine import get_db
 from harmoniq.db.CRUD import read_data_by_id
 from harmoniq.db.schemas import ListeInfrastructures,Scenario
+import asyncio
 
 def test_network_data():
     """
@@ -23,7 +24,7 @@ def test_network_data():
     
     try:
         db = next(get_db())
-        liste_infra = read_data_by_id(db, ListeInfrastructures,1)
+        liste_infra = asyncio.run(read_data_by_id(db, ListeInfrastructures,1))
         loader = NetworkDataLoader(data_dir=str(parent_dir / "data"))
         loader.set_infrastructure_ids(liste_infra)
         network = loader.load_network_data()
@@ -166,8 +167,8 @@ def test_timeseries_data():
     
     try:
         db = next(get_db())
-        liste_infra = read_data_by_id(db, ListeInfrastructures, 1)
-        scenario = read_data_by_id(db, Scenario, 1)
+        liste_infra = asyncio.run(read_data_by_id(db, ListeInfrastructures, 1))
+        scenario = asyncio.run(read_data_by_id(db, Scenario, 3))
         
         loader = NetworkDataLoader(data_dir=str(parent_dir / "data"))
         loader.set_infrastructure_ids(liste_infra)
@@ -176,7 +177,7 @@ def test_timeseries_data():
         network = loader.load_network_data()
         
         # Chargement des données temporelles
-        network = loader.load_timeseries_data(network, scenario, year="2024")
+        network = loader.load_timeseries_data(network, scenario, year="2035", start_date="2035-01-01", end_date="2035-01-31")
         
         # Vérification des snapshots
         print("\n=== SNAPSHOTS ===")
@@ -205,19 +206,19 @@ def test_timeseries_data():
                 else:
                     print(f"- {name}: ❌ Pas de série temporelle")
 
-            # Vérification des éoliennes
-            solaire_gens = network.generators[network.generators.carrier == 'solaire']
-            solaire_names = solaire_gens.index.tolist()
+            # # Vérification des éoliennes
+            # solaire_gens = network.generators[network.generators.carrier == 'solaire']
+            # solaire_names = solaire_gens.index.tolist()
             
-            solaire_series = [col for col in p_max_pu.columns if col in solaire_names]
-            print(f"\nSéries temporelles pour les éoliennes: {len(solaire_series)}/{len(solaire_names)}")
+            # solaire_series = [col for col in p_max_pu.columns if col in solaire_names]
+            # print(f"\nSéries temporelles pour les éoliennes: {len(solaire_series)}/{len(solaire_names)}")
             
-            for name in solaire_names:
-                if name in p_max_pu.columns:
-                    serie = p_max_pu[name]
-                    print(f"- {name}: min={serie.min():.4f}, max={serie.max():.4f}, moyenne={serie.mean():.4f}")
-                else:
-                    print(f"- {name}: ❌ Pas de série temporelle")
+            # for name in solaire_names:
+            #     if name in p_max_pu.columns:
+            #         serie = p_max_pu[name]
+            #         print(f"- {name}: min={serie.min():.4f}, max={serie.max():.4f}, moyenne={serie.mean():.4f}")
+            #     else:
+            #         print(f"- {name}: ❌ Pas de série temporelle")
                     
             # Vérification des valeurs
             invalid_values = (p_max_pu < 0).sum().sum() + (p_max_pu > 1).sum().sum()

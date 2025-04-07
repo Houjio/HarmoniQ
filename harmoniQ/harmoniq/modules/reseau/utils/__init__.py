@@ -1,4 +1,4 @@
-from .data_loader import NetworkDataLoader, DataLoadError
+from .data_loader import NetworkDataLoader, DataLoadError,DATA_DIR
 from .validators import NetworkValidator
 from .geo_utils import GeoUtils
 from .time_utils import TimeSeriesManager
@@ -14,5 +14,6 @@ __all__ = [
     'TimeSeriesManager',
     'LineFilter',
     'NetworkVisualizer',
-    'EnergyUtils'
+    'EnergyUtils',
+    'DATA_DIR'
 ]

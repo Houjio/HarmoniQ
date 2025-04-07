@@ -55,7 +55,8 @@ from pathlib import Path
 from typing import Optional
 from .geo_utils import GeoUtils
 from harmoniq.modules.eolienne import InfraParcEolienne
-from harmoniq.modules.solaire import InfraParcSolaire
+#from harmoniq.modules.solaire import InfraParcSolaire
+import asyncio
 
 from harmoniq.db.engine import get_db
 from harmoniq.db.demande import read_demande_data
@@ -63,6 +64,10 @@ from harmoniq.db.schemas import Eolienne,Solaire,Hydro, Nucleaire, Thermique, Sc
 from harmoniq.db.CRUD import (read_all_bus, read_all_line, read_all_line_type,
                               read_all_eolienne,read_all_solaire,read_all_hydro,
                               read_all_nucleaire,read_all_thermique,read_multiple_by_id)
+
+# Définition du chemin vers le répertoire de données
+CURRENT_DIR = Path(__file__).parent
+DATA_DIR = CURRENT_DIR / ".." / "data"
 
 
 class DataLoadError(Exception):
@@ -81,20 +86,24 @@ class NetworkDataLoader:
         data_dir (Path): Chemin vers le répertoire des données
     """
 
-    def __init__(self, data_dir: str = "data"):
+    def __init__(self, data_dir: str = None):
         """
         Initialise le chargeur de données.
 
         Args:
             data_dir: Chemin vers le répertoire des données.
-                Defaults to "data".
+                Si None, utilise le répertoire par défaut.
 
         Raises:
             DataLoadError: Si le répertoire n'existe pas.
         """
-        self.data_dir = Path(data_dir)
+        if data_dir is None:
+            self.data_dir = DATA_DIR
+        else:
+            self.data_dir = Path(data_dir)
+            
         if not self.data_dir.exists():
-            raise DataLoadError(f"Le répertoire {data_dir} n'existe pas")
+            raise DataLoadError(f"Le répertoire {self.data_dir} n'existe pas")
         
         self.eolienne_ids = None
         self.solaire_ids = None
@@ -224,6 +233,15 @@ class NetworkDataLoader:
             DataLoadError: Si les données sont inaccessibles ou mal formatées
         """
         try:
+            # Définition des dates par défaut si non fournies
+            if year and not start_date:
+                start_date = f"{year}-01-01"
+            if year and not end_date:
+                end_date = f"{year}-12-31"
+                
+            # Utiliser les dates du scénario si définies, sinon les dates calculées ci-dessus
+            scenario_start = getattr(scenario, 'date_de_debut', start_date)
+            scenario_end = getattr(scenario, 'date_de_fin', end_date)
             # Création de l'index temporel
             snapshots = pd.date_range(
                 start=scenario.date_de_debut, 
@@ -232,16 +250,16 @@ class NetworkDataLoader:
             )
             network.set_snapshots(snapshots)
             
-            if year:
-                #TODO : A SUPPRIMER
-                # loads_path = self.data_dir / "timeseries" / year / "loads-p_set.csv"
-                # loads_df = pd.read_csv(loads_path, index_col=0, parse_dates=True)
-                # loads_df.columns = [f"load_{col}" for col in loads_df.columns]
-                # network.loads_t.p_set = loads_df
+            # if year:
+            #     #TODO : A SUPPRIMER
+            #     # loads_path = self.data_dir / "timeseries" / year / "loads-p_set.csv"
+            #     # loads_df = pd.read_csv(loads_path, index_col=0, parse_dates=True)
+            #     # loads_df.columns = [f"load_{col}" for col in loads_df.columns]
+            #     # network.loads_t.p_set = loads_df
                 
-                gen_cost_path = self.data_dir / "timeseries" / year / "generation" / "generators-marginal_cost.csv"
-                gen_cost_df = pd.read_csv(gen_cost_path, index_col=0, parse_dates=True)
-                network.generators_t.marginal_cost = gen_cost_df
+            #     gen_cost_path = self.data_dir / "timeseries" / year / "generation" / "generators-marginal_cost.csv"
+            #     gen_cost_df = pd.read_csv(gen_cost_path, index_col=0, parse_dates=True)
+            #     network.generators_t.marginal_cost = gen_cost_df
             
             p_max_pu_df = self.generate_non_pilotable_timeseries(network, scenario)
             
@@ -255,14 +273,17 @@ class NetworkDataLoader:
             # Mise à jour des données temporelles
             network.generators_t.p_max_pu = p_max_pu_df
             
-            load_demand_df = self.load_demand_data(network, scenario, start_date, end_date)
+            # load_demand_df = self.load_demand_data(network, scenario, start_date, end_date)
+
+            #TODO : A SUPPRIMER
+            load_demand_df = self.load_demand_data(network, scenario,start_date="2035-01-01", end_date="2035-01-31")
+
             
             if not load_demand_df.empty:
                 # Convertir l'index en DatetimeIndex si ce n'est pas déjà fait
                 if not isinstance(load_demand_df.index, pd.DatetimeIndex):
                     load_demand_df.index = pd.to_datetime(load_demand_df.index)
                 
-                # p_set pour chaque load
                 network.loads_t.p_set = load_demand_df
             
             return network
@@ -290,7 +311,7 @@ class NetworkDataLoader:
         
         if source_type == "eolienne":
             if self.eolienne_ids:
-                centrales = read_multiple_by_id(db, Eolienne, self.eolienne_ids)
+                centrales = asyncio.run(read_multiple_by_id(db, Eolienne, self.eolienne_ids))
             else:
                 centrales = read_all_eolienne(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
@@ -305,7 +326,7 @@ class NetworkDataLoader:
 
         elif source_type == "solaire":
             if self.solaire_ids:
-                centrales = read_multiple_by_id(db, Solaire, self.solaire_ids)
+                centrales = asyncio.run(read_multiple_by_id(db, Solaire, self.solaire_ids))
             else:
                 centrales = read_all_solaire(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
@@ -320,7 +341,7 @@ class NetworkDataLoader:
 
         elif source_type == "hydro_fil":
             if self.hydro_ids:
-                centrales = read_multiple_by_id(db, Hydro, self.hydro_ids)
+                centrales = asyncio.run(read_multiple_by_id(db, Hydro, self.hydro_ids))
             else:
                 centrales = read_all_hydro(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
@@ -330,13 +351,13 @@ class NetworkDataLoader:
             else:
                 df = df[df['type_barrage'] == "Fil de l'eau"]
                 # Mapping des colonnes pour les barrages au fil de l'eau
-                df['name'] = df['barrage_nom']
+                df['name'] = df['nom']
                 df['p_nom'] = df['puissance_nominal']
                 df['carrier'] = 'hydro_fil'
 
         elif source_type == "nucleaire":
             if self.nucleaire_ids:
-                centrales = read_multiple_by_id(db, Nucleaire, self.nucleaire_ids)
+                centrales = asyncio.run(read_multiple_by_id(db, Nucleaire, self.nucleaire_ids))
             else:
                 centrales = read_all_nucleaire(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
@@ -411,7 +432,7 @@ class NetworkDataLoader:
         
         if source_type == "hydro_reservoir":
             if self.hydro_ids:
-                centrales = read_multiple_by_id(db, Hydro, self.hydro_ids)
+                centrales = asyncio.run(read_multiple_by_id(db, Hydro, self.hydro_ids))
             else:
                 centrales = read_all_hydro(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
@@ -421,13 +442,13 @@ class NetworkDataLoader:
             else:
                 df = df[df['type_barrage'] == "Reservoir"]
                 # Mapping des colonnes pour les barrages à réservoir
-                df['name'] = df['barrage_nom']
+                df['name'] = df['nom']
                 df['p_nom'] = df['puissance_nominal']
                 df['carrier'] = 'hydro_reservoir'
 
         elif source_type == "thermique":
             if self.thermique_ids:
-                centrales = read_multiple_by_id(db, Thermique, self.thermique_ids)
+                centrales = asyncio.run(read_multiple_by_id(db, Thermique, self.thermique_ids))
             else:
                 centrales = read_all_thermique(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
@@ -508,7 +529,7 @@ class NetworkDataLoader:
         ))
         
         if self.eolienne_ids:
-            eoliennes = read_multiple_by_id(db, Eolienne, self.eolienne_ids)
+            eoliennes = asyncio.run(read_multiple_by_id(db, Eolienne, self.eolienne_ids))
             if eoliennes:
                 infra_eolienne = InfraParcEolienne(eoliennes)
                 infra_eolienne.charger_scenario(scenario)
@@ -522,20 +543,20 @@ class NetworkDataLoader:
                         p_nom = eolienne.puissance_nominal
                         p_max_pu_df[nom] = production_df[nom] / p_nom
 
-        if self.solaire_ids:
-            solaires = read_multiple_by_id(db, Solaire, self.solaire_ids)
-            if solaires:
-                infra_solaire = InfraParcSolaire(solaires)
-                infra_solaire.charger_scenario(scenario)
-                production_df = infra_solaire.calculer_production()
-                production_df = production_df.fillna(0)
+        # if self.solaire_ids:
+        #     solaires = asyncio.run(read_multiple_by_id(db, Solaire, self.solaire_ids))
+        #     if solaires:
+        #         infra_solaire = InfraParcSolaire(solaires)
+        #         infra_solaire.charger_scenario(scenario)
+        #         production_df = infra_solaire.calculer_production()
+        #         production_df = production_df.fillna(0)
                 
-                for solaire in solaires:
-                    nom = solaire.nom
-                    if nom in production_df.columns and nom in network.generators.index:
-                        # Calcul du p_max_pu = production / puissance_nominale
-                        p_nom = solaire.puissance_nominal
-                        p_max_pu_df[nom] = production_df[nom] / p_nom
+        #         for solaire in solaires:
+        #             nom = solaire.nom
+        #             if nom in production_df.columns and nom in network.generators.index:
+        #                 # Calcul du p_max_pu = production / puissance_nominale
+        #                 p_nom = solaire.puissance_nominal
+        #                 p_max_pu_df[nom] = production_df[nom] / p_nom
         
         # TODO: Ajouter le code pour l'hydro au fil de l'eau
         # Similaire à l'implémentation pour les éoliennes
@@ -556,6 +577,16 @@ class NetworkDataLoader:
         Returns:
             pd.DataFrame: DataFrame contenant la demande distribuée pour chaque charge du réseau
         """
+        # Déterminer l'année à partir du scénario ou des dates fournies
+        scenario_year = None
+        if hasattr(scenario, 'date_de_debut') and scenario.date_de_debut:
+            scenario_year = str(pd.to_datetime(scenario.date_de_debut).year)
+        
+        # Définir les dates par défaut si non fournies
+        if not start_date and scenario_year:
+            start_date = f"{scenario_year}-01-01"
+        if not end_date and scenario_year:
+            end_date = f"{scenario_year}-12-31"
         
         db_scenario = Scenario(
             weather=getattr(scenario, 'weather', 1),
@@ -565,17 +596,15 @@ class NetworkDataLoader:
         )
         
         # total demand (CUID = 1)
-        demand_df = read_demande_data(db_scenario, CUID=1)
+        demand_df = asyncio.run(read_demande_data(db_scenario, CUID=1))
         demand_df['total_demand'] = demand_df['electricity'] + demand_df['gaz']
         
         loads = network.loads.index
         n_loads = len(loads)
         
         demand_df = demand_df.set_index('date')
-        load_demand_df = pd.DataFrame(index=demand_df.index)
         
-        # Distribution de la demande totale entre toutes les charges
-        for load in loads:
-            load_demand_df[load] = demand_df['total_demand'] / n_loads
+        data_dict = {load: demand_df['total_demand'] / n_loads for load in loads}
+        load_demand_df = pd.DataFrame(data_dict, index=demand_df.index)
         
         return load_demand_df

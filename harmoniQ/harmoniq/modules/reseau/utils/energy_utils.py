@@ -134,7 +134,7 @@ class EnergyUtils:
         apport_naturel = pd.DataFrame(index=[timestamp])
         
         for barrage in barrages:
-            if barrage.type_barrage == "Reservoir" and barrage.barrage_nom in productions.columns:
+            if barrage.type_barrage == "Reservoir" and barrage.nom in productions.columns:
                 try:
                     id_hq = str(barrage.id_HQ)
                     nom_fichier = f"{id_hq}.csv"
@@ -147,18 +147,18 @@ class EnergyUtils:
                         jour_exact = data_apport[data_apport["time"].dt.date == date_jour.date()]
                         
                         if not jour_exact.empty:
-                            apport_naturel[barrage.barrage_nom] = jour_exact["streamflow"].values[0]
+                            apport_naturel[barrage.nom] = jour_exact["streamflow"].values[0]
                         else:
                             data_apport["diff"] = abs(data_apport["time"] - date_jour)
                             jour_proche = data_apport.loc[data_apport["diff"].idxmin()]
-                            logger.warning(f"Date exacte {date_jour.date()} non trouvée pour {barrage.barrage_nom}, utilisation de la date la plus proche: {jour_proche['time'].date()}")
-                            apport_naturel[barrage.barrage_nom] = jour_proche["streamflow"]
+                            logger.warning(f"Date exacte {date_jour.date()} non trouvée pour {barrage.nom}, utilisation de la date la plus proche: {jour_proche['time'].date()}")
+                            apport_naturel[barrage.nom] = jour_proche["streamflow"]
                     else:
-                        logger.warning(f"Fichier d'apport {nom_fichier} introuvable pour {barrage.barrage_nom}, utilisation de la valeur par défaut")
-                        apport_naturel[barrage.barrage_nom] = 15 
+                        logger.warning(f"Fichier d'apport {nom_fichier} introuvable pour {barrage.nom}, utilisation de la valeur par défaut")
+                        apport_naturel[barrage.nom] = 15 
                 except Exception as e:
-                    logger.error(f"Erreur lors du chargement des apports pour {barrage.barrage_nom}: {str(e)}")
-                    apport_naturel[barrage.barrage_nom] = 15
+                    logger.error(f"Erreur lors du chargement des apports pour {barrage.nom}: {str(e)}")
+                    apport_naturel[barrage.nom] = 15
         
 
         if isinstance(niveaux_actuels, dict):

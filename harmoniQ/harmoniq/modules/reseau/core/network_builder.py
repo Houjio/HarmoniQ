@@ -33,7 +33,7 @@ from pathlib import Path
 from typing import Dict, Optional, Tuple
 from datetime import datetime
 
-from utils import NetworkDataLoader
+from utils import NetworkDataLoader, DATA_DIR
 from .optimization import NetworkOptimizer
 from .power_flow import PowerFlowAnalyzer
 
@@ -53,17 +53,17 @@ class NetworkBuilder:
         current_network (pypsa.Network): Réseau PyPSA en cours d'analyse
     """
 
-    def __init__(self, data_dir: str = "data"):
+    def __init__(self, data_dir: str = None):
         """
         Initialise le constructeur de réseau.
 
         Args:
-            data_dir: Chemin vers le répertoire des données
+            data_dir: Chemin vers le répertoire des données, si None utilise le répertoire par défaut
         """
         self.data_loader = NetworkDataLoader(data_dir)
         self.current_network = None
 
-    def create_network(self, scenario, year: str = None) -> pypsa.Network:
+    def create_network(self, scenario, year: str = None, start_date=None, end_date=None) -> pypsa.Network:
         """
         Crée et configure le réseau à partir des données CSV et d'un scénario.
 
@@ -85,7 +85,9 @@ class NetworkBuilder:
         network = self.data_loader.load_timeseries_data(
             network=network, 
             scenario=scenario,
-            year=year
+            year=year,
+            start_date=start_date,
+            end_date=end_date
         )
         
         self.current_network = network
