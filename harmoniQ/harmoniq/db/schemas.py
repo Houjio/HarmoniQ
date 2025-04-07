@@ -141,6 +141,7 @@ class ListeInfrastructures(SQLBase):
     parc_solaires = Column(String, nullable=True)
     central_hydroelectriques = Column(String, nullable=True)
     central_thermique = Column(String, nullable=True)
+    central_nucleaire = Column(String, nullable=True)
 
     @property
     def parc_eolien_list(self):
@@ -161,6 +162,10 @@ class ListeInfrastructures(SQLBase):
     @property
     def central_thermique_list(self):
         return self.central_thermique.split(",") if self.central_thermique else []
+    
+    @property
+    def central_nucleaire_list(self):
+        return self.central_nucleaire.split(",") if self.central_nucleaire else []
 
 
 class ListeInfrastructuresBase(BaseModel):
@@ -169,6 +174,7 @@ class ListeInfrastructuresBase(BaseModel):
     parc_solaires: Optional[str] = None
     central_hydroelectriques: Optional[str] = None
     central_thermique: Optional[str] = None
+    central_nucleaire: Optional[str] = None
 
 
 class ListeInfrastructuresCreate(ListeInfrastructuresBase):

@@ -30,6 +30,7 @@ var prettyNames = {
     eolienneparc: "Parc éolien",
     solaire: "Parc solaire",
     thermique: "Centale thermique",
+    nucleaire: "Centrale nucléaire",
     hydro: "Barrage hydroélectrique"
 }
 
@@ -184,6 +185,10 @@ function initialiserListeThermique() {
     initialiserListeParc('thermique', 'list-parc-thermique');
 }
 
+function initialiserListeParcNucleaire() {
+    initialiserListeParc('nucleaire', 'list-parc-nucleaire');
+}
+
 function loadMap() {
     map = L.map('map-box', {
         zoomControl: true,
@@ -259,6 +264,7 @@ window.onload = function() {
     initialiserListeParcEolienne();
     initialiserListeParcSolaire();
     initialiserListeThermique();
+    initialiserListeParcNucleaire();
 
     loadMap();
     loadOpenApi();
@@ -388,7 +394,8 @@ function load_groupe_ids() {
         { elementId: "list-parc-hydro", key: "selected_hydro" },
         { elementId: "list-parc-eolienneparc", key: "selected_eolienes" },
         { elementId: "list-parc-solaire", key: "selected_solaires" },
-        { elementId: "list-parc-thermique", key: "selected_thermiques" }
+        { elementId: "list-parc-thermique", key: "selected_thermiques" },
+        { elementId: "list-parc-nucleaire", key: "selected_nucleaire" }
     ];
 
     const selectedItems = {};
@@ -401,14 +408,15 @@ function load_groupe_ids() {
             .join(',');
     });
 
-    const { selected_hydro, selected_eolienes, selected_solaires, selected_thermiques } = selectedItems;
+    const { selected_hydro, selected_eolienes, selected_solaires, selected_thermiques , selected_nucleaire } = selectedItems;
     
     const data = {
         nom: active_name,
         parc_eoliens: selected_eolienes,
         parc_solaires: selected_solaires,
         central_hydroelectriques: selected_hydro,
-        central_thermique: selected_thermiques
+        central_thermique: selected_thermiques,
+        central_nucleaire: selected_nucleaire,
     };
 
     return data;
@@ -444,6 +452,7 @@ function changeInfra() {
                 { elementId: "list-parc-eolienneparc", activeIds: data.parc_eoliens ? data.parc_eoliens.split(',') : [] },
                 { elementId: "list-parc-solaire", activeIds: data.parc_solaires ? data.parc_solaires.split(',') : [] },
                 { elementId: "list-parc-thermique", activeIds: data.central_thermique ? data.central_thermique.split(',') : [] },
+                { elementId: "list-parc-nucleaire", activeIds: data.central_nucleaire ? data.central_nucleaire.split(',') : [] },
                 { elementId: "list-parc-hydro", activeIds: data.central_hydroelectriques ? data.central_hydroelectriques.split(',') : [] }
             ];
 
@@ -806,7 +815,8 @@ $('#add-infra-liste').on('click', function() {
         parc_eoliens: "",
         parc_solaire: "",
         central_hydroelectriques: "",
-        central_thermique: ""
+        central_thermique: "",
+        central_nucleaire: "",
     };
 
     $.ajax({
