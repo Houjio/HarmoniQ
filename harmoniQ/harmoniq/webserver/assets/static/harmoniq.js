@@ -5,22 +5,22 @@ var openApiJson = null;
 
 const map_icons = {
     eolienneparc: L.icon({
-        iconUrl: '/static/icons/eolienne.svg',
+        iconUrl: '/static/icons/eolienne.png',
         iconSize: [30, 30],
         iconAnchor: [20, 20]
     }),
     solaire: L.icon({
-        iconUrl: '/static/icons/solaire.svg',
+        iconUrl: '/static/icons/solaire.png',
         iconSize: [40, 40],
         iconAnchor: [20, 20]
     }),
     thermique: L.icon({
-        iconUrl: '/static/icons/thermique.svg',
+        iconUrl: '/static/icons/thermique.png',
         iconSize: [40, 40],
         iconAnchor: [20, 20]
     }),
     hydro: L.icon({
-        iconUrl: '/static/icons/barrage.svg',
+        iconUrl: '/static/icons/barrage.png',
         iconSize: [50, 50],
         iconAnchor: [20, 20]
     })
@@ -102,10 +102,42 @@ function initialiserListeInfra() {
 
 function addMarker(lat, lon, type, data) {
     const icon = map_icons[type];
+
+    // Construire le contenu du popup en fonction du type
+    let popupContent = `<b>${data.nom}</b><br>Catégorie: ${prettyNames[type]}<br>`;
+
+    if (type === 'eolienneparc') {
+        popupContent += `
+            Nombre d'éoliennes: ${data.nombre_eoliennes || 'N/A'}<br>
+            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
+            Capacité totale: ${data.capacite_total || 'N/A'} MW
+        `;
+    } else if (type === 'hydro') {
+        popupContent += `
+            Débit nominal: ${data.debits_nominal || 'N/A'} m³/s<br>
+            Nombre de turbines: ${data.nb_turbines || 'N/A'}<br>
+            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
+            Volume du réservoir: ${data.volume_reservoir || 'N/A'} m³
+        `;
+    } else if (type === 'solaire') {
+        popupContent += `
+            Nombre de panneaux: ${data.nombre_panneau || 'N/A'}<br>
+            Orientation des panneaux: ${data.orientation_panneau || 'N/A'}<br>
+            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW
+        `;
+    } else if (type === 'thermique') {
+        popupContent += `
+            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
+            Type d'intrant: ${data.type_intrant || 'N/A'}
+        `;
+    }
+
+    // Ajouter le marqueur à la carte avec le popup
     const marker = L.marker([lat, lon], { icon: icon })
         .addTo(map)
-        .bindPopup(`<b>${data.nom}</b><br>Catégorie: ${prettyNames[type]}`);
-    marker.on('click', function() {
+        .bindPopup(popupContent);
+
+    marker.on('click', function () {
         this.openPopup();
     });
 }
