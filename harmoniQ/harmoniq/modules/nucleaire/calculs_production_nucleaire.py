@@ -32,6 +32,64 @@ def calculate_nuclear_production(power_kw, maintenance_week):
     return production_df
 
 
+
+def co2_emissions_nuclear(annual_nuclear_production, facteur_emission=8):
+    """
+    Calcule les émissions totales de CO₂ équivalent pour une centrale nucléaire.
+
+    Parameters
+    ----------
+    annual_nuclear_production : float
+        Production annuelle totale de la centrale en kWh.
+    facteur_emission : float
+        Facteur d'émission en g CO₂eq/kWh basé sur l'ACV. Par défaut 8 g CO₂eq/kWh.
+
+    Returns
+    -------
+    float
+        Émissions totales de CO₂ en kg
+    """
+    # Calcul des émissions en grammes
+    emissions_g = annual_nuclear_production * facteur_emission 
+    
+    # Conversion en kilogrammes
+    emissions_kg = emissions_g / 1000
+    
+    return emissions_kg
+
+
+def cost_nuclear_powerplant(power_kw):
+    """
+    Estime le coût de construction d'une centrale nucléaire au Québec.
+
+    Parameters
+    ----------
+    power_kw : float
+        Puissance nominale de la centrale en kilowatts (kW)
+
+    Returns
+    -------
+    float
+        Coût total estimé en dollars canadiens
+    """
+    # Conversion en MW pour les calculs
+    power_mw = power_kw / 1000
+    
+    # Coûts de référence basés sur des projets récents
+    cout_base_par_mw = 4_000_000  # 4M$ par MW 
+    
+    # Facteurs d'ajustement
+    facteur_echelle = 0.85  # Économies d'échelle
+    facteur_region = 1.1   # Ajustement pour le Québec (conditions climatiques, normes, etc.)
+    
+    # Calcul du coût total
+    cout_total = cout_base_par_mw * (power_mw ** facteur_echelle) * facteur_region
+    
+    return cout_total
+
+
+# ---------------- APPEL DES FONCTIONS ----------------
+
 # Paramètres de la centrale nucléaire
 power_kw = 300 * 1000  # Puissance nominale en kW (300MW pour un réacteur SMR)
 maintenance_week = 20  # Semaine de maintenance
@@ -42,20 +100,31 @@ weekly_production = production_df.groupby("week")["production_kwh"].sum()
 
 # Calculer la production annuelle totale en kWh
 annual_nuclear_production = production_df["production_kwh"].sum()
-print(f"Production nucléaire annuelle totale : {annual_nuclear_production:.2f} kWh")
+# Déplacer tous les calculs et affichages ensemble
+annual_nuclear_production = production_df['production_kwh'].sum()
+Total_emission = co2_emissions_nuclear(annual_nuclear_production)
+cout_construction = cost_nuclear_powerplant(power_kw)
 
-# Tracer le graphique de la production hebdomadaire
-plt.figure(figsize=(10, 6))
-plt.plot(
-    weekly_production.index,
-    weekly_production.values,
-    marker="o",
-    linestyle="-",
-    color="b",
-)
-plt.title("Production Nucléaire Hebdomadaire")
-plt.xlabel("Semaine de l'année")
-plt.ylabel("Production (kWh)")
-plt.grid(True)
-plt.xticks(range(1, 53))
-plt.show()
+
+# print("\n=== RÉSULTATS DE LA CENTRALE NUCLÉAIRE ===")
+# print(f"Puissance installée : {power_kw:.2f} kW")
+# print(f"Production nucléaire annuelle totale : {annual_nuclear_production:.2f} kWh")
+# print(f"Total des émissions de CO2 : {Total_emission:.2f} kg CO2eq")
+# print(f"Coût de construction estimé : {cout_construction:,.2f} $")
+# print("\n")  # Ligne vide pour séparer les résultats du graphique
+
+# # Tracer le graphique de la production hebdomadaire
+# plt.figure(figsize=(10, 6))
+# plt.plot(
+#     weekly_production.index,
+#     weekly_production.values,
+#     marker="o",
+#     linestyle="-",
+#     color="b",
+# )
+# plt.title("Production Nucléaire Hebdomadaire")
+# plt.xlabel("Semaine de l'année")
+# plt.ylabel("Production (kWh)")
+# plt.grid(True)
+# plt.xticks(range(1, 53))
+# plt.show()
