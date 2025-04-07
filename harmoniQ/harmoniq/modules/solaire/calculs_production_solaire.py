@@ -395,23 +395,23 @@ def co2_emissions_solar(
 if __name__ == "__main__":
 
     # Appel des fonction
-    resultats_regions, resultats_regions_df = calculate_regional_residential_solar(
-        coordinates_residential,
-        population_relative,
-        total_clients=125000,
-        num_panels_per_client=4,
-        surface_tilt=0,
-        surface_orientation=180,
-    )
+    # resultats_regions, resultats_regions_df = calculate_regional_residential_solar(
+    #     coordinates_residential,
+    #     population_relative,
+    #     total_clients=125000,
+    #     num_panels_per_client=4,
+    #     surface_tilt=0,
+    #     surface_orientation=180,
+    # )
 
     resultats_centrales, resultats_centrales_df = calculate_energy_solar_plants(
         coordinates_centrales
     )
     energie_centrales = resultats_centrales["energie_totale_wh"]
-    couts = cost_solar_powerplant(coordinates_centrales, resultats_centrales)
-    couts_installation = calculate_installation_cost(coordinates_centrales)
-    durees_vie = calculate_lifetime(coordinates_centrales)
-    emissions_co2 = co2_emissions_solar(coordinates_centrales, resultats_centrales)
+    # couts = cost_solar_powerplant(coordinates_centrales, resultats_centrales)
+    # couts_installation = calculate_installation_cost(coordinates_centrales)
+    # durees_vie = calculate_lifetime(coordinates_centrales)
+    # emissions_co2 = co2_emissions_solar(coordinates_centrales, resultats_centrales)
 
     # # Affichage des résultats
     # print("\n=== RÉSULTATS PAR CENTRALE ===")
@@ -527,3 +527,63 @@ print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
 
 # # # Superposer les données simulées et réelles sur un graphique
 # # plot_validation(resultats_centrales, real_data)
+def plot_heatmap_centrales(resultats_centrales):
+    """
+    Crée une heatmap de la production solaire simulée par mois et par heure.
+
+    Parameters
+    ----------
+    resultats_centrales : dict
+        Dictionnaire contenant les résultats des centrales solaires simulées.
+    """
+    # Combiner les données horaires de toutes les centrales simulées
+    simulated_data = pd.concat(
+        [
+            resultats_centrales[name]["energie_horaire"]
+            for name in resultats_centrales.keys()
+            if name != "energie_totale_wh"
+        ]
+    )
+    simulated_data = simulated_data.groupby(simulated_data.index).sum()
+
+    # Convertir l'index en DatetimeIndex
+    simulated_data.index = pd.to_datetime(simulated_data.index)
+
+    # Ajouter des colonnes pour le mois et l'heure
+    simulated_data = simulated_data.to_frame(name="Production (MWh)")
+    simulated_data["Production (MWh)"] = simulated_data["Production (MWh)"] / 1e6  # Conversion en MWh
+    simulated_data["Mois"] = simulated_data.index.month
+    simulated_data["Heure"] = simulated_data.index.hour
+
+    # Décaler les heures de 4h vers le bas pour rétablir l'index
+    simulated_data["Heure"] = (simulated_data["Heure"] - 6) % 24
+
+    # Calculer la production moyenne par mois et par heure
+    heatmap_data = simulated_data.pivot_table(
+        values="Production (MWh)", index="Heure", columns="Mois", aggfunc="mean"
+    )
+
+    # Remplacer les valeurs nulles, égales à zéro ou négatives par NaN pour laisser les cases vides
+    heatmap_data = heatmap_data.applymap(lambda x: np.nan if x <= 0 else x)
+
+    # Renommer les colonnes pour afficher les noms des mois
+    heatmap_data.columns = [
+        "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+        "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+    ]
+
+    # Tracer la heatmap avec matplotlib
+    plt.figure(figsize=(12, 8))
+    plt.imshow(heatmap_data.values, aspect="auto", cmap="RdYlGn_r", origin="lower")  # Inverser l'axe Y
+    plt.colorbar(label="Production moyenne (MWh)")
+    plt.title("Production horaire moyenne par mois pour les centrales solaires (en MWh)", fontsize=16)
+    plt.xlabel("Mois", fontsize=14)
+    plt.ylabel("Heure de la journée", fontsize=14)
+
+    # Ajouter les ticks pour les heures et les mois
+    plt.xticks(ticks=np.arange(len(heatmap_data.columns)), labels=heatmap_data.columns, rotation=45, fontsize=12)
+    plt.yticks(ticks=np.arange(len(heatmap_data.index)), labels=heatmap_data.index[::-1], fontsize=12)  # Inverser les heures
+
+    plt.tight_layout()
+    plt.show()
+plot_heatmap_centrales(resultats_centrales) 
