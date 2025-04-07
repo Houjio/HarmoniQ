@@ -503,7 +503,7 @@ function infraModal(create_class, post_url, lat, lon) {
             <form id="form-${create_class.toLowerCase()}">
                 <div class="modal-content">
                     <div class="modal-header w-100 d-flex justify-content-between">
-                        <h5 class="modal-title">Créer ${schema.title || create_class}</h5>
+                        <h5 class="modal-title">Créer Infrastructure</h5>
                         <button type="button" class="close btn-primary" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true"><i class="fas fa-times"></i></span>
                         </button>
