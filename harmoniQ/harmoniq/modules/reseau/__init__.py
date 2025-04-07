@@ -92,23 +92,17 @@ class InfraReseau(Infrastructure):
         """
         logger.info("Phase 1: Calcul de la capacité d'import/export...")
         
-        # S'assurer que le réseau existe
         if self.network is None:
             self.creer_reseau()
         
-        # Obtention de l'année
         annee = str(self.scenario.date_de_debut.year)
         
-        # Récupération des données historiques de production
         energie_historique_HQ = EnergyUtils.obtenir_energie_historique(annee)
-        
-        # Calcul des besoins énergétiques totaux
         besoins_totaux = self.network.loads_t.p_set.sum().sum()
-        
         # Calcul du déséquilibre énergétique global (ΔE)
         deltaE = energie_historique_HQ - besoins_totaux
         
-        # Ajustement pour les nouvelles centrales ajoutées par l'utilisateur
+        # Ajustement pour les nouvelles centrales ajoutées
         nouvelles_centrales = EnergyUtils.identifier_nouvelles_centrales(self.network)
         for centrale in nouvelles_centrales:
             energie_estimee = EnergyUtils.estimer_production_annuelle(centrale)
@@ -117,10 +111,10 @@ class InfraReseau(Infrastructure):
         # Calcul de l'import maximal théorique à chaque pas de temps
         import_max_theorique = []
         for heure in self.network.snapshots:
-            # Besoins énergétiques à cette heure
+            # Besoins énergétiques
             besoins_heure = self.network.loads_t.p_set.loc[heure].sum()
             
-            # Production maximale des sources fatales à cette heure
+            # Production maximale des sources fatales
             sources_fatales = self.network.generators[
                 self.network.generators.carrier.isin(['hydro_fil', 'eolien', 'solaire'])
             ].index
@@ -138,26 +132,22 @@ class InfraReseau(Infrastructure):
             import_max_theorique.append(import_max)
         
         # Recherche de Pmax pour équilibrer deltaE
-        # Initialisation
         Pmax_min = min(import_max_theorique)  # Pourrait être négatif (export)
         Pmax_max = max(import_max_theorique)
         Pmax = (Pmax_min + Pmax_max) / 2
         
-        tolerance = 0.1  # Précision souhaitée
+        tolerance = 0.1
         iterations_max = 100
         iteration = 0
         
-        # Recherche dichotomique
         while iteration < iterations_max:
             # Calcul des imports/exports avec ce Pmax
             imports = [min(Pmax, max_theorique) for max_theorique in import_max_theorique]
-            
-            # Somme totale des imports/exports
             somme_imports = sum(imports)
             
             # Vérification de la convergence
             if abs(somme_imports - deltaE) < tolerance:
-                break  # Pmax trouvé avec la précision souhaitée
+                break
             
             # Ajustement de Pmax
             if somme_imports > deltaE:
@@ -170,7 +160,6 @@ class InfraReseau(Infrastructure):
         
         logger.info(f"Pmax calculé: {Pmax:.2f} MW après {iteration} itérations")
         
-        # Stockage des informations pour la phase 2
         self.Pmax = Pmax
         self.deltaE = deltaE
         
@@ -195,11 +184,9 @@ class InfraReseau(Infrastructure):
         """
         logger.info("Phase 2: Optimisation avec gestion adaptative des réservoirs...")
         
-        # S'assurer que le réseau existe
         if self.network is None:
             self.creer_reseau()
         
-        # Si Pmax n'est pas fourni, le calculer
         if Pmax is None:
             if not hasattr(self, 'Pmax'):
                 Pmax = self.calculer_capacite_import_export()
@@ -207,7 +194,7 @@ class InfraReseau(Infrastructure):
                 Pmax = self.Pmax
         
         # Détermination du type d'échange (import ou export)
-        bus_frontiere = EnergyUtils.obtenir_bus_frontiere(self.network, "Interconnexion")
+        bus_frontiere = EnergyUtils.obtenir_bus_frontiere(self.network, "Interconnexion") #bus_type pas utilisé pour le moment
         
         if Pmax > 0:
             # Création d'un générateur d'import
@@ -223,56 +210,43 @@ class InfraReseau(Infrastructure):
             # Création d'une charge d'export (Pmax est négatif)
             logger.info(f"Ajout d'une charge d'export virtuelle de {-Pmax:.2f} MW")
             self.network.add("Load", 
-                           name="Export_Virtuel",
+                           name="load_export",
                            bus=bus_frontiere,
                            p_set=-Pmax,  # Valeur positive pour une charge
                            type="export"
             )
         
-        # Initialisation des niveaux de réservoir
-        niveaux_reservoirs = {}
-        niveau_initial = {}
-        niveau_min = {}
-        niveau_max = {}
-        
-        # Récupération des centrales avec réservoirs
         reservoirs = self.network.generators[self.network.generators.carrier == 'hydro_reservoir'].index
         
-        # Initialisation des niveaux
-        for gen in reservoirs:
-            niveau_initial[gen] = 0.70  # Niveau initial à 70%
-            niveaux_reservoirs[gen] = niveau_initial[gen]
+        niveaux_initiaux = {gen: 0.70 for gen in reservoirs}  # Niveau initial à 70%
+        niveaux_reservoirs_df = pd.DataFrame([niveaux_initiaux])
         
-        # Création de DataFrames pour stocker les niveaux et les coûts
         niveaux_df = pd.DataFrame(index=self.network.snapshots, columns=reservoirs)
         couts_df = pd.DataFrame(index=self.network.snapshots, columns=reservoirs)
         
-        # Optimisation temporelle avec gestion des réservoirs
+        # Optimisation avec gestion des réservoirs
         logger.info("Démarrage de l'optimisation temporelle avec gestion des réservoirs...")
         
         for t, heure_actuelle in enumerate(self.network.snapshots):
-            # Mise à jour des coûts marginaux basés sur les niveaux de réservoir
+            niveaux_actuels = niveaux_reservoirs_df.iloc[0]
             for generateur in reservoirs:
-                niveau = niveaux_reservoirs[generateur]
+                niveau = niveaux_actuels[generateur]
                 cout = EnergyUtils.calcul_cout_reservoir(niveau)
                 
-                # Enregistrement du niveau et du coût
                 niveaux_df.loc[heure_actuelle, generateur] = niveau
                 couts_df.loc[heure_actuelle, generateur] = cout
                 
-                # Mise à jour du coût dans le réseau
+                # Mise à jour du coût
                 if hasattr(self.network.generators_t, 'marginal_cost'):
                     if generateur in self.network.generators_t.marginal_cost.columns:
                         self.network.generators_t.marginal_cost.loc[heure_actuelle, generateur] = cout
             
-            # Optimisation pour cette heure via NetworkBuilder
             snapshot = pd.DatetimeIndex([heure_actuelle])
             self.network.snapshots = snapshot
             self.network = self.builder.optimize_network(self.network)
             
-            # Récupération des valeurs de production pour cette heure
+            # Récupération des valeurs de production
             if hasattr(self.network.generators_t, 'p') and not self.network.generators_t.p.empty:
-                # Récupération des productions des centrales hydro
                 productions_hydro = {}
                 for generateur in reservoirs:
                     if generateur in self.network.generators_t.p.columns:
@@ -280,22 +254,15 @@ class InfraReseau(Infrastructure):
                 
                 productions_df = pd.DataFrame([productions_hydro])
                 
-                # (0,002 par heure) fct a changer
-                apport_naturel = 0.002
-                
-                niveaux_reservoir_df = reservoir_infill(
-                    besoin_puissance=productions_df,
-                    pourcentage_reservoir=niveaux_reservoirs,
-                    apport_naturel=apport_naturel
+                # Mise à jour des niveaux
+                niveaux_reservoirs_df = EnergyUtils.get_niveau_reservoir(
+                    productions=productions_df,
+                    niveaux_actuels=niveaux_reservoirs_df,
+                    timestamp=heure_actuelle
                 )
-                
-                # Extraction des valeurs mises à jour et conversion en dictionnaire
-                niveaux_reservoirs = niveaux_reservoir_df.iloc[0].to_dict()
         
-        # Analyse des flux de puissance via NetworkBuilder
         self.network, _ = self.builder.run_power_flow(self.network, mode="dc")
         
-        # Compilation des statistiques finales
         energie_importee = 0
         if "Import_Virtuel" in self.network.generators.index:
             if hasattr(self.network.generators_t, 'p') and "Import_Virtuel" in self.network.generators_t.p.columns:
@@ -306,19 +273,21 @@ class InfraReseau(Infrastructure):
             if hasattr(self.network.loads_t, 'p') and "Export_Virtuel" in self.network.loads_t.p.columns:
                 energie_exportee = self.network.loads_t.p["Export_Virtuel"].sum()
         
+        niveaux_finaux = niveaux_reservoirs_df.iloc[0].to_dict()
+        
         self.statistics = {
             "Pmax_calcule": Pmax,
             "deltaE_initial": self.deltaE if hasattr(self, 'deltaE') else None,
             "energie_importee": energie_importee,
             "energie_exportee": energie_exportee,
-            "niveaux_finaux_reservoirs": niveaux_reservoirs,
+            "niveaux_finaux_reservoirs": niveaux_finaux,
             "niveaux_reservoirs_timeseries": niveaux_df,
             "couts_reservoirs_timeseries": couts_df
         }
         
         logger.info("Optimisation avec gestion des réservoirs terminée avec succès")
         
-        self.reservoir_levels = niveaux_reservoirs
+        self.reservoir_levels = niveaux_finaux
         return self.network, self.statistics
     
     @necessite_scenario
@@ -333,7 +302,7 @@ class InfraReseau(Infrastructure):
         Returns:
             Tuple contenant le réseau optimisé et les statistiques
         """
-        logger.info("Démarrage du workflow complet d'optimisation avec gestion des imports/exports...")
+        logger.info("Démarrage du workflow d'optimisation avec gestion des imports/exports...")
         
         # Phase 1: Calcul de la capacité d'import/export
         Pmax = self.calculer_capacite_import_export()
@@ -352,18 +321,14 @@ class InfraReseau(Infrastructure):
         Returns:
             DataFrame contenant la production par type d'énergie
         """
-        # Exécuter le workflow complet si pas encore fait
         if self.network is None or not self.statistics:
             self.workflow_import_export()
         
         # Agréger les données de production par type d'énergie
         if hasattr(self.network, 'generators_t') and hasattr(self.network.generators_t, 'p'):
             production = self.network.generators_t.p.copy()
-            
-            # Ajouter une colonne pour la production totale
             production['totale'] = production.sum(axis=1)
             
-            # Ajouter des colonnes par type d'énergie
             carriers = self.network.generators.carrier.unique()
             for carrier in carriers:
                 gens = self.network.generators[self.network.generators.carrier == carrier].index
@@ -386,3 +351,30 @@ class InfraReseau(Infrastructure):
             return {}
         
         return self.statistics
+
+if __name__ == "__main__":
+    from harmoniq.db.CRUD import read_data_by_id, read_all_scenario
+    from harmoniq.db.engine import get_db
+    from harmoniq.db.schemas import ListeInfrastructures
+    
+    db = next(get_db())
+    
+    liste_infrastructures = read_data_by_id(db, ListeInfrastructures, 1)
+    infraReseau = InfraReseau(liste_infrastructures)
+    
+    scenario = read_all_scenario(db)[0]
+    infraReseau.charger_scenario(scenario)
+    
+    network, statistics = infraReseau.workflow_import_export()
+    print(f"Capacité d'import/export (Pmax): {statistics['Pmax_calcule']:.2f} MW")
+    print(f"Énergie importée: {statistics['energie_importee']:.2f} MWh")
+    print(f"Énergie exportée: {statistics['energie_exportee']:.2f} MWh")
+    
+    production = infraReseau.calculer_production()
+    print(f"Production totale: {production['totale'].sum():.2f} MWh")
+    
+    print("\nProduction par type d'énergie:")
+    carriers = network.generators.carrier.unique()
+    for carrier in carriers:
+        print(f"- {carrier}: {production[f'total_{carrier}'].sum():.2f} MWh")
+

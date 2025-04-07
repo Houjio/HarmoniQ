@@ -58,7 +58,8 @@ from harmoniq.modules.eolienne import InfraParcEolienne
 from harmoniq.modules.solaire import InfraParcSolaire
 
 from harmoniq.db.engine import get_db
-from harmoniq.db.schemas import Eolienne,Solaire,Hydro, Nucleaire, Thermique
+from harmoniq.db.demande import read_demande_data
+from harmoniq.db.schemas import Eolienne,Solaire,Hydro, Nucleaire, Thermique, Scenario
 from harmoniq.db.CRUD import (read_all_bus, read_all_line, read_all_line_type,
                               read_all_eolienne,read_all_solaire,read_all_hydro,
                               read_all_nucleaire,read_all_thermique,read_multiple_by_id)
@@ -232,10 +233,11 @@ class NetworkDataLoader:
             network.set_snapshots(snapshots)
             
             if year:
-                loads_path = self.data_dir / "timeseries" / year / "loads-p_set.csv"
-                loads_df = pd.read_csv(loads_path, index_col=0, parse_dates=True)
-                loads_df.columns = [f"load_{col}" for col in loads_df.columns]
-                network.loads_t.p_set = loads_df
+                #TODO : A SUPPRIMER
+                # loads_path = self.data_dir / "timeseries" / year / "loads-p_set.csv"
+                # loads_df = pd.read_csv(loads_path, index_col=0, parse_dates=True)
+                # loads_df.columns = [f"load_{col}" for col in loads_df.columns]
+                # network.loads_t.p_set = loads_df
                 
                 gen_cost_path = self.data_dir / "timeseries" / year / "generation" / "generators-marginal_cost.csv"
                 gen_cost_df = pd.read_csv(gen_cost_path, index_col=0, parse_dates=True)
@@ -253,12 +255,23 @@ class NetworkDataLoader:
             # Mise à jour des données temporelles
             network.generators_t.p_max_pu = p_max_pu_df
             
+            load_demand_df = self.load_demand_data(network, scenario, start_date, end_date)
+            
+            if not load_demand_df.empty:
+                # Convertir l'index en DatetimeIndex si ce n'est pas déjà fait
+                if not isinstance(load_demand_df.index, pd.DatetimeIndex):
+                    load_demand_df.index = pd.to_datetime(load_demand_df.index)
+                
+                # p_set pour chaque load
+                network.loads_t.p_set = load_demand_df
+            
             return network
             
         except Exception as e:
             raise DataLoadError(
                 f"Erreur lors du chargement des données temporelles: {str(e)}"
-            )       
+            )  
+             
     def fill_non_pilotable(self, network: pypsa.Network, source_type: str) -> pypsa.Network:
         """
         Remplit les données de production pour les générateurs non pilotables.
@@ -528,3 +541,41 @@ class NetworkDataLoader:
         # Similaire à l'implémentation pour les éoliennes
         
         return p_max_pu_df
+
+    def load_demand_data(self, network: pypsa.Network, scenario, start_date=None, end_date=None) -> pd.DataFrame:
+        """
+        Charge les données de demande depuis la base de données et les distribue uniformément 
+        entre toutes les charges du réseau.
+        
+        Args:
+            network: Le réseau PyPSA
+            scenario: Le scénario contenant les paramètres de simulation
+            start_date: Date de début pour filtrer les données de demande (optionnel)
+            end_date: Date de fin pour filtrer les données de demande (optionnel)
+            
+        Returns:
+            pd.DataFrame: DataFrame contenant la demande distribuée pour chaque charge du réseau
+        """
+        
+        db_scenario = Scenario(
+            weather=getattr(scenario, 'weather', 1),
+            consomation=getattr(scenario, 'consomation', 1),
+            date_de_debut=start_date or getattr(scenario, 'date_de_debut', None),
+            date_de_fin=end_date or getattr(scenario, 'date_de_fin', None)
+        )
+        
+        # total demand (CUID = 1)
+        demand_df = read_demande_data(db_scenario, CUID=1)
+        demand_df['total_demand'] = demand_df['electricity'] + demand_df['gaz']
+        
+        loads = network.loads.index
+        n_loads = len(loads)
+        
+        demand_df = demand_df.set_index('date')
+        load_demand_df = pd.DataFrame(index=demand_df.index)
+        
+        # Distribution de la demande totale entre toutes les charges
+        for load in loads:
+            load_demand_df[load] = demand_df['total_demand'] / n_loads
+        
+        return load_demand_df
