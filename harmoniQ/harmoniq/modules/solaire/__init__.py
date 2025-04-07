@@ -3,8 +3,8 @@ from harmoniq.core.meteo import WeatherHelper, Granularity, EnergyType
 from harmoniq.db.schemas import ScenarioBase, SolaireBase, PositionBase
 from harmoniq.modules.solaire.calculs_production_solaire import (
     calculate_energy_solar_plants,
-    calculate_regional_residential_solar,
-)
+    calculate_regional_residential_solar, calculate_installation_cost, co2_emissions_solar, cost_solar_powerplant, calculate_lifetime)
+
 
 from typing import List
 import pandas as pd
@@ -50,7 +50,17 @@ class InfraParcSolaire(Infrastructure):
             _, resultats_df = calculate_energy_solar_plants(self.donnees)
 
         return resultats_df
+    
 
+    def calculer_cout_construction(self) -> float:
+        """Calculer le coût de construction de la centrale solaire"""
+        return cost_solar_powerplant(self.donnees)
+
+    def calculer_co2_eq_construction(self) -> float:
+        """Calculer les émissions de CO2 équivalentes de la construction"""
+        return co2_emissions_solar(self.donnees)
+    
+   
 
 if __name__ == "__main__":
     from harmoniq.db.CRUD import read_all_solaire_parc, read_all_scenario
