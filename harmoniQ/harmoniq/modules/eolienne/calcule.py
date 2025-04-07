@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from harmoniq.db.schemas import Eolienne, weather_schema
+from harmoniq.db.schemas import EolienneParc, weather_schema
 from harmoniq.modules.eolienne.turbine_data import turbine_models
 
 
@@ -92,11 +92,11 @@ def ice_loss_factor(t: np.ndarray) -> np.ndarray:
     return np.where(t < 273, 1.0, np.random.uniform(0.5, 1.0, size=t.shape))
 
 
-def get_turbine_power(eolienne: Eolienne, meteo: pd.DataFrame) -> pd.DataFrame:
+def get_parc_power(parc: EolienneParc, meteo: pd.DataFrame) -> pd.DataFrame:
     # Get the turbine data
-    turbine_data = turbine_models.get(eolienne.modele_turbine, None)
+    turbine_data = turbine_models.get(parc.modele_turbine, None)
     if turbine_data is None:
-        raise ValueError(f"Unknown turbine model: {eolienne.modele_turbine}")
+        raise ValueError(f"Unknown turbine model: {parc.modele_turbine}")
 
     # Set tempature to Kelvin
     meteo["temperature"] = meteo["temperature_C"] + 273.15
@@ -105,7 +105,7 @@ def get_turbine_power(eolienne: Eolienne, meteo: pd.DataFrame) -> pd.DataFrame:
     # TODO: @Zineb: PQ on utilise 10m comme référence ?
     # TODO: @Zineb: Est-ce que c'est suppose être en m/s ?
     vitesse_vents = adjust_wind_speed(
-        meteo["vitesse_vent_kmh"].values, 10, eolienne.hauteur_moyenne
+        meteo["vitesse_vent_kmh"].values, 10, parc.hauteur_moyenne
     )
 
     # Apply directional losses
@@ -116,7 +116,7 @@ def get_turbine_power(eolienne: Eolienne, meteo: pd.DataFrame) -> pd.DataFrame:
         (turbine_data["cut_in_wind_speed"] + turbine_data["cut_out_wind_speed"])
         / 2,  # rated speed (TODO find real rated speed)
         turbine_data["cut_out_wind_speed"],
-        eolienne.puissance_nominal,
+        parc.puissance_nominal,
     )
 
     #power_with_output_direction = power_output_direction * directional_losses # On ne considère pas la direction pour le moment
@@ -128,6 +128,9 @@ def get_turbine_power(eolienne: Eolienne, meteo: pd.DataFrame) -> pd.DataFrame:
     # Apply ice losses
     ice_losses = ice_loss_factor(meteo["temperature"])
     power_with_ice_losses = power_with_wake_losses * ice_losses
+    
+    # Apply for all turbines in the parc
+    power_parc = power_with_ice_losses * parc.nombre_eoliennes
 
     # Calculate the energy produced
     df = pd.DataFrame(
@@ -135,7 +138,7 @@ def get_turbine_power(eolienne: Eolienne, meteo: pd.DataFrame) -> pd.DataFrame:
             "tempsdate": meteo.index,
             "vitesse_vent_kmh": meteo["vitesse_vent_kmh"],
             "direction_vent": meteo["direction_vent"],
-            "puissance": power_with_ice_losses,
+            "puissance": power_parc,
         }
     )
 

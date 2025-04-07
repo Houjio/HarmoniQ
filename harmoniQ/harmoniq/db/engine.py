@@ -52,10 +52,14 @@ def get_db():
         db.close()
 
 
-async def all_eoliennes_in_parc(db: Session, eolienne_parc_id: int):
-    eoliennes = (
-        db.query(schemas.Eolienne)
-        .filter(schemas.Eolienne.eolienne_parc_id == eolienne_parc_id)
+def get_all_mrcs_population(db: Session, mrc_id: int) -> pd.DataFrame:
+    data = (
+        db.query(schemas.InstancePopulation)
+        .filter(schemas.InstancePopulation.mrc_id == mrc_id)
         .all()
     )
-    return eoliennes
+
+    df = pd.DataFrame(
+        [{"annee": item.annee, "population": item.population} for item in data]
+    )
+    return df

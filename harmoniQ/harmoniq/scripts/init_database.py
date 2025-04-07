@@ -8,7 +8,16 @@ from pathlib import Path
 from harmoniq.db.engine import engine, get_db
 from harmoniq.db.schemas import SQLBase
 from harmoniq.db import schemas
-from harmoniq.db import CRUD
+from harmoniq.db.CRUD import (
+    create_eolienne_parc,
+    create_bus,
+    create_line,
+    create_line_type,
+    create_hydro,
+    create_thermique,
+    create_solaire,
+)
+
 
 import argparse
 
@@ -70,7 +79,7 @@ def fill_solaire():
         print(f"Centrale solaire {row['nom']} ajoutée à la base de données")
 
 
-def fill_eoliennes():
+def fill_parc_eoliennes():
     db = next(get_db())
 
     station_df = pd.read_excel(CSV_DIR / "Wind_Turbine_Database_FGP.xlsx")
@@ -89,40 +98,25 @@ def fill_eoliennes():
 
             project_capacity = project_capacity[0]
 
+            for _, row in project_df.iterrows():
+                hub_height = row["Hub Height (m)"]
+                
+                if isinstance(hub_height, str) and "-" in hub_height:
+                    hub_height = sum(map(int, hub_height.split("-")))/2
+                    project_df["Hub Height (m)"] = project_df["Hub Height (m)"].replace(row["Hub Height (m)"], hub_height)
+            
             eolienne_parc = schemas.EolienneParcCreate(
                 nom=project_name,
                 latitude=average_lat,
                 longitude=average_lon,
                 nombre_eoliennes=len(project_df),
                 capacite_total=project_capacity,
+                hauteur_moyenne=project_df["Hub Height (m)"].mean(),
+                modele_turbine = project_df["Model"].unique()[0],
+                puissance_nominal = project_df["Turbine Rated Capacity (kW)"].unique()[0]
             )
-            result = CRUD.create_eolienne_parc(db, eolienne_parc)
-            project_id = result.id
-
-            for _, row in project_df.iterrows():
-                hub_height = row["Hub Height (m)"]
-
-                if isinstance(hub_height, str) and "-" in hub_height:
-                    hub_height = sum(map(int, hub_height.split("-"))) / 2
-
-                commisioning = row["Commissioning"]
-                if isinstance(commisioning, str) and "/" in commisioning:
-                    commisioning = int(commisioning.split("/")[-1])
-
-                eolienne = schemas.EolienneCreate(
-                    eolienne_nom=row["Turbine Identifier"],
-                    latitude=row["Latitude"],
-                    longitude=row["Longitude"],
-                    diametre_rotor=row["Rotor Diameter (m)"],
-                    turbine_id=row["Turbine Number"],
-                    puissance_nominal=row["Turbine Rated Capacity (kW)"],
-                    hauteur_moyenne=hub_height,
-                    modele_turbine=row["Manufacturer"] + " " + row["Model"],
-                    project_name=project_name,
-                    annee_commission=commisioning,
-                    eolienne_parc_id=project_id,
-                )
-                CRUD.create_eolienne(db, eolienne)
+            
+            create_eolienne_parc(db, eolienne_parc)
         except Exception as e:
             print(f"Erreur lors de l'ajout du projet {project_name}")
             print(e)
@@ -401,13 +395,13 @@ def fill_network():
 
 def populate_db():
     print("Collecte des éoliennes")
-    fill_eoliennes()
+    fill_parc_eoliennes()
 
     print("Collecte des données du réseau électrique :")
     fill_network()
 
-    print("Collecte des données du réseau hydro :")
-    fill_hydro()
+    # print("Collecte des données du réseau hydro :")
+    # fill_hydro()
 
     print("Collecte des centrales thermiques")
     fill_thermique()

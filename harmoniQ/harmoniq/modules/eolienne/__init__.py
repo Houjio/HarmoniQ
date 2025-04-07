@@ -1,28 +1,24 @@
 from harmoniq.core.base import Infrastructure, necessite_scenario
 from harmoniq.core.meteo import WeatherHelper, Granularity, EnergyType
-from harmoniq.db.schemas import ScenarioBase, EolienneBase, PositionBase
-from harmoniq.modules.eolienne.calcule import get_turbine_power
+from harmoniq.db.schemas import ScenarioBase, EolienneParcBase, PositionBase
+from harmoniq.modules.eolienne.calcule import get_parc_power
 
 from typing import List
 import pandas as pd
 import logging
 
-logger = logging.getLogger("Eolienne")
+logger = logging.getLogger("EolienneParc")
 
 
 class InfraParcEolienne(Infrastructure):
-    def __init__(self, donnees: List[EolienneBase]):
+    def __init__(self, donnees: EolienneParcBase):
         super().__init__(donnees)
 
     def _charger_meteo(self, scenario: ScenarioBase):
-        avrg_lat = sum([eolienne.latitude for eolienne in self.donnees]) / len(
-            self.donnees
-        )
-        avrg_lon = sum([eolienne.longitude for eolienne in self.donnees]) / len(
-            self.donnees
-        )
-
-        pos = PositionBase(latitude=avrg_lat, longitude=avrg_lon)
+        lat = self.donnees.latitude
+        long = self.donnees.longitude
+        logger.info(f"Latitude: {lat}, Longitude: {long}")
+        pos = PositionBase(latitude=lat, longitude=long)
         granularite = (
             Granularity.HOURLY if scenario.pas_de_temps.days == 0 else Granularity.DAILY
         )
@@ -49,43 +45,43 @@ class InfraParcEolienne(Infrastructure):
     def calculer_production(self) -> pd.DataFrame:
         # TODO: Ce code repete souvent les memes calcules, il faudrait le refactoriser
 
-        new_df = None
+        parc_data = None
 
         keys = []
 
-        for eolienne in self.donnees:
-            nom = eolienne.eolienne_nom
-            keys.append(nom)
-
-            logger.info(f"Calcul de la production pour {nom}")
-            turbine_data = get_turbine_power(eolienne, self.meteo)
-
-            # Replace puissance with the name of the turbine
-            turbine_data = turbine_data.rename(columns={"puissance": nom})
-
-            turbine_data.rename(columns={"puissance": nom}, inplace=True)
-            if new_df is None:
-                new_df = turbine_data
-            else:
-                new_df[nom] = turbine_data[nom]
-
-        new_df["production"] = new_df[keys].sum(axis=1)
-
-        return new_df
+        nom = self.donnees.nom
+        keys.append(nom)
+        logger.info(f"Calcul de la production pour {nom}")
+        parc_data = get_parc_power(self.donnees, self.meteo)
+        
+        return parc_data
 
 
 if __name__ == "__main__":
     from harmoniq.db.CRUD import read_all_eolienne_parc, read_all_scenario
-    from harmoniq.db.engine import get_db, all_eoliennes_in_parc
-    import asyncio
+    from harmoniq.db.engine import get_db
+    from datetime import datetime, timedelta
 
     db = next(get_db())
-    eolienne_parc = read_all_eolienne_parc(db)[0]
-    eoliennes = asyncio.run(all_eoliennes_in_parc(db, eolienne_parc.id))
-    infraEolienne = InfraParcEolienne(eoliennes)
+    production_totale = pd.DataFrame() 
+    for parc in read_all_eolienne_parc(db):
+        parc_id = parc.id
+        print(f"Traitement du parc éolien avec l'ID: {parc_id}")
+        eolienne_parc = read_all_eolienne_parc(db)[parc_id - 1]
+        infraEolienne = InfraParcEolienne(eolienne_parc)
 
-    scenario = read_all_scenario(db)[0]
+        scenario = read_all_scenario(db)[0]
 
-    infraEolienne.charger_scenario(scenario)
+        infraEolienne.charger_scenario(scenario)
 
-    production = infraEolienne.calculer_production()
+        production_iteration = infraEolienne.calculer_production()
+        if parc_id == 1:
+            production_totale= production_iteration
+        else:
+            production_totale["puissance"]  += production_iteration["puissance"]
+    
+    print(read_all_eolienne_parc(db))
+    #print(f"Production totale pour tous les parcs: {production_totale["puissance"]} kW")
+    
+    prod_totale = production_totale["puissance"].sum()/1000  # Convertir en MW
+    print(f"Production totale: {prod_totale} MW") 
