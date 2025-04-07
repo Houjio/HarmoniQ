@@ -5,22 +5,22 @@ var openApiJson = null;
 
 const map_icons = {
     eolienneparc: L.icon({
-        iconUrl: '/static/icons/heolienne.png',
+        iconUrl: '/static/icons/eolienne.svg',
         iconSize: [30, 30],
         iconAnchor: [20, 20]
     }),
     solaire: L.icon({
-        iconUrl: '/static/icons/solaire.png',
+        iconUrl: '/static/icons/solaire.svg',
         iconSize: [40, 40],
         iconAnchor: [20, 20]
     }),
     thermique: L.icon({
-        iconUrl: '/static/icons/thermique.png',
+        iconUrl: '/static/icons/thermique.svg',
         iconSize: [40, 40],
         iconAnchor: [20, 20]
     }),
     hydro: L.icon({
-        iconUrl: '/static/icons/barrage.png',
+        iconUrl: '/static/icons/barrage.svg',
         iconSize: [50, 50],
         iconAnchor: [20, 20]
     })
