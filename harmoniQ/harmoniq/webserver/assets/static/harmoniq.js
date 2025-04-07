@@ -23,6 +23,11 @@ const map_icons = {
         iconUrl: '/static/icons/barrage.png',
         iconSize: [50, 50],
         iconAnchor: [20, 20]
+    }),
+    nucleaire: L.icon({
+        iconUrl: '/static/icons/nucelaire.png',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
     })
 };
 
