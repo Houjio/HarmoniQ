@@ -315,6 +315,7 @@ function lancer_simulation() {
     // });
 }
 
+
 function add_infra(element) {
     // Fail if no group is selected
     if ($('#groupe-actif').val() === '' || $('#groupe-actif').val() === null) {
@@ -328,6 +329,7 @@ function add_infra(element) {
     } else {
         element.setAttribute('active', 'true');
     }
+
 
     infraUserAction();
 }
