@@ -8,15 +8,7 @@ from pathlib import Path
 from harmoniq.db.engine import engine, get_db
 from harmoniq.db.schemas import SQLBase
 from harmoniq.db import schemas
-from harmoniq.db.CRUD import (
-    create_eolienne_parc,
-    create_bus,
-    create_line,
-    create_line_type,
-    create_hydro,
-    create_thermique,
-    create_solaire,
-)
+from harmoniq.db import CRUD
 
 
 import argparse
@@ -116,7 +108,7 @@ def fill_parc_eoliennes():
                 puissance_nominal = project_df["Turbine Rated Capacity (kW)"].unique()[0]
             )
             
-            create_eolienne_parc(db, eolienne_parc)
+            CRUD.create_eolienne_parc(db, eolienne_parc)
         except Exception as e:
             print(f"Erreur lors de l'ajout du projet {project_name}")
             print(e)
@@ -400,8 +392,8 @@ def populate_db():
     print("Collecte des données du réseau électrique :")
     fill_network()
 
-    # print("Collecte des données du réseau hydro :")
-    # fill_hydro()
+    print("Collecte des données du réseau hydro :")
+    fill_hydro()
 
     print("Collecte des centrales thermiques")
     fill_thermique()
