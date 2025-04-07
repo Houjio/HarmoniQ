@@ -6,7 +6,7 @@ var openApiJson = null;
 const map_icons = {
     eolienneparc: L.icon({
         iconUrl: '/static/icons/heolienne.png',
-        iconSize: [40, 40],
+        iconSize: [30, 30],
         iconAnchor: [20, 20]
     }),
     solaire: L.icon({
@@ -21,7 +21,7 @@ const map_icons = {
     }),
     hydro: L.icon({
         iconUrl: '/static/icons/barrage.png',
-        iconSize: [40, 40],
+        iconSize: [50, 50],
         iconAnchor: [20, 20]
     })
 };
@@ -119,6 +119,7 @@ function initialiserListeParc(type, elementId) {
             return response.json();
         })
         .then(data => {
+            console.log(`Liste des ${type}:`, data);
             data.forEach(parc => {
                 listeElement.innerHTML += createListElement({ nom: parc.nom, id: parc.id });
                 addMarker(parc.latitude, parc.longitude, type, parc);
