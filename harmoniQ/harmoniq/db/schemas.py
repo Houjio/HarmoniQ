@@ -30,14 +30,17 @@ class Optimisme(PyEnum):
     moyen = 2
     optimiste = 3
 
+
 class Weather(PyEnum):
     warm = 1
     typical = 2
     cold = 3
 
+
 class Consomation(PyEnum):
-    PV = 1 # Typique
-    UB = 2 # Conservateur
+    PV = 1  # Typique
+    UB = 2  # Conservateur
+
 
 class DateTimeString(TypeDecorator):
     impl = String
@@ -92,7 +95,7 @@ class ScenarioBase(BaseModel):
         ..., description="Date de fin de la simulation (YYYY-MM-DD)"
     )
     pas_de_temps: timedelta = Field(
-        ..., description="Pas de temps de la simulation (HH:MM:SS)"
+        ..., description="Pas de temps de la simulation (ISO 8601 duration)"
     )
     weather: Weather = Weather.typical
     consomation: Consomation = Consomation.PV
@@ -312,7 +315,7 @@ class SolaireCreate(SolaireBase):
 
 
 class HydroBase(BaseModel):
-    barrage_nom: str
+    nom: str
     longitude: float
     latitude: float
     type_barrage: str
@@ -346,7 +349,7 @@ class Hydro(SQLBase):
     __tablename__ = "hydro"
 
     id = Column(Integer, primary_key=True, index=True)
-    barrage_nom = Column(String)
+    nom = Column(String)
     longitude = Column(Float)
     latitude = Column(Float)
     type_barrage = Column(String)

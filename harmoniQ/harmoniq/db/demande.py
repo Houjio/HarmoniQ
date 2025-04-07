@@ -10,6 +10,7 @@ from typing import Optional
 
 _conn = sqlite3.connect(DEMANDE_PATH)
 
+
 def get_all_mrc() -> pd.DataFrame:
     query = """
         SELECT DISTINCT m.id, m.CUID, m.weather, m.sector, m.scenario, m.year
@@ -19,12 +20,13 @@ def get_all_mrc() -> pd.DataFrame:
     df = pd.read_sql_query(query, _conn)
     return df
 
-def read_demande_data(
+
+async def read_demande_data(
     scenario: Scenario,
     CUID: Optional[int] = None,
 ) -> pd.DataFrame:
     if CUID is None:
-        CUID = 1 # Default value = Total
+        CUID = 1  # Default value = Total
 
     query = """
         SELECT d.date, d.electricity, d.gaz

@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+
 # data_solaire.py
 
 # Définition des centrales solaires avec leurs puissances

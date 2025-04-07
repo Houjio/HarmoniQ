@@ -1,3 +1,4 @@
+let infraTimeout = null;
 var map;
 
 // Utility function to fetch data and handle errors
@@ -84,7 +85,7 @@ function initialiserListeParc(type, elementId) {
             iconSize: [40, 40],
             iconAnchor: [20, 20]
         }),
-        barrage: L.icon({
+        hydro: L.icon({
             iconUrl: '/static/icons/barrage.png',
             iconSize: [40, 40],
             iconAnchor: [20, 20]
@@ -112,7 +113,10 @@ function initialiserListeParc(type, elementId) {
     })
     .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
 }
-    
+
+function initialiserListeHydro() {
+    initialiserListeParc('hydro', 'list-parc-hydro');
+}
 
 function initialiserListeParcEolienne() {
     initialiserListeParc('eolienneparc', 'list-parc-eolien');
@@ -147,6 +151,7 @@ function loadMap() {
 }
 
 window.onload = function() {
+    initialiserListeHydro();
     initialiserListeScenario();
     initialiserListeInfra();
     initialiserListeParcEolienne();
@@ -156,12 +161,21 @@ window.onload = function() {
     loadMap();
 };
 
-function save_groupe() {
+function infraUserAction() {
+    if (infraTimeout) {
+        clearTimeout(infraTimeout);
+    }
+
+    infraTimeout = setTimeout(() => {
+        save_groupe();
+    }, 2500);
+}
+
+async function save_groupe() {
     const values = load_groupe_ids();
     fetchData(`/api/listeinfrastructures/${$("#groupe-actif").val()}`, 'PUT', values)
-        .then(response => console.log('Infrastructure group saved successfully:', response))
+        .then(_ => console.log('Infrastructure group auto saved successfully:'))
         .catch(error => console.error('Error saving infrastructure group:', error));
-    toggleButtonState("enregistrer-groupe", false);
 }
 
 function unblock_run() {
@@ -212,7 +226,7 @@ function add_infra(element) {
         element.setAttribute('active', 'true');
     }
 
-    $("#enregistrer-groupe").prop("disabled", false);
+    infraUserAction();
 }
 
 $("button.select-all").on('click', function(target) {
@@ -227,7 +241,7 @@ $("button.select-all").on('click', function(target) {
         this.setAttribute('active', 'true');
     });
 
-    $("#enregistrer-groupe").prop("disabled", false);
+    infraUserAction();
 });
 
 $("button.select-none").on('click', function(target) {
@@ -242,7 +256,7 @@ $("button.select-none").on('click', function(target) {
         this.removeAttribute('active');
     });
 
-    $("#enregistrer-groupe").prop("disabled", false);
+    infraUserAction();
 });
 
 function deleteScenario(id) {
@@ -266,8 +280,9 @@ function confirmDeleteScenario(id, nom) {
 function load_groupe_ids() {
     const active_name = $("#groupe-actif option:selected").text();
     const categories = [
+        { elementId: "list-parc-hydro", key: "selected_hydro" },
         { elementId: "list-parc-eolien", key: "selected_eolienes" },
-        { elementId: "solarCollapse", key: "selected_solaires" },
+        { elementId: "list-parc-solaire", key: "selected_solaires" },
         { elementId: "list-parc-thermique", key: "selected_thermiques" }
     ];
 
@@ -281,13 +296,13 @@ function load_groupe_ids() {
             .join(',');
     });
 
-    const { selected_eolienes, selected_solaires, selected_thermiques } = selectedItems;
+    const { selected_hydro, selected_eolienes, selected_solaires, selected_thermiques } = selectedItems;
     
     const data = {
         nom: active_name,
         parc_eoliens: selected_eolienes,
         parc_solaires: selected_solaires,
-        central_hydroelectriques: "",
+        central_hydroelectriques: selected_hydro,
         central_thermique: selected_thermiques
     };
 
@@ -309,7 +324,6 @@ function no_selection_infra() {
     $("#groupe-actif").val('');
     $("#active-groupe-title").text("N/A");
     $("#active-groupe-title").addClass("text-muted");
-    $("#enregistrer-groupe").hide();
     $('#run').prop('disabled', true);
 }
 
@@ -324,7 +338,8 @@ function changeInfra() {
             const categories = [
                 { elementId: "list-parc-eolien", activeIds: data.parc_eoliens ? data.parc_eoliens.split(',') : [] },
                 { elementId: "list-parc-solaire", activeIds: data.parc_solaires ? data.parc_solaires.split(',') : [] },
-                { elementId: "list-parc-thermique", activeIds: data.central_thermique ? data.central_thermique.split(',') : [] }
+                { elementId: "list-parc-thermique", activeIds: data.central_thermique ? data.central_thermique.split(',') : [] },
+                { elementId: "list-parc-hydro", activeIds: data.central_hydroelectriques ? data.central_hydroelectriques.split(',') : [] }
             ];
 
             categories.forEach(({ elementId, activeIds }) => {
@@ -342,7 +357,6 @@ function changeInfra() {
 
             $("#active-groupe-title").text(data.nom);
             $("#active-groupe-title").removeClass('text-muted');
-            $("#enregistrer-groupe").show();
             unblock_run();
         })
         .catch(error => console.error('Erreur lors du chargement du groupe d\'infrastructures:', error));
@@ -351,6 +365,24 @@ function changeInfra() {
 function updateOptimismeText(card, type, value) {
     const labels = ["Pessimiste", "Moyen", "Optimiste"];
     card.find(`.optimisme-${type}`).text(labels[value - 1]);
+}
+
+function charger_demande(scenario_id, mrc_id) {
+    if (!mrc_id) {
+        mrc_id = 1;
+    }
+
+    fetchData(`/api/demande/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST')
+        .then(data => {
+            console.log('Demande chargée avec succès:', data);
+        })
+        .catch(error => {
+            if (error.message.includes('404')) {
+                console.error('Demande non trouvée:', error);
+            } else {
+                console.error('Erreur lors du chargement de la demande:', error);
+            }
+        });
 }
 
 function changeScenario() {
@@ -386,6 +418,9 @@ function changeScenario() {
             $("#active-scenario-title").removeClass('text-muted');
             $("#delete-scenario").find("span").text(data.nom);
             $("#delete-scenario").show();
+
+            setTimeout(() => charger_demande(id, 1), 0);
+            console.log("Chargement de la demande pour le scenario:", id);
 
             unblock_run();
         })
@@ -489,6 +524,8 @@ function nouveauScenario() {
             date_de_debut: date_de_debut,
             date_de_fin: date_de_fin,
             pas_de_temps: pas_de_temps,
+            weather: weather,
+            consomation: consomation,
             optimisme_social: optimisme_social,
             optimisme_ecologique: optimisme_ecologique
         };
@@ -499,26 +536,28 @@ function nouveauScenario() {
             return;
         }
 
-        $.ajax({
-            type: 'POST',
-            url: '/api/scenario',
-            data: JSON.stringify(data),
-            contentType: 'application/json',
-            success: function(response) {
-                console.log('Scenario créé avec succès:', response);
-                var option = document.createElement('option');
-                option.value = response.id;
-                option.textContent = response.nom;
-                document.getElementById('scenario-actif').appendChild(option);
-                $('#dataModal').modal('hide');
-                setTimeout(function() {
-                    no_selection_scenario()
-                }
-                , 50);
-            },
-            error: function(error) {
-                console.error('Erreur lors de la création du scenario:', error);
-            }
+        fetch('/api/scenario', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(response => {
+            console.log('Scenario créé avec succès:', response);
+            var option = document.createElement('option');
+            option.value = response.id;
+            option.textContent = response.nom;
+            document.getElementById('scenario-actif').appendChild(option);
+            $('#dataModal').modal('hide');
+            setTimeout(function() {
+                no_selection_scenario();
+            }, 50);
+        })
+        .catch(error => {
+            console.error('Erreur lors de la création du scenario:', error);
         });
     });
 

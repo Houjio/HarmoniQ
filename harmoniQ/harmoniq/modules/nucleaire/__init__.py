@@ -1,7 +1,9 @@
 from harmoniq.core.base import Infrastructure, necessite_scenario
 from harmoniq.core.meteo import WeatherHelper, Granularity, EnergyType
 from harmoniq.db.schemas import NucleaireBase, ScenarioBase, PositionBase
-from harmoniq.modules.nucleaire.calculs_production_nucleaire import calculate_nuclear_production
+from harmoniq.modules.nucleaire.calculs_production_nucleaire import (
+    calculate_nuclear_production,
+)
 
 from typing import List
 import pandas as pd
@@ -9,9 +11,10 @@ import logging
 
 logger = logging.getLogger("Solaire")
 
+
 class Nucleaire(Infrastructure):
     def __init__(self, donnees: List[NucleaireBase]):
-     
+
         super().__init__(donnees)
         self.donnees = donnees
 
@@ -34,13 +37,11 @@ class Nucleaire(Infrastructure):
         )
 
         return helper.load()
-    
+
     @necessite_scenario
     def charger_scenario(self, scenario: ScenarioBase):
         self.scenario: ScenarioBase = scenario
         self.meteo: pd.DataFrame = self._charger_meteo(scenario)
-    
-
 
     @necessite_scenario
     def calculer_production(self) -> pd.DataFrame:
@@ -59,6 +60,7 @@ class Nucleaire(Infrastructure):
             else:
                 new_df = pd.concat([new_df, centrale_data], axis=1)
         return new_df
+
 
 if __name__ == "__main__":
     from harmoniq.db.CRUD import read_all_centrales_nucleaires, read_all_scenario
