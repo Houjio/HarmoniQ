@@ -77,11 +77,11 @@ class InfraParcEolienne(Infrastructure):
 if __name__ == "__main__":
     from harmoniq.db.CRUD import read_all_eolienne_parc, read_all_scenario
     from harmoniq.db.engine import get_db, all_eoliennes_in_parc
-    from datetime import datetime, timedelta
+    import asyncio
 
     db = next(get_db())
     eolienne_parc = read_all_eolienne_parc(db)[0]
-    eoliennes = all_eoliennes_in_parc(db, eolienne_parc.id)
+    eoliennes = asyncio.run(all_eoliennes_in_parc(db, eolienne_parc.id))
     infraEolienne = InfraParcEolienne(eoliennes)
 
     scenario = read_all_scenario(db)[0]
