@@ -259,6 +259,7 @@ window.onload = function() {
     initialiserListeParcEolienne();
     initialiserListeParcSolaire();
     initialiserListeThermique();
+    modeliserLignes(); 
 
     loadMap();
     loadOpenApi();
@@ -835,4 +836,74 @@ $('#delete-scenario').on('click', function() {
     let nom = $("#scenario-actif option:selected").text();
     confirmDeleteScenario(id, nom);
 });
+
+function modeliserLignes() {
+    // Charger le fichier CSV
+    fetch('/static/lignes_quebec.csv')
+        .then(response => {
+            if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+            return response.text();
+        })
+        .then(csvData => {
+            // Diviser le CSV en lignes
+            const lignes = csvData.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
+            // Extraire les en-têtes
+            const headers = lignes[0].split(',');
+
+            // Parcourir les lignes de données
+            lignes.slice(1).forEach(line => {
+                const values = line.split(',');
+                const ligne = headers.reduce((acc, header, index) => {
+                    acc[header] = values[index];
+                    return acc;
+                }, {});
+
+                // Filtrer uniquement les lignes avec un voltage de 735
+                if (parseInt(ligne.voltage) === 735) {
+                    const busDepart = [parseFloat(ligne.latitude_starting), parseFloat(ligne.longitude_starting)];
+                    const busArrivee = [parseFloat(ligne.latitude_ending), parseFloat(ligne.longitude_ending)];
+
+                    // Construire le contenu du popup
+                    const popupContent2 = `
+                        <b>Voltage:</b> ${ligne.voltage || 'N/A'} kV<br>
+                        <b>Longueur:</b> ${ligne.line_length_km || 'N/A'} km<br>
+                        <b>Point de départ:</b> ${ligne.network_node_name_starting || 'N/A'}<br>
+                        <b>Point d'arrivée:</b> ${ligne.network_node_name_ending || 'N/A'}
+                    `;
+
+
+                    // Ajouter un point pour le bus de départ
+                    L.circleMarker(busDepart, {
+                        radius: 5,
+                        color: 'blue',
+                        fillColor: 'blue',
+                        fillOpacity: 0.8
+                    }).addTo(map);
+
+                    // Ajouter un point pour le bus d'arrivée
+                    L.circleMarker(busArrivee, {
+                        radius: 5,
+                        color: 'red',
+                        fillColor: 'red',
+                        fillOpacity: 0.8
+                    }).addTo(map);
+
+                    // Tracer une ligne entre les deux bus
+                    const polyline = L.polyline([busDepart, busArrivee], {
+                        color: 'green',
+                        weight: 3
+                    }).addTo(map)
+                    .bindPopup(popupContent2); 
+                    
+                    // Lier le popup à la ligne
+                    polyline.on('click', function () {
+                        this.openPopup();
+                    });
+
+                }
+            });
+        })
+        .catch(error => console.error('Erreur lors du chargement des lignes électriques:', error));
+}
 
