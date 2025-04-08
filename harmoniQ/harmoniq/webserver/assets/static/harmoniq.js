@@ -876,7 +876,7 @@ function modeliserLignes() {
 
                 // Filtrer uniquement les lignes avec un voltage de 735
                 // ou 120, 161, 230, 315, 735 kV
-                if ([120, 161, 230, 315, 735].includes(parseInt(ligne.voltage))) {                    const busDepart = [parseFloat(ligne.latitude_starting), parseFloat(ligne.longitude_starting)];
+                if ([735].includes(parseInt(ligne.voltage))) {                    const busDepart = [parseFloat(ligne.latitude_starting), parseFloat(ligne.longitude_starting)];
                     const busArrivee = [parseFloat(ligne.latitude_ending), parseFloat(ligne.longitude_ending)];
 
                     // Construire le contenu du popup
@@ -896,7 +896,7 @@ function modeliserLignes() {
 
                     // Ajouter un point pour le bus de départ
                     const bus0= L.circleMarker(busDepart, {
-                        radius: 5,
+                        radius: 1,
                         color: 'blue',
                         fillColor: 'blue',
                         fillOpacity: 0.8
@@ -910,7 +910,7 @@ function modeliserLignes() {
 
                     // Ajouter un point pour le bus d'arrivée
                     const bus1= L.circleMarker(busArrivee, {
-                        radius: 5,
+                        radius: 1,
                         color: 'red',
                         fillColor: 'red',
                         fillOpacity: 0.8
@@ -924,8 +924,8 @@ function modeliserLignes() {
 
                     // Tracer une ligne entre les deux bus
                     const polyline = L.polyline([busDepart, busArrivee], {
-                        color: 'green',
-                        weight: 3
+                        color: 'gray',
+                        weight: 1
                     }).addTo(map)
                     .bindPopup(popupContent2); 
                     
