@@ -8,7 +8,7 @@ import sqlite3
 
 from typing import Optional
 
-_conn = sqlite3.connect(DEMANDE_PATH)
+_conn = sqlite3.connect(f"file:{DEMANDE_PATH}?mode=ro", uri=True)
 
 def get_all_mrc() -> pd.DataFrame:
     query = """

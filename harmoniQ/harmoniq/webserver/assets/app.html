@@ -227,10 +227,14 @@
                 </div>
             </div>
             <div class="tab-pane show h-100" id="sankey" role="tabpanel" aria-labelledby="sankey-tab">
-                <div id="sankey-plot" style="height: 100%; width: 100%;"></div>
+                <div id="sankey-plot" style="height: 100%; width: 100%;">
+                    Choisi un scénario pour voir des données
+                </div>
             </div>
             <div class="tab-pane show h-100" id="temporal" role="tabpanel" aria-labelledby="temporal-tab">
-                <div id="temporal-plot" style="height: 100%; width: 100%;"></div>
+                <div id="temporal-plot" style="height: 100%; width: 100%;">
+                    Choisi un scénario pour voir des données temporelles
+                </div>
             </div>
         </div>
     </div>
@@ -247,6 +251,13 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment/locale/fr.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    // Globals
+    var demande;
+    var production;
+    var map;
+</script>
 
 <script src="{{ url_for('static', path='graphiques.js') }}"></script>
 <script src="{{ url_for('static', path='harmoniq.js') }}"></script>

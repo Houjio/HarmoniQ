@@ -1,6 +1,5 @@
 let infraTimeout = null;
 let scenarioFetchController = null;
-var map;
 var openApiJson = null;
 
 const map_icons = {
@@ -508,7 +507,8 @@ function charger_demande(scenario_id, mrc_id) {
 
     fetchData(`/api/demande/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', null, signal)
         .then(data => {
-            console.log('Demande chargée avec succès:', data);
+            console.log('Demande chargée avec succès');
+            demande = data;
         })
         .catch(error => {
             if (error.message.includes('404')) {
