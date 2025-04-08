@@ -144,6 +144,11 @@ function addMarker(lat, lon, type, data) {
             Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
             Type d'intrant: ${data.type_intrant || 'N/A'}
         `;
+    } else if (type === 'nucleaire') { // Ajout pour la catégorie nucléaire
+        popupContent += `
+            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
+            Type d'intrant: ${data.type_intrant || 'N/A'}
+        `;
     }
 
     // Ajouter le marqueur à la carte avec le popup
