@@ -84,7 +84,7 @@ async def read_demande_data_sankey(
     return df
 
 
-async def read_demande_data_sankey(
+async def read_demande_data_temporal(
     scenario: Scenario,
     CUID: Optional[int] = None,
 ) -> pd.DataFrame:
