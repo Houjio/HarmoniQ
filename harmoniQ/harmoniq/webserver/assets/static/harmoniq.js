@@ -942,7 +942,7 @@ function modeliserLignes() {
                 `;
 
                 L.circleMarker([parseFloat(point.lat), parseFloat(point.lon)], {
-                    radius: 5,
+                    radius: 1,
                     color: color,
                     fillColor: color,
                     fillOpacity: 0.8
