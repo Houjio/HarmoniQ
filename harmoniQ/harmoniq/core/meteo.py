@@ -36,7 +36,8 @@ class EnergyType(Enum):
 
 
 _CURRENT_YEAR = datetime.now().year
-_REFERENCE_YEAR = 2020 # If future data is queried, 2020 is provided
+_REFERENCE_YEAR = 2020  # If future data is queried, 2020 is provided
+
 
 class WeatherHelper:
     def __init__(
@@ -63,10 +64,12 @@ class WeatherHelper:
         # If the time range is after this year, set it back
         self._timeshift = None
         if self.end_time.year > _CURRENT_YEAR:
-            self._timeshift = timedelta(days=(365 * (self.end_time.year - _REFERENCE_YEAR)))
+            self._timeshift = timedelta(
+                days=(365 * (self.end_time.year - _REFERENCE_YEAR))
+            )
             self.start_time -= self._timeshift
             self.end_time -= self._timeshift
-    
+
         self._granularity = granularity
         self._nearby_stations: Optional[pd.DataFrame] = None
         self._data: Optional[pd.DataFrame] = None
@@ -87,7 +90,7 @@ class WeatherHelper:
         if self._data is None:
             raise ValueError("Data not loaded")
         return self._data
-    
+
     @property
     def _cache_key(self) -> str:
         lat = round(self.position.latitude, 4)
@@ -97,7 +100,6 @@ class WeatherHelper:
         end_str = self.end_time.strftime("%Y-%m-%d")
         return f"{lat}_{lon}_{start_str}_{end_str}_{self.granularity}_{energy_type}"
 
-    
     def load(self) -> None:
         if self._data is not None:
             return self._data

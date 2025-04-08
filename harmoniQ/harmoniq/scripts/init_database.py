@@ -91,11 +91,13 @@ def fill_parc_eoliennes():
 
             for _, row in project_df.iterrows():
                 hub_height = row["Hub Height (m)"]
-                
+
                 if isinstance(hub_height, str) and "-" in hub_height:
-                    hub_height = sum(map(int, hub_height.split("-")))/2
-                    project_df["Hub Height (m)"] = project_df["Hub Height (m)"].replace(row["Hub Height (m)"], hub_height)
-            
+                    hub_height = sum(map(int, hub_height.split("-"))) / 2
+                    project_df["Hub Height (m)"] = project_df["Hub Height (m)"].replace(
+                        row["Hub Height (m)"], hub_height
+                    )
+
             eolienne_parc = schemas.EolienneParcCreate(
                 nom=project_name,
                 latitude=average_lat,
@@ -103,10 +105,10 @@ def fill_parc_eoliennes():
                 nombre_eoliennes=len(project_df),
                 capacite_total=project_capacity,
                 hauteur_moyenne=project_df["Hub Height (m)"].mean(),
-                modele_turbine = project_df["Model"].unique()[0],
-                puissance_nominal = project_df["Turbine Rated Capacity (kW)"].unique()[0]
+                modele_turbine=project_df["Model"].unique()[0],
+                puissance_nominal=project_df["Turbine Rated Capacity (kW)"].unique()[0],
             )
-            
+
             CRUD.create_eolienne_parc(db, eolienne_parc)
         except Exception as e:
             print(f"Erreur lors de l'ajout du projet {project_name}")

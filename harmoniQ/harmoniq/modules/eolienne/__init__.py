@@ -53,7 +53,7 @@ class InfraParcEolienne(Infrastructure):
         keys.append(nom)
         logger.info(f"Calcul de la production pour {nom}")
         parc_data = get_parc_power(self.donnees, self.meteo)
-        
+
         return parc_data
 
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     from datetime import datetime, timedelta
 
     db = next(get_db())
-    production_totale = pd.DataFrame() 
+    production_totale = pd.DataFrame()
     for parc in read_all_eolienne_parc(db):
         parc_id = parc.id
         print(f"Traitement du parc éolien avec l'ID: {parc_id}")
@@ -76,12 +76,12 @@ if __name__ == "__main__":
 
         production_iteration = infraEolienne.calculer_production()
         if parc_id == 1:
-            production_totale= production_iteration
+            production_totale = production_iteration
         else:
-            production_totale["puissance"]  += production_iteration["puissance"]
-    
+            production_totale["puissance"] += production_iteration["puissance"]
+
     print(read_all_eolienne_parc(db))
-    #print(f"Production totale pour tous les parcs: {production_totale["puissance"]} kW")
-    
-    prod_totale = production_totale["puissance"].sum()/1000  # Convertir en MW
-    print(f"Production totale: {prod_totale} MW") 
+    # print(f"Production totale pour tous les parcs: {production_totale["puissance"]} kW")
+
+    prod_totale = production_totale["puissance"].sum() / 1000  # Convertir en MW
+    print(f"Production totale: {prod_totale} MW")

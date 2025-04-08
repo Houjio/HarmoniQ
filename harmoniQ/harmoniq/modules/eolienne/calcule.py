@@ -119,7 +119,7 @@ def get_parc_power(parc: EolienneParc, meteo: pd.DataFrame) -> pd.DataFrame:
         parc.puissance_nominal,
     )
 
-    #power_with_output_direction = power_output_direction * directional_losses # On ne considère pas la direction pour le moment
+    # power_with_output_direction = power_output_direction * directional_losses # On ne considère pas la direction pour le moment
 
     # Apply wake losses
     wake_losses = apply_wake_losses(meteo["direction_vent"])
@@ -128,7 +128,7 @@ def get_parc_power(parc: EolienneParc, meteo: pd.DataFrame) -> pd.DataFrame:
     # Apply ice losses
     ice_losses = ice_loss_factor(meteo["temperature"])
     power_with_ice_losses = power_with_wake_losses * ice_losses
-    
+
     # Apply for all turbines in the parc
     power_parc = power_with_ice_losses * parc.nombre_eoliennes
 

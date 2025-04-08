@@ -178,6 +178,7 @@ async def read_demande(
     demande = await read_demande_data(scenario, CUID)
     return demande
 
+
 @demande_router.post("/sankey")
 async def read_demande_sankey(
     scenario_id: int,
