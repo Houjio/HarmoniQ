@@ -198,7 +198,7 @@ function loadMap() {
     map = L.map('map-box', {
         zoomControl: true,
         attributionControl: true,
-        maxZoom: 10,
+        maxZoom: 12,
         minZoom: 5
     }).setView([52.9399, -67], 4);
 
@@ -273,6 +273,18 @@ window.onload = function() {
 
     loadMap();
     loadOpenApi();
+
+    document.getElementById('apply-filter').addEventListener('click', () => {
+        // Supprimer les anciennes couches de la carte
+        map.eachLayer(layer => {
+            if (layer instanceof L.CircleMarker || layer instanceof L.Polyline) {
+                map.removeLayer(layer);
+            }
+        });
+    
+        // Recharger les lignes avec les voltages sélectionnés
+        modeliserLignes();
+    });
 };
 
 function infraUserAction() {
@@ -851,3 +863,122 @@ $('#delete-scenario').on('click', function() {
     confirmDeleteScenario(id, nom);
 });
 
+function modeliserLignes() {
+    // Charger le fichier CSV
+    fetch('/static/lignes_quebec.csv')
+        .then(response => {
+            if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+            return response.text();
+        })
+        .then(csvData => {
+            // Diviser le CSV en lignes
+            const lignes = csvData.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
+            // Extraire les en-têtes
+            const headers = lignes[0].split(',');
+
+            // Récupérer les voltages sélectionnés
+            const selectedVoltages = Array.from(document.getElementById('voltage-select').selectedOptions)
+                .map(option => parseInt(option.value));
+
+            // Stocker les points pour déterminer leur rôle
+            const points = {};
+
+            // Parcourir les lignes de données pour collecter les points uniquement pour les lignes sélectionnées
+            const lignesSelectionnees = lignes.slice(1).filter(line => {
+                const values = line.split(',');
+                const ligne = headers.reduce((acc, header, index) => {
+                    acc[header] = values[index];
+                    return acc;
+                }, {});
+
+                // Filtrer les lignes selon les voltages sélectionnés
+                return selectedVoltages.includes(parseInt(ligne.voltage));
+            });
+
+            lignesSelectionnees.forEach(line => {
+                const values = line.split(',');
+                const ligne = headers.reduce((acc, header, index) => {
+                    acc[header] = values[index];
+                    return acc;
+                }, {});
+
+                const departKey = `${ligne.latitude_starting},${ligne.longitude_starting}`;
+                const arriveeKey = `${ligne.latitude_ending},${ligne.longitude_ending}`;
+
+                // Marquer les points comme départ ou arrivée et ajouter le nom
+                points[departKey] = points[departKey] || { 
+                    lat: ligne.latitude_starting, 
+                    lon: ligne.longitude_starting, 
+                    nom: ligne.network_node_name_starting || 'N/A', 
+                    isDepart: false, 
+                    isArrivee: false 
+                };
+                points[departKey].isDepart = true;
+
+                points[arriveeKey] = points[arriveeKey] || { 
+                    lat: ligne.latitude_ending, 
+                    lon: ligne.longitude_ending, 
+                    nom: ligne.network_node_name_ending || 'N/A', 
+                    isDepart: false, 
+                    isArrivee: false 
+                };
+                points[arriveeKey].isArrivee = true;
+            });
+
+            // Ajouter les points à la carte avec les couleurs appropriées
+            Object.values(points).forEach(point => {
+                let color = 'gray'; // Par défaut, gris pour les points à la fois départ et arrivée
+                if (point.isDepart && !point.isArrivee) {
+                    color = 'blue'; // Bleu pour les points uniquement départ
+                } else if (!point.isDepart && point.isArrivee) {
+                    color = 'red'; // Rouge pour les points uniquement arrivée
+                }
+
+                const popupContent = `
+                    <b>Nom:</b> ${point.nom || 'N/A'}<br>
+                    <b>Type:</b> ${point.isDepart && point.isArrivee ? 'Départ et Arrivée' : point.isDepart ? 'Départ' : 'Arrivée'}
+                `;
+                // <b>Coordonnées:</b> (${point.lat}, ${point.lon})<br>
+
+                L.circleMarker([parseFloat(point.lat), parseFloat(point.lon)], {
+                    radius: 2,
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.8
+                }).addTo(map)
+                .bindPopup(popupContent);
+            });
+
+            // Parcourir les lignes de données pour tracer les lignes
+            lignesSelectionnees.forEach(line => {
+                const values = line.split(',');
+                const ligne = headers.reduce((acc, header, index) => {
+                    acc[header] = values[index];
+                    return acc;
+                }, {});
+
+                const busDepart = [parseFloat(ligne.latitude_starting), parseFloat(ligne.longitude_starting)];
+                const busArrivee = [parseFloat(ligne.latitude_ending), parseFloat(ligne.longitude_ending)];
+
+                // Construire le contenu du popup pour la ligne
+                const popupContent = `
+                    <b>Voltage:</b> ${ligne.voltage || 'N/A'} kV<br>
+                    <b>Longueur:</b> ${ligne.line_length_km || 'N/A'} km<br>
+                    <b>Point de départ:</b> ${ligne.network_node_name_starting || 'N/A'}<br>
+                    <b>Point d'arrivée:</b> ${ligne.network_node_name_ending || 'N/A'}
+                `;
+
+                // Tracer une ligne entre les deux bus
+                L.polyline([busDepart, busArrivee], {
+                    color: 'gray',
+                    weight: 1
+                }).addTo(map)
+                .bindPopup(popupContent)
+                .on('click', function () {
+                    this.openPopup();
+                });
+            });
+        })
+        .catch(error => console.error('Erreur lors du chargement des lignes électriques:', error));
+}
