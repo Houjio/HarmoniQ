@@ -15,61 +15,6 @@ from enum import Enum as PyEnum
 SQLBase = declarative_base()
 
 
-class MRC(SQLBase):
-    __tablename__ = "mrc"
-
-    id = Column(Integer, primary_key=True)  # CDUID
-    nom = Column(String)
-    longitude_centre = Column(Float)
-    latitude_centre = Column(Float)
-
-    instances_population = relationship("InstancePopulation", back_populates="mrc")
-
-
-class MRCBase(BaseModel):
-    id: int
-    nom: str
-    longitude_centre: float
-    latitude_centre: float
-
-
-class MRCCreate(MRCBase):
-    pass
-
-
-class MRCResponse(MRCBase):
-    class Config:
-        from_attributes = True
-
-
-class InstancePopulation(SQLBase):
-    __tablename__ = "instance_population"
-
-    id = Column(Integer, primary_key=True)
-    annee = Column(Integer)
-    population = Column(Integer)
-    mrc_id = Column(Integer, ForeignKey("mrc.id"))
-
-    mrc = relationship("MRC", back_populates="instances_population")
-
-
-class InstancePopulationBase(BaseModel):
-    annee: int
-    population: int
-    mrc_id: int
-
-
-class InstancePopulationCreate(InstancePopulationBase):
-    pass
-
-
-class InstancePopulationResponse(InstancePopulationBase):
-    id: int
-
-    class Config:
-        from_attributes = True
-
-
 class PositionBase(BaseModel):
     """Pydantic modèle de base pour les positions"""
 
@@ -84,6 +29,17 @@ class Optimisme(PyEnum):
     pessimiste = 1
     moyen = 2
     optimiste = 3
+
+
+class Weather(PyEnum):
+    warm = 1
+    typical = 2
+    cold = 3
+
+
+class Consomation(PyEnum):
+    PV = 1  # Typique
+    UB = 2  # Conservateur
 
 
 class DateTimeString(TypeDecorator):
@@ -123,6 +79,8 @@ class Scenario(SQLBase):
     date_de_debut = Column(DateTimeString)
     date_de_fin = Column(DateTimeString)
     pas_de_temps = Column(TimeDeltaString)
+    weather = Column(Enum(Weather))
+    consomation = Column(Enum(Consomation))
     optimisme_social = Column(Enum(Optimisme))
     optimisme_ecologique = Column(Enum(Optimisme))
 
@@ -137,8 +95,10 @@ class ScenarioBase(BaseModel):
         ..., description="Date de fin de la simulation (YYYY-MM-DD)"
     )
     pas_de_temps: timedelta = Field(
-        ..., description="Pas de temps de la simulation (HH:MM:SS)"
+        ..., description="Pas de temps de la simulation (ISO 8601 duration)"
     )
+    weather: Weather = Weather.typical
+    consomation: Consomation = Consomation.PV
     optimisme_social: Optimisme = Optimisme.moyen
     optimisme_ecologique: Optimisme = Optimisme.moyen
 
@@ -181,6 +141,7 @@ class ListeInfrastructures(SQLBase):
     parc_solaires = Column(String, nullable=True)
     central_hydroelectriques = Column(String, nullable=True)
     central_thermique = Column(String, nullable=True)
+    central_nucleaire = Column(String, nullable=True)
 
     @property
     def parc_eolien_list(self):
@@ -201,6 +162,10 @@ class ListeInfrastructures(SQLBase):
     @property
     def central_thermique_list(self):
         return self.central_thermique.split(",") if self.central_thermique else []
+    
+    @property
+    def central_nucleaire_list(self):
+        return self.central_nucleaire.split(",") if self.central_nucleaire else []
 
 
 class ListeInfrastructuresBase(BaseModel):
@@ -209,6 +174,7 @@ class ListeInfrastructuresBase(BaseModel):
     parc_solaires: Optional[str] = None
     central_hydroelectriques: Optional[str] = None
     central_thermique: Optional[str] = None
+    central_nucleaire: Optional[str] = None
 
 
 class ListeInfrastructuresCreate(ListeInfrastructuresBase):
@@ -222,61 +188,61 @@ class ListeInfrastructuresResponse(ListeInfrastructuresBase):
         from_attributes = True
 
 
-class EolienneBase(BaseModel):
-    latitude: float
-    longitude: float
-    eolienne_nom: str
-    diametre_rotor: float
-    hauteur_moyenne: float
-    puissance_nominal: float
-    turbine_id: int
-    modele_turbine: str
-    project_name: str
-    eolienne_parc_id: int
-    annee_commission: Optional[int] = None
-    surface_balayee: Optional[float] = None
-    vitesse_vent_de_demarrage: Optional[float] = None
-    vitesse_vent_de_coupure: Optional[float] = None
-    materiau_pale: Optional[str] = None
-    type_generateur: Optional[int] = None
+# class EolienneBase(BaseModel):
+#     latitude: float
+#     longitude: float
+#     eolienne_nom: str
+#     diametre_rotor: float
+#     hauteur_moyenne: float
+#     puissance_nominal: float
+#     turbine_id: int
+#     modele_turbine: str
+#     project_name: str
+#     eolienne_parc_id: int
+#     annee_commission: Optional[int] = None
+#     surface_balayee: Optional[float] = None
+#     vitesse_vent_de_demarrage: Optional[float] = None
+#     vitesse_vent_de_coupure: Optional[float] = None
+#     materiau_pale: Optional[str] = None
+#     type_generateur: Optional[int] = None
 
-    class Config:
-        from_attributes = True
-
-
-class EolienneCreate(EolienneBase):
-    pass
+#     class Config:
+#         from_attributes = True
 
 
-class EolienneResponse(EolienneBase):
-    id: int
-
-    class Config:
-        from_attributes = True
+# class EolienneCreate(EolienneBase):
+#     pass
 
 
-class Eolienne(SQLBase):
-    __tablename__ = "eoliennes"
+# class EolienneResponse(EolienneBase):
+#     id: int
 
-    id = Column(Integer, primary_key=True, index=True)
-    eolienne_nom = Column(String)
-    latitude = Column(Float)
-    longitude = Column(Float)
-    diametre_rotor = Column(Float)
-    hauteur_moyenne = Column(Float)
-    turbine_id = Column(Integer)
-    puissance_nominal = Column(Float)
-    modele_turbine = Column(String)
-    project_name = Column(String)
-    annee_commission = Column(Integer, nullable=True)
-    surface_balayee = Column(Float, nullable=True)
-    vitesse_vent_de_demarrage = Column(Float, nullable=True)
-    vitesse_vent_de_coupure = Column(Float, nullable=True)
-    materiau_pale = Column(String, nullable=True)
-    type_generateur = Column(Integer, nullable=True)
-    eolienne_parc_id = Column(Integer, ForeignKey("eoliennes_parc.id"), nullable=True)
+#     class Config:
+#         from_attributes = True
 
-    eolienne_parc = relationship("EolienneParc", back_populates="eoliennes")
+
+# class Eolienne(SQLBase):
+#     __tablename__ = "eoliennes"
+
+#     id = Column(Integer, primary_key=True, index=True)
+#     eolienne_nom = Column(String)
+#     latitude = Column(Float)
+#     longitude = Column(Float)
+#     diametre_rotor = Column(Float)
+#     hauteur_moyenne = Column(Float)
+#     turbine_id = Column(Integer)
+#     puissance_nominal = Column(Float)
+#     modele_turbine = Column(String)
+#     project_name = Column(String)
+#     annee_commission = Column(Integer, nullable=True)
+#     surface_balayee = Column(Float, nullable=True)
+#     vitesse_vent_de_demarrage = Column(Float, nullable=True)
+#     vitesse_vent_de_coupure = Column(Float, nullable=True)
+#     materiau_pale = Column(String, nullable=True)
+#     type_generateur = Column(Integer, nullable=True)
+#     eolienne_parc_id = Column(Integer, ForeignKey("eoliennes_parc.id"), nullable=True)
+
+#     eolienne_parc = relationship("EolienneParc", back_populates="eoliennes")
 
 
 class EolienneParcBase(BaseModel):
@@ -287,6 +253,9 @@ class EolienneParcBase(BaseModel):
     )
     nombre_eoliennes: int = Field(..., description="Nombre d'éoliennes dans le parc")
     capacite_total: float = Field(..., description="Capacité totale du parc (MW)")
+    hauteur_moyenne : float = Field(..., description="Hauteur moyenne des éoliennes du parc (m)")
+    modele_turbine : str = Field(..., description="Modèle de turbine utilisé dans le parc")
+    puissance_nominal : float = Field(..., description="Puissance nominale des turbines dans le parc (MW)")
 
 
 class EolienneParcCreate(EolienneParcBase):
@@ -309,7 +278,10 @@ class EolienneParc(SQLBase):
     longitude = Column(Float)
     nombre_eoliennes = Column(Integer)
     capacite_total = Column(Float)
-    eoliennes = relationship("Eolienne", back_populates="eolienne_parc")
+    hauteur_moyenne = Column(Float)
+    modele_turbine = Column(String)
+    puissance_nominal = Column(Float)
+    #eoliennes = relationship("Eolienne", back_populates="eolienne_parc")
 
 
 class Solaire(SQLBase):
@@ -329,13 +301,13 @@ class Solaire(SQLBase):
 
 
 class SolaireBase(BaseModel):
-    nom: str
-    latitude: float
-    longitude: float
-    angle_panneau: int
-    orientation_panneau: int
-    puissance_nominal: float
-    nombre_panneau: int
+    nom: str = Field(..., description="Nom du parc solaire")
+    latitude: float = Field(..., description="Latitude du parc solaire (degrés)")
+    longitude: float =  Field(..., description="Longitude du parc solaire (degrés)")
+    angle_panneau: int = Field(..., description="Angle d'inclinaison des panneaux (degrés)")
+    orientation_panneau: int = Field(..., description="Orientation des panneaux - 180° est plein sud (degrés)")
+    puissance_nominal: float = Field(..., description="Puissance nominale du parc solaire (MW)")
+    nombre_panneau: int = Field(..., description="Nombre de panneaux solaires dans le parc")
     annee_commission: Optional[int] = None
     panneau_type: Optional[str] = None
     materiau_panneau: Optional[str] = None
@@ -349,7 +321,7 @@ class SolaireCreate(SolaireBase):
 
 
 class HydroBase(BaseModel):
-    barrage_nom: str
+    nom: str
     longitude: float
     latitude: float
     type_barrage: str
@@ -360,6 +332,7 @@ class HydroBase(BaseModel):
     modele_turbine: str
     volume_reservoir: int
     nb_turbines_maintenance: int
+    id_HQ: int
     annee_commission: Optional[int] = None
     materiau_conduite: Optional[str] = None
 
@@ -382,7 +355,7 @@ class Hydro(SQLBase):
     __tablename__ = "hydro"
 
     id = Column(Integer, primary_key=True, index=True)
-    barrage_nom = Column(String)
+    nom = Column(String)
     longitude = Column(Float)
     latitude = Column(Float)
     type_barrage = Column(String)
@@ -393,6 +366,7 @@ class Hydro(SQLBase):
     modele_turbine = Column(String)
     volume_reservoir = Column(Integer)
     nb_turbines_maintenance = Column(Integer)
+    id_HQ = Column(Integer)
     annee_commission = Column(Integer, nullable=True)
     materiau_conduite = Column(String, nullable=True)
 
@@ -405,12 +379,12 @@ class SolaireResponse(SolaireBase):
 
 
 class ThermiqueBase(BaseModel):
-    latitude: float
-    longitude: float
-    nom: str
-    puissance_nominal: float
-    type_intrant: str
-    semaine_maintenance: int
+    nom: str = Field(..., description="Nom de la centrale thermique")
+    latitude: float = Field(..., description="Latitude de la centrale thermique (degrés)")
+    longitude: float = Field(..., description="Longitude de la centrale thermique (degrés)")
+    puissance_nominal: float = Field(..., description="Puissance nominale de la centrale thermique (kW)")
+    type_intrant: str = Field(..., description="Type d'intrant de la centrale thermique")
+    semaine_maintenance: int = Field(..., description="Semaine de maintenance où la centrale thermique est à l'arrêt")
     annee_commission: Optional[int] = None
     type_generateur: Optional[str] = None
 
@@ -445,15 +419,14 @@ class Thermique(SQLBase):
 
 
 class NucleaireBase(BaseModel):
-    latitude: float
-    longitude: float
-    centrale_nucleaire_nom: str
-    puissance_nominal: float
-    type_intrant: str
-    semaine_maintenance: int
+    nom: str = Field(..., description="Nom de la centrale nucléaire")
+    latitude: float = Field(..., description="Latitude de la centrale nucléaire (degrés)")
+    longitude: float = Field(..., description="Longitude de la centrale nucléaire (degrés)")
+    puissance_nominal: float = Field(..., description="Puissance nominale de la centrale nucléaire (kW)")
+    type_intrant: str = Field(..., description="Type d'intrant de la centrale nucléaire")
+    semaine_maintenance: int = Field(..., description="Semaine de maintenance où la centrale nucléaire est à l'arrêt")
     annee_commission: Optional[int] = None
     type_generateur: Optional[str] = None
-
     class Config:
         from_attributes = True
 
@@ -474,7 +447,7 @@ class Nucleaire(SQLBase):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    centrale_nucleaire_nom = Column(String)
+    nom = Column(String)
     latitude = Column(Float)
     longitude = Column(Float)
     puissance_nominal = Column(Float)

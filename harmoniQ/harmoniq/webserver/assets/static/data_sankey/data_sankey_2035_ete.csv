@@ -1,0 +1,217 @@
+scenario,croissance,efficacite,secteur,energie,valeur
+optimiste,faible,faible,Transport,Énergies fossiles,457
+optimiste,faible,faible,Transport,Électricité,172
+optimiste,faible,faible,Bâtiment,Énergies fossiles,472
+optimiste,faible,faible,Bâtiment,Électricité,274
+optimiste,faible,faible,Commercial,Énergies fossiles,305
+optimiste,faible,faible,Commercial,Électricité,163
+optimiste,faible,moyen,Transport,Énergies fossiles,258
+optimiste,faible,moyen,Transport,Électricité,323
+optimiste,faible,moyen,Bâtiment,Énergies fossiles,302
+optimiste,faible,moyen,Bâtiment,Électricité,150
+optimiste,faible,moyen,Commercial,Énergies fossiles,496
+optimiste,faible,moyen,Commercial,Électricité,305
+optimiste,faible,elevee,Transport,Énergies fossiles,321
+optimiste,faible,elevee,Transport,Électricité,253
+optimiste,faible,elevee,Bâtiment,Énergies fossiles,416
+optimiste,faible,elevee,Bâtiment,Électricité,213
+optimiste,faible,elevee,Commercial,Énergies fossiles,239
+optimiste,faible,elevee,Commercial,Électricité,334
+optimiste,moyen,faible,Transport,Énergies fossiles,426
+optimiste,moyen,faible,Transport,Électricité,489
+optimiste,moyen,faible,Bâtiment,Énergies fossiles,189
+optimiste,moyen,faible,Bâtiment,Électricité,165
+optimiste,moyen,faible,Commercial,Énergies fossiles,180
+optimiste,moyen,faible,Commercial,Électricité,310
+optimiste,moyen,moyen,Transport,Énergies fossiles,398
+optimiste,moyen,moyen,Transport,Électricité,446
+optimiste,moyen,moyen,Bâtiment,Énergies fossiles,483
+optimiste,moyen,moyen,Bâtiment,Électricité,370
+optimiste,moyen,moyen,Commercial,Énergies fossiles,471
+optimiste,moyen,moyen,Commercial,Électricité,261
+optimiste,moyen,elevee,Transport,Énergies fossiles,475
+optimiste,moyen,elevee,Transport,Électricité,484
+optimiste,moyen,elevee,Bâtiment,Énergies fossiles,176
+optimiste,moyen,elevee,Bâtiment,Électricité,238
+optimiste,moyen,elevee,Commercial,Énergies fossiles,304
+optimiste,moyen,elevee,Commercial,Électricité,450
+optimiste,elevee,faible,Transport,Énergies fossiles,175
+optimiste,elevee,faible,Transport,Électricité,248
+optimiste,elevee,faible,Bâtiment,Énergies fossiles,267
+optimiste,elevee,faible,Bâtiment,Électricité,452
+optimiste,elevee,faible,Commercial,Énergies fossiles,394
+optimiste,elevee,faible,Commercial,Électricité,246
+optimiste,elevee,moyen,Transport,Énergies fossiles,216
+optimiste,elevee,moyen,Transport,Électricité,200
+optimiste,elevee,moyen,Bâtiment,Énergies fossiles,160
+optimiste,elevee,moyen,Bâtiment,Électricité,360
+optimiste,elevee,moyen,Commercial,Énergies fossiles,249
+optimiste,elevee,moyen,Commercial,Électricité,308
+optimiste,elevee,elevee,Transport,Énergies fossiles,328
+optimiste,elevee,elevee,Transport,Électricité,296
+optimiste,elevee,elevee,Bâtiment,Énergies fossiles,377
+optimiste,elevee,elevee,Bâtiment,Électricité,316
+optimiste,elevee,elevee,Commercial,Énergies fossiles,277
+optimiste,elevee,elevee,Commercial,Électricité,417
+neutre,faible,faible,Transport,Énergies fossiles,349
+neutre,faible,faible,Transport,Électricité,299
+neutre,faible,faible,Bâtiment,Énergies fossiles,252
+neutre,faible,faible,Bâtiment,Électricité,222
+neutre,faible,faible,Commercial,Énergies fossiles,233
+neutre,faible,faible,Commercial,Électricité,355
+neutre,faible,moyen,Transport,Énergies fossiles,320
+neutre,faible,moyen,Transport,Électricité,234
+neutre,faible,moyen,Bâtiment,Énergies fossiles,451
+neutre,faible,moyen,Bâtiment,Électricité,310
+neutre,faible,moyen,Commercial,Énergies fossiles,429
+neutre,faible,moyen,Commercial,Électricité,436
+neutre,faible,elevee,Transport,Énergies fossiles,417
+neutre,faible,elevee,Transport,Électricité,392
+neutre,faible,elevee,Bâtiment,Énergies fossiles,305
+neutre,faible,elevee,Bâtiment,Électricité,166
+neutre,faible,elevee,Commercial,Énergies fossiles,376
+neutre,faible,elevee,Commercial,Électricité,272
+neutre,moyen,faible,Transport,Énergies fossiles,466
+neutre,moyen,faible,Transport,Électricité,465
+neutre,moyen,faible,Bâtiment,Énergies fossiles,425
+neutre,moyen,faible,Bâtiment,Électricité,291
+neutre,moyen,faible,Commercial,Énergies fossiles,446
+neutre,moyen,faible,Commercial,Électricité,320
+neutre,moyen,moyen,Transport,Énergies fossiles,270
+neutre,moyen,moyen,Transport,Électricité,473
+neutre,moyen,moyen,Bâtiment,Énergies fossiles,202
+neutre,moyen,moyen,Bâtiment,Électricité,270
+neutre,moyen,moyen,Commercial,Énergies fossiles,197
+neutre,moyen,moyen,Commercial,Électricité,442
+neutre,moyen,elevee,Transport,Énergies fossiles,221
+neutre,moyen,elevee,Transport,Électricité,221
+neutre,moyen,elevee,Bâtiment,Énergies fossiles,409
+neutre,moyen,elevee,Bâtiment,Électricité,383
+neutre,moyen,elevee,Commercial,Énergies fossiles,486
+neutre,moyen,elevee,Commercial,Électricité,499
+neutre,elevee,faible,Transport,Énergies fossiles,219
+neutre,elevee,faible,Transport,Électricité,365
+neutre,elevee,faible,Bâtiment,Énergies fossiles,277
+neutre,elevee,faible,Bâtiment,Électricité,333
+neutre,elevee,faible,Commercial,Énergies fossiles,322
+neutre,elevee,faible,Commercial,Électricité,337
+neutre,elevee,moyen,Transport,Énergies fossiles,282
+neutre,elevee,moyen,Transport,Électricité,168
+neutre,elevee,moyen,Bâtiment,Énergies fossiles,287
+neutre,elevee,moyen,Bâtiment,Électricité,200
+neutre,elevee,moyen,Commercial,Énergies fossiles,186
+neutre,elevee,moyen,Commercial,Électricité,264
+neutre,elevee,elevee,Transport,Énergies fossiles,281
+neutre,elevee,elevee,Transport,Électricité,284
+neutre,elevee,elevee,Bâtiment,Énergies fossiles,347
+neutre,elevee,elevee,Bâtiment,Électricité,267
+neutre,elevee,elevee,Commercial,Énergies fossiles,243
+neutre,elevee,elevee,Commercial,Électricité,394
+pessimiste,faible,faible,Transport,Énergies fossiles,156
+pessimiste,faible,faible,Transport,Électricité,316
+pessimiste,faible,faible,Bâtiment,Énergies fossiles,414
+pessimiste,faible,faible,Bâtiment,Électricité,436
+pessimiste,faible,faible,Commercial,Énergies fossiles,283
+pessimiste,faible,faible,Commercial,Électricité,181
+pessimiste,faible,moyen,Transport,Énergies fossiles,250
+pessimiste,faible,moyen,Transport,Électricité,157
+pessimiste,faible,moyen,Bâtiment,Énergies fossiles,248
+pessimiste,faible,moyen,Bâtiment,Électricité,333
+pessimiste,faible,moyen,Commercial,Énergies fossiles,243
+pessimiste,faible,moyen,Commercial,Électricité,363
+pessimiste,faible,elevee,Transport,Énergies fossiles,158
+pessimiste,faible,elevee,Transport,Électricité,436
+pessimiste,faible,elevee,Bâtiment,Énergies fossiles,234
+pessimiste,faible,elevee,Bâtiment,Électricité,311
+pessimiste,faible,elevee,Commercial,Énergies fossiles,197
+pessimiste,faible,elevee,Commercial,Électricité,340
+pessimiste,moyen,faible,Transport,Énergies fossiles,411
+pessimiste,moyen,faible,Transport,Électricité,389
+pessimiste,moyen,faible,Bâtiment,Énergies fossiles,197
+pessimiste,moyen,faible,Bâtiment,Électricité,409
+pessimiste,moyen,faible,Commercial,Énergies fossiles,291
+pessimiste,moyen,faible,Commercial,Électricité,291
+pessimiste,moyen,moyen,Transport,Énergies fossiles,260
+pessimiste,moyen,moyen,Transport,Électricité,373
+pessimiste,moyen,moyen,Bâtiment,Énergies fossiles,288
+pessimiste,moyen,moyen,Bâtiment,Électricité,363
+pessimiste,moyen,moyen,Commercial,Énergies fossiles,162
+pessimiste,moyen,moyen,Commercial,Électricité,259
+pessimiste,moyen,elevee,Transport,Énergies fossiles,180
+pessimiste,moyen,elevee,Transport,Électricité,155
+pessimiste,moyen,elevee,Bâtiment,Énergies fossiles,172
+pessimiste,moyen,elevee,Bâtiment,Électricité,384
+pessimiste,moyen,elevee,Commercial,Énergies fossiles,406
+pessimiste,moyen,elevee,Commercial,Électricité,367
+pessimiste,elevee,faible,Transport,Énergies fossiles,211
+pessimiste,elevee,faible,Transport,Électricité,195
+pessimiste,elevee,faible,Bâtiment,Énergies fossiles,366
+pessimiste,elevee,faible,Bâtiment,Électricité,368
+pessimiste,elevee,faible,Commercial,Énergies fossiles,237
+pessimiste,elevee,faible,Commercial,Électricité,429
+pessimiste,elevee,moyen,Transport,Énergies fossiles,384
+pessimiste,elevee,moyen,Transport,Électricité,155
+pessimiste,elevee,moyen,Bâtiment,Énergies fossiles,437
+pessimiste,elevee,moyen,Bâtiment,Électricité,377
+pessimiste,elevee,moyen,Commercial,Énergies fossiles,272
+pessimiste,elevee,moyen,Commercial,Électricité,370
+pessimiste,elevee,elevee,Transport,Énergies fossiles,406
+pessimiste,elevee,elevee,Transport,Électricité,375
+pessimiste,elevee,elevee,Bâtiment,Énergies fossiles,181
+pessimiste,elevee,elevee,Bâtiment,Électricité,227
+pessimiste,elevee,elevee,Commercial,Énergies fossiles,231
+pessimiste,elevee,elevee,Commercial,Électricité,476
+optimiste,faible,faible,Exportations,Électricité,172
+optimiste,faible,moyen,Exportations,Électricité,323
+optimiste,faible,elevee,Exportations,Électricité,253
+optimiste,moyen,faible,Exportations,Électricité,489
+optimiste,moyen,moyen,Exportations,Électricité,446
+optimiste,moyen,elevee,Exportations,Électricité,484
+optimiste,elevee,faible,Exportations,Électricité,248
+optimiste,elevee,moyen,Exportations,Électricité,200
+optimiste,elevee,elevee,Exportations,Électricité,296
+neutre,faible,faible,Exportations,Électricité,299
+neutre,faible,moyen,Exportations,Électricité,234
+neutre,faible,elevee,Exportations,Électricité,392
+neutre,moyen,faible,Exportations,Électricité,465
+neutre,moyen,moyen,Exportations,Électricité,473
+neutre,moyen,elevee,Exportations,Électricité,221
+neutre,elevee,faible,Exportations,Électricité,365
+neutre,elevee,moyen,Exportations,Électricité,168
+neutre,elevee,elevee,Exportations,Électricité,284
+pessimiste,faible,faible,Exportations,Électricité,316
+pessimiste,faible,moyen,Exportations,Électricité,157
+pessimiste,faible,elevee,Exportations,Électricité,436
+pessimiste,moyen,faible,Exportations,Électricité,389
+pessimiste,moyen,moyen,Exportations,Électricité,373
+pessimiste,moyen,elevee,Exportations,Électricité,155
+pessimiste,elevee,faible,Exportations,Électricité,195
+pessimiste,elevee,moyen,Exportations,Électricité,155
+pessimiste,elevee,elevee,Exportations,Électricité,375
+optimiste,faible,faible,Pertes,Électricité,172
+optimiste,faible,moyen,Pertes,Électricité,323
+optimiste,faible,elevee,Pertes,Électricité,253
+optimiste,moyen,faible,Pertes,Électricité,489
+optimiste,moyen,moyen,Pertes,Électricité,446
+optimiste,moyen,elevee,Pertes,Électricité,484
+optimiste,elevee,faible,Pertes,Électricité,248
+optimiste,elevee,moyen,Pertes,Électricité,200
+optimiste,elevee,elevee,Pertes,Électricité,296
+neutre,faible,faible,Pertes,Électricité,299
+neutre,faible,moyen,Pertes,Électricité,234
+neutre,faible,elevee,Pertes,Électricité,392
+neutre,moyen,faible,Pertes,Électricité,465
+neutre,moyen,moyen,Pertes,Électricité,473
+neutre,moyen,elevee,Pertes,Électricité,221
+neutre,elevee,faible,Pertes,Électricité,365
+neutre,elevee,moyen,Pertes,Électricité,168
+neutre,elevee,elevee,Pertes,Électricité,284
+pessimiste,faible,faible,Pertes,Électricité,316
+pessimiste,faible,moyen,Pertes,Électricité,157
+pessimiste,faible,elevee,Pertes,Électricité,436
+pessimiste,moyen,faible,Pertes,Électricité,389
+pessimiste,moyen,moyen,Pertes,Électricité,373
+pessimiste,moyen,elevee,Pertes,Électricité,155
+pessimiste,elevee,faible,Pertes,Électricité,195
+pessimiste,elevee,moyen,Pertes,Électricité,155
+pessimiste,elevee,elevee,Pertes,Électricité,375

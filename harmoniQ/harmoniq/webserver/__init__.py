@@ -3,7 +3,6 @@ from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-import numpy as np # for eq9
 from pathlib import Path
 
 from harmoniq.webserver.REST import router as api_router
@@ -55,9 +54,6 @@ def documentation(request: Request):
 def application(request: Request):
     return templates.TemplateResponse(request=request, name="app.html")
 
-@app.get("/eq9")
-def application(request: Request):
-    return {"données": np.random.uniform(0.2e12, 1.2e12, 8000).tolist()}
 
 @app.get("/Eloise", response_class=HTMLResponse)
 def eloisepage(request: Request):

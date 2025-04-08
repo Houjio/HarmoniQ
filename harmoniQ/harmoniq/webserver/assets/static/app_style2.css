@@ -1,44 +1,37 @@
-/* Main Layout */
+/* ===============================
+   Main Layout
+================================= */
 div#main {
     padding: 1em;
     gap: 1rem;
-    display: grid;
-    grid-template-areas:
-        "scenario plot";
-    grid-template-columns: 1fr 2fr;
-    grid-template-rows: auto;
-    /* Let the content expand naturally, no forced height */
+    display: flex;
+    align-items: flex-start;
 }
 
 /* Responsive adjustments */
 @media (max-width: 1250px) {
     div#main {
-        grid-template-areas:
-            "scenario"
-            "plot";
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
 
     div#plots #sankeyDiagram {
-        height: 400px;
+        height: 450px;
     }
 }
 
 @media (max-width: 768px) {
     div#main {
-        height: auto;
-        grid-template-areas:
-            "scenario"
-            "plot";
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
 
     div#plots #sankeyDiagram {
-        height: 300px;
+        height: 350px;
     }
 }
 
-/* Ensure smooth layout for scenario section */
+/* ===============================
+   Scenario Panel Styling
+================================= */
 div#scenario {
     background-color: #f8f9fa;
     border-right: 1px solid #ddd;
@@ -47,25 +40,6 @@ div#scenario {
     max-width: 800px;
 }
 
-/* Center the Sankey diagram and prevent overflow */
-div#sankeyContainer {
-    width: 100%;
-    height: 100%;
-    max-width: 900px;
-    margin: auto;
-    padding: 1em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-div#sankeyDiagram {
-    width: 100%;
-    height: 100%;
-    min-height: 500px;
-}
-
-/* Improve Table Layout */
 .table {
     font-size: 14px;
 }
@@ -75,9 +49,96 @@ div#sankeyDiagram {
     overflow-x: auto;
 }
 
-/* Improve button styling */
+/* ===============================
+   Button Styling
+================================= */
 button#generateButton {
     font-size: 1rem;
     padding: 0.75rem;
     border-radius: 8px;
 }
+
+/* ===============================
+   Sankey Container
+================================= */
+.sankey-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+div#sankeyDiagram {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+}
+
+/* ===============================
+   Navigation Tabs (Annuel, etc.)
+================================= */
+ul#viewTabs {
+    display: flex;
+    justify-content: center;
+    border-bottom: none;
+    margin-bottom: 0.5rem;
+    padding-left: 0;
+}
+
+ul#viewTabs li.nav-item {
+    margin: 0 0.5rem;
+}
+
+ul#viewTabs li.nav-item a.nav-link {
+    border: none;
+    font-weight: bold;
+    color: #007bff;
+    padding: 0.5rem 1rem;
+    background-color: transparent;
+}
+
+ul#viewTabs li.nav-item a.nav-link.active {
+    border-bottom: 2px solid #007bff;
+    color: #007bff;
+}
+
+/* ===============================
+   Section Labels Above Sankey
+================================= */
+#sankeySectionLabels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 40px;
+    margin-bottom: 10px;
+    margin-top: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    font-family: Helvetica, sans-serif;
+}
+
+.section-labels .label {
+    flex: 1;
+    text-align: center;
+}
+
+.label.production {
+    text-align: left;
+    padding-left: 20px;
+    background-color: rgba(30, 144, 255, 0.1);
+}
+
+.label.consommation {
+    text-align: right;
+    padding-right: 20px;
+    background-color: rgba(50, 205, 50, 0.1);
+}
+#sankeyDescription {
+    transition: opacity 0.3s ease;
+  }
+  

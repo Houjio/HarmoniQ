@@ -63,12 +63,3 @@ def get_all_mrcs_population(db: Session, mrc_id: int) -> pd.DataFrame:
         [{"annee": item.annee, "population": item.population} for item in data]
     )
     return df
-
-
-def all_eoliennes_in_parc(db: Session, eolienne_parc_id: int):
-    eoliennes = (
-        db.query(schemas.Eolienne)
-        .filter(schemas.Eolienne.eolienne_parc_id == eolienne_parc_id)
-        .all()
-    )
-    return eoliennes

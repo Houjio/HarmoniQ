@@ -5,7 +5,7 @@ from env_canada.ec_historical import get_historical_stations
 
 import numpy as np
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List
 from enum import Enum
 from geopy.distance import geodesic
@@ -35,6 +35,9 @@ class EnergyType(Enum):
     EOLIEN = 3
 
 
+_CURRENT_YEAR = datetime.now().year
+_REFERENCE_YEAR = 2020 # If future data is queried, 2020 is provided
+
 class WeatherHelper:
     def __init__(
         self,
@@ -53,6 +56,17 @@ class WeatherHelper:
         self.start_time = start_time
         self.end_time = end_time or datetime.now()
 
+        # If the start time and end time are the same, set the end time to the end of the day
+        if self.start_time == self.end_time:
+            self.end_time = self.start_time + pd.DateOffset(days=1)
+
+        # If the time range is after this year, set it back
+        self._timeshift = None
+        if self.end_time.year > _CURRENT_YEAR:
+            self._timeshift = timedelta(days=(365 * (self.end_time.year - _REFERENCE_YEAR)))
+            self.start_time -= self._timeshift
+            self.end_time -= self._timeshift
+    
         self._granularity = granularity
         self._nearby_stations: Optional[pd.DataFrame] = None
         self._data: Optional[pd.DataFrame] = None
@@ -73,7 +87,17 @@ class WeatherHelper:
         if self._data is None:
             raise ValueError("Data not loaded")
         return self._data
+    
+    @property
+    def _cache_key(self) -> str:
+        lat = round(self.position.latitude, 4)
+        lon = round(self.position.longitude, 4)
+        energy_type = self.data_type.name.lower()
+        start_str = self.start_time.strftime("%Y-%m-%d")
+        end_str = self.end_time.strftime("%Y-%m-%d")
+        return f"{lat}_{lon}_{start_str}_{end_str}_{self.granularity}_{energy_type}"
 
+    
     def load(self) -> None:
         if self._data is not None:
             return self._data
@@ -124,6 +148,10 @@ class WeatherHelper:
         self._data = self._data.loc[
             (self._data.index >= self.start_time) & (self._data.index <= self.end_time)
         ]
+
+        # Shift the data back to the original time range
+        if self._timeshift is not None:
+            self._data.index = self._data.index + self._timeshift
 
         return self._data
 
@@ -329,11 +357,11 @@ class WeatherHelper:
 
 if __name__ == "__main__":
     pos = PositionBase(latitude=49.049334, longitude=-66.750423)
-    start_time = datetime(2021, 1, 1)
-    end_time = datetime(2021, 3, 31)
+    start_time = datetime(2035, 1, 1)
+    end_time = datetime(2035, 3, 31)
     granularity = Granularity.HOURLY
 
     weather = WeatherHelper(
-        pos, True, start_time, end_time, EnergyType.NONE, granularity
+        pos, True, start_time, end_time, EnergyType.EOLIEN, granularity
     )
-    weather.load()
+    df = weather.load()

@@ -1,13 +1,56 @@
-var map;
+let infraTimeout = null;
+let scenarioFetchController = null;
+var openApiJson = null;
+
+const map_icons = {
+    eolienneparc: L.icon({
+        iconUrl: '/static/icons/eolienne.png',
+        iconSize: [30, 30],
+        iconAnchor: [20, 20]
+    }),
+    solaire: L.icon({
+        iconUrl: '/static/icons/solaire.png',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+    }),
+    thermique: L.icon({
+        iconUrl: '/static/icons/thermique.png',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+    }),
+    hydro: L.icon({
+        iconUrl: '/static/icons/barrage.png',
+        iconSize: [50, 50],
+        iconAnchor: [20, 20]
+    }),
+    nucleaire: L.icon({
+        iconUrl: '/static/icons/nucelaire.png',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+    })
+};
+
+var prettyNames = {
+    eolienneparc: "Parc éolien",
+    solaire: "Parc solaire",
+    thermique: "Centale thermique",
+    nucleaire: "Centrale nucléaire",
+    hydro: "Barrage hydroélectrique"
+}
+
 
 // Utility function to fetch data and handle errors
-function fetchData(url, method = 'GET', data = null) {
+function fetchData(url, method = 'GET', data = null, signal = null) {
     return fetch(url, {
         method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: data ? JSON.stringify(data) : null
-    }).then(response => {
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: data ? JSON.stringify(data) : null,
+        signal: signal
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(response.statusText);
         return response.json();
     });
 }
@@ -32,12 +75,10 @@ function updateListItems(listElement, items, activeIds = []) {
     });
 }
 
-// Unimplemented function alert
 function unimplemented() {
     alert('Fonctionnalité non implémentée');
 }
 
-// Initialize dropdown lists
 function initializeDropdown(apiUrl, dropdownId, noSelectionCallback) {
     fetchData(apiUrl)
         .then(data => {
@@ -64,39 +105,67 @@ function initialiserListeInfra() {
     initializeDropdown('/api/listeinfrastructures', 'groupe-actif', no_selection_infra);
 }
 
-// Initialize wind parks
+function addMarker(lat, lon, type, data) {
+    const icon = map_icons[type];
+
+    // Construire le contenu du popup en fonction du type
+    let popupContent = `<b>${data.nom}</b><br>Catégorie: ${prettyNames[type]}<br>`;
+
+    if (type === 'eolienneparc') {
+        popupContent += `
+            Nombre d'éoliennes: ${data.nombre_eoliennes || 'N/A'}<br>
+            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
+            Capacité totale: ${data.capacite_total || 'N/A'} MW
+        `;
+    } else if (type === 'hydro') {
+        popupContent += `
+            type de barrage: ${data.type_barrage || 'N/A'} <br>
+            Débit nominal: ${data.debits_nominal ? parseFloat(data.debits_nominal).toFixed(1) : 'N/A'} m³/s<br>
+            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
+            Volume du réservoir: ${
+                data.volume_reservoir
+                ? data.volume_reservoir >= 1e9
+                    ? (data.volume_reservoir / 1e9).toFixed(1) + ' Gm³' // Milliards de m³
+                    : data.volume_reservoir >= 1e6
+                        ? (data.volume_reservoir / 1e6).toFixed(1) + ' Mm³' // Millions de m³
+                        : (data.volume_reservoir / 1e3).toFixed(1) + ' km³' // Milliers de m³
+                : 'N/A'
+            }<br>
+        `;
+    } else if (type === 'solaire') {
+        popupContent += `
+            Nombre de panneaux: ${data.nombre_panneau || 'N/A'}<br>
+            Orientation des panneaux: ${data.orientation_panneau || 'N/A'}<br>
+            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW
+        `;
+    } else if (type === 'thermique') {
+        popupContent += `
+            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
+            Type d'intrant: ${data.type_intrant || 'N/A'}
+        `;
+    }
+
+    // Ajouter le marqueur à la carte avec le popup
+    const marker = L.marker([lat, lon], { icon: icon })
+        .addTo(map)
+        .bindPopup(popupContent);
+
+    marker.on('click', function () {
+        this.openPopup();
+    });
+}
+
+function createListElement({ nom, id }) {
+    return `
+        <li class="list-group-item list-group-item-action" role="button" elementid=${id} onclick="add_infra(this)">
+            ${nom}
+        </li>
+    `;
+}
+
 function initialiserListeParc(type, elementId) {
     const listeElement = document.getElementById(elementId).getElementsByTagName('ul')[0];
     
-    const icons = {
-        eolienneparc: L.icon({
-            iconUrl: '/static/icons/heolienne.png',
-            iconSize: [30, 30],
-            iconAnchor: [20, 20]
-        }),
-        solaire: L.icon({
-            iconUrl: '/static/icons/solaire.png',
-            iconSize: [40, 40],
-            iconAnchor: [20, 20]
-        }),
-        thermique: L.icon({
-            iconUrl: '/static/icons/thermique.png',
-            iconSize: [40, 40],
-            iconAnchor: [20, 20]
-        }),
-        barrage: L.icon({
-            iconUrl: '/static/icons/barrage.png',
-            iconSize: [40, 40],
-            iconAnchor: [20, 20]
-        })
-    };
-    function createElement({ nom, id }) {
-        return `
-            <li class="list-group-item list-group-item-action" role="button" elementid=${id} onclick="add_infra(this)">
-                ${nom}
-            </li>
-        `;
-    }
     fetch(`/api/${type}`)
         .then(response => {
             if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
@@ -104,23 +173,20 @@ function initialiserListeParc(type, elementId) {
         })
         .then(data => {
             console.log(`Liste des ${type}:`, data);
-
-            // Parcourir les données et ajouter les points sur la carte
             data.forEach(parc => {
-                listeElement.innerHTML += createElement(parc);
-                console.log(parc.latitude, parc.longitude, type);
-                // Ajouter un marqueur sur la carte
-                L.marker([parc.latitude, parc.longitude], { icon: icons[type] })
-                    .addTo(map)
-                    .bindPopup(`<b>${parc.nom}</b><br>Catégorie: ${type}`);
+                listeElement.innerHTML += createListElement({ nom: parc.nom, id: parc.id });
+                addMarker(parc.latitude, parc.longitude, type, parc);
         });
     })
     .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
 }
-    
+
+function initialiserListeHydro() {
+    initialiserListeParc('hydro', 'list-parc-hydro');
+}
 
 function initialiserListeParcEolienne() {
-    initialiserListeParc('eolienneparc', 'list-parc-eolien');
+    initialiserListeParc('eolienneparc', 'list-parc-eolienneparc');
 }
 
 function initialiserListeParcSolaire() {
@@ -131,65 +197,118 @@ function initialiserListeThermique() {
     initialiserListeParc('thermique', 'list-parc-thermique');
 }
 
+function initialiserListeParcNucleaire() {
+    initialiserListeParc('nucleaire', 'list-parc-nucleaire');
+}
+
+function loadMap() {
+    map = L.map('map-box', {
+        zoomControl: true,
+        attributionControl: true,
+        maxZoom: 12,
+        minZoom: 5
+    }).setView([52.9399, -67], 4);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+    }).addTo(map);
+
+    var bounds = [
+        [40.0, -90.0], 
+        [65.0, -50.0] 
+    ];
+    map.setMaxBounds(bounds);
+    map.on('drag', function() {
+        map.panInsideBounds(bounds, { animate: false });
+    });
+
+    const draggableIcons = document.querySelectorAll(".icon-draggable");
+
+    draggableIcons.forEach(iconEl => {
+        iconEl.addEventListener("dragstart", function (e) {
+            let create_class = e.target.getAttribute('createClass');
+            let post_url = e.target.getAttribute('createApi');
+
+            e.dataTransfer.setData("text/plain", `${create_class},${post_url}`);
+        });
+    });
+
+    // Prevent map from blocking drop events
+    map.getContainer().addEventListener("dragover", function (e) {
+        e.preventDefault();
+    });
+
+    map.getContainer().addEventListener("drop", function (e) {
+        e.preventDefault();
+        const [create_class, post_url] =  e.dataTransfer.getData("text/plain").split(",");
+
+        const mapPos = map.getContainer().getBoundingClientRect();
+        const x = e.clientX - mapPos.left;
+        const y = e.clientY - mapPos.top;
+
+        const latlng = map.containerPointToLatLng([x, y]);
+
+        const lat = parseFloat(latlng.lat.toFixed(6));
+        const lng = parseFloat(latlng.lng.toFixed(6));
+
+        infraModal(create_class, post_url, lat, lng);
+    });
+}
+
+function loadOpenApi() {
+    fetch('/openapi.json')
+        .then(response => {
+            if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            openApiJson = data;
+        })
+        .catch(error => console.error('Erreur lors du chargement du fichier OpenAPI:', error));
+}
+
 window.onload = function() {
+    initialiserListeHydro();
     initialiserListeScenario();
     initialiserListeInfra();
     initialiserListeParcEolienne();
     initialiserListeParcSolaire();
     initialiserListeThermique();
+    initialiserListeParcNucleaire();
+
+    loadMap();
+    loadOpenApi();
+
+    document.getElementById('apply-filter').addEventListener('click', () => {
+        // Supprimer les anciennes couches de la carte
+        map.eachLayer(layer => {
+            if (layer instanceof L.CircleMarker || layer instanceof L.Polyline) {
+                map.removeLayer(layer);
+            }
+        });
+    
+        // Recharger les lignes avec les voltages sélectionnés
+        modeliserLignes();
+    });
 };
 
+function infraUserAction() {
+    if (infraTimeout) {
+        clearTimeout(infraTimeout);
+    }
 
-
-function changeInfra() {
-    const selectedId = $("#groupe-actif option:selected").val();
-    fetchData(`/api/listeinfrastructures/${selectedId}`)
-        .then(data => {
-            const categories = [
-                { elementId: "list-parc-eolien", activeIds: data.parc_eoliens.split(',') },
-                { elementId: "solarCollapse", activeIds: data.parc_solaires.split(',') },
-                { elementId: "list-parc-thermique", activeIds: data.central_thermique.split(',') }
-            ];
-
-            categories.forEach(({ elementId, activeIds }) => {
-                const elements = document.getElementById(elementId).getElementsByTagName("li");
-                updateListItems(elements, Array.from(elements), activeIds);
-            });
-
-            $("#active-groupe-title").text(data.nom).removeClass('text-muted');
-            $("#enregistrer-groupe").show();
-            unblock_run();
-        })
-        .catch(error => console.error('Error loading infrastructure group:', error));
+    infraTimeout = setTimeout(() => {
+        save_groupe();
+    }, 800);
 }
 
-function changeScenario() {
-    const id = $("#scenario-actif").val();
-    fetchData(`/api/scenario/${id}`)
-        .then(data => {
-            const scenarioCard = $('#scenario-info');
-            scenarioCard.show();
-            scenarioCard.find('.scenario-nom').text(data.nom);
-            scenarioCard.find('.description').text(data.description);
-            scenarioCard.find('.scenario-debut').text(moment(data.date_de_debut).format('LL'));
-            scenarioCard.find('.scenario-fin').text(moment(data.date_de_fin).format('LL'));
-            scenarioCard.find('.scenario-pas').text(moment.duration(data.pas_de_temps).humanize());
-            scenarioCard.find('.optimisme-social').text(['Pessimiste', 'Moyen', 'Optimiste'][data.optimisme_social - 1]);
-            scenarioCard.find('.optimisme-ecologique').text(['Pessimiste', 'Moyen', 'Optimiste'][data.optimisme_ecologique - 1]);
-
-            $("#active-scenario-title").text(data.nom).removeClass('text-muted');
-            $("#delete-scenario").find("span").text(data.nom).show();
-            unblock_run();
-        })
-        .catch(error => console.error('Error loading scenario:', error));
-}
-
-function save_groupe() {
+async function save_groupe() {
     const values = load_groupe_ids();
     fetchData(`/api/listeinfrastructures/${$("#groupe-actif").val()}`, 'PUT', values)
-        .then(response => console.log('Infrastructure group saved successfully:', response))
+        .then(_ => console.log('Infrastructure group auto saved successfully:'))
         .catch(error => console.error('Error saving infrastructure group:', error));
-    toggleButtonState("enregistrer-groupe", false);
 }
 
 function unblock_run() {
@@ -226,6 +345,7 @@ function lancer_simulation() {
     // });
 }
 
+
 function add_infra(element) {
     // Fail if no group is selected
     if ($('#groupe-actif').val() === '' || $('#groupe-actif').val() === null) {
@@ -240,7 +360,8 @@ function add_infra(element) {
         element.setAttribute('active', 'true');
     }
 
-    $("#enregistrer-groupe").prop("disabled", false);
+
+    infraUserAction();
 }
 
 $("button.select-all").on('click', function(target) {
@@ -255,7 +376,7 @@ $("button.select-all").on('click', function(target) {
         this.setAttribute('active', 'true');
     });
 
-    $("#enregistrer-groupe").prop("disabled", false);
+    infraUserAction();
 });
 
 $("button.select-none").on('click', function(target) {
@@ -270,7 +391,7 @@ $("button.select-none").on('click', function(target) {
         this.removeAttribute('active');
     });
 
-    $("#enregistrer-groupe").prop("disabled", false);
+    infraUserAction();
 });
 
 function deleteScenario(id) {
@@ -294,9 +415,11 @@ function confirmDeleteScenario(id, nom) {
 function load_groupe_ids() {
     const active_name = $("#groupe-actif option:selected").text();
     const categories = [
-        { elementId: "list-parc-eolien", key: "selected_eolienes" },
-        { elementId: "solarCollapse", key: "selected_solaires" },
-        { elementId: "list-parc-thermique", key: "selected_thermiques" }
+        { elementId: "list-parc-hydro", key: "selected_hydro" },
+        { elementId: "list-parc-eolienneparc", key: "selected_eolienes" },
+        { elementId: "list-parc-solaire", key: "selected_solaires" },
+        { elementId: "list-parc-thermique", key: "selected_thermiques" },
+        { elementId: "list-parc-nucleaire", key: "selected_nucleaire" }
     ];
 
     const selectedItems = {};
@@ -309,36 +432,18 @@ function load_groupe_ids() {
             .join(',');
     });
 
-    const { selected_eolienes, selected_solaires, selected_thermiques } = selectedItems;
+    const { selected_hydro, selected_eolienes, selected_solaires, selected_thermiques , selected_nucleaire } = selectedItems;
     
     const data = {
         nom: active_name,
         parc_eoliens: selected_eolienes,
         parc_solaires: selected_solaires,
-        central_hydroelectriques: "",
-        central_thermique: selected_thermiques
+        central_hydroelectriques: selected_hydro,
+        central_thermique: selected_thermiques,
+        central_nucleaire: selected_nucleaire,
     };
 
     return data;
-}
-
-function save_groupe() {
-    var values = load_groupe_ids();
-
-    $.ajax({
-        type: 'PUT',
-        url: '/api/listeinfrastructures/' + $("#groupe-actif").val(),
-        data: JSON.stringify(values),
-        contentType: 'application/json',
-        success: function(response) {
-            console.log('Groupe d\'infrastructures enregistré avec succès:', response);
-        },
-        error: function(error) {
-            console.error('Erreur lors de l\'enregistrement du groupe d\'infrastructures:', error);
-        }
-    });
-
-    $("#enregistrer-groupe").prop("disabled", true);
 }
 
 function no_selection_scenario() {
@@ -356,7 +461,6 @@ function no_selection_infra() {
     $("#groupe-actif").val('');
     $("#active-groupe-title").text("N/A");
     $("#active-groupe-title").addClass("text-muted");
-    $("#enregistrer-groupe").hide();
     $('#run').prop('disabled', true);
 }
 
@@ -369,9 +473,11 @@ function changeInfra() {
             console.log('Groupe d\'infrastructures actif:', data);
 
             const categories = [
-                { elementId: "list-parc-eolien", activeIds: data.parc_eoliens.split(',') },
-                { elementId: "list-parc-solaire", activeIds: data.parc_solaires.split(',') },
-                { elementId: "list-parc-thermique", activeIds: data.central_thermique.split(',') }
+                { elementId: "list-parc-eolienneparc", activeIds: data.parc_eoliens ? data.parc_eoliens.split(',') : [] },
+                { elementId: "list-parc-solaire", activeIds: data.parc_solaires ? data.parc_solaires.split(',') : [] },
+                { elementId: "list-parc-thermique", activeIds: data.central_thermique ? data.central_thermique.split(',') : [] },
+                { elementId: "list-parc-nucleaire", activeIds: data.central_nucleaire ? data.central_nucleaire.split(',') : [] },
+                { elementId: "list-parc-hydro", activeIds: data.central_hydroelectriques ? data.central_hydroelectriques.split(',') : [] }
             ];
 
             categories.forEach(({ elementId, activeIds }) => {
@@ -389,7 +495,6 @@ function changeInfra() {
 
             $("#active-groupe-title").text(data.nom);
             $("#active-groupe-title").removeClass('text-muted');
-            $("#enregistrer-groupe").show();
             unblock_run();
         })
         .catch(error => console.error('Erreur lors du chargement du groupe d\'infrastructures:', error));
@@ -400,6 +505,28 @@ function updateOptimismeText(card, type, value) {
     card.find(`.optimisme-${type}`).text(labels[value - 1]);
 }
 
+function charger_demande(scenario_id, mrc_id) {
+    if (!mrc_id) {
+        mrc_id = 1;
+    }
+
+    demandeFetchController = new AbortController();
+    const signal = demandeFetchController.signal;
+
+    fetchData(`/api/demande/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', null, signal)
+        .then(data => {
+            console.log('Demande chargée avec succès');
+            demande = data;
+        })
+        .catch(error => {
+            if (error.message.includes('404')) {
+                console.error('Demande non trouvée:', error);
+            } else {
+                console.error('Erreur lors du chargement de la demande:', error);
+            }
+        });
+}
+
 function changeScenario() {
     let id = $("#scenario-actif").val();
     
@@ -407,7 +534,6 @@ function changeScenario() {
     fetch('/api/scenario/' + id)
         .then(response => response.json())
         .then(data => {
-            console.log('Scenario actif:', data);
             let scenario_card = $('#scenario-info');
             scenario_card.show();
             scenario_card.find('.description').text(data.description);  
@@ -420,6 +546,12 @@ function changeScenario() {
             scenario_card.find('.scenario-pas').text(
                 moment.duration(data.pas_de_temps).humanize()
             );
+            scenario_card.find('.consommation-scenario').text(
+                data.consomation === 1 ? 'Normal' : 'Conservateur'
+            );
+            scenario_card.find('.meteo-scenario').text(
+                data.weather === 1 ? 'Chaude' : data.weather === 2 ? 'Typique' : 'Froide'
+            );
 
             updateOptimismeText(scenario_card, 'social', data.optimisme_social);
             updateOptimismeText(scenario_card, 'ecologique', data.optimisme_ecologique);
@@ -429,20 +561,132 @@ function changeScenario() {
             $("#delete-scenario").find("span").text(data.nom);
             $("#delete-scenario").show();
 
+            setTimeout(() => charger_demande(id, 1), 0);
+            console.log("Chargement de la demande pour le scenario:", id);
+
             unblock_run();
         })
         .catch(error => console.error('Erreur lors du chargement du scenario:', error));
 }
 
-function unblock_run() {
-    let scenarioActif = $('#scenario-actif').val();
-    let groupeActif = $('#groupe-actif').val();
+function infraModal(create_class, post_url, lat, lon) {
+    const schema = openApiJson.components.schemas[create_class];
+    const required = schema.required || [];
+    const props = schema.properties;
 
-    if (scenarioActif && groupeActif) {
-        $('#run').prop('disabled', false);
-    } else {
-        $('#run').prop('disabled', true);
+    let modalHTML = `
+        <div class="modal-dialog" role="document">
+            <form id="form-${create_class.toLowerCase()}">
+                <div class="modal-content">
+                    <div class="modal-header w-100 d-flex justify-content-between">
+                        <h5 class="modal-title">Créer Infrastructure</h5>
+                        <button type="button" class="close btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true"><i class="fas fa-times"></i></span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+    `;
+
+    for (const [key, prop] of Object.entries(props)) {
+        if (!required.includes(key)) continue;
+
+        const title = prop.title || key;
+        const isLatLon = (key === "latitude" || key === "longitude");
+        const inputType = (prop.type === "number" || prop.type === "integer") ? "number" : "text";
+        const value = key === "latitude" ? lat : (key === "longitude" ? lon : "");
+        let tooltip;
+        if (prop.description) {
+            tooltip = `<i class="fas fa-info-circle" title="${prop.description}"></i>`;
+        } else {
+            tooltip = "";
+        }
+
+        modalHTML += `
+            <div class="form-group">
+                <label for="${key}">
+                    ${title}
+                    ${tooltip}
+                </label>
+        `;
+
+        if (prop.enum) {
+            modalHTML += `<select class="form-control" id="${key}" name="${key}" ${isLatLon ? "readonly disabled" : ""}>`;
+            prop.enum.forEach(val => {
+                modalHTML += `<option value="${val}">${val}</option>`;
+            });
+            modalHTML += `</select>`;
+        } else {
+            modalHTML += `<input 
+                type="${inputType}" 
+                class="form-control" 
+                id="${key}" 
+                name="${key}" 
+                value="${value}" 
+                ${isLatLon ? "disabled" : ""} 
+                required
+            >`;
+        }
+
+        modalHTML += `</div>`;
     }
+
+    modalHTML += `
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <input type="submit" class="btn btn-primary" value="Créer">
+                    </div>
+                </div>
+            </form>
+        </div>
+    `;
+
+    document.getElementById("dataModal").innerHTML = modalHTML;
+
+    const modal = new bootstrap.Modal(document.getElementById("dataModal"));
+    modal.show();
+
+    $("#form-" + create_class.toLowerCase()).submit(function(event) {
+        event.preventDefault();
+        const formData = $(this).serializeArray();
+        const data = {};
+        formData.forEach(item => {
+            data[item.name] = item.value;
+        });
+
+        data["latitude"] = lat;
+        data["longitude"] = lon;
+
+        fetch(post_url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(response => {
+            console.log(`${create_class} créé avec succès:`, response);
+            modal.hide();
+
+            new_infra_dropped(response, post_url, lat, lon);
+        })
+        .catch(error => {
+            console.error(`Erreur lors de la création de ${create_class}:`, error);
+        });
+    });
+        
+}
+
+function new_infra_dropped(data, create_path, lat, lon) {
+    const type = create_path.split('/').pop();
+    addMarker(lat, lon, type, data);
+
+    const listElement = document.getElementById(`list-parc-${type}`);
+    const list = listElement.getElementsByTagName('ul')[0];
+    const newElement = createListElement({ nom: data.nom, id: data.id });
+    list.innerHTML += newElement;
 }
 
 function nouveauScenario() {
@@ -451,10 +695,10 @@ function nouveauScenario() {
             <div class="modal-dialog" role="document">
             <form id="form-nouveau-scenario">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header w-100 d-flex justify-content-between">
                         <h5 class="modal-title">Créer nouveau scenario</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="close btn-primary" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true"><i class="fas fa-times"></i></span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -467,11 +711,22 @@ function nouveauScenario() {
                             <input type="text" name="etendue_de_temps" class="form-control" id="scenario-etendue_de_temps">
                             <label for="pas_de_temps">Pas de temps</label>
                             <select class="form-control" id="scenario-pas_de_temps">
-                                <option value="PT15M">15 minutes</option>
+                                <option value="PT15M" disabled>15 minutes</option>
                                 <option value="PT1H" selected>1 heure</option>
-                                <option value="PT4H">4 heures</option>
-                                <option value="P1D">1 jour</option>
-                                <opton value="P7D">7 jours</option>
+                                <option value="PT4H" disabled>4 heures</option>
+                                <option value="P1D" disabled>1 jour</option>
+                                <opton value="P7D" disabled>7 jours</option>
+                            </select>
+                            <label for="weather">Meteo (consomation)</label>
+                            <select class="form-control" id="scenario-weather">
+                                <option value="3">Froid</option>
+                                <option value="2" selected>Typique</option>
+                                <option value="1">Chaud</option>
+                            </select>
+                            <label for="consomation">Modèle de consomation</label>
+                            <select class="form-control" id="scenario-consomation">
+                                <option value="2">Conservateur</option>
+                                <option value="1" selected>Normal</option>
                             </select>
                             <label for="optimisme_social">Optimisme social</label>
                             <select class="form-control" id="scenario-optimisme_social">
@@ -519,6 +774,8 @@ function nouveauScenario() {
         let pas_de_temps = $('#scenario-pas_de_temps').val();
         let date_de_debut = $('#scenario-etendue_de_temps').data('daterangepicker').startDate.format('YYYY-MM-DD');
         let date_de_fin = $('#scenario-etendue_de_temps').data('daterangepicker').endDate.format('YYYY-MM-DD');
+        let weather = parseInt($('#scenario-weather').val());
+        let consomation = parseInt($('#scenario-consomation').val());
         let optimisme_social = parseInt($('#scenario-optimisme_social').val());
         let optimisme_ecologique = parseInt($('#scenario-optimisme_ecologique').val());
 
@@ -528,36 +785,40 @@ function nouveauScenario() {
             date_de_debut: date_de_debut,
             date_de_fin: date_de_fin,
             pas_de_temps: pas_de_temps,
+            weather: weather,
+            consomation: consomation,
             optimisme_social: optimisme_social,
             optimisme_ecologique: optimisme_ecologique
         };
 
         // Validation des données
-        if (nom === '' || description === '' || pas_de_temps === '' || date_de_debut === '' || date_de_fin === '') {
+        if (nom === '' || pas_de_temps === '' || date_de_debut === '' || date_de_fin === '') {
             alert('Veuillez remplir tous les champs');
             return;
         }
 
-        $.ajax({
-            type: 'POST',
-            url: '/api/scenario',
-            data: JSON.stringify(data),
-            contentType: 'application/json',
-            success: function(response) {
-                console.log('Scenario créé avec succès:', response);
-                var option = document.createElement('option');
-                option.value = response.id;
-                option.textContent = response.nom;
-                document.getElementById('scenario-actif').appendChild(option);
-                $('#dataModal').modal('hide');
-                setTimeout(function() {
-                    no_selection_scenario()
-                }
-                , 50);
-            },
-            error: function(error) {
-                console.error('Erreur lors de la création du scenario:', error);
-            }
+        fetch('/api/scenario', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(response => {
+            console.log('Scenario créé avec succès:', response);
+            var option = document.createElement('option');
+            option.value = response.id;
+            option.textContent = response.nom;
+            document.getElementById('scenario-actif').appendChild(option);
+            $('#dataModal').modal('hide');
+
+            $("#scenario-actif").val(response.id);
+            changeScenario();
+        })
+        .catch(error => {
+            console.error('Erreur lors de la création du scenario:', error);
         });
     });
 
@@ -579,7 +840,8 @@ $('#add-infra-liste').on('click', function() {
         parc_eoliens: "",
         parc_solaire: "",
         central_hydroelectriques: "",
-        central_thermique: ""
+        central_thermique: "",
+        central_nucleaire: "",
     };
 
     $.ajax({
@@ -593,10 +855,9 @@ $('#add-infra-liste').on('click', function() {
             option.value = response.id;
             option.textContent = response.nom;
             document.getElementById('groupe-actif').appendChild(option);
-            setTimeout(function() {
-                no_selection_infra()
-            }
-            , 50);
+
+            $("#groupe-actif").val(response.id);
+            changeInfra();
         },
         error: function(error) {
             console.error('Erreur lors de la création du groupe d\'infrastructures:', error);
@@ -610,22 +871,122 @@ $('#delete-scenario').on('click', function() {
     confirmDeleteScenario(id, nom);
 });
 
-document.addEventListener("DOMContentLoaded", function() {
-    map = L.map('map-box', {
-        zoomControl: true,
-        attributionControl: true,
-        maxZoom: 15,
-        minZoom: 5
-    }).setView([52.9399, -67], 4);
+function modeliserLignes() {
+    // Charger le fichier CSV
+    fetch('/static/lignes_quebec.csv')
+        .then(response => {
+            if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
+            return response.text();
+        })
+        .then(csvData => {
+            // Diviser le CSV en lignes
+            const lignes = csvData.split('\n').map(line => line.trim()).filter(line => line.length > 0);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            // Extraire les en-têtes
+            const headers = lignes[0].split(',');
 
-    var bounds = [
-        [40.0, -90.0], 
-        [65.0, -50.0] 
-    ];
-    map.setMaxBounds(bounds);
-    map.on('drag', function() {
-        map.panInsideBounds(bounds, { animate: false });
-    });
-});
+            // Récupérer les voltages sélectionnés
+            const selectedVoltages = Array.from(document.getElementById('voltage-select').selectedOptions)
+                .map(option => parseInt(option.value));
+
+            // Stocker les points pour déterminer leur rôle
+            const points = {};
+
+            // Parcourir les lignes de données pour collecter les points uniquement pour les lignes sélectionnées
+            const lignesSelectionnees = lignes.slice(1).filter(line => {
+                const values = line.split(',');
+                const ligne = headers.reduce((acc, header, index) => {
+                    acc[header] = values[index];
+                    return acc;
+                }, {});
+
+                // Filtrer les lignes selon les voltages sélectionnés
+                return selectedVoltages.includes(parseInt(ligne.voltage));
+            });
+
+            lignesSelectionnees.forEach(line => {
+                const values = line.split(',');
+                const ligne = headers.reduce((acc, header, index) => {
+                    acc[header] = values[index];
+                    return acc;
+                }, {});
+
+                const departKey = `${ligne.latitude_starting},${ligne.longitude_starting}`;
+                const arriveeKey = `${ligne.latitude_ending},${ligne.longitude_ending}`;
+
+                // Marquer les points comme départ ou arrivée et ajouter le nom
+                points[departKey] = points[departKey] || { 
+                    lat: ligne.latitude_starting, 
+                    lon: ligne.longitude_starting, 
+                    nom: ligne.network_node_name_starting || 'N/A', 
+                    isDepart: false, 
+                    isArrivee: false 
+                };
+                points[departKey].isDepart = true;
+
+                points[arriveeKey] = points[arriveeKey] || { 
+                    lat: ligne.latitude_ending, 
+                    lon: ligne.longitude_ending, 
+                    nom: ligne.network_node_name_ending || 'N/A', 
+                    isDepart: false, 
+                    isArrivee: false 
+                };
+                points[arriveeKey].isArrivee = true;
+            });
+
+            // Ajouter les points à la carte avec les couleurs appropriées
+            Object.values(points).forEach(point => {
+                let color = 'gray'; // Par défaut, gris pour les points à la fois départ et arrivée
+                if (point.isDepart && !point.isArrivee) {
+                    color = 'blue'; // Bleu pour les points uniquement départ
+                } else if (!point.isDepart && point.isArrivee) {
+                    color = 'red'; // Rouge pour les points uniquement arrivée
+                }
+
+                const popupContent = `
+                    <b>Nom:</b> ${point.nom || 'N/A'}<br>
+                    <b>Type:</b> ${point.isDepart && point.isArrivee ? 'Départ et Arrivée' : point.isDepart ? 'Départ' : 'Arrivée'}
+                `;
+                // <b>Coordonnées:</b> (${point.lat}, ${point.lon})<br>
+
+                L.circleMarker([parseFloat(point.lat), parseFloat(point.lon)], {
+                    radius: 2,
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.8
+                }).addTo(map)
+                .bindPopup(popupContent);
+            });
+
+            // Parcourir les lignes de données pour tracer les lignes
+            lignesSelectionnees.forEach(line => {
+                const values = line.split(',');
+                const ligne = headers.reduce((acc, header, index) => {
+                    acc[header] = values[index];
+                    return acc;
+                }, {});
+
+                const busDepart = [parseFloat(ligne.latitude_starting), parseFloat(ligne.longitude_starting)];
+                const busArrivee = [parseFloat(ligne.latitude_ending), parseFloat(ligne.longitude_ending)];
+
+                // Construire le contenu du popup pour la ligne
+                const popupContent = `
+                    <b>Voltage:</b> ${ligne.voltage || 'N/A'} kV<br>
+                    <b>Longueur:</b> ${ligne.line_length_km || 'N/A'} km<br>
+                    <b>Point de départ:</b> ${ligne.network_node_name_starting || 'N/A'}<br>
+                    <b>Point d'arrivée:</b> ${ligne.network_node_name_ending || 'N/A'}
+                `;
+
+                // Tracer une ligne entre les deux bus
+                L.polyline([busDepart, busArrivee], {
+                    color: 'gray',
+                    weight: 1
+                }).addTo(map)
+                .bindPopup(popupContent)
+                .on('click', function () {
+                    this.openPopup();
+                });
+            });
+        })
+        .catch(error => console.error('Erreur lors du chargement des lignes électriques:', error));
+}

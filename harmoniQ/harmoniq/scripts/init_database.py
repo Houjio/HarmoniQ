@@ -8,16 +8,7 @@ from pathlib import Path
 from harmoniq.db.engine import engine, get_db
 from harmoniq.db.schemas import SQLBase
 from harmoniq.db import schemas
-from harmoniq.db.CRUD import (
-    create_eolienne_parc,
-    create_eolienne,
-    create_bus,
-    create_line,
-    create_line_type,
-    create_hydro,
-    create_thermique,
-    create_solaire,
-)
+from harmoniq.db import CRUD
 
 
 import argparse
@@ -43,7 +34,7 @@ def fill_thermique():
     db = next(get_db())
 
     for _, row in df.iterrows():
-        create_thermique(
+        CRUD.create_thermique(
             db,
             schemas.ThermiqueCreate(
                 nom=row["nom"],
@@ -65,7 +56,7 @@ def fill_solaire():
     db = next(get_db())
 
     for _, row in df.iterrows():
-        create_solaire(
+        CRUD.create_solaire(
             db,
             schemas.SolaireCreate(
                 nom=row["nom"],
@@ -73,14 +64,14 @@ def fill_solaire():
                 longitude=row["longitude"],
                 puissance_nominal=row["puissance_nominal_MW"],
                 angle_panneau=row["angle_panneau"],
-                orientation_panneau=row["orientation_panneau"],  # Correction ici
+                orientation_panneau=row["orientation_panneau"],
                 nombre_panneau=row["nombre_panneau"],
             ),
         )
         print(f"Centrale solaire {row['nom']} ajoutée à la base de données")
 
 
-def fill_eoliennes():
+def fill_parc_eoliennes():
     db = next(get_db())
 
     station_df = pd.read_excel(CSV_DIR / "Wind_Turbine_Database_FGP.xlsx")
@@ -99,40 +90,25 @@ def fill_eoliennes():
 
             project_capacity = project_capacity[0]
 
+            for _, row in project_df.iterrows():
+                hub_height = row["Hub Height (m)"]
+                
+                if isinstance(hub_height, str) and "-" in hub_height:
+                    hub_height = sum(map(int, hub_height.split("-")))/2
+                    project_df["Hub Height (m)"] = project_df["Hub Height (m)"].replace(row["Hub Height (m)"], hub_height)
+            
             eolienne_parc = schemas.EolienneParcCreate(
                 nom=project_name,
                 latitude=average_lat,
                 longitude=average_lon,
                 nombre_eoliennes=len(project_df),
                 capacite_total=project_capacity,
+                hauteur_moyenne=project_df["Hub Height (m)"].mean(),
+                modele_turbine = project_df["Model"].unique()[0],
+                puissance_nominal = project_df["Turbine Rated Capacity (kW)"].unique()[0]
             )
-            result = create_eolienne_parc(db, eolienne_parc)
-            project_id = result.id
-
-            for _, row in project_df.iterrows():
-                hub_height = row["Hub Height (m)"]
-
-                if isinstance(hub_height, str) and "-" in hub_height:
-                    hub_height = sum(map(int, hub_height.split("-"))) / 2
-
-                commisioning = row["Commissioning"]
-                if isinstance(commisioning, str) and "/" in commisioning:
-                    commisioning = int(commisioning.split("/")[-1])
-
-                eolienne = schemas.EolienneCreate(
-                    eolienne_nom=row["Turbine Identifier"],
-                    latitude=row["Latitude"],
-                    longitude=row["Longitude"],
-                    diametre_rotor=row["Rotor Diameter (m)"],
-                    turbine_id=row["Turbine Number"],
-                    puissance_nominal=row["Turbine Rated Capacity (kW)"],
-                    hauteur_moyenne=hub_height,
-                    modele_turbine=row["Manufacturer"] + " " + row["Model"],
-                    project_name=project_name,
-                    annee_commission=commisioning,
-                    eolienne_parc_id=project_id,
-                )
-                create_eolienne(db, eolienne)
+            
+            CRUD.create_eolienne_parc(db, eolienne_parc)
         except Exception as e:
             print(f"Erreur lors de l'ajout du projet {project_name}")
             print(e)
@@ -143,10 +119,6 @@ def fill_eoliennes():
 
 def fill_hydro():
     """Remplit la table bus à partir du fichier CSV"""
-    import pandas as pd
-    import os
-    from pathlib import Path
-
     db = next(get_db())
 
     file_path = CSV_DIR / "Info_Barrages.csv"
@@ -155,16 +127,14 @@ def fill_hydro():
     count = 0
     for _, row in barrages_df.iterrows():
         existing = (
-            db.query(schemas.Hydro)
-            .filter(schemas.Hydro.barrage_nom == row["Nom"])
-            .first()
+            db.query(schemas.Hydro).filter(schemas.Hydro.nom == row["Nom"]).first()
         )
         if existing:
             print(f"Barrage {row['Nom']} existe déjà")
             continue
 
         db_hydro = schemas.HydroCreate(
-            barrage_nom=row["Nom"],
+            nom=row["Nom"],
             puissance_nominal=row["Puissance_Installee_MW"],
             type_barrage=row["Type"],
             latitude=row["Longitude"],
@@ -175,11 +145,11 @@ def fill_hydro():
             nb_turbines=row["Nb_turbines"],
             nb_turbines_maintenance=row["nb_turbines_maintenance"],
             volume_reservoir=row["Volume_reservoir"],
+            id_HQ=row["id_HQ"],
         )
-
         count += 1
-        create_hydro(db, db_hydro)
-        print(f"Barrage '{db_hydro.barrage_nom}' ajouté à la base de données")
+        CRUD.create_hydro(db, db_hydro)
+        print(f"Barrage '{db_hydro.nom}' ajouté à la base de données")
 
     print(f"{count} barrage ajoutés à la base de données")
 
@@ -208,7 +178,7 @@ def fill_line_types():
             x_per_length=float(row["x_per_length"]),
         )
 
-        create_line_type(db, db_line_type)
+        CRUD.create_line_type(db, db_line_type)
         count += 1
         print(f"Type de ligne '{db_line_type.name}' ajouté à la base de données")
 
@@ -239,7 +209,7 @@ def fill_buses():
         )
 
         count += 1
-        create_bus(db, db_bus)
+        CRUD.create_bus(db, db_bus)
         print(f"Bus '{db_bus.name}' ajouté à la base de données")
 
     print(f"{count} bus ajoutés à la base de données")
@@ -301,7 +271,7 @@ def fill_lines():
                 s_nom=row["s_nom"],
             )
             count += 1
-            create_line(db, db_line)
+            CRUD.create_line(db, db_line)
             print(f"Ligne '{db_line.name}' ajouté à la base de données")
         except Exception as e:
             print(f"Erreur lors de l'ajout de la ligne {row['name']}: {e}")
@@ -309,16 +279,91 @@ def fill_lines():
     print(f"{count} lignes ajoutées à la base de données")
 
 
+def create_initial_scenarios():
+    scenario_2035 = schemas.ScenarioCreate(
+        nom="année 2035",
+        description="Scénario de base pour l'année 2035",
+        date_de_debut="2035-01-01",
+        date_de_fin="2035-12-31",
+        pas_de_temps="PT1H",
+    )
+
+    db = next(get_db())
+    existing = (
+        db.query(schemas.Scenario)
+        .filter(schemas.Scenario.nom == scenario_2035.nom)
+        .first()
+    )
+    if existing:
+        print(f"Scénario {scenario_2035.nom} existe déjà")
+    else:
+        CRUD.create_scenario(db, scenario_2035)
+        print(f"Scénario {scenario_2035.nom} ajouté à la base de données")
+
+    scenario_2050 = schemas.ScenarioCreate(
+        nom="année 2050",
+        description="Scénario de base pour l'année 2050",
+        date_de_debut="2050-01-01",
+        date_de_fin="2050-12-31",
+        pas_de_temps="PT1H",
+    )
+
+    existing = (
+        db.query(schemas.Scenario)
+        .filter(schemas.Scenario.nom == scenario_2050.nom)
+        .first()
+    )
+
+    if existing:
+        print(f"Scénario {scenario_2050.nom} existe déjà")
+    else:
+        CRUD.create_scenario(db, scenario_2050)
+        print(f"Scénario {scenario_2050.nom} ajouté à la base de données")
+
+
+def create_initial_groupe_infra():
+    # Get all infrastructures
+    db = next(get_db())
+
+    eoliennes = CRUD.read_all_eolienne_parc(db)
+    hydro = CRUD.read_all_hydro(db)
+    thermique = CRUD.read_all_thermique(db)
+    solaire = CRUD.read_all_solaire(db)
+
+    to_string = lambda x: ",".join([str(y.id) for y in x])
+
+    chaque_infra = schemas.ListeInfrastructuresCreate(
+        nom="Chaque infrastructure",
+        parc_eoliens=to_string(eoliennes),
+        central_hydroelectriques=to_string(hydro),
+        central_thermique=to_string(thermique),
+        parc_solaires=to_string(solaire),
+    )
+
+    existing = (
+        db.query(schemas.ListeInfrastructures)
+        .filter(schemas.ListeInfrastructures.nom == chaque_infra.nom)
+        .first()
+    )
+    if existing:
+        print(f"Groupe d'infrastructure {chaque_infra.nom} existe déjà")
+    else:
+        CRUD.create_liste_infrastructures(db, chaque_infra)
+        print(f"Groupe d'infrastructure {chaque_infra.nom} ajouté à la base de données")
+
+
 def check_if_empty():
     db = next(get_db())
     tables = [
         schemas.EolienneParc,
         schemas.Eolienne,
+        schemas.Hydro,
         schemas.Bus,
         schemas.Line,
         schemas.LineType,
         schemas.Thermique,
         schemas.Solaire,
+        schemas.Scenario,
     ]
 
     for table in tables:
@@ -342,7 +387,7 @@ def fill_network():
 
 def populate_db():
     print("Collecte des éoliennes")
-    fill_eoliennes()
+    fill_parc_eoliennes()
 
     print("Collecte des données du réseau électrique :")
     fill_network()
@@ -355,6 +400,12 @@ def populate_db():
 
     print("Collecte des centrales solaires")
     fill_solaire()
+
+    print("Création des scénarios de base")
+    create_initial_scenarios()
+
+    print("Création des groupes d'infrastructure")
+    create_initial_groupe_infra()
 
 
 def main():
@@ -394,4 +445,5 @@ def main():
 
 
 if __name__ == "__main__":
+    populate_db()
     init_db()

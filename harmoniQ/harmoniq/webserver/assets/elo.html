@@ -1,3 +1,4 @@
+
 {% extends "template.html" %}
 
 {% block extra_head %}
@@ -5,7 +6,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
     <link rel="stylesheet" href="/static/app_style2.css">
-    <script src="/static/elo.js?v=1.1"></script>
+    <script src="/static/elo.js?v=1.4"></script>
 {% endblock %}
 
 {% block content %}
@@ -14,8 +15,14 @@
         <div class="card-body">
             <h5 class="card-title text-center">Sélection du Scénario</h5>
 
+            <h5 class="mt-3">Année:</h5>
+            <select id="yearSelector" class="form-select mb-3">
+                <option value="2035" selected>2035</option>
+                <option value="2050">2050</option>
+            </select>
+
             <label for="climateScenario" class="form-label">Scénario climatique:</label>
-            <select id="climateScenario" class="form-select">
+            <select id="climateScenario" class="form-select mb-3">
                 <option value="optimiste">Optimiste</option>
                 <option value="neutre">Neutre</option>
                 <option value="pessimiste">Pessimiste</option>
@@ -27,63 +34,56 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Faible Électrification</th>
-                            <th>Moyenne Électrification</th>
-                            <th>Élevée Électrification</th>
+                            <th>Moyenne électrification</th>
+                            <th>Électrification élevée</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <th>Faible Population</th>
-                            <td><input type="radio" name="growthScenario" value="faible"></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <th>Moyenne Population</th>
-                            <td></td>
-                            <td><input type="radio" name="growthScenario" value="moyen" checked></td>
+                            <th>Croissance faible</th>
+                            <td><input type="radio" name="growthScenario" value="faible_moyen" checked></td>
                             <td></td>
                         </tr>
                         <tr>
-                            <th>Élevée Population</th>
+                            <th>Croissance élevée</th>
                             <td></td>
-                            <td></td>
-                            <td><input type="radio" name="growthScenario" value="elevee"></td>
+                            <td><input type="radio" name="growthScenario" value="elevee_elevee"></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <h5 class="mt-4">Efficacité du transport</h5>
-            <input type="range" id="transportEfficiency" class="form-range" min="1" max="3" step="1" value="2">
-            <div class="d-flex justify-content-between">
-                <span>Faible</span>
-                <span id="efficiencyLabel" class="fw-bold">Moyen</span>
-                <span>Élevé</span>
-            </div>
+            <select id="transportEfficiency" class="form-select mb-3">
+                <option value="faible">Faible efficacité</option>
+                <option value="elevee">Efficacité élevée</option>
+            </select>
 
-            <button id="generateButton" class="btn btn-primary mt-3 w-100">Générer</button>
-            <button id="downloadPNG" class="btn btn-outline-secondary mt-2 w-100"><i class="fa fa-download"></i> Télécharger PNG</button>
+            <button id="generateButton" class="btn btn-primary w-100">Générer</button>
+            <button id="downloadPNG" class="btn btn-outline-secondary mt-2 w-100">
+                <i class="fa fa-download"></i> Télécharger PNG
+            </button>
         </div>
     </div>
 
-    <div id="plots" class="mt-4">
-        <div id="sankeyContainer">
-            <div id="sankeyDiagram"></div>
+    <div id="plots" class="sankey-wrapper">
+        <ul class="nav nav-tabs justify-content-center mb-3" id="viewTabs">
+            <li class="nav-item"><a class="nav-link active" data-view="annuel" href="#">Annuel</a></li>
+            <li class="nav-item"><a class="nav-link" data-view="hiver" href="#">Hiver</a></li>
+            <li class="nav-item"><a class="nav-link" data-view="ete" href="#">Été</a></li>
+            <li class="nav-item"><a class="nav-link" data-view="pic" href="#">Puissance de pointe</a></li>
+        </ul>
+
+        <div id="sankeySectionLabels" class="section-labels">
+            <div class="label production">Production</div>
+            <div class="label consommation">Consommation</div>
         </div>
+
+        <div id="sankeyDiagram"></div>
+
+        <p id="sankeyDescription" class="text-center mt-3">
+            Le diagramme Sankey ci-dessus illustre les flux d'énergie entre la production et la consommation pour le scénario sélectionné.
+        </p>
     </div>
 </div>
-
-<script>
-document.getElementById("downloadPNG").addEventListener("click", function () {
-  Plotly.downloadImage("sankeyDiagram", {
-    format: "png",
-    filename: "sankey_diagram",
-    height: 600,
-    width: 1000,
-    scale: 2
-  });
-});
-</script>
 {% endblock %}
