@@ -356,7 +356,6 @@ def check_if_empty():
     db = next(get_db())
     tables = [
         schemas.EolienneParc,
-        schemas.Eolienne,
         schemas.Hydro,
         schemas.Bus,
         schemas.Line,
