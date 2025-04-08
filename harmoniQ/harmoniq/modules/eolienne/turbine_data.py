@@ -734,8 +734,8 @@ _ge_15sle = {
     "cut_out_wind_speed": 25,
 }
 
-# General ELectric GE 2.2-107 2.2MW pas d'informations disponibles pour le power-curve. 
-# Les données utilisées sont fictives et temporaires. 
+# General ELectric GE 2.2-107 2.2MW pas d'informations disponibles pour le power-curve.
+# Les données utilisées sont fictives et temporaires.
 _ge_22_107 = {
     "cut_in_wind_speed": 3,
     "cut_out_wind_speed": 25,
@@ -1399,7 +1399,7 @@ turbine_models = {
     "3.2-MM114": _senvion_32m114,
     "MM82": _senvion_mm82,
     "MM92": _senvion_mm92,
-    "MM92 CCV": _senvion_mm92, # Pas d'informations pour ce modèle. On impose le modèle Senvion MM92 de façon temporaire.
+    "MM92 CCV": _senvion_mm92,  # Pas d'informations pour ce modèle. On impose le modèle Senvion MM92 de façon temporaire.
     "SWT 3.2-113": _swt_23_113,
     "V117-3.45": _vestas_v117_345,
     "V80-1.8": _vestas_v80_18,

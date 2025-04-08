@@ -5,18 +5,21 @@ from pathlib import Path
 from HydroGenerate.hydropower_potential import calculate_hp_potential
 from harmoniq.db.engine import get_db
 from harmoniq.db.CRUD import read_all_hydro
+
 CURRENT_DIR = Path(__file__).parent
 APPORT_DIR = CURRENT_DIR / "apport_naturel"
 
 
-def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel, timestamp):
+def reservoir_infill(
+    besoin_puissance, pourcentage_reservoir, apport_naturel, timestamp
+):
     db = next(get_db())
     barrages = read_all_hydro(db)
     Units = "IS"
     hp_type = "Diversion"
     results = {}
 
-    for i in range(0,len(barrages)):
+    for i in range(0, len(barrages)):
         type_barrage = barrages[i].type_barrage
         # barrage_amont = dam_data["amont"].values[0]
         # debit_amont = barrages_df["id"== barrage_amont].values[0]
@@ -27,7 +30,7 @@ def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel, ti
             nom = barrages[i].barrage_nom
             besoin = besoin_puissance[nom].iloc[0]  # Get power needs for this dam
             # Get dam-specific values from barrages_df
-            dam_data = barrages[i]  
+            dam_data = barrages[i]
             volume_remplie = dam_data.volume_reservoir
             debit_nom = dam_data.debits_nominal
             head = dam_data.hauteur_chute
@@ -69,7 +72,7 @@ def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel, ti
                         debits_turb = hp.flow[i]
                         break
 
-                    elif besoin>hp.power[-1]:
+                    elif besoin > hp.power[-1]:
                         nb_turbines_a = nb_turbines
                         debits_turb = hp.flow[-1]
                         break
@@ -89,7 +92,10 @@ def reservoir_infill(besoin_puissance, pourcentage_reservoir, apport_naturel, ti
 
     return pourcentage_reservoir_df  # Possible d'ajouter une fonctionnalité permettant de calculer l'énergie perdue après l'utilisation d'un évacuateur de crue pour l'analyse de résultat
 
-def charger_apport_reservoir(start_date, end_date): #Pour réseau pas utiliser dans la classe Hydro
+
+def charger_apport_reservoir(
+    start_date, end_date
+):  # Pour réseau pas utiliser dans la classe Hydro
     db = next(get_db())
     barrages = read_all_hydro(db)
     # barrages_df = pd.DataFrame([vars(b) for b in barrages])
@@ -99,23 +105,28 @@ def charger_apport_reservoir(start_date, end_date): #Pour réseau pas utiliser d
             data_barrage = barrages[i]
             id_HQ = data_barrage.id_HQ
             nom_fichier = str(id_HQ) + ".csv"
-            apport = pd.read_csv(filepath_or_buffer=APPORT_DIR /nom_fichier)
+            apport = pd.read_csv(filepath_or_buffer=APPORT_DIR / nom_fichier)
             apport["time"] = pd.to_datetime(apport["time"])
-            apport= apport[(apport["time"] >= start_date) & (apport["time"] <= end_date)]
+            apport = apport[
+                (apport["time"] >= start_date) & (apport["time"] <= end_date)
+            ]
             if i == 0:
-                df_apport["time"] = apport["time"]       
-            date_repetee = np.repeat(apport["time"].values,24)
+                df_apport["time"] = apport["time"]
+            date_repetee = np.repeat(apport["time"].values, 24)
             offset = np.tile(pd.to_timedelta(np.arange(24), unit="h"), len(apport))
             temps = date_repetee + offset
             apport_repete = np.repeat(apport["streamflow"].values, 24)
-            apport_re = pd.DataFrame({"time" : temps,data_barrage.barrage_nom : apport_repete}) 
+            apport_re = pd.DataFrame(
+                {"time": temps, data_barrage.barrage_nom: apport_repete}
+            )
             if df_apport.empty:
                 df_apport = apport_re
-            else:                
-                df_apport = pd.merge(df_apport, apport_re, on = "time", how = "outer")
+            else:
+                df_apport = pd.merge(df_apport, apport_re, on="time", how="outer")
     df_apport.set_index("time")
-    
+
     return df_apport
+
 
 # def store_flows(Volume_evacue, debits_turb, df_debit, id_barrage): #pas implémenté
 
