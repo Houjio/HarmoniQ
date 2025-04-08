@@ -383,12 +383,8 @@ class SolaireResponse(SolaireBase):
     class Config:
         from_attributes = True
 
-class TailleCentraleThermique(float, Enum):
-    PETITE = 50_000  # Limite haute pour petite taille (50 000 kW)
-    MOYENNE = 500_000  # Limite haute pour moyenne taille (500 000 kW)
-    GRANDE = 3_000_000  # Limite haute pour grande taille (3 000 000 kW)
 
-class TypeIntrantThermique(str, Enum):
+class TypeIntrantThermique(str, PyEnum):
     GAZ_NATUREL = "Gaz naturel"
     CHARBON = "Charbon"
     DIESEL = "Diesel"
@@ -400,7 +396,7 @@ class ThermiqueBase(BaseModel):
     latitude: float = Field(..., description="Latitude de la centrale thermique (degrés)")
     longitude: float = Field(..., description="Longitude de la centrale thermique (degrés)")
     type_intrant: TypeIntrantThermique = Field(..., description="Type d'intrant de la centrale thermique")
-    puissance_nominal: TailleCentraleThermique = Field(..., description="Taille de la centrale thermique (petite, moyenne ou grande)")
+    puissance_nominal: float = Field(..., description="Taille de la centrale thermique (petite, moyenne ou grande)")
     semaine_maintenance: int = Field(..., description="Semaine de maintenance où la centrale thermique est à l'arrêt - Choisir une semaine entre 10 et 22 pour le printemps pour une période de faible consommation")
     annee_commission: Optional[int] = None
     type_generateur: Optional[str] = None
