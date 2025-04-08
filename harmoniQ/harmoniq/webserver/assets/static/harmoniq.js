@@ -886,23 +886,41 @@ function modeliserLignes() {
                         <b>Point de départ:</b> ${ligne.network_node_name_starting || 'N/A'}<br>
                         <b>Point d'arrivée:</b> ${ligne.network_node_name_ending || 'N/A'}
                     `;
+                    const depart = `
+                        <b>Point de départ:</b> ${ligne.network_node_name_starting || 'N/A'}<br>
+                    `;
 
+                    const ARRIVE = `
+                        <b>Point d'arrivée:</b> ${ligne.network_node_name_ending || 'N/A'}
+                    `;
 
                     // Ajouter un point pour le bus de départ
-                    L.circleMarker(busDepart, {
+                    const bus0= L.circleMarker(busDepart, {
                         radius: 5,
                         color: 'blue',
                         fillColor: 'blue',
                         fillOpacity: 0.8
-                    }).addTo(map);
+                    }).addTo(map)
+                    .bindPopup(depart); 
+
+                    // Lier le popup à la ligne
+                    bus0.on('click', function () {
+                        this.openPopup();
+                    });
 
                     // Ajouter un point pour le bus d'arrivée
-                    L.circleMarker(busArrivee, {
+                    const bus1= L.circleMarker(busArrivee, {
                         radius: 5,
                         color: 'red',
                         fillColor: 'red',
                         fillOpacity: 0.8
-                    }).addTo(map);
+                    }).addTo(map)
+                    .bindPopup(ARRIVE); 
+                    
+                    // Lier le popup à la ligne
+                    bus1.on('click', function () {
+                        this.openPopup();
+                    });
 
                     // Tracer une ligne entre les deux bus
                     const polyline = L.polyline([busDepart, busArrivee], {
