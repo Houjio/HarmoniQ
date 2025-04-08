@@ -2,6 +2,7 @@ let infraTimeout = null;
 let scenarioFetchController = null;
 var map;
 var openApiJson = null;
+const markers = {}; // Objet pour stocker les marqueurs par ID d'infrastructure
 
 const map_icons = {
     eolienneparc: L.icon({
@@ -154,14 +155,32 @@ function addMarker(lat, lon, type, data) {
     marker.on('click', function () {
         this.openPopup();
     });
+    // Stocker le marqueur dans l'objet global
+    const markerKey = `${type}-${data.id}`;
+    markers[markerKey] = marker;
 }
 
-function createListElement({ nom, id }) {
+function createListElement({ nom, id, type }) {
     return `
-        <li class="list-group-item list-group-item-action" role="button" elementid=${id} onclick="add_infra(this)">
-            ${nom}
+        <li class="list-group-item d-flex justify-content-between align-items-center" role="button" elementid="${id}" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #ddd; margin-bottom: 5px; border-radius: 5px;">
+            <span>${nom}</span>
+            <button style="background-color: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;" onclick="showPopup('${id}', '${type}')">
+                <i style="margin-right: 5px;" class="fas fa-info-circle"></i> 
+            </button>
         </li>
     `;
+}
+
+function showPopup(infraId, type) {
+    const markerKey = `${type}-${infraId}`; // Générer la clé unique
+    const marker = markers[markerKey]; // Récupérer le marqueur correspondant
+
+    if (marker) {
+        map.setView(marker.getLatLng(), 10); // Centrer la carte sur le marqueur
+        marker.openPopup(); // Ouvrir le popup du marqueur
+    } else {
+        console.error(`Aucun marqueur trouvé pour l'infrastructure avec la clé ${markerKey}`);
+    }
 }
 
 function initialiserListeParc(type, elementId) {
@@ -175,11 +194,11 @@ function initialiserListeParc(type, elementId) {
         .then(data => {
             console.log(`Liste des ${type}:`, data);
             data.forEach(parc => {
-                listeElement.innerHTML += createListElement({ nom: parc.nom, id: parc.id });
+                listeElement.innerHTML += createListElement({ nom: parc.nom, id: parc.id, type: type });
                 addMarker(parc.latitude, parc.longitude, type, parc);
-        });
-    })
-    .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
+            });
+        })
+        .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
 }
 
 function initialiserListeHydro() {
