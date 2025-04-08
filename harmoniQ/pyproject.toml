@@ -37,7 +37,9 @@ dependencies = [
     "nrel-pysam",
     "windpowerlib",
     "geopandas",
-    "env-canada"
+    "env-canada",
+    "pypsa",
+    "pypsa[hdf5]"
 ]
 
 [project.scripts]

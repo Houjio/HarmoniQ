@@ -63,7 +63,7 @@ class NetworkBuilder:
         self.data_loader = NetworkDataLoader(data_dir)
         self.current_network = None
 
-    def create_network(self, scenario, year: str = None, start_date=None, end_date=None) -> pypsa.Network:
+    def create_network(self, scenario,liste_infra, year: str = None, start_date=None, end_date=None) -> pypsa.Network:
         """
         Crée et configure le réseau à partir des données CSV et d'un scénario.
 
@@ -79,6 +79,7 @@ class NetworkBuilder:
             >>> network = builder.create_network(scenario, '2024')
         """
         # Chargement des données statiques
+        self.data_loader.set_infrastructure_ids(liste_infra)
         network = self.data_loader.load_network_data()
         
         # Ajout des séries temporelles

@@ -60,9 +60,9 @@ import asyncio
 
 from harmoniq.db.engine import get_db
 from harmoniq.db.demande import read_demande_data
-from harmoniq.db.schemas import Eolienne,Solaire,Hydro, Nucleaire, Thermique, Scenario
+from harmoniq.db.schemas import EolienneParc,Solaire,Hydro, Nucleaire, Thermique, Scenario
 from harmoniq.db.CRUD import (read_all_bus, read_all_line, read_all_line_type,
-                              read_all_eolienne,read_all_solaire,read_all_hydro,
+                              read_all_eolienne_parc,read_all_solaire,read_all_hydro,
                               read_all_nucleaire,read_all_thermique,read_multiple_by_id)
 
 # Définition du chemin vers le répertoire de données
@@ -273,10 +273,10 @@ class NetworkDataLoader:
             # Mise à jour des données temporelles
             network.generators_t.p_max_pu = p_max_pu_df
             
-            # load_demand_df = self.load_demand_data(network, scenario, start_date, end_date)
+            load_demand_df = self.load_demand_data(network, scenario, start_date, end_date)
 
             #TODO : A SUPPRIMER
-            load_demand_df = self.load_demand_data(network, scenario,start_date="2035-01-01", end_date="2035-01-31")
+            # load_demand_df = self.load_demand_data(network, scenario,start_date="2035-01-01", end_date="2035-01-31")
 
             
             if not load_demand_df.empty:
@@ -311,17 +311,17 @@ class NetworkDataLoader:
         
         if source_type == "eolienne":
             if self.eolienne_ids:
-                centrales = asyncio.run(read_multiple_by_id(db, Eolienne, self.eolienne_ids))
+                centrales = asyncio.run(read_multiple_by_id(db, EolienneParc, self.eolienne_ids))
             else:
-                centrales = read_all_eolienne(db)
+                centrales = read_all_eolienne_parc(db)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if df.empty:
                 return network
             
             else:
                 # Mapping des colonnes pour éoliennes
-                df['name'] = df['eolienne_nom']
-                df['p_nom'] = df['puissance_nominal']
+                df['name'] = df['nom']
+                df['p_nom'] = (df['puissance_nominal'] * df['nombre_eoliennes'] ) * 10e-3  # Convertir en MW
                 df['carrier'] = 'eolien'
 
         elif source_type == "solaire":
@@ -336,7 +336,7 @@ class NetworkDataLoader:
             else:
                 # Mapping des colonnes pour solaire
                 df['name'] = df['nom']
-                df['p_nom'] = df['puissance_nominal']
+                df['p_nom'] = df['puissance_nominal'] # Deja en MW
                 df['carrier'] = 'solaire'
 
         elif source_type == "hydro_fil":
@@ -367,7 +367,7 @@ class NetworkDataLoader:
             else :
                 # Mapping des colonnes pour nucléaires
                 df['name'] = df['centrale_nucleaire_nom']
-                df['p_nom'] = df['puissance_nominal']
+                df['p_nom'] = df['puissance_nominal'] * 10e-3  # Convertir en MW
                 df['carrier'] = 'nucléaire'
         else:
             raise DataLoadError(f"Type de centrale non pris en charge: {source_type}")
@@ -458,7 +458,7 @@ class NetworkDataLoader:
             else:
                 # Mapping des colonnes pour thermiques
                 df['name'] = df['nom']
-                df['p_nom'] = df['puissance_nominal']
+                df['p_nom'] = df['puissance_nominal'] * 10e-3  # Convertir en MW
                 df['carrier'] = 'thermique'
         else:
             raise DataLoadError(f"Type de centrale pilotable non pris en charge: {source_type}")
@@ -529,19 +529,23 @@ class NetworkDataLoader:
         ))
         
         if self.eolienne_ids:
-            eoliennes = asyncio.run(read_multiple_by_id(db, Eolienne, self.eolienne_ids))
-            if eoliennes:
-                infra_eolienne = InfraParcEolienne(eoliennes)
-                infra_eolienne.charger_scenario(scenario)
-                production_df = infra_eolienne.calculer_production()
-                production_df = production_df.fillna(0)
+            production_totale = pd.DataFrame()
+            eoliennes = asyncio.run(read_multiple_by_id(db, EolienneParc, self.eolienne_ids))
+            
+            for parc in eoliennes:
+                infraEolienne = InfraParcEolienne(parc)
+                infraEolienne.charger_scenario(scenario)
+                production_iteration = infraEolienne.calculer_production()  # Convertir en MW
                 
-                for eolienne in eoliennes:
-                    nom = eolienne.eolienne_nom
-                    if nom in production_df.columns and nom in network.generators.index:
+                if production_iteration is not None and not production_iteration.empty:
+                    nom = parc.nom
+                    if nom in network.generators.index:
                         # Calcul du p_max_pu = production / puissance_nominale
-                        p_nom = eolienne.puissance_nominal
-                        p_max_pu_df[nom] = production_df[nom] / p_nom
+                        p_nom = (parc.puissance_nominal * parc.nombre_eoliennes)
+                        if 'puissance' in production_iteration.columns:
+                            p_max_pu_df[nom] = production_iteration['puissance'] / p_nom
+                            p_max_pu_df = p_max_pu_df.fillna(0)
+
 
         # if self.solaire_ids:
         #     solaires = asyncio.run(read_multiple_by_id(db, Solaire, self.solaire_ids))
@@ -597,7 +601,7 @@ class NetworkDataLoader:
         
         # total demand (CUID = 1)
         demand_df = asyncio.run(read_demande_data(db_scenario, CUID=1))
-        demand_df['total_demand'] = demand_df['electricity'] + demand_df['gaz']
+        demand_df['total_demand'] = (demand_df['electricity'] + demand_df['gaz'])*10e-6 #MW
         
         loads = network.loads.index
         n_loads = len(loads)
