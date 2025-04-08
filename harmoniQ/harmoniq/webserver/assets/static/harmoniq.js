@@ -198,7 +198,7 @@ function loadMap() {
     map = L.map('map-box', {
         zoomControl: true,
         attributionControl: true,
-        maxZoom: 10,
+        maxZoom: 12,
         minZoom: 5
     }).setView([52.9399, -67], 4);
 
@@ -875,8 +875,8 @@ function modeliserLignes() {
                 }, {});
 
                 // Filtrer uniquement les lignes avec un voltage de 735
-                if (parseInt(ligne.voltage) === 735) {
-                    const busDepart = [parseFloat(ligne.latitude_starting), parseFloat(ligne.longitude_starting)];
+                // ou 120, 161, 230, 315, 735 kV
+                if ([120, 161, 230, 315, 735].includes(parseInt(ligne.voltage))) {                    const busDepart = [parseFloat(ligne.latitude_starting), parseFloat(ligne.longitude_starting)];
                     const busArrivee = [parseFloat(ligne.latitude_ending), parseFloat(ligne.longitude_ending)];
 
                     // Construire le contenu du popup
