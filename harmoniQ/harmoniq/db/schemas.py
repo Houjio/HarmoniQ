@@ -162,7 +162,7 @@ class ListeInfrastructures(SQLBase):
     @property
     def central_thermique_list(self):
         return self.central_thermique.split(",") if self.central_thermique else []
-    
+
     @property
     def central_nucleaire_list(self):
         return self.central_nucleaire.split(",") if self.central_nucleaire else []
@@ -253,9 +253,15 @@ class EolienneParcBase(BaseModel):
     )
     nombre_eoliennes: int = Field(..., description="Nombre d'éoliennes dans le parc")
     capacite_total: float = Field(..., description="Capacité totale du parc (MW)")
-    hauteur_moyenne : float = Field(..., description="Hauteur moyenne des éoliennes du parc (m)")
-    modele_turbine : str = Field(..., description="Modèle de turbine utilisé dans le parc")
-    puissance_nominal : float = Field(..., description="Puissance nominale des turbines dans le parc (MW)")
+    hauteur_moyenne: float = Field(
+        ..., description="Hauteur moyenne des éoliennes du parc (m)"
+    )
+    modele_turbine: str = Field(
+        ..., description="Modèle de turbine utilisé dans le parc"
+    )
+    puissance_nominal: float = Field(
+        ..., description="Puissance nominale des turbines dans le parc (MW)"
+    )
 
 
 class EolienneParcCreate(EolienneParcBase):
@@ -281,7 +287,7 @@ class EolienneParc(SQLBase):
     hauteur_moyenne = Column(Float)
     modele_turbine = Column(String)
     puissance_nominal = Column(Float)
-    #eoliennes = relationship("Eolienne", back_populates="eolienne_parc")
+    # eoliennes = relationship("Eolienne", back_populates="eolienne_parc")
 
 
 class Solaire(SQLBase):

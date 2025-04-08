@@ -7,6 +7,13 @@
 // });
 
 function initialise_sankey() {
+    if (typeof demande === 'undefined' || demande === null) {
+        return;
+    }
+
+    // Empty the plot
+    $('#sankey-plot').empty();
+
     let trace = {
         x: [],
         y: [],
@@ -19,10 +26,9 @@ function initialise_sankey() {
     Plotly.newPlot('sankey-plot', data, layout);
 };
 
-// $('button[data-bs-target="#sankey"]').on('shown.bs.tab', function () {
-//     Plotly.Plots.resize('sankey-plot');
-//     Plotly.relayout('sankey-plot', { 'yaxis.autorange': true });
-// });
+$('button[data-bs-target="#sankey"]').on('shown.bs.tab', function () {
+    initialise_sankey();
+});
 
 function initialise_temporal() {
     if (typeof demande === 'undefined' || demande === null) {
@@ -51,8 +57,3 @@ function initialise_temporal() {
 $('button[data-bs-target="#temporal"]').on('shown.bs.tab', function () {
     initialise_temporal();
 });
-
-// window.onload = function () {
-//     // initialise_sankey();
-//     // initialise_temporal();
-// };

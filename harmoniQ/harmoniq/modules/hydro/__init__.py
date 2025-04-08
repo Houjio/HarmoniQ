@@ -91,16 +91,18 @@ class InfraHydro:
 
         if self.donnees.type_barrage == "Fil de l'eau":
             return get_run_of_river_dam_power(self)
+
     def pourcentage_reservoir(self, pourcentage_reservoir) -> pd.DataFrame:
         if self.donnees.type_barrage == "Reservoir":
-            self.apport : pd.DataFrame = self._charger_apport()
-            date_repetee = np.repeat(self.apport["time"].values,24)
+            self.apport: pd.DataFrame = self._charger_apport()
+            date_repetee = np.repeat(self.apport["time"].values, 24)
             offset = np.tile(pd.to_timedelta(np.arange(24), unit="h"), len(self.apport))
             temps = date_repetee + offset
             apport_repete = np.repeat(self.apport["streamflow"].values, 24)
-            apport_df = pd.DataFrame({"dateTime":temps, "streamflow" : apport_repete})
+            apport_df = pd.DataFrame({"dateTime": temps, "streamflow": apport_repete})
             self.apport = apport_df
-        return reservoir_infill(pourcentage_reservoir)    
+        return reservoir_infill(pourcentage_reservoir)
+
     def calculer_energie(self, production):
         return get_energy(production)
 
@@ -126,8 +128,16 @@ if __name__ == "__main__":
     from datetime import datetime, timedelta
 
     # df_apport = charger_apport_reservoir("2025-01-01","2025-12-31")
-    besoin_puissance = pd.DataFrame({"Robert-Bourassa" : [1750, 750], "La Grande-4" : [2000,2150], "La Grande-3" : [250,300]})
-    pourcentage_reservoir = reservoir_infill(besoin_puissance=besoin_puissance, pourcentage_reservoir=1, apport_naturel=250)
+    besoin_puissance = pd.DataFrame(
+        {
+            "Robert-Bourassa": [1750, 750],
+            "La Grande-4": [2000, 2150],
+            "La Grande-3": [250, 300],
+        }
+    )
+    pourcentage_reservoir = reservoir_infill(
+        besoin_puissance=besoin_puissance, pourcentage_reservoir=1, apport_naturel=250
+    )
     # db = next(get_db())
     # production = 0
     # for i in range(4,6):

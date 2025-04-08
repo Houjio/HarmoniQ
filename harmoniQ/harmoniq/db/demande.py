@@ -10,6 +10,7 @@ from typing import Optional
 
 _conn = sqlite3.connect(f"file:{DEMANDE_PATH}?mode=ro", uri=True)
 
+
 def get_all_mrc() -> pd.DataFrame:
     query = """
         SELECT DISTINCT m.id, m.CUID, m.weather, m.sector, m.scenario, m.year
@@ -19,12 +20,13 @@ def get_all_mrc() -> pd.DataFrame:
     df = pd.read_sql_query(query, _conn)
     return df
 
+
 async def read_demande_data(
     scenario: Scenario,
     CUID: Optional[int] = None,
 ) -> pd.DataFrame:
     if CUID is None:
-        CUID = 1 # Default value = Total
+        CUID = 1  # Default value = Total
 
     query = """
         SELECT d.date, d.electricity, d.gaz, m.sector
@@ -34,6 +36,70 @@ async def read_demande_data(
         AND m.weather = ?
         AND m.scenario = ?
         AND d.date BETWEEN ? AND ?
+    """
+
+    weather_string = Weather(scenario.weather).name
+    consomation_string = Consomation(scenario.consomation).name
+
+    params = (
+        CUID,
+        weather_string,
+        consomation_string,
+        scenario.date_de_debut,
+        scenario.date_de_fin,
+    )
+    df = pd.read_sql_query(query, _conn, params=params)
+    return df
+
+
+async def read_demande_data_sankey(
+    scenario: Scenario,
+    CUID: Optional[int] = None,
+) -> pd.DataFrame:
+    if CUID is None:
+        CUID = 1  # Default value = Total
+
+    query = """
+        SELECT m.sector, SUM(d.electricity) AS total_electricity, SUM(d.gaz) AS total_gaz
+        FROM Demande d
+        JOIN Metadata m ON d.meta_id = m.id
+        WHERE m.CUID = ?
+        AND m.weather = ?
+        AND m.scenario = ?
+        AND d.date BETWEEN ? AND ?
+        GROUP BY m.sector
+    """
+
+    weather_string = Weather(scenario.weather).name
+    consomation_string = Consomation(scenario.consomation).name
+
+    params = (
+        CUID,
+        weather_string,
+        consomation_string,
+        scenario.date_de_debut,
+        scenario.date_de_fin,
+    )
+    df = pd.read_sql_query(query, _conn, params=params)
+    return df
+
+
+async def read_demande_data_sankey(
+    scenario: Scenario,
+    CUID: Optional[int] = None,
+) -> pd.DataFrame:
+    if CUID is None:
+        CUID = 1  # Default value = Total
+
+    query = """
+        SELECT m.sector, SUM(d.electricity) AS total_electricity, SUM(d.gaz) AS total_gaz
+        FROM Demande d
+        JOIN Metadata m ON d.meta_id = m.id
+        WHERE m.CUID = ?
+        AND m.weather = ?
+        AND m.scenario = ?
+        AND d.date BETWEEN ? AND ?
+        GROUP BY m.sector
     """
 
     weather_string = Weather(scenario.weather).name

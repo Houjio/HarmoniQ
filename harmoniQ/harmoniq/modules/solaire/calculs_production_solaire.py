@@ -586,4 +586,4 @@ print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
 
 #     plt.tight_layout()
 #     plt.show()
-# plot_heatmap_centrales(resultats_centrales) 
+# plot_heatmap_centrales(resultats_centrales)
