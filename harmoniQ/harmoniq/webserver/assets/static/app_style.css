@@ -59,6 +59,18 @@ div#main div#infrastructures div.accordion {
     overflow-y: auto;
 }
 
-#sankey-plot {
-    background-color: rebeccapurple;
-}
+/* Map */
+div.map-overlay {
+    position: absolute;
+    bottom: 0;
+    right: 0; 
+    /* Hacky since the map is usually on the right (if not uh-oh */
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
+    z-index: 1000;
+  }
+  
+  div.map-overlay img.icon-draggable {
+    width: 2.5em;
+    height: 2.5em;
+    cursor: grab;
+  }
