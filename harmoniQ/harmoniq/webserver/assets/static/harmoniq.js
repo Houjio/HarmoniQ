@@ -163,9 +163,12 @@ function createListElement({ nom, id, type }) {
     return `
         <li class="list-group-item d-flex justify-content-between align-items-center" role="button" elementid="${id}" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #ddd; margin-bottom: 5px; border-radius: 5px;">
             <span>${nom}</span>
-            <button style="background-color: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;" onclick="showPopup('${id}', '${type}')">
-                <i style="margin-right: 5px;" class="fas fa-info-circle"></i> 
-            </button>
+            <img 
+                src="/static/icons/info.png" 
+                alt="Info" 
+                style="width: 20px; height: 20px; cursor: pointer;" 
+                onclick="showPopup('${id}', '${type}')"
+            />
         </li>
     `;
 }
@@ -175,7 +178,7 @@ function showPopup(infraId, type) {
     const marker = markers[markerKey]; // Récupérer le marqueur correspondant
 
     if (marker) {
-        map.setView(marker.getLatLng(), 10); // Centrer la carte sur le marqueur
+        map.setView(marker.getLatLng(), 8); // Centrer la carte sur le marqueur
         marker.openPopup(); // Ouvrir le popup du marqueur
     } else {
         console.error(`Aucun marqueur trouvé pour l'infrastructure avec la clé ${markerKey}`);
