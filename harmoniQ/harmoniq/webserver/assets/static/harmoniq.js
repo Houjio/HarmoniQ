@@ -866,77 +866,102 @@ function modeliserLignes() {
             // Extraire les en-têtes
             const headers = lignes[0].split(',');
 
-            // Parcourir les lignes de données
-            lignes.slice(1).forEach(line => {
+            // Stocker les points pour déterminer leur rôle
+            const points = {};
+
+            // Parcourir les lignes de données pour collecter les points uniquement pour les lignes sélectionnées
+            const lignesSelectionnees = lignes.slice(1).filter(line => {
+                const values = line.split(',');
+                const ligne = headers.reduce((acc, header, index) => {
+                    acc[header] = values[index];
+                    return acc;
+                }, {});
+                return [ 735].includes(parseInt(ligne.voltage));
+            });
+
+            lignesSelectionnees.forEach(line => {
                 const values = line.split(',');
                 const ligne = headers.reduce((acc, header, index) => {
                     acc[header] = values[index];
                     return acc;
                 }, {});
 
-                // Filtrer uniquement les lignes avec un voltage de 735
-                // ou 120, 161, 230, 315, 735 kV
-                if ([735].includes(parseInt(ligne.voltage))) {                    const busDepart = [parseFloat(ligne.latitude_starting), parseFloat(ligne.longitude_starting)];
-                    const busArrivee = [parseFloat(ligne.latitude_ending), parseFloat(ligne.longitude_ending)];
+                const departKey = `${ligne.latitude_starting},${ligne.longitude_starting}`;
+                const arriveeKey = `${ligne.latitude_ending},${ligne.longitude_ending}`;
 
-                    // Construire le contenu du popup
-                    const popupContent2 = `
-                        <b>Voltage:</b> ${ligne.voltage || 'N/A'} kV<br>
-                        <b>Longueur:</b> ${ligne.line_length_km || 'N/A'} km<br>
-                        <b>Point de départ:</b> ${ligne.network_node_name_starting || 'N/A'}<br>
-                        <b>Point d'arrivée:</b> ${ligne.network_node_name_ending || 'N/A'}
-                    `;
-                    const depart = `
-                        <b>Point de départ:</b> ${ligne.network_node_name_starting || 'N/A'}<br>
-                    `;
+                // Marquer les points comme départ ou arrivée et ajouter le nom
+                points[departKey] = points[departKey] || { 
+                    lat: ligne.latitude_starting, 
+                    lon: ligne.longitude_starting, 
+                    nom: ligne.network_node_name_starting || 'N/A', 
+                    isDepart: false, 
+                    isArrivee: false 
+                };
+                points[departKey].isDepart = true;
 
-                    const arrive = `
-                        <b>Point d'arrivée:</b> ${ligne.network_node_name_ending || 'N/A'}
-                    `;
+                points[arriveeKey] = points[arriveeKey] || { 
+                    lat: ligne.latitude_ending, 
+                    lon: ligne.longitude_ending, 
+                    nom: ligne.network_node_name_ending || 'N/A', 
+                    isDepart: false, 
+                    isArrivee: false 
+                };
+                points[arriveeKey].isArrivee = true;
+            });
 
-                    // Ajouter un point pour le bus de départ
-                    const bus0= L.circleMarker(busDepart, {
-                        radius: 1,
-                        color: 'blue',
-                        fillColor: 'blue',
-                        fillOpacity: 0.8
-                    }).addTo(map)
-                    .bindPopup(depart); 
-
-                    // Lier le popup à la ligne
-                    bus0.on('click', function () {
-                        this.openPopup();
-                    });
-
-                    // Ajouter un point pour le bus d'arrivée
-                    const bus1= L.circleMarker(busArrivee, {
-                        radius: 1,
-                        color: 'red',
-                        fillColor: 'red',
-                        fillOpacity: 0.8
-                    }).addTo(map)
-                    .bindPopup(arrive); 
-                    
-                    // Lier le popup à la ligne
-                    bus1.on('click', function () {
-                        this.openPopup();
-                    });
-
-                    // Tracer une ligne entre les deux bus
-                    const polyline = L.polyline([busDepart, busArrivee], {
-                        color: 'gray',
-                        weight: 1
-                    }).addTo(map)
-                    .bindPopup(popupContent2); 
-                    
-                    // Lier le popup à la ligne
-                    polyline.on('click', function () {
-                        this.openPopup();
-                    });
-
+            // Ajouter les points à la carte avec les couleurs appropriées
+            Object.values(points).forEach(point => {
+                let color = 'gray'; // Par défaut, gris pour les points à la fois départ et arrivée
+                if (point.isDepart && !point.isArrivee) {
+                    color = 'blue'; // Bleu pour les points uniquement départ
+                } else if (!point.isDepart && point.isArrivee) {
+                    color = 'red'; // Rouge pour les points uniquement arrivée
                 }
+
+                const popupContent = `
+                    <b>Nom:</b> ${point.nom || 'N/A'}<br>
+                    <b>Coordonnées:</b> (${point.lat}, ${point.lon})<br>
+                    <b>Type:</b> ${point.isDepart && point.isArrivee ? 'Départ et Arrivée' : point.isDepart ? 'Départ' : 'Arrivée'}
+                `;
+
+                L.circleMarker([parseFloat(point.lat), parseFloat(point.lon)], {
+                    radius: 2,
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.8
+                }).addTo(map)
+                .bindPopup(popupContent);
+            });
+
+            // Parcourir les lignes de données pour tracer les lignes
+            lignesSelectionnees.forEach(line => {
+                const values = line.split(',');
+                const ligne = headers.reduce((acc, header, index) => {
+                    acc[header] = values[index];
+                    return acc;
+                }, {});
+
+                const busDepart = [parseFloat(ligne.latitude_starting), parseFloat(ligne.longitude_starting)];
+                const busArrivee = [parseFloat(ligne.latitude_ending), parseFloat(ligne.longitude_ending)];
+
+                // Construire le contenu du popup pour la ligne
+                const popupContent = `
+                    <b>Voltage:</b> ${ligne.voltage || 'N/A'} kV<br>
+                    <b>Longueur:</b> ${ligne.line_length_km || 'N/A'} km<br>
+                    <b>Point de départ:</b> ${ligne.network_node_name_starting || 'N/A'}<br>
+                    <b>Point d'arrivée:</b> ${ligne.network_node_name_ending || 'N/A'}
+                `;
+
+                // Tracer une ligne entre les deux bus
+                L.polyline([busDepart, busArrivee], {
+                    color: 'gray',
+                    weight: 1
+                }).addTo(map)
+                .bindPopup(popupContent)
+                .on('click', function () {
+                    this.openPopup();
+                });
             });
         })
         .catch(error => console.error('Erreur lors du chargement des lignes électriques:', error));
 }
-
