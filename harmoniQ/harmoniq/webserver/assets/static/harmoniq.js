@@ -270,10 +270,21 @@ window.onload = function() {
     initialiserListeParcSolaire();
     initialiserListeThermique();
     initialiserListeParcNucleaire();
-    modeliserLignes(); 
 
     loadMap();
     loadOpenApi();
+
+    document.getElementById('apply-filter').addEventListener('click', () => {
+        // Supprimer les anciennes couches de la carte
+        map.eachLayer(layer => {
+            if (layer instanceof L.CircleMarker || layer instanceof L.Polyline) {
+                map.removeLayer(layer);
+            }
+        });
+    
+        // Recharger les lignes avec les voltages sélectionnés
+        modeliserLignes();
+    });
 };
 
 function infraUserAction() {
@@ -866,6 +877,10 @@ function modeliserLignes() {
             // Extraire les en-têtes
             const headers = lignes[0].split(',');
 
+            // Récupérer les voltages sélectionnés
+            const selectedVoltages = Array.from(document.getElementById('voltage-select').selectedOptions)
+                .map(option => parseInt(option.value));
+
             // Stocker les points pour déterminer leur rôle
             const points = {};
 
@@ -876,7 +891,9 @@ function modeliserLignes() {
                     acc[header] = values[index];
                     return acc;
                 }, {});
-                return [ 735].includes(parseInt(ligne.voltage));
+
+                // Filtrer les lignes selon les voltages sélectionnés
+                return selectedVoltages.includes(parseInt(ligne.voltage));
             });
 
             lignesSelectionnees.forEach(line => {
@@ -925,7 +942,7 @@ function modeliserLignes() {
                 `;
 
                 L.circleMarker([parseFloat(point.lat), parseFloat(point.lon)], {
-                    radius: 2,
+                    radius: 5,
                     color: color,
                     fillColor: color,
                     fillOpacity: 0.8

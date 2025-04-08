@@ -84,12 +84,25 @@
             </div>
         </div>
     </div>
+
     <div id="infrastructures" class="bg-light card">
+        <div class="mb-2">
+            <h5>Sélectionnez les voltages à afficher:</h5>
+            <div class="d-flex align-items-center">
+                <select id="voltage-select" class="form-select" multiple>
+                    <option value="120">120 kV</option>
+                    <option value="161">161 kV</option>
+                    <option value="230">230 kV</option>
+                    <option value="315">315 kV</option>
+                    <option value="735">735 kV</option>
+                </select>
+                <button id="apply-filter" class="btn btn-primary ms-3">Appliquer</button>
+            </div>
+        </div>
         <div class="d-flex w-100 justify-content-space-between align-items-center my-3">
             <label style="white-space: nowrap;"><h5>Groupe infras actif: </h5></label>
             <span class="mx-1"></span>
             <select name="groupe-actif" id="groupe-actif" class="form-select" onchange="changeInfra()">
-            
             </select>
             <span class="mx-1"></span>
             <button class="btn btn-primary" id="add-infra-liste" title="Créer un nouveau groupe d'infrastructure">
