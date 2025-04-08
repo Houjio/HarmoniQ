@@ -937,12 +937,12 @@ function modeliserLignes() {
 
                 const popupContent = `
                     <b>Nom:</b> ${point.nom || 'N/A'}<br>
-                    <b>Coordonnées:</b> (${point.lat}, ${point.lon})<br>
                     <b>Type:</b> ${point.isDepart && point.isArrivee ? 'Départ et Arrivée' : point.isDepart ? 'Départ' : 'Arrivée'}
                 `;
+                // <b>Coordonnées:</b> (${point.lat}, ${point.lon})<br>
 
                 L.circleMarker([parseFloat(point.lat), parseFloat(point.lon)], {
-                    radius: 1,
+                    radius: 2,
                     color: color,
                     fillColor: color,
                     fillOpacity: 0.8
