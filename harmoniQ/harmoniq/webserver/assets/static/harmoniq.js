@@ -1,6 +1,5 @@
 let infraTimeout = null;
 let scenarioFetchController = null;
-var map;
 var openApiJson = null;
 const markers = {}; // Objet pour stocker les marqueurs par ID d'infrastructure
 
@@ -533,15 +532,29 @@ function charger_demande(scenario_id, mrc_id) {
     demandeFetchController = new AbortController();
     const signal = demandeFetchController.signal;
 
-    fetchData(`/api/demande/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', null, signal)
+    // fetchData(`/api/demande/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', null, signal)
+    //     .then(data => {
+    //         console.log('Demande chargée avec succès');
+    //         demande = data;
+    //     })
+    //     .catch(error => {
+    //         if (error.message.includes('404')) {
+    //             console.error('Demande non trouvée:', error);
+    //         } else {
+    //             console.error('Erreur lors du chargement de la demande:', error);
+    //         }
+    //     });
+
+    fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
         .then(data => {
-            console.log('Demande chargée avec succès:', data);
+            console.log('Demande Sankey chargée avec succès');
+            demande = data;
         })
         .catch(error => {
             if (error.message.includes('404')) {
                 console.error('Demande non trouvée:', error);
             } else {
-                console.error('Erreur lors du chargement de la demande:', error);
+                console.error('Erreur lors du chargement de la demande Sankey:', error);
             }
         });
 }

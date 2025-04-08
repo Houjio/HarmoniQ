@@ -59,10 +59,6 @@ div#main div#infrastructures div.accordion {
     overflow-y: auto;
 }
 
-#sankey-plot {
-    background-color: rebeccapurple;
-}
-
 /* Map */
 div.map-overlay {
     position: absolute;
