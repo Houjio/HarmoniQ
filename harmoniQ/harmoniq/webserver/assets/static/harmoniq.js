@@ -120,10 +120,18 @@ function addMarker(lat, lon, type, data) {
         `;
     } else if (type === 'hydro') {
         popupContent += `
-            Débit nominal: ${data.debits_nominal || 'N/A'} m³/s<br>
-            Nombre de turbines: ${data.nb_turbines || 'N/A'}<br>
+            type de barrage: ${data.type_barrage || 'N/A'} <br>
+            Débit nominal: ${data.debits_nominal ? parseFloat(data.debits_nominal).toFixed(1) : 'N/A'} m³/s<br>
             Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
-            Volume du réservoir: ${data.volume_reservoir || 'N/A'} m³
+            Volume du réservoir: ${
+                data.volume_reservoir
+                ? data.volume_reservoir >= 1e9
+                    ? (data.volume_reservoir / 1e9).toFixed(1) + ' Gm³' // Milliards de m³
+                    : data.volume_reservoir >= 1e6
+                        ? (data.volume_reservoir / 1e6).toFixed(1) + ' Mm³' // Millions de m³
+                        : (data.volume_reservoir / 1e3).toFixed(1) + ' km³' // Milliers de m³
+                : 'N/A'
+            }<br>
         `;
     } else if (type === 'solaire') {
         popupContent += `
