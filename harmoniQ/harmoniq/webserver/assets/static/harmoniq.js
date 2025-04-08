@@ -321,6 +321,7 @@ window.onload = function() {
     });
 };
 
+
 function infraUserAction() {
     if (infraTimeout) {
         clearTimeout(infraTimeout);
