@@ -890,7 +890,7 @@ function modeliserLignes() {
                         <b>Point de départ:</b> ${ligne.network_node_name_starting || 'N/A'}<br>
                     `;
 
-                    const ARRIVE = `
+                    const arrive = `
                         <b>Point d'arrivée:</b> ${ligne.network_node_name_ending || 'N/A'}
                     `;
 
@@ -915,7 +915,7 @@ function modeliserLignes() {
                         fillColor: 'red',
                         fillOpacity: 0.8
                     }).addTo(map)
-                    .bindPopup(ARRIVE); 
+                    .bindPopup(arrive); 
                     
                     // Lier le popup à la ligne
                     bus1.on('click', function () {
