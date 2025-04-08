@@ -1,6 +1,5 @@
 """Script qui initialise la base de données et la remplit avec des données de référence"""
 
-import requests
 import pandas as pd
 from pathlib import Path
 from pathlib import Path
