@@ -435,7 +435,7 @@ class NucleaireBase(BaseModel):
     nom: str = Field(..., description="Nom de la centrale nucléaire")
     latitude: float = Field(..., description="Latitude de la centrale nucléaire (degrés)")
     longitude: float = Field(..., description="Longitude de la centrale nucléaire (degrés)")
-    puissance_nominal: float = Field(..., description="Puissance nominale de la centrale nucléaire (kW)")
+    puissance_nominal: float = Field(..., description="Puissance nominale de la centrale nucléaire (MW)")
     semaine_maintenance: int = Field(..., description="Semaine de maintenance où la centrale nucléaire est à l'arrêt")
     annee_commission: Optional[int] = None
     type_generateur: Optional[str] = None

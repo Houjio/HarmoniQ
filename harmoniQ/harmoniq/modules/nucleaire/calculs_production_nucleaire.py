@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def calculate_nuclear_production(power_kw, maintenance_week):
+def calculate_nuclear_production(power_mw, maintenance_week):
     """
     Calcule la production annuelle d'une centrale nucléaire en kWh.
 
@@ -23,7 +23,7 @@ def calculate_nuclear_production(power_kw, maintenance_week):
     production_df = pd.DataFrame(index=date_range, columns=["production_kwh"])
 
     # Calculer la production horaire en kWh (constante)
-    production_df["production_kwh"] = power_kw
+    production_df["production_kwh"] = power_mw
     production_df["week"] = production_df.index.isocalendar().week
 
     # Mettre la production à zéro pendant la semaine de maintenance
@@ -57,7 +57,7 @@ def co2_emissions_nuclear(annual_nuclear_production, facteur_emission=8):
     return emissions_kg
 
 
-def cost_nuclear_powerplant(power_kw):
+def cost_nuclear_powerplant(power_mw):
     """
     Estime le coût de construction d'une centrale nucléaire au Québec.
 
@@ -71,8 +71,7 @@ def cost_nuclear_powerplant(power_kw):
     float
         Coût total estimé en dollars canadiens
     """
-    # Conversion en MW pour les calculs
-    power_mw = power_kw / 1000
+
 
     # Coûts de référence basés sur des projets récents
     cout_base_par_mw = 4_000_000  # 4M$ par MW
@@ -92,11 +91,11 @@ def cost_nuclear_powerplant(power_kw):
 # ---------------- APPEL DES FONCTIONS ----------------
 
 # Paramètres de la centrale nucléaire
-power_kw = 300 * 1000  # Puissance nominale en kW (300MW pour un réacteur SMR)
+power_mw = 300 # Puissance nominale en MW (
 maintenance_week = 20  # Semaine de maintenance
 
 # Calculer la production annuelle et hebdomadaire
-production_df = calculate_nuclear_production(power_kw, maintenance_week)
+production_df = calculate_nuclear_production(power_mw, maintenance_week)
 weekly_production = production_df.groupby("week")["production_kwh"].sum()
 
 # Calculer la production annuelle totale en kWh
@@ -104,11 +103,11 @@ annual_nuclear_production = production_df["production_kwh"].sum()
 # Déplacer tous les calculs et affichages ensemble
 annual_nuclear_production = production_df["production_kwh"].sum()
 Total_emission = co2_emissions_nuclear(annual_nuclear_production)
-cout_construction = cost_nuclear_powerplant(power_kw)
+cout_construction = cost_nuclear_powerplant(power_mw)
 
 
 # print("\n=== RÉSULTATS DE LA CENTRALE NUCLÉAIRE ===")
-# print(f"Puissance installée : {power_kw:.2f} kW")
+# print(f"Puissance installée : {power_kw:.2f} MW")
 # print(f"Production nucléaire annuelle totale : {annual_nuclear_production:.2f} kWh")
 # print(f"Total des émissions de CO2 : {Total_emission:.2f} kg CO2eq")
 # print(f"Coût de construction estimé : {cout_construction:,.2f} $")
