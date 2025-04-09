@@ -1,7 +1,7 @@
 div#main {
     padding: 1em;
     gap: 1rem;
-    height: calc(100vh - 4.5em);
+    min-height: calc(100vh - 4.5em);
     display: grid;
     grid-template-areas:
         "gestion  infra plot"

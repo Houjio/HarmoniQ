@@ -491,6 +491,8 @@ function no_selection_infra() {
 }
 
 function changeInfra() {
+    $("#lists-infras").show()
+
     let selectedId = $("#groupe-actif option:selected").val();
 
     fetch('/api/listeinfrastructures/' + selectedId)
