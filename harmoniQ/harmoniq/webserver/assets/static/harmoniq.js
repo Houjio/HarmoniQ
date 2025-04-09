@@ -296,6 +296,14 @@ function loadOpenApi() {
         .catch(error => console.error('Erreur lors du chargement du fichier OpenAPI:', error));
 }
 
+function initialiserTooltips() {
+    $(".icon-draggable").tooltip({
+        title: "Glissez et déposez sur la carte pour ajouter une infrastructure",
+        placement: "top",
+        trigger: "hover"
+    });
+}
+
 window.onload = function() {
     initialiserListeHydro();
     initialiserListeScenario();
@@ -307,6 +315,7 @@ window.onload = function() {
     modeliserLignes();
     loadMap();
     loadOpenApi();
+    initialiserTooltips();
 
 };
 
@@ -626,7 +635,7 @@ function infraModal(create_class, post_url, lat, lon) {
         const value = key === "latitude" ? lat : (key === "longitude" ? lon : "");
         let tooltip;
         if (prop.description) {
-            tooltip = `<i class="fas fa-info-circle" title="${prop.description}"></i>`;
+            tooltip = `<i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="${prop.description}"></i>`;
         } else {
             tooltip = "";
         }
@@ -675,6 +684,10 @@ function infraModal(create_class, post_url, lat, lon) {
 
     const modal = new bootstrap.Modal(document.getElementById("dataModal"));
     modal.show();
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 
     $("#form-" + create_class.toLowerCase()).submit(function(event) {
         event.preventDefault();

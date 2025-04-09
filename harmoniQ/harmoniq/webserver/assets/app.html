@@ -86,19 +86,6 @@
     </div>
 
     <div id="infrastructures" class="bg-light card">
-        <div class="mb-2" style="display: none;">
-            <h5>Sélectionnez les voltages à afficher:</h5>
-            <div class="d-flex align-items-center">
-                <select id="voltage-select" class="form-select" multiple>
-                    <option value="120">120 kV</option>
-                    <option value="161">161 kV</option>
-                    <option value="230">230 kV</option>
-                    <option value="315">315 kV</option>
-                    <option value="735">735 kV</option>
-                </select>
-                <button id="apply-filter" class="btn btn-primary ms-3">Appliquer</button>
-            </div>
-        </div>
         <div class="d-flex w-100 justify-content-space-between align-items-center my-3">
             <label style="white-space: nowrap;"><h5>Groupe infras actif: </h5></label>
             <span class="mx-1"></span>
@@ -219,11 +206,12 @@
                 <div id="map-box" style="width: 100%; height: 100%;">
                 </div>
                 <div class="map-overlay card p-2 m-4">
-                    <img src="/static/icons/barrage.png" class="icon-draggable" createClass="HydroCreate" createApi="/api/hydro" draggable="true" />
-                    <img src="/static/icons/eolienne.png" class="icon-draggable" createClass="EolienneParcCreate" createApi="/api/eolienneparc" draggable="true" />
-                    <img src="/static/icons/solaire.png" class="icon-draggable" createClass="SolaireCreate" createApi="/api/solaire" draggable="true" />
-                    <img src="/static/icons/thermique.png" class="icon-draggable" createClass="ThermiqueCreate" createApi="/api/thermique" draggable="true" />
-                    <img src="/static/icons/nucelaire.png" class="icon-draggable" createClass="NucleaireCreate" createApi="/api/nucleaire" draggable="true" />
+                    <p>Ajouter infra fictive: </p>
+                    <img src="/static/icons/barrage.png" infraNom="Barrage Hydro-Électrique" class="icon-draggable" createClass="HydroCreate" createApi="/api/hydro" draggable="true" />
+                    <img src="/static/icons/eolienne.png" infraNom="Parc Éolien" class="icon-draggable" createClass="EolienneParcCreate" createApi="/api/eolienneparc" draggable="true" />
+                    <img src="/static/icons/solaire.png" infraNom="Parc Solaire"  class="icon-draggable" createClass="SolaireCreate" createApi="/api/solaire" draggable="true" />
+                    <img src="/static/icons/thermique.png" infraNom="Parc Thermique" class="icon-draggable" createClass="ThermiqueCreate" createApi="/api/thermique" draggable="true" />
+                    <img src="/static/icons/nucelaire.png" infraNom="Parc Nucléaire" class="icon-draggable" createClass="NucleaireCreate" createApi="/api/nucleaire" draggable="true" />
                 </div>
             </div>
             <div class="tab-pane show h-100" id="sankey" role="tabpanel" aria-labelledby="sankey-tab">
