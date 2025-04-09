@@ -842,16 +842,16 @@ function new_infra_dropped(data, create_path, lat, lon) {
     const newElement = createListElement({ nom: data.nom, id: data.id, type: type });
     list.innerHTML += newElement;
 
-        // Définir l'icône de base sur grise (non sélectionnée)
+    // Définir l'icône de base sur noir (sélectionné)
     const markerKey = `${type}-${data.id}`;
     const marker = markers[markerKey];
     if (marker) {
         marker.setIcon(map_icons[`${type}gris`]); // Icône grise pour non sélectionné
     }
-
     // Mettre à jour les icônes après l'ajout
-    mettreAJourIconesSelectionnees();
     infraUserAction();
+    mettreAJourIconesSelectionnees();
+
 
 }
 
@@ -1178,11 +1178,9 @@ function mettreAJourIconesSelectionnees() {
                 const [type, id] = markerKey.split('-'); // Extraire le type et l'ID de l'infrastructure
 
                 if (selectedIds.includes(id)) {
-                    // Changer l'icône en grise pour les infrastructures sélectionnées
-                    marker.setIcon(map_icons[type]);
+                    marker.setIcon(map_icons[type]); // Icône noire pour sélectionné
                 } else {
-                    // Restaurer l'icône d'origine pour les infrastructures non sélectionnées
-                    marker.setIcon(map_icons[`${type}gris`]); 
+                    marker.setIcon(map_icons[`${type}gris`]); // Icône grise pour non sélectionné
                 }
             });
 
