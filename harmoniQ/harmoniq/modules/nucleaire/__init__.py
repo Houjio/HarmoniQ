@@ -15,23 +15,29 @@ class Nucleaire(Infrastructure):
 
         super().__init__(donnees)
         self.donnees:NucleaireBase = donnees
+        self.production: pd.DataFrame = None
 
     def charger_scenario(self, scenario: ScenarioBase):
         self.scenario: ScenarioBase = scenario
+        self.production = None
 
     @necessite_scenario
     def calculer_production(self) -> pd.DataFrame:
+        if self.production is not None:
+            return self.production
+
         nom = self.donnees.nom
         logger.info(f"Calcul de la production pour {nom}")
 
 
-        df = calculate_nuclear_production(
+        self.production = calculate_nuclear_production(
             power_mw=self.donnees.puissance_nominal,
             maintenance_week=self.donnees.semaine_maintenance,
             date_start=self.scenario.date_de_debut,
             date_end=self.scenario.date_de_fin,
         )
-        return df
+        return self.production
+
 
 
 if __name__ == "__main__":
