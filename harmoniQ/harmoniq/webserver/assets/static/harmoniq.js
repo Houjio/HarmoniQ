@@ -553,21 +553,51 @@ function charger_demande(scenario_id, mrc_id) {
     //             console.error('Erreur lors du chargement de la demande:', error);
     //         }
     //     });
+//SANKEY START
+fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
+    .then(data => {
+        console.log('Demande Sankey chargée avec succès');
+        demande = data;
 
-    fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
-        .then(data => {
-            console.log('Demande Sankey chargée avec succès');
-            demande = data;
-        })
-        .catch(error => {
-            if (error.message.includes('404')) {
-                console.error('Demande non trouvée:', error);
-            } else {
-                console.error('Erreur lors du chargement de la demande Sankey:', error);
+        // Generate Sankey diagram
+        const sankeyData = [{
+            type: "sankey",
+            orientation: "h",
+            node: {
+                pad: 15,
+                thickness: 20,
+                line: {
+                    color: "black",
+                    width: 0.5
+                },
+                label: demande.nodes.map(node => node.label), // Dynamically set labels
+                color: demande.nodes.map(node => node.color)  // Dynamically set colors
+            },
+            link: {
+                source: demande.links.map(link => link.source), // Dynamically set sources
+                target: demande.links.map(link => link.target), // Dynamically set targets
+                value: demande.links.map(link => link.value)    // Dynamically set values
             }
-        });
-}
+        }];
 
+        const layout = {
+            title: "Diagramme Sankey",
+            font: {
+                size: 12
+            }
+        };
+
+        Plotly.newPlot("sankey-plot", sankeyData, layout);
+    })
+    .catch(error => {
+        if (error.message.includes('404')) {
+            console.error('Demande non trouvée:', error);
+        } else {
+            console.error('Erreur lors du chargement de la demande Sankey:', error);
+        }
+    });
+//SANKEY END
+}
 function changeScenario() {
     let id = $("#scenario-actif").val();
     
