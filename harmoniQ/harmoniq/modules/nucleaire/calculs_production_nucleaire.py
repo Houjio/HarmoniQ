@@ -72,7 +72,6 @@ def cost_nuclear_powerplant(power_mw):
         Coût total estimé en dollars canadiens
     """
 
-
     # Coûts de référence basés sur des projets récents
     cout_base_par_mw = 4_000_000  # 4M$ par MW
 
@@ -91,7 +90,7 @@ def cost_nuclear_powerplant(power_mw):
 # ---------------- APPEL DES FONCTIONS ----------------
 
 # Paramètres de la centrale nucléaire
-power_mw = 300 # Puissance nominale en MW (
+power_mw = 300  # Puissance nominale en MW (
 maintenance_week = 20  # Semaine de maintenance
 
 # Calculer la production annuelle et hebdomadaire

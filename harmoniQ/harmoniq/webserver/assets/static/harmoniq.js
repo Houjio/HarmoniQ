@@ -296,6 +296,14 @@ function loadOpenApi() {
         .catch(error => console.error('Erreur lors du chargement du fichier OpenAPI:', error));
 }
 
+function initialiserTooltips() {
+    $(".icon-draggable").tooltip({
+        title: "Glissez et déposez sur la carte pour ajouter une infrastructure",
+        placement: "top",
+        trigger: "hover"
+    });
+}
+
 window.onload = function() {
     initialiserListeHydro();
     initialiserListeScenario();
@@ -304,21 +312,11 @@ window.onload = function() {
     initialiserListeParcSolaire();
     initialiserListeThermique();
     initialiserListeParcNucleaire();
-
+    modeliserLignes();
     loadMap();
     loadOpenApi();
+    initialiserTooltips();
 
-    document.getElementById('apply-filter').addEventListener('click', () => {
-        // Supprimer les anciennes couches de la carte
-        map.eachLayer(layer => {
-            if (layer instanceof L.CircleMarker || layer instanceof L.Polyline) {
-                map.removeLayer(layer);
-            }
-        });
-    
-        // Recharger les lignes avec les voltages sélectionnés
-        modeliserLignes();
-    });
 };
 
 
@@ -560,31 +558,49 @@ fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`
         demande = data;
 
         // Generate Sankey diagram
+        const sectorLabels = Object.values(demande.sector);
+        const energyLabels = ["Electricity", "Gaz"];
+        const allLabels = energyLabels.concat(sectorLabels);
+
+        const electricitySourceIndex = 0; // Electricité
+        const gazSourceIndex = 1;         // Gaz
+
+        const sources = [];
+        const targets = [];
+        const values = [];
+
+        for (let i = 0; i < sectorLabels.length; i++) {
+            const targetIndex = i + energyLabels.length;
+
+            // Electricity to sector
+            sources.push(electricitySourceIndex);
+            targets.push(targetIndex);
+            values.push(demande.total_electricity[i]);
+
+            // Gaz to sector
+            sources.push(gazSourceIndex);
+            targets.push(targetIndex);
+            values.push(demande.total_gaz[i]);
+            }
+
         const sankeyData = [{
             type: "sankey",
             orientation: "h",
             node: {
                 pad: 15,
                 thickness: 20,
-                line: {
-                    color: "black",
-                    width: 0.5
-                },
-                label: demande.nodes.map(node => node.label), // Dynamically set labels
-                color: demande.nodes.map(node => node.color)  // Dynamically set colors
+                label: allLabels
             },
             link: {
-                source: demande.links.map(link => link.source), // Dynamically set sources
-                target: demande.links.map(link => link.target), // Dynamically set targets
-                value: demande.links.map(link => link.value)    // Dynamically set values
+                source: sources,
+                target: targets,
+                value: values
             }
         }];
 
         const layout = {
-            title: "Diagramme Sankey",
-            font: {
-                size: 12
-            }
+            title: "Flux d'énergie vers les secteurs",
+            font: { size: 12 }
         };
 
         Plotly.newPlot("sankey-plot", sankeyData, layout);
@@ -641,6 +657,8 @@ function changeScenario() {
 }
 
 function infraModal(create_class, post_url, lat, lon) {
+    // Fonction qui lit le fichier openapi.json pour pouvoir créer des formulaires
+    // dynamiquement qui permet à un usager de créer une infrastructure
     const schema = openApiJson.components.schemas[create_class];
     const required = schema.required || [];
     const props = schema.properties;
@@ -661,13 +679,15 @@ function infraModal(create_class, post_url, lat, lon) {
     for (const [key, prop] of Object.entries(props)) {
         if (!required.includes(key)) continue;
 
-        const title = prop.title || key;
+        let title = prop.title || key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         const isLatLon = (key === "latitude" || key === "longitude");
         const inputType = (prop.type === "number" || prop.type === "integer") ? "number" : "text";
         const value = key === "latitude" ? lat : (key === "longitude" ? lon : "");
+        const suggestion = prop["suggestion"] || null;
+
         let tooltip;
         if (prop.description) {
-            tooltip = `<i class="fas fa-info-circle" title="${prop.description}"></i>`;
+            tooltip = `<i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="${prop.description}"></i>`;
         } else {
             tooltip = "";
         }
@@ -680,21 +700,33 @@ function infraModal(create_class, post_url, lat, lon) {
                 </label>
         `;
 
-        if (prop.enum) {
+        if (prop["$ref"]) {
+            let refPath = prop["$ref"].replace("#/components/schemas/", "");
+            let enumSchema = openApiJson.components.schemas[refPath];
+            if (enumSchema && enumSchema.enum) {
             modalHTML += `<select class="form-control" id="${key}" name="${key}" ${isLatLon ? "readonly disabled" : ""}>`;
-            prop.enum.forEach(val => {
-                modalHTML += `<option value="${val}">${val}</option>`;
+            enumSchema.enum.forEach(val => {
+                modalHTML += `<option value="${val}" ${suggestion === val ? "selected" : ""}>${val}</option>`;
             });
             modalHTML += `</select>`;
-        } else {
+            }
+        }
+        else if (prop.enum) {
+            modalHTML += `<select class="form-control" id="${key}" name="${key}" ${isLatLon ? "readonly disabled" : ""}>`;
+            prop.enum.forEach(val => {
+            modalHTML += `<option value="${val}" ${suggestion === val ? "selected" : ""}>${val}</option>`;
+            });
+            modalHTML += `</select>`;
+        }
+        else {
             modalHTML += `<input 
-                type="${inputType}" 
-                class="form-control" 
-                id="${key}" 
-                name="${key}" 
-                value="${value}" 
-                ${isLatLon ? "disabled" : ""} 
-                required
+            type="${inputType}" 
+            class="form-control" 
+            id="${key}" 
+            name="${key}" 
+            value="${suggestion || value}" 
+            ${isLatLon ? "readonly" : ""} 
+            required
             >`;
         }
 
@@ -716,6 +748,10 @@ function infraModal(create_class, post_url, lat, lon) {
 
     const modal = new bootstrap.Modal(document.getElementById("dataModal"));
     modal.show();
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 
     $("#form-" + create_class.toLowerCase()).submit(function(event) {
         event.preventDefault();
@@ -956,14 +992,10 @@ function modeliserLignes() {
             // Extraire les en-têtes
             const headers = lignes[0].split(',');
 
-            // Récupérer les voltages sélectionnés
-            const selectedVoltages = Array.from(document.getElementById('voltage-select').selectedOptions)
-                .map(option => parseInt(option.value));
-
             // Stocker les points pour déterminer leur rôle
             const points = {};
 
-            // Parcourir les lignes de données pour collecter les points uniquement pour les lignes sélectionnées
+            // Parcourir les lignes de données pour collecter les points uniquement pour les lignes avec un voltage de 735
             const lignesSelectionnees = lignes.slice(1).filter(line => {
                 const values = line.split(',');
                 const ligne = headers.reduce((acc, header, index) => {
@@ -971,8 +1003,8 @@ function modeliserLignes() {
                     return acc;
                 }, {});
 
-                // Filtrer les lignes selon les voltages sélectionnés
-                return selectedVoltages.includes(parseInt(ligne.voltage));
+                // Filtrer les lignes avec un voltage de 735
+                return parseInt(ligne.voltage) === 80;
             });
 
             lignesSelectionnees.forEach(line => {
@@ -1018,7 +1050,6 @@ function modeliserLignes() {
                     <b>Nom:</b> ${point.nom || 'N/A'}<br>
                     <b>Type:</b> ${point.isDepart && point.isArrivee ? 'Départ et Arrivée' : point.isDepart ? 'Départ' : 'Arrivée'}
                 `;
-                // <b>Coordonnées:</b> (${point.lat}, ${point.lon})<br>
 
                 L.circleMarker([parseFloat(point.lat), parseFloat(point.lon)], {
                     radius: 2,
