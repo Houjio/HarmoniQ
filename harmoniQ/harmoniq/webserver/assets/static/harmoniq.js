@@ -851,6 +851,8 @@ function new_infra_dropped(data, create_path, lat, lon) {
 
     // Mettre à jour les icônes après l'ajout
     mettreAJourIconesSelectionnees();
+    infraUserAction();
+
 }
 
 function nouveauScenario() {
