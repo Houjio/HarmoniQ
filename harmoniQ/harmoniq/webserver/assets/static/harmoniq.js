@@ -453,6 +453,16 @@ $("button.select-all").on('click', function(target) {
     div.find('.list-group-item').each(function() {
         this.classList.add('list-group-item-secondary');
         this.setAttribute('active', 'true');
+
+        // Mettre à jour l'icône en noir pour les infrastructures sélectionnées
+        const infraId = this.getAttribute('elementid');
+        const type = this.getAttribute('type');
+        const markerKey = `${type}-${infraId}`;
+        const marker = markers[markerKey];
+
+        if (marker) {
+            marker.setIcon(map_icons[type]); // Icône noire pour les sélectionnées
+        }
     });
 
     infraUserAction();
@@ -468,10 +478,21 @@ $("button.select-none").on('click', function(target) {
     div.find('.list-group-item').each(function() {
         this.classList.remove('list-group-item-secondary');
         this.removeAttribute('active');
+
+        // Mettre à jour l'icône en gris pour les infrastructures désélectionnées
+        const infraId = this.getAttribute('elementid');
+        const type = this.getAttribute('type');
+        const markerKey = `${type}-${infraId}`;
+        const marker = markers[markerKey];
+
+        if (marker) {
+            marker.setIcon(map_icons[`${type}gris`]); // Icône grise pour les désélectionnées
+        }
     });
 
     infraUserAction();
 });
+
 
 function deleteScenario(id) {
     fetch('/api/scenario/' + id, {
