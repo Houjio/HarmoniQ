@@ -838,16 +838,18 @@ function new_infra_dropped(data, create_path, lat, lon) {
     // Ajouter l'infrastructure à la liste HTML
     const listElement = document.getElementById(`list-parc-${type}`);
     const list = listElement.getElementsByTagName('ul')[0];
-    const newElement = `
-        <li class="list-group-item list-group-item-secondary" 
-            role="button" 
-            elementid="${data.id}" 
-            type="${type}" 
-            active="true" 
-            onclick="add_infra(this)">
-            ${data.nom}
-        </li>`;
+    const newElement = createListElement({ nom: data.nom, id: data.id, type: type });
     list.insertAdjacentHTML('beforeend', newElement); // Ajouter dynamiquement l'élément HTML
+
+
+    // Récupérer l'élément ajouté
+    const addedElement = list.querySelector(`li[elementid="${data.id}"][type="${type}"]`);
+
+    // Marquer l'élément comme sélectionné
+    if (addedElement) {
+        addedElement.classList.add('list-group-item-secondary'); // Ajouter la classe pour le style sélectionné
+        addedElement.setAttribute('active', 'true'); // Ajouter l'attribut actif
+    }
 
     // Définir l'icône de base sur noir (sélectionné)
     const markerKey = `${type}-${data.id}`;
@@ -856,8 +858,12 @@ function new_infra_dropped(data, create_path, lat, lon) {
         marker.setIcon(map_icons[type]); // Icône noire pour sélectionné
     }
 
+ 
+
     // Sauvegarder les changements
     infraUserAction();
+    createListElement();
+    mettreAJourIconesSelectionnees();
 }
 
 function nouveauScenario() {
