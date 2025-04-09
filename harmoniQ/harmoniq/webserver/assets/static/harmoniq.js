@@ -304,21 +304,10 @@ window.onload = function() {
     initialiserListeParcSolaire();
     initialiserListeThermique();
     initialiserListeParcNucleaire();
-
+    modeliserLignes();
     loadMap();
     loadOpenApi();
 
-    document.getElementById('apply-filter').addEventListener('click', () => {
-        // Supprimer les anciennes couches de la carte
-        map.eachLayer(layer => {
-            if (layer instanceof L.CircleMarker || layer instanceof L.Polyline) {
-                map.removeLayer(layer);
-            }
-        });
-    
-        // Recharger les lignes avec les voltages sélectionnés
-        modeliserLignes();
-    });
 };
 
 
@@ -926,14 +915,10 @@ function modeliserLignes() {
             // Extraire les en-têtes
             const headers = lignes[0].split(',');
 
-            // Récupérer les voltages sélectionnés
-            const selectedVoltages = Array.from(document.getElementById('voltage-select').selectedOptions)
-                .map(option => parseInt(option.value));
-
             // Stocker les points pour déterminer leur rôle
             const points = {};
 
-            // Parcourir les lignes de données pour collecter les points uniquement pour les lignes sélectionnées
+            // Parcourir les lignes de données pour collecter les points uniquement pour les lignes avec un voltage de 735
             const lignesSelectionnees = lignes.slice(1).filter(line => {
                 const values = line.split(',');
                 const ligne = headers.reduce((acc, header, index) => {
@@ -941,8 +926,8 @@ function modeliserLignes() {
                     return acc;
                 }, {});
 
-                // Filtrer les lignes selon les voltages sélectionnés
-                return selectedVoltages.includes(parseInt(ligne.voltage));
+                // Filtrer les lignes avec un voltage de 735
+                return parseInt(ligne.voltage) === 80;
             });
 
             lignesSelectionnees.forEach(line => {
@@ -988,7 +973,6 @@ function modeliserLignes() {
                     <b>Nom:</b> ${point.nom || 'N/A'}<br>
                     <b>Type:</b> ${point.isDepart && point.isArrivee ? 'Départ et Arrivée' : point.isDepart ? 'Départ' : 'Arrivée'}
                 `;
-                // <b>Coordonnées:</b> (${point.lat}, ${point.lon})<br>
 
                 L.circleMarker([parseFloat(point.lat), parseFloat(point.lon)], {
                     radius: 2,
