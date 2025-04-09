@@ -9,7 +9,7 @@ def calculate_nuclear_production(
         date_end: datetime
     ) -> pd.DataFrame:
     """
-    Calcule la production annuelle d'une centrale nucléaire en kWh.
+    Calcule la production annuelle d'une centrale nucléaire en mWh.
 
     Parameters
     ----------
