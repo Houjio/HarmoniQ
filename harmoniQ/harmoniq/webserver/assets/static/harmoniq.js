@@ -609,6 +609,8 @@ function changeScenario() {
 }
 
 function infraModal(create_class, post_url, lat, lon) {
+    // Fonction qui lit le fichier openapi.json pour pouvoir créer des formulaires
+    // dynamiquement qui permet à un usager de créer une infrastructure
     const schema = openApiJson.components.schemas[create_class];
     const required = schema.required || [];
     const props = schema.properties;
@@ -629,10 +631,12 @@ function infraModal(create_class, post_url, lat, lon) {
     for (const [key, prop] of Object.entries(props)) {
         if (!required.includes(key)) continue;
 
-        const title = prop.title || key;
+        let title = prop.title || key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         const isLatLon = (key === "latitude" || key === "longitude");
         const inputType = (prop.type === "number" || prop.type === "integer") ? "number" : "text";
         const value = key === "latitude" ? lat : (key === "longitude" ? lon : "");
+        const suggestion = prop["suggestion"] || null;
+
         let tooltip;
         if (prop.description) {
             tooltip = `<i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="${prop.description}"></i>`;
@@ -648,21 +652,33 @@ function infraModal(create_class, post_url, lat, lon) {
                 </label>
         `;
 
-        if (prop.enum) {
+        if (prop["$ref"]) {
+            let refPath = prop["$ref"].replace("#/components/schemas/", "");
+            let enumSchema = openApiJson.components.schemas[refPath];
+            if (enumSchema && enumSchema.enum) {
             modalHTML += `<select class="form-control" id="${key}" name="${key}" ${isLatLon ? "readonly disabled" : ""}>`;
-            prop.enum.forEach(val => {
-                modalHTML += `<option value="${val}">${val}</option>`;
+            enumSchema.enum.forEach(val => {
+                modalHTML += `<option value="${val}" ${suggestion === val ? "selected" : ""}>${val}</option>`;
             });
             modalHTML += `</select>`;
-        } else {
+            }
+        }
+        else if (prop.enum) {
+            modalHTML += `<select class="form-control" id="${key}" name="${key}" ${isLatLon ? "readonly disabled" : ""}>`;
+            prop.enum.forEach(val => {
+            modalHTML += `<option value="${val}" ${suggestion === val ? "selected" : ""}>${val}</option>`;
+            });
+            modalHTML += `</select>`;
+        }
+        else {
             modalHTML += `<input 
-                type="${inputType}" 
-                class="form-control" 
-                id="${key}" 
-                name="${key}" 
-                value="${value}" 
-                ${isLatLon ? "disabled" : ""} 
-                required
+            type="${inputType}" 
+            class="form-control" 
+            id="${key}" 
+            name="${key}" 
+            value="${suggestion || value}" 
+            ${isLatLon ? "readonly" : ""} 
+            required
             >`;
         }
 
