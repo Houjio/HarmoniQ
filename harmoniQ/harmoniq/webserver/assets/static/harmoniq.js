@@ -203,10 +203,16 @@ function createListElement({ nom, id, type }) {
                 src="/static/icons/info.png" 
                 alt="Info" 
                 style="width: 20px; height: 20px; cursor: pointer;" 
-                onclick="showPopup('${id}', '${type}')"
+                onclick="handleInfoClick(event, '${id}', '${type}')"
             />
         </li>
     `;
+}
+
+function handleInfoClick(event, infraId, type) {
+    event.preventDefault(); // Empêche le comportement par défaut
+    event.stopPropagation(); // Empêche la propagation de l'événement au parent
+    showPopup(infraId, type); // Affiche le popup pour l'infrastructure
 }
 
 
