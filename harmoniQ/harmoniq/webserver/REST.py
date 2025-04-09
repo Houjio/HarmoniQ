@@ -240,24 +240,24 @@ parc_eolien_router = api_routers["eolienneparc"]
 
 
 @parc_eolien_router.post("/{parc_eolien_id}/production")
-def calculer_production_parc_eolien(
+async def calculer_production_parc_eolien(
     parc_eolien_id: int, scenario_id: int, db: Session = Depends(get_db)
 ):
-    list_eolienne = engine.all_eoliennes_in_parc(db, parc_eolien_id)
-    scenario = CRUD.read_scenario_by_id(db, scenario_id)
-    if list_eolienne is None:
+    eolienne_parc_task = read_data_by_id(db, schemas.EolienneParc, parc_eolien_id)
+    scenario_task = read_data_by_id(db, schemas.Scenario, scenario_id)
+
+    eolienne_parc, scenario = await asyncio.gather(eolienne_parc_task, scenario_task)
+    if eolienne_parc is None:
         raise HTTPException(status_code=404, detail="Parc éolien not found")
 
     if scenario is None:
         raise HTTPException(status_code=404, detail="Scenario not found")
 
-    eolienne_infra = InfraParcEolienne(list_eolienne)
-    eolienne_infra.charger_scenario(scenario)
+    eolienne_infra = InfraParcEolienne(eolienne_parc)
+    await eolienne_infra.charger_scenario(scenario)
     production: pd.DataFrame = eolienne_infra.calculer_production()
 
-    json_prod = production.to_json()
-
-    return json_prod
+    return production
 
 
 # Fausses données

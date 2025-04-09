@@ -16,3 +16,6 @@ __pycache__/
 
 # Remove build files
 build/
+
+# remove the data cache
+cache/
