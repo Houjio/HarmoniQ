@@ -22,3 +22,7 @@ def production_aleatoire(scenario: ScenarioBase) -> pd.DataFrame:
     production_df = pd.DataFrame({"temps": time_range, "production": production})
 
     return production_df
+
+# def production_total(
+#     scenario: ScenarioBase,
+# )
