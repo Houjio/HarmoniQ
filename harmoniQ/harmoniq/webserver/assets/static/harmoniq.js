@@ -831,13 +831,26 @@ function infraModal(create_class, post_url, lat, lon) {
 }
 
 function new_infra_dropped(data, create_path, lat, lon) {
-    const type = create_path.split('/').pop();
+    const type = create_path.split('/').pop(); // Extraire le type d'infrastructure (ex: hydro, solaire, etc.)
+
+    // Ajouter le marqueur sur la carte
     addMarker(lat, lon, type, data);
 
+    // Ajouter l'infrastructure à la liste HTML
     const listElement = document.getElementById(`list-parc-${type}`);
     const list = listElement.getElementsByTagName('ul')[0];
-    const newElement = createListElement({ nom: data.nom, id: data.id });
+    const newElement = createListElement({ nom: data.nom, id: data.id, type: type });
     list.innerHTML += newElement;
+
+        // Définir l'icône de base sur grise (non sélectionnée)
+    const markerKey = `${type}-${data.id}`;
+    const marker = markers[markerKey];
+    if (marker) {
+        marker.setIcon(map_icons[`${type}gris`]); // Icône grise pour non sélectionné
+    }
+
+    // Mettre à jour les icônes après l'ajout
+    mettreAJourIconesSelectionnees();
 }
 
 function nouveauScenario() {
