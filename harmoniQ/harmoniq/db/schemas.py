@@ -273,16 +273,16 @@ class SolaireBase(BaseModel):
     longitude: float = Field(..., description="Longitude du parc solaire (degrés)")
     angle_panneau: int = Field(
         ...,
-        description="Angle d'inclinaison des panneaux comrpis entre 0° et 90° - 0° est un panneau parfaitement plat - 45° par défaut (degrés)",
+        description="Angle d'inclinaison des panneaux comrpis entre 0° et 90° - 0° est un panneau parfaitement plat - Choisir un angle égal à la latitude est une bonne approximation", suggestion = 45,
     )
     orientation_panneau: int = Field(
-        ..., description="Orientation des panneaux (degrés) - 180° est plein sud"
+        ..., description="Orientation des panneaux (degrés) - 180° est plein sud", suggestion=180
     )
     puissance_nominal: float = Field(
-        ..., description="Puissance nominale du parc solaire (MW)"
+        ..., description="Puissance nominale du parc solaire (MW) - Maximum de 25 MW pour un parc", suggestion=20
     )
     nombre_panneau: int = Field(
-        ..., description="Nombre de panneaux solaires dans le parc"
+        ..., description="Nombre de panneaux solaires dans le parc", suggestion=60000
     )
     annee_commission: Optional[int] = None
     panneau_type: Optional[str] = None
@@ -377,7 +377,7 @@ class ThermiqueBase(BaseModel):
     )
     semaine_maintenance: int = Field(
         ...,
-        description="Semaine de maintenance où la centrale thermique est à l'arrêt - Choisir une semaine entre 10 et 22 pour le printemps pour une période de faible consommation",
+        description="Semaine de maintenance où la centrale thermique est à l'arrêt - Choisir une semaine entre 10 et 22 pour le printemps puisqu'il s'agit d'une période de faible consommation",
         suggestion=15
     )
     annee_commission: Optional[int] = None
@@ -422,10 +422,10 @@ class NucleaireBase(BaseModel):
         ..., description="Longitude de la centrale nucléaire (degrés)"
     )
     puissance_nominal: float = Field(
-        ..., description="Puissance nominale de la centrale nucléaire (MW)"
+        ..., description="Puissance nominale de la centrale nucléaire (MW) - Chosir un multiple de 300 (1 réacteur SMR = 300 MW)", suggestion=1200
     )
     semaine_maintenance: int = Field(
-        ..., description="Semaine de maintenance où la centrale nucléaire est à l'arrêt"
+        ..., description="Semaine de maintenance où la centrale nucléaire est à l'arrêt - Choisir une semaine entre 10 et 22 pour le printemps puisqu'il s'agit d'une période de faible consommation", suggestion=20
     )
     annee_commission: Optional[int] = None
     type_generateur: Optional[str] = None
