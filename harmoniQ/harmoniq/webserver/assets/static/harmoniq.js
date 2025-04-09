@@ -432,9 +432,8 @@ function add_infra(element) {
         if (isActive) {
             // Restaurer l'icône d'origine si désélectionné
             marker.setIcon(map_icons[`${type}gris`]);
-
         } else {
-            // Changer l'icône en grise si sélectionné
+            // Changer l'icône en noire si sélectionné
             marker.setIcon(map_icons[type]);
         }
     }
@@ -839,20 +838,26 @@ function new_infra_dropped(data, create_path, lat, lon) {
     // Ajouter l'infrastructure à la liste HTML
     const listElement = document.getElementById(`list-parc-${type}`);
     const list = listElement.getElementsByTagName('ul')[0];
-    const newElement = createListElement({ nom: data.nom, id: data.id, type: type });
-    list.innerHTML += newElement;
+    const newElement = `
+        <li class="list-group-item list-group-item-secondary" 
+            role="button" 
+            elementid="${data.id}" 
+            type="${type}" 
+            active="true" 
+            onclick="add_infra(this)">
+            ${data.nom}
+        </li>`;
+    list.insertAdjacentHTML('beforeend', newElement); // Ajouter dynamiquement l'élément HTML
 
     // Définir l'icône de base sur noir (sélectionné)
     const markerKey = `${type}-${data.id}`;
     const marker = markers[markerKey];
     if (marker) {
-        marker.setIcon(map_icons[`${type}gris`]); // Icône grise pour non sélectionné
+        marker.setIcon(map_icons[type]); // Icône noire pour sélectionné
     }
-    // Mettre à jour les icônes après l'ajout
+
+    // Sauvegarder les changements
     infraUserAction();
-    mettreAJourIconesSelectionnees();
-
-
 }
 
 function nouveauScenario() {
@@ -1172,19 +1177,34 @@ function mettreAJourIconesSelectionnees() {
                 ...(data.central_nucleaire ? data.central_nucleaire.split(',') : [])
             ];
 
-            // Mettre à jour les icônes des marqueurs
+            // Mettre à jour les icônes des marqueurs et la liste
             Object.keys(markers).forEach(markerKey => {
                 const marker = markers[markerKey];
                 const [type, id] = markerKey.split('-'); // Extraire le type et l'ID de l'infrastructure
 
+                const listElement = document.querySelector(`li[elementid="${id}"][type="${type}"]`);
                 if (selectedIds.includes(id)) {
-                    marker.setIcon(map_icons[type]); // Icône noire pour sélectionné
+                    // Icône noire pour les infrastructures sélectionnées
+                    marker.setIcon(map_icons[type]);
+
+                    // Marquer comme sélectionné dans la liste
+                    if (listElement) {
+                        listElement.classList.add('list-group-item-secondary');
+                        listElement.setAttribute('active', 'true');
+                    }
                 } else {
-                    marker.setIcon(map_icons[`${type}gris`]); // Icône grise pour non sélectionné
+                    // Icône grise pour les infrastructures non sélectionnées
+                    marker.setIcon(map_icons[`${type}gris`]);
+
+                    // Marquer comme non sélectionné dans la liste
+                    if (listElement) {
+                        listElement.classList.remove('list-group-item-secondary');
+                        listElement.removeAttribute('active');
+                    }
                 }
             });
 
-            console.log("Icônes mises à jour pour les infrastructures sélectionnées.");
+            console.log("Icônes et liste mises à jour pour les infrastructures sélectionnées.");
         })
         .catch(error => console.error("Erreur lors de la mise à jour des icônes :", error));
 }
