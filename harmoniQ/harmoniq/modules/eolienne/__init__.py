@@ -37,33 +37,26 @@ class InfraParcEolienne(Infrastructure):
 
         return helper.load()
 
-    def charger_scenario(self, scenario):
+    async def charger_scenario(self, scenario):
         self.scenario: ScenarioBase = scenario
-        self.meteo: pd.DataFrame = self._charger_meteo(scenario)
+        self.meteo: pd.DataFrame = await self._charger_meteo(scenario)
 
     @necessite_scenario
     def calculer_production(self) -> pd.DataFrame:
-        # TODO: Ce code repete souvent les memes calcules, il faudrait le refactoriser
-
-        parc_data = None
-
-        keys = []
-
         nom = self.donnees.nom
-        keys.append(nom)
         logger.info(f"Calcul de la production pour {nom}")
         parc_data = get_parc_power(self.donnees, self.meteo)
-        
+
         return parc_data
 
 
 if __name__ == "__main__":
     from harmoniq.db.CRUD import read_all_eolienne_parc, read_all_scenario
+    import asyncio
     from harmoniq.db.engine import get_db
-    from datetime import datetime, timedelta
 
     db = next(get_db())
-    production_totale = pd.DataFrame() 
+    production_totale = pd.DataFrame()
     for parc in read_all_eolienne_parc(db):
         parc_id = parc.id
         print(f"Traitement du parc éolien avec l'ID: {parc_id}")
@@ -72,16 +65,16 @@ if __name__ == "__main__":
 
         scenario = read_all_scenario(db)[0]
 
-        infraEolienne.charger_scenario(scenario)
+        asyncio.run(infraEolienne.charger_scenario(scenario))
 
         production_iteration = infraEolienne.calculer_production()
         if parc_id == 1:
-            production_totale= production_iteration
+            production_totale = production_iteration
         else:
-            production_totale["puissance"]  += production_iteration["puissance"]
-    
+            production_totale["puissance"] += production_iteration["puissance"]
+
     print(read_all_eolienne_parc(db))
-    #print(f"Production totale pour tous les parcs: {production_totale["puissance"]} kW")
-    
-    prod_totale = production_totale["puissance"].sum()/1000  # Convertir en MW
-    print(f"Production totale: {prod_totale} MW") 
+    # print(f"Production totale pour tous les parcs: {production_totale["puissance"]} kW")
+
+    prod_totale = production_totale["puissance"].sum() / 1000  # Convertir en MW
+    print(f"Production totale: {prod_totale} MW")

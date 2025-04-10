@@ -4,6 +4,7 @@ from env_canada import ECHistorical
 from env_canada.ec_historical import get_historical_stations
 
 import numpy as np
+from pathlib import Path
 import pandas as pd
 from datetime import datetime, timedelta
 from typing import Optional, List
@@ -36,7 +37,11 @@ class EnergyType(Enum):
 
 
 _CURRENT_YEAR = datetime.now().year
-_REFERENCE_YEAR = 2020 # If future data is queried, 2020 is provided
+_REFERENCE_YEAR = 2020  # If future data is queried, 2020 is provided
+
+CACHE = Path(__file__).parent / "cache"
+if not CACHE.exists():
+    CACHE.mkdir(parents=True, exist_ok=True)
 
 class WeatherHelper:
     def __init__(
@@ -63,10 +68,12 @@ class WeatherHelper:
         # If the time range is after this year, set it back
         self._timeshift = None
         if self.end_time.year > _CURRENT_YEAR:
-            self._timeshift = timedelta(days=(365 * (self.end_time.year - _REFERENCE_YEAR)))
+            self._timeshift = timedelta(
+                days=(365 * (self.end_time.year - _REFERENCE_YEAR))
+            )
             self.start_time -= self._timeshift
             self.end_time -= self._timeshift
-    
+
         self._granularity = granularity
         self._nearby_stations: Optional[pd.DataFrame] = None
         self._data: Optional[pd.DataFrame] = None
@@ -87,7 +94,7 @@ class WeatherHelper:
         if self._data is None:
             raise ValueError("Data not loaded")
         return self._data
-    
+
     @property
     def _cache_key(self) -> str:
         lat = round(self.position.latitude, 4)
@@ -97,12 +104,41 @@ class WeatherHelper:
         end_str = self.end_time.strftime("%Y-%m-%d")
         return f"{lat}_{lon}_{start_str}_{end_str}_{self.granularity}_{energy_type}"
 
+    def test_cache(self) -> bool:
+        """Test if the cache file exists and is not empty"""
+        cache_file = CACHE / f"{self._cache_key}.csv"
+        if cache_file.exists():
+            logger.info(f"Cache file {cache_file} exists")
+            return True
+        return False
     
-    def load(self) -> None:
+    def load_cache(self) -> pd.DataFrame:
+        """Load the cache file"""
+        cache_file = CACHE / f"{self._cache_key}.csv"
+        return pd.read_csv(cache_file, index_col=0, parse_dates=True)
+
+    def save_cache(self, data: pd.DataFrame) -> None:
+        cache_file = CACHE / f"{self._cache_key}.csv"
+        data.to_csv(cache_file, index=True)
+        logger.info(f"Saved cache file {cache_file}")
+
+    def set_back_time(self, data: pd.DataFrame) -> pd.DataFrame:
+        if self._timeshift is not None:
+            data.index = data.index + self._timeshift
+
+        return data
+
+
+    async def load(self) -> None:
         if self._data is not None:
+            return self.set_back_time(self._data)
+
+        if self.test_cache():
+            logger.info(f"Loading data from cache")
+            self._data = self.load_cache()
             return self._data
 
-        self._nearby_stations = self._get_nearest_station()
+        self._nearby_stations = await self._get_nearest_station()
 
         valid_data = 0
         data_list = []
@@ -120,7 +156,7 @@ class WeatherHelper:
                 )
                 continue
 
-            sub_data = self._get_historical_data_range(int(station.id))
+            sub_data = await self._get_historical_data_range(int(station.id))
 
             sub_data = self._to_schema(sub_data)
 
@@ -136,7 +172,7 @@ class WeatherHelper:
             logger.info(f"Found valid data from {station.Index}")
             data_list.append(sub_data)
 
-            if valid_data >= 5:
+            if valid_data >= 3:
                 break
 
         self._data = self._interpolate_data(data_list)
@@ -149,10 +185,10 @@ class WeatherHelper:
             (self._data.index >= self.start_time) & (self._data.index <= self.end_time)
         ]
 
-        # Shift the data back to the original time range
-        if self._timeshift is not None:
-            self._data.index = self._data.index + self._timeshift
+        self.save_cache(self._data)
 
+        self._data = self.set_back_time(self._data)
+        
         return self._data
 
     @staticmethod
@@ -198,7 +234,7 @@ class WeatherHelper:
 
         return new_data
 
-    def _get_nearest_station(
+    async def _get_nearest_station(
         self,
         radius: Optional[int] = 200,
         limit: Optional[int] = 100,
@@ -213,15 +249,14 @@ class WeatherHelper:
         end_year = self.end_time.year or datetime.now().year
 
         stations = pd.DataFrame(
-            asyncio.run(
-                get_historical_stations(
+            
+            await get_historical_stations(
                     coordinates,
                     start_year=start_year,
                     end_year=end_year,
                     radius=radius,
                     limit=limit,
                 )
-            )
         ).T
 
         self._nearby_stations = stations
@@ -277,7 +312,7 @@ class WeatherHelper:
         return clean_df
 
     @staticmethod
-    def _get_historical_data(
+    async def _get_historical_data(
         station_id: int,
         granularity: Granularity,
         year: Optional[int] = None,
@@ -309,10 +344,10 @@ class WeatherHelper:
         else:
             raise ValueError("Invalid granularity")
 
-        asyncio.run(historical.update())
+        await historical.update()
         return pd.read_csv(historical.station_data)
 
-    def _get_historical_data_range(
+    async def _get_historical_data_range(
         self,
         station_id: int,
     ) -> pd.DataFrame:
@@ -329,7 +364,7 @@ class WeatherHelper:
 
         data = pd.DataFrame()
         for date in date_range:
-            data_instance = self._get_historical_data(
+            data_instance = await self._get_historical_data(
                 station_id, self._granularity, year=date.year, month=date.month
             )
 
@@ -337,22 +372,22 @@ class WeatherHelper:
 
         return data
 
-    def _get_historical_data_hourly(
+    async def _get_historical_data_hourly(
         self,
         station_id: int,
         year: int,
         month: int,
     ) -> pd.DataFrame:
-        return self._get_historical_data(
+        return await self._get_historical_data(
             station_id, granularity=1, year=year, month=month
         )
 
-    def _get_historical_data_daily(
+    async def _get_historical_data_daily(
         self,
         station_id: int,
         year: int,
     ) -> pd.DataFrame:
-        return self._get_historical_data(station_id, timeframe=2, year=year)
+        return await self._get_historical_data(station_id, timeframe=2, year=year)
 
 
 if __name__ == "__main__":
@@ -364,4 +399,4 @@ if __name__ == "__main__":
     weather = WeatherHelper(
         pos, True, start_time, end_time, EnergyType.EOLIEN, granularity
     )
-    df = weather.load()
+    df = asyncio.run(weather.load())

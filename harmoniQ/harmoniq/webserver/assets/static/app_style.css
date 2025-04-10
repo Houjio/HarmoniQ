@@ -1,7 +1,7 @@
 div#main {
     padding: 1em;
     gap: 1rem;
-    height: calc(100vh - 4.5em);
+    min-height: calc(100vh - 4.5em);
     display: grid;
     grid-template-areas:
         "gestion  infra plot"
@@ -66,7 +66,15 @@ div.map-overlay {
     right: 0; 
     /* Hacky since the map is usually on the right (if not uh-oh */
     box-shadow: 0 0 8px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     z-index: 1000;
+  }
+
+  div.map-overlay p {
+    margin: 0 0.25em;
   }
   
   div.map-overlay img.icon-draggable {

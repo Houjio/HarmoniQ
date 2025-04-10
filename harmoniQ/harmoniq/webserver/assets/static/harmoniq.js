@@ -1,6 +1,7 @@
 let infraTimeout = null;
 let scenarioFetchController = null;
 var openApiJson = null;
+const markers = {}; // Objet pour stocker les marqueurs par ID d'infrastructure
 
 const map_icons = {
     eolienneparc: L.icon({
@@ -25,6 +26,32 @@ const map_icons = {
     }),
     nucleaire: L.icon({
         iconUrl: '/static/icons/nucelaire.png',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+    }),
+
+    eolienneparcgris: L.icon({
+        iconUrl: '/static/icons/eolienne_gris.png',
+        iconSize: [30, 30],
+        iconAnchor: [20, 20]
+    }),
+    solairegris: L.icon({
+        iconUrl: '/static/icons/solaire_gris.png',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+    }),
+    thermiquegris: L.icon({
+        iconUrl: '/static/icons/thermique_gris.png',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+    }),
+    hydrogris: L.icon({
+        iconUrl: '/static/icons/barrage_gris.png',
+        iconSize: [50, 50],
+        iconAnchor: [20, 20]
+    }),
+    nucleairegris: L.icon({
+        iconUrl: '/static/icons/nucelaire_gris.png',
         iconSize: [40, 40],
         iconAnchor: [20, 20]
     })
@@ -143,6 +170,11 @@ function addMarker(lat, lon, type, data) {
             Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
             Type d'intrant: ${data.type_intrant || 'N/A'}
         `;
+    } else if (type === 'nucleaire') { // Ajout pour la catégorie nucléaire
+        popupContent += `
+            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
+            Type d'intrant: ${data.type_intrant || 'N/A'}
+        `;
     }
 
     // Ajouter le marqueur à la carte avec le popup
@@ -153,14 +185,47 @@ function addMarker(lat, lon, type, data) {
     marker.on('click', function () {
         this.openPopup();
     });
+    // Stocker le marqueur dans l'objet global
+    const markerKey = `${type}-${data.id}`;
+    markers[markerKey] = marker;
 }
 
-function createListElement({ nom, id }) {
+function createListElement({ nom, id, type }) {
     return `
-        <li class="list-group-item list-group-item-action" role="button" elementid=${id} onclick="add_infra(this)">
-            ${nom}
+        <li class="list-group-item d-flex justify-content-between align-items-center" 
+            role="button" 
+            elementid="${id}" 
+            type="${type}" 
+            style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #ddd; margin-bottom: 5px; border-radius: 5px;"
+            onclick="add_infra(this)">
+            <span>${nom}</span>
+            <img 
+                src="/static/icons/info.png" 
+                alt="Info" 
+                style="width: 20px; height: 20px; cursor: pointer;" 
+                onclick="handleInfoClick(event, '${id}', '${type}')"
+            />
         </li>
     `;
+}
+
+function handleInfoClick(event, infraId, type) {
+    event.preventDefault(); // Empêche le comportement par défaut
+    event.stopPropagation(); // Empêche la propagation de l'événement au parent
+    showPopup(infraId, type); // Affiche le popup pour l'infrastructure
+}
+
+
+function showPopup(infraId, type) {
+    const markerKey = `${type}-${infraId}`; // Générer la clé unique
+    const marker = markers[markerKey]; // Récupérer le marqueur correspondant
+
+    if (marker) {
+        map.setView(marker.getLatLng(), 8); // Centrer la carte sur le marqueur
+        marker.openPopup(); // Ouvrir le popup du marqueur
+    } else {
+        console.error(`Aucun marqueur trouvé pour l'infrastructure avec la clé ${markerKey}`);
+    }
 }
 
 function initialiserListeParc(type, elementId) {
@@ -174,11 +239,11 @@ function initialiserListeParc(type, elementId) {
         .then(data => {
             console.log(`Liste des ${type}:`, data);
             data.forEach(parc => {
-                listeElement.innerHTML += createListElement({ nom: parc.nom, id: parc.id });
+                listeElement.innerHTML += createListElement({ nom: parc.nom, id: parc.id, type: type });
                 addMarker(parc.latitude, parc.longitude, type, parc);
-        });
-    })
-    .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
+            });
+        })
+        .catch(error => console.error(`Erreur lors du chargement des parcs ${type}:`, error));
 }
 
 function initialiserListeHydro() {
@@ -269,6 +334,14 @@ function loadOpenApi() {
         .catch(error => console.error('Erreur lors du chargement du fichier OpenAPI:', error));
 }
 
+function initialiserTooltips() {
+    $(".icon-draggable").tooltip({
+        title: "Glissez et déposez sur la carte pour ajouter une infrastructure",
+        placement: "top",
+        trigger: "hover"
+    });
+}
+
 window.onload = function() {
     initialiserListeHydro();
     initialiserListeScenario();
@@ -277,22 +350,13 @@ window.onload = function() {
     initialiserListeParcSolaire();
     initialiserListeThermique();
     initialiserListeParcNucleaire();
-
+    modeliserLignes();
     loadMap();
     loadOpenApi();
+    initialiserTooltips();
 
-    document.getElementById('apply-filter').addEventListener('click', () => {
-        // Supprimer les anciennes couches de la carte
-        map.eachLayer(layer => {
-            if (layer instanceof L.CircleMarker || layer instanceof L.Polyline) {
-                map.removeLayer(layer);
-            }
-        });
-    
-        // Recharger les lignes avec les voltages sélectionnés
-        modeliserLignes();
-    });
 };
+
 
 function infraUserAction() {
     if (infraTimeout) {
@@ -347,20 +411,40 @@ function lancer_simulation() {
 
 
 function add_infra(element) {
-    // Fail if no group is selected
+    // Vérifier si un groupe est sélectionné
     if ($('#groupe-actif').val() === '' || $('#groupe-actif').val() === null) {
         alert('Veuillez sélectionner un groupe d\'infrastructures');
         return;
     }
 
+    // Basculer l'état de sélection de l'infrastructure
     element.classList.toggle('list-group-item-secondary');
-    if (element.getAttribute('active') === 'true') {
+    const isActive = element.getAttribute('active') === 'true';
+
+    if (isActive) {
         element.removeAttribute('active');
     } else {
         element.setAttribute('active', 'true');
     }
 
+    // Mettre à jour l'icône sur la carte
+    const infraId = element.getAttribute('elementid');
+    const type = element.getAttribute('type'); // Assurez-vous que le type est défini dans l'attribut HTML
 
+    const markerKey = `${type}-${infraId}`;
+    const marker = markers[markerKey];
+
+    if (marker) {
+        if (isActive) {
+            // Restaurer l'icône d'origine si désélectionné
+            marker.setIcon(map_icons[`${type}gris`]);
+        } else {
+            // Changer l'icône en noire si sélectionné
+            marker.setIcon(map_icons[type]);
+        }
+    }
+
+    // Sauvegarder les changements
     infraUserAction();
 }
 
@@ -374,6 +458,16 @@ $("button.select-all").on('click', function(target) {
     div.find('.list-group-item').each(function() {
         this.classList.add('list-group-item-secondary');
         this.setAttribute('active', 'true');
+
+        // Mettre à jour l'icône en noir pour les infrastructures sélectionnées
+        const infraId = this.getAttribute('elementid');
+        const type = this.getAttribute('type');
+        const markerKey = `${type}-${infraId}`;
+        const marker = markers[markerKey];
+
+        if (marker) {
+            marker.setIcon(map_icons[type]); // Icône noire pour les sélectionnées
+        }
     });
 
     infraUserAction();
@@ -389,10 +483,21 @@ $("button.select-none").on('click', function(target) {
     div.find('.list-group-item').each(function() {
         this.classList.remove('list-group-item-secondary');
         this.removeAttribute('active');
+
+        // Mettre à jour l'icône en gris pour les infrastructures désélectionnées
+        const infraId = this.getAttribute('elementid');
+        const type = this.getAttribute('type');
+        const markerKey = `${type}-${infraId}`;
+        const marker = markers[markerKey];
+
+        if (marker) {
+            marker.setIcon(map_icons[`${type}gris`]); // Icône grise pour les désélectionnées
+        }
     });
 
     infraUserAction();
 });
+
 
 function deleteScenario(id) {
     fetch('/api/scenario/' + id, {
@@ -465,6 +570,8 @@ function no_selection_infra() {
 }
 
 function changeInfra() {
+    $("#lists-infras").show();
+
     let selectedId = $("#groupe-actif option:selected").val();
 
     fetch('/api/listeinfrastructures/' + selectedId)
@@ -483,12 +590,28 @@ function changeInfra() {
             categories.forEach(({ elementId, activeIds }) => {
                 const elements = document.getElementById(elementId).getElementsByTagName("li");
                 Array.from(elements).forEach(element => {
-                    if (activeIds.includes(element.getAttribute('elementid'))) {
+                    const infraId = element.getAttribute('elementid');
+                    const type = element.getAttribute('type');
+                    const markerKey = `${type}-${infraId}`;
+                    const marker = markers[markerKey];
+
+                    if (activeIds.includes(infraId)) {
                         element.classList.add('list-group-item-secondary');
                         element.setAttribute('active', 'true');
+
+                        // Mettre à jour l'icône en grise
+                        if (marker) {
+                            marker.setIcon(map_icons[type]);
+                        }
                     } else {
                         element.classList.remove('list-group-item-secondary');
                         element.removeAttribute('active');
+
+                        // Restaurer l'icône d'origine
+                        if (marker) {
+                            marker.setIcon(map_icons[`${type}gris`]);
+
+                        }
                     }
                 });
             });
@@ -513,20 +636,81 @@ function charger_demande(scenario_id, mrc_id) {
     demandeFetchController = new AbortController();
     const signal = demandeFetchController.signal;
 
-    fetchData(`/api/demande/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', null, signal)
-        .then(data => {
-            console.log('Demande chargée avec succès');
-            demande = data;
-        })
-        .catch(error => {
-            if (error.message.includes('404')) {
-                console.error('Demande non trouvée:', error);
-            } else {
-                console.error('Erreur lors du chargement de la demande:', error);
-            }
-        });
-}
+    // fetchData(`/api/demande/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', null, signal)
+    //     .then(data => {
+    //         console.log('Demande chargée avec succès');
+    //         demande = data;
+    //     })
+    //     .catch(error => {
+    //         if (error.message.includes('404')) {
+    //             console.error('Demande non trouvée:', error);
+    //         } else {
+    //             console.error('Erreur lors du chargement de la demande:', error);
+    //         }
+    //     });
+//SANKEY START
+fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
+    .then(data => {
+        console.log('Demande Sankey chargée avec succès');
+        demande = data;
 
+        // Generate Sankey diagram
+        const sectorLabels = Object.values(demande.sector);
+        const energyLabels = ["Electricity", "Gaz"];
+        const allLabels = energyLabels.concat(sectorLabels);
+
+        const electricitySourceIndex = 0; // Electricité
+        const gazSourceIndex = 1;         // Gaz
+
+        const sources = [];
+        const targets = [];
+        const values = [];
+
+        for (let i = 0; i < sectorLabels.length; i++) {
+            const targetIndex = i + energyLabels.length;
+
+            // Electricity to sector
+            sources.push(electricitySourceIndex);
+            targets.push(targetIndex);
+            values.push(demande.total_electricity[i]);
+
+            // Gaz to sector
+            sources.push(gazSourceIndex);
+            targets.push(targetIndex);
+            values.push(demande.total_gaz[i]);
+            }
+
+        const sankeyData = [{
+            type: "sankey",
+            orientation: "h",
+            node: {
+                pad: 15,
+                thickness: 20,
+                label: allLabels
+            },
+            link: {
+                source: sources,
+                target: targets,
+                value: values
+            }
+        }];
+
+        const layout = {
+            title: "Flux d'énergie vers les secteurs",
+            font: { size: 12 }
+        };
+
+        Plotly.newPlot("sankey-plot", sankeyData, layout);
+    })
+    .catch(error => {
+        if (error.message.includes('404')) {
+            console.error('Demande non trouvée:', error);
+        } else {
+            console.error('Erreur lors du chargement de la demande Sankey:', error);
+        }
+    });
+//SANKEY END
+}
 function changeScenario() {
     let id = $("#scenario-actif").val();
     
@@ -570,6 +754,8 @@ function changeScenario() {
 }
 
 function infraModal(create_class, post_url, lat, lon) {
+    // Fonction qui lit le fichier openapi.json pour pouvoir créer des formulaires
+    // dynamiquement qui permet à un usager de créer une infrastructure
     const schema = openApiJson.components.schemas[create_class];
     const required = schema.required || [];
     const props = schema.properties;
@@ -590,13 +776,15 @@ function infraModal(create_class, post_url, lat, lon) {
     for (const [key, prop] of Object.entries(props)) {
         if (!required.includes(key)) continue;
 
-        const title = prop.title || key;
+        let title = prop.title || key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         const isLatLon = (key === "latitude" || key === "longitude");
         const inputType = (prop.type === "number" || prop.type === "integer") ? "number" : "text";
         const value = key === "latitude" ? lat : (key === "longitude" ? lon : "");
+        const suggestion = prop["suggestion"] || null;
+
         let tooltip;
         if (prop.description) {
-            tooltip = `<i class="fas fa-info-circle" title="${prop.description}"></i>`;
+            tooltip = `<i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="${prop.description}"></i>`;
         } else {
             tooltip = "";
         }
@@ -609,21 +797,33 @@ function infraModal(create_class, post_url, lat, lon) {
                 </label>
         `;
 
-        if (prop.enum) {
+        if (prop["$ref"]) {
+            let refPath = prop["$ref"].replace("#/components/schemas/", "");
+            let enumSchema = openApiJson.components.schemas[refPath];
+            if (enumSchema && enumSchema.enum) {
             modalHTML += `<select class="form-control" id="${key}" name="${key}" ${isLatLon ? "readonly disabled" : ""}>`;
-            prop.enum.forEach(val => {
-                modalHTML += `<option value="${val}">${val}</option>`;
+            enumSchema.enum.forEach(val => {
+                modalHTML += `<option value="${val}" ${suggestion === val ? "selected" : ""}>${val}</option>`;
             });
             modalHTML += `</select>`;
-        } else {
+            }
+        }
+        else if (prop.enum) {
+            modalHTML += `<select class="form-control" id="${key}" name="${key}" ${isLatLon ? "readonly disabled" : ""}>`;
+            prop.enum.forEach(val => {
+            modalHTML += `<option value="${val}" ${suggestion === val ? "selected" : ""}>${val}</option>`;
+            });
+            modalHTML += `</select>`;
+        }
+        else {
             modalHTML += `<input 
-                type="${inputType}" 
-                class="form-control" 
-                id="${key}" 
-                name="${key}" 
-                value="${value}" 
-                ${isLatLon ? "disabled" : ""} 
-                required
+            type="${inputType}" 
+            class="form-control" 
+            id="${key}" 
+            name="${key}" 
+            value="${suggestion || value}" 
+            ${isLatLon ? "readonly" : ""} 
+            required
             >`;
         }
 
@@ -645,6 +845,10 @@ function infraModal(create_class, post_url, lat, lon) {
 
     const modal = new bootstrap.Modal(document.getElementById("dataModal"));
     modal.show();
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 
     $("#form-" + create_class.toLowerCase()).submit(function(event) {
         event.preventDefault();
@@ -680,13 +884,40 @@ function infraModal(create_class, post_url, lat, lon) {
 }
 
 function new_infra_dropped(data, create_path, lat, lon) {
-    const type = create_path.split('/').pop();
+    const type = create_path.split('/').pop(); // Extraire le type d'infrastructure (ex: hydro, solaire, etc.)
+
+    // Ajouter le marqueur sur la carte
     addMarker(lat, lon, type, data);
 
+    // Ajouter l'infrastructure à la liste HTML
     const listElement = document.getElementById(`list-parc-${type}`);
     const list = listElement.getElementsByTagName('ul')[0];
-    const newElement = createListElement({ nom: data.nom, id: data.id });
-    list.innerHTML += newElement;
+    const newElement = createListElement({ nom: data.nom, id: data.id, type: type });
+    list.insertAdjacentHTML('beforeend', newElement); // Ajouter dynamiquement l'élément HTML
+
+
+    // Récupérer l'élément ajouté
+    const addedElement = list.querySelector(`li[elementid="${data.id}"][type="${type}"]`);
+
+    // Marquer l'élément comme sélectionné
+    if (addedElement) {
+        addedElement.classList.add('list-group-item-secondary'); // Ajouter la classe pour le style sélectionné
+        addedElement.setAttribute('active', 'true'); // Ajouter l'attribut actif
+    }
+
+    // Définir l'icône de base sur noir (sélectionné)
+    const markerKey = `${type}-${data.id}`;
+    const marker = markers[markerKey];
+    if (marker) {
+        marker.setIcon(map_icons[type]); // Icône noire pour sélectionné
+    }
+
+ 
+
+    // Sauvegarder les changements
+    infraUserAction();
+    createListElement();
+    mettreAJourIconesSelectionnees();
 }
 
 function nouveauScenario() {
@@ -885,14 +1116,10 @@ function modeliserLignes() {
             // Extraire les en-têtes
             const headers = lignes[0].split(',');
 
-            // Récupérer les voltages sélectionnés
-            const selectedVoltages = Array.from(document.getElementById('voltage-select').selectedOptions)
-                .map(option => parseInt(option.value));
-
             // Stocker les points pour déterminer leur rôle
             const points = {};
 
-            // Parcourir les lignes de données pour collecter les points uniquement pour les lignes sélectionnées
+            // Parcourir les lignes de données pour collecter les points uniquement pour les lignes avec un voltage de 735
             const lignesSelectionnees = lignes.slice(1).filter(line => {
                 const values = line.split(',');
                 const ligne = headers.reduce((acc, header, index) => {
@@ -900,8 +1127,8 @@ function modeliserLignes() {
                     return acc;
                 }, {});
 
-                // Filtrer les lignes selon les voltages sélectionnés
-                return selectedVoltages.includes(parseInt(ligne.voltage));
+                // Filtrer les lignes avec un voltage de 735
+                return parseInt(ligne.voltage) === 80;
             });
 
             lignesSelectionnees.forEach(line => {
@@ -947,7 +1174,6 @@ function modeliserLignes() {
                     <b>Nom:</b> ${point.nom || 'N/A'}<br>
                     <b>Type:</b> ${point.isDepart && point.isArrivee ? 'Départ et Arrivée' : point.isDepart ? 'Départ' : 'Arrivée'}
                 `;
-                // <b>Coordonnées:</b> (${point.lat}, ${point.lon})<br>
 
                 L.circleMarker([parseFloat(point.lat), parseFloat(point.lon)], {
                     radius: 2,
@@ -989,4 +1215,97 @@ function modeliserLignes() {
             });
         })
         .catch(error => console.error('Erreur lors du chargement des lignes électriques:', error));
+}
+
+function mettreAJourIconesSelectionnees() {
+    const groupeActifId = $("#groupe-actif").val();
+
+    if (!groupeActifId) {
+        console.error("Aucun groupe d'infrastructures sélectionné.");
+        return;
+    }
+
+    // Récupérer les infrastructures sélectionnées pour le groupe actif
+    fetch(`/api/listeinfrastructures/${groupeActifId}`)
+        .then(response => response.json())
+        .then(data => {
+            const selectedIds = [
+                ...(data.parc_eoliens ? data.parc_eoliens.split(',') : []),
+                ...(data.parc_solaires ? data.parc_solaires.split(',') : []),
+                ...(data.central_hydroelectriques ? data.central_hydroelectriques.split(',') : []),
+                ...(data.central_thermique ? data.central_thermique.split(',') : []),
+                ...(data.central_nucleaire ? data.central_nucleaire.split(',') : [])
+            ];
+
+            // Mettre à jour les icônes des marqueurs et la liste
+            Object.keys(markers).forEach(markerKey => {
+                const marker = markers[markerKey];
+                const [type, id] = markerKey.split('-'); // Extraire le type et l'ID de l'infrastructure
+
+                const listElement = document.querySelector(`li[elementid="${id}"][type="${type}"]`);
+                if (selectedIds.includes(id)) {
+                    // Icône noire pour les infrastructures sélectionnées
+                    marker.setIcon(map_icons[type]);
+
+                    // Marquer comme sélectionné dans la liste
+                    if (listElement) {
+                        listElement.classList.add('list-group-item-secondary');
+                        listElement.setAttribute('active', 'true');
+                    }
+                } else {
+                    // Icône grise pour les infrastructures non sélectionnées
+                    marker.setIcon(map_icons[`${type}gris`]);
+
+                    // Marquer comme non sélectionné dans la liste
+                    if (listElement) {
+                        listElement.classList.remove('list-group-item-secondary');
+                        listElement.removeAttribute('active');
+                    }
+                }
+            });
+
+            console.log("Icônes et liste mises à jour pour les infrastructures sélectionnées.");
+        })
+        .catch(error => console.error("Erreur lors de la mise à jour des icônes :", error));
+}
+
+function changeInfra() {
+    $("#lists-infras").show();
+
+    let selectedId = $("#groupe-actif option:selected").val();
+
+    fetch('/api/listeinfrastructures/' + selectedId)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Groupe d\'infrastructures actif:', data);
+
+            const categories = [
+                { elementId: "list-parc-eolienneparc", activeIds: data.parc_eoliens ? data.parc_eoliens.split(',') : [] },
+                { elementId: "list-parc-solaire", activeIds: data.parc_solaires ? data.parc_solaires.split(',') : [] },
+                { elementId: "list-parc-thermique", activeIds: data.central_thermique ? data.central_thermique.split(',') : [] },
+                { elementId: "list-parc-nucleaire", activeIds: data.central_nucleaire ? data.central_nucleaire.split(',') : [] },
+                { elementId: "list-parc-hydro", activeIds: data.central_hydroelectriques ? data.central_hydroelectriques.split(',') : [] }
+            ];
+
+            categories.forEach(({ elementId, activeIds }) => {
+                const elements = document.getElementById(elementId).getElementsByTagName("li");
+                Array.from(elements).forEach(element => {
+                    if (activeIds.includes(element.getAttribute('elementid'))) {
+                        element.classList.add('list-group-item-secondary');
+                        element.setAttribute('active', 'true');
+                    } else {
+                        element.classList.remove('list-group-item-secondary');
+                        element.removeAttribute('active');
+                    }
+                });
+            });
+
+            $("#active-groupe-title").text(data.nom);
+            $("#active-groupe-title").removeClass('text-muted');
+            unblock_run();
+
+            // Mettre à jour les icônes sur la carte
+            mettreAJourIconesSelectionnees();
+        })
+        .catch(error => console.error('Erreur lors du chargement du groupe d\'infrastructures:', error));
 }
