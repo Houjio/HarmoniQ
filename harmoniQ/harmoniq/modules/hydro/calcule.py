@@ -198,7 +198,7 @@ def get_run_of_river_dam_power(barrage):
         hp.dataframe_output["power_MW"] = (
             hp.dataframe_output["power_kW"] * (nb_turbines - nb_turb_maintenance)
         ) / 1000
-
+        barrage.production = hp.dataframe_output["power_MW"]
         return hp.dataframe_output["power_MW"]
 
 
