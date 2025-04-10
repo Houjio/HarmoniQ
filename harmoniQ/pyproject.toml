@@ -15,6 +15,7 @@ authors = [
 dependencies = [
     # Général
     "numpy==1.26.4",
+    "urllib3==1.26.6",
     "pandas",
     "pandera",
     "matplotlib",
@@ -36,7 +37,11 @@ dependencies = [
     "nrel-pysam",
     "windpowerlib",
     "geopandas",
-    "env-canada"
+    "env-canada",
+    "pypsa",
+    "pypsa[hdf5]",
+    "pyarrow",
+    "fastparquet"
 ]
 
 [project.scripts]

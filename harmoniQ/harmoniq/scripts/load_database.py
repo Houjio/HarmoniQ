@@ -61,8 +61,10 @@ def upload_db():
     print("Compression de la base de données...")
     with zipfile.ZipFile(DB_PATH, "w") as zip_ref:
         zip_ref.write(LOCAL_DB_DIR / LOCAL_UNZIPPED_DB_NAME, LOCAL_DB_NAME)
-    
-    print("Compression terminée, téléversement de la base de données... (cela peut prendre du temps)")
+
+    print(
+        "Compression terminée, téléversement de la base de données... (cela peut prendre du temps)"
+    )
     ctx = get_sharepoint_user()
     folder = get_sharepoint_folder(ctx)
     with open(DB_PATH, "rb") as local_file:

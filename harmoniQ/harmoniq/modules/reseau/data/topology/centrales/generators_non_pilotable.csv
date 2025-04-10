@@ -1,0 +1,5 @@
+name,bus,type,p_nom,p_nom_extendable,p_nom_min,carrier,marginal_cost
+Beauharnois,BEA,non_pilotable,1912,False,0,hydro_fil,0.1
+Carillon,MTL,non_pilotable,753,False,0,hydro_fil,0.1
+GaspesieEolien,GAT,non_pilotable,160,False,0,eolien,0.1
+MontergieSolaire,MTL,non_pilotable,100,False,0,solaire,0.1

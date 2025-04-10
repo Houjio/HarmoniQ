@@ -1,0 +1,562 @@
+node_name,used_as_start,used_as_end,latitude,longitude
+Abitibi,True,False,48.7177241,-77.9142732
+Abitibi Consolidated Alma,False,True,,
+Abitibi Consolidated Amos,True,True,,
+Abitibi Consolidated KÃƒÂ©nogami,True,True,,
+Achigan,True,True,45.8047978,-71.1489039
+Acton,True,True,45.6018427,-72.5232917
+Adamsville,False,True,45.2801055,-72.7853418
+AdÃƒÂ©lard-Godbout,True,True,,
+Alain-Grandbois,True,True,45.536315144898275,-73.66772176508078
+Albanel,True,True,48.883683,-72.442474
+Alcan Usine Shawinigan,False,True,,
+Alcoa,True,True,49.2553229,-68.1495681106384
+Alcoa-Aluminierie de Deschambault SENC,True,True,,
+Alma,True,True,48.548887,-71.651459
+Almaville,False,True,46.5306903,-72.75655589911258
+Aluminerie Alouette,True,False,50.16014375,-66.44030932883572
+Aluminerie-de-BÃƒÂ©cancour,False,True,,
+AluminiÃƒÂ¨re Grande-Baie Alcan,True,True,,
+Amos,True,True,48.5718519,-78.1160856
+Amqui,True,True,48.4656706,-67.4315171
+Anjou,True,True,45.6048982,-73.5466723
+Anne-HÃƒÂ©bert,False,True,,
+Anse-ÃƒÂ -Valleau,True,True,,
+Antoine-Lemieux,False,True,,
+Appalaches,True,True,46.5895686,-71.01398860552078
+Aqueduc,True,True,45.439324368280325,-73.59722016511155
+Argonal Inc,True,True,,
+Arnaud,True,True,59.970508094129215,-71.96636733876329
+Arthabaska,True,True,45.9965832,-71.9875776
+Arthur-Buies,True,True,48.43052955,-68.52607680311249
+Asbestos,True,True,45.776623,-71.932297
+Atwater,True,True,45.4897865,-73.5863426
+B.O.C. Canada Inc,True,True,,
+Baie dUrfÃƒÂ©,True,False,,
+Baie-Saint-Paul,True,True,47.444343,-70.505447
+Baie-TrinitÃƒÂ©,True,True,,
+Basell Canada Inc,True,False,,
+Beauceville,True,True,46.210725,-70.774269
+Beauceville-Est,True,True,46.2024008,-70.7717706
+Beauharnois-Est,True,True,45.542896034776035,-73.64469635825193
+Beauharnois-Ouest,True,True,45.53824493747812,-73.64743398518046
+Beaulieu,True,True,48.34061249494663,-69.52340078387633
+Beaumont,True,False,46.8293593,-71.0105418
+Beaumont GS,True,False,,
+Beauport,True,True,46.89834915,-71.2062892476116
+BeauprÃƒÂ©,True,True,,
+Bedford,False,True,45.1205194,-72.9885161
+Bergeronnes,True,True,48.243882,-69.545517
+Berri,True,False,45.5151125,-73.5610756
+Bersimis-1,True,True,49.2933544,-69.5515852
+Bersimis-2,True,False,49.175351500000005,-69.22591330326088
+Berthier,True,False,46.33476485,-73.13786806802949
+Blainville,True,True,45.67932,-73.87619
+Bois-Francs,True,True,45.49389955,-73.73277019090784
+Bolduc,True,True,49.53344365,-71.34141304089493
+Boralex,False,True,45.863618849999995,-72.06290590996895
+Boucherville,True,True,45.6050197,-73.4526144
+Boulevard-Labelle,False,True,45.999177851915974,-74.20861664582178
+Bourget,True,True,45.4993544,-73.5693941
+Bout-de-lÃƒÅ½le,True,True,,
+Bowater Gatineau,False,True,,
+Bowater Produits Forestiers,True,True,,
+Brisay,True,False,54.442568,-70.5306507
+Bromptonville,True,True,45.4749156,-71.9428879
+Brossard,True,True,45.4554579,-73.4678695
+Bryson,True,True,45.6772459,-76.6217075
+Buckingham,True,True,45.5864671,-75.4168252
+BÃƒÂ©cancour,True,True,,
+BÃƒÂ©cancour GS,False,True,,
+BÃƒÂ©langer,False,True,,
+Cabano,True,True,47.6836969,-68.8853408
+Cacouna,True,True,47.9171789,-69.5016092
+Cadieux,True,True,45.4313481,-74.0218419
+Cadillac,True,True,45.5768358,-73.5466995
+Calumet,True,True,45.649868,-74.6315694
+Cap-de-la-Madeleine,False,True,46.368253,-72.509079
+Carignan,True,True,45.437955,-73.3554902
+Carillon,True,False,45.5672971,-74.375248
+Carleton,True,True,48.101464,-66.1140521
+Casavant,False,True,46.259872900000005,-74.99497592791889
+Cascades Canada East Angus,False,True,,
+Cascades Canada Saguenay,True,True,,
+Cascades Groupe Papiers,True,True,,
+CascapÃƒÂ©dia,True,True,,
+Causapscal,True,True,48.3542375,-67.2269621
+Central-2,False,True,45.355738450000004,-72.00206234979936
+Chambly,True,True,45.4483467,-73.2936944
+Chamouchouane,True,True,,
+Chapais,True,False,49.7829998,-74.8572812
+Charette,True,True,46.440696,-72.924156
+Charland,True,True,46.7355594,-71.4707002
+Charlesbourg,True,True,46.89564985,-71.2908285897658
+Charlevoix,True,True,47.6493447,-70.7362215
+ChaudiÃƒÂ¨re,True,True,,
+Chelsea,True,True,45.5031737,-75.808023
+Chenaux,True,False,46.5473036,-72.3896926
+ChenÃƒÂ©ville,False,True,,
+Chibougamau,True,True,49.9137407,-74.3713954
+Chicoutimi,False,True,48.3370248,-71.12352613559267
+Chicoutimi-Nord,True,True,48.4382053,-71.0750109
+Chigoubiche,False,True,48.98968517382856,-73.26403868063218
+Chisasibi,False,True,53.6520138,-78.3384139877295
+Chissibi,True,True,53.733769800000005,-76.00903082363152
+Chomedey,True,True,45.5384715,-73.7427541
+Chute-Allard,True,False,47.892936399999996,-73.7185591011652
+Chute-Hemmings,True,True,45.86243381113644,-72.44943252019252
+Chute-des-Passes,True,False,49.818166,-71.1480664
+Chute-du-diable,True,False,46.3886298,-74.5111379
+Chute-ÃƒÂ -Caron,True,True,,
+Chute-ÃƒÂ -la-Savane,True,True,,
+ChÃƒÂ¢teauguay,True,True,,
+ChÃƒÂ©nier,True,True,,
+Cleveland,True,True,41.4943941196557,-81.61842511271446
+Coaticook,True,True,45.1334169,-71.803479
+CogÃƒÂ©nÃƒÂ©ration Saint-FÃƒÂ©licien,True,True,,
+Coigny,True,True,48.9941119,-77.8871804
+Coleraine,True,True,45.986528050000004,-71.37767158285382
+Compagnie Papiers Stadacona S.E.C.,False,True,,
+Companie-MiniÃƒÂ¨re-QuÃƒÂ©bec-Cartier,True,True,,
+Compass YUL II,False,True,,
+Contrecoeur,True,True,45.8573781,-73.2374307
+Copper Mountain,True,True,,
+Corporation MiniÃƒÂ¨re Inmet,False,True,,
+Coteau-du-Lac,False,True,45.2963957,-74.1782005
+Cournoyer,True,False,46.8817357,-72.85742668549427
+Cowansville,False,True,45.2076125,-72.7479195
+CÃƒÂ´te-Nord,True,True,,
+Daaquam,False,True,46.5896913,-70.0606033
+Daveluyville,True,False,46.20431,-72.137604
+De Lorimier,True,True,45.53751455,-73.58010120996488
+Delisle,True,True,48.6020438,-71.6244396
+Delson,True,True,45.3748635,-73.5412607
+Des Cantons,True,True,46.414044,-70.5966801
+Des HÃƒÂªtres,True,True,,
+Des Irlandais,True,True,48.1052907,-69.80406603276806
+Desbiens,False,True,48.417809,-71.949463
+Deschambault,True,True,46.6492,-71.929893
+Doc-Grignon,True,True,,
+Domtar QuÃƒÂ©villon,True,True,,
+Domtar Windsor,True,True,45.56677125,-71.98417093222562
+Dorchester,True,True,46.813319050000004,-71.22569952266213
+Dorion,True,True,45.3863926,-74.0084813
+Du Portage,False,True,47.7672259,-69.6105212
+Du Tremblay,True,True,45.5223886,-73.75567758141023
+Dubuc,False,True,45.517426400000005,-73.5667089438662
+Duchesnay,True,True,46.8572271,-71.195907
+Duvernay,True,True,45.5935503,-73.6699909
+DÃƒÂ©gelis,False,True,,
+EKA Chimie Canada Inc Magog,True,True,,
+East Angus,True,True,45.4828558,-71.6594817
+East Broughton,False,True,46.216664,-71.075706
+Eastmain-1,False,True,52.222154,-78.25610960481026
+Eka Chimie Canada Inc,True,True,,
+Elkem Metal Canada,True,True,,
+Emballages Smurfit-Stone,False,True,,
+Emballages-Smurfit-Stone La Tuque,False,True,,
+Erco Mondial Buckingham,True,False,,
+F.F. Soucy S.E.C.,True,True,,
+FPS Canada Inc,True,True,,
+Falconbridge LimitÃƒÂ©e MontrÃƒÂ©al-Est,True,False,,
+Farnham,True,True,45.2831,-72.974968
+Figuery,True,False,48.472466,-78.046188
+Fleury,True,True,46.02624794833683,-74.1527865075071
+Forges-de-Sorel,True,True,,
+Francheville,True,True,54.966359100000005,-67.93776825734012
+Frontenac-1,True,True,45.428990999999996,-75.72145898091603
+Frontenac-2,False,True,46.0467294,-71.9918462
+GEC-Alstom-Fagan,False,True,,
+Gamelin,False,True,45.51523015,-73.55991655381047
+GaspÃƒÂ©,True,True,,
+GaspÃƒÂ©sia,False,True,,
+Gatineau,True,True,45.4277659,-75.710976
+Glenwood,True,False,45.39488605,-75.83248403612015
+Godbout,True,True,49.323332,-67.59613
+Goldex,True,True,48.089954160033415,-77.87103979325806
+Goodyear Canada,True,False,45.26995665,-74.10802095826693
+GoÃƒÂ©mon,True,True,,
+Gracefield,True,True,46.0933721,-76.0531906
+Granby,True,True,45.3990409,-72.721834
+Grand-BrulÃƒÂ©,True,True,,
+Grand-Portage,False,True,48.876511916480894,-73.50408717176828
+Grand-PrÃƒÂ©,True,False,,
+Grande VallÃƒÂ©e,False,True,,
+Grantham,False,True,45.840759,-72.57019
+Grondines,True,True,46.592662,-72.0406309
+Gros-Morne,False,True,49.2520793,-65.54472
+Groulx,True,True,45.4827728,-73.5798271
+Guy,True,True,45.4953736,-73.5798383
+Hadley,True,True,46.1049357,-75.83250776190172
+Hampstead,True,True,45.4816781,-73.647192
+Hart-Jaune,False,True,51.81437425,-67.85196915488217
+Hauterive,True,True,49.1929593,-68.2570763
+Havre-Saint-Pierre,True,True,50.2463647,-63.6003951
+Hemmingford,False,True,45.048424,-73.58554645874733
+Henri-Bourassa,True,True,45.5545124,-73.6682516
+Heriot,True,True,45.8842858,-72.4870998
+Hertel,True,True,46.3439278,-72.53696442909092
+High Falls,True,True,45.5957779,-76.3380325
+Hull-2,False,True,45.42161199464099,-75.72128234552005
+Huntingdon,False,True,45.087339,-74.173851
+Hydrogenal Inc,True,True,,
+IREQ,True,True,45.6208649,-73.3791213
+Iberville,True,True,45.3039219,-73.2297415
+Institute-de-Recherche,True,False,45.4742689,-73.5998146
+Interconnexion-Maclaren,True,True,,
+Interquisa,False,True,,
+Iron-Ore-du-Canada,False,True,,
+Jacques-Cartier,True,True,45.4037181,-71.9185838
+Jean-R Marcotte,True,True,,
+Jeanne-dArc,True,True,,
+Johan-Beetz,True,True,50.289411,-62.8063611
+Joliette,True,True,46.0239798,-73.4419936
+Joly,True,True,46.6147745,-71.8186881
+JonquiÃƒÂ¨re,True,True,,
+Joutel,False,True,49.4623075,-78.3084915
+Judith-Jasmin,True,True,45.717545900000005,-73.72539926505519
+Jules-A.-Brillant,True,True,48.45042586808255,-68.52407645976726
+Junction 1646,True,True,43.664022488348074,-79.47146885912669
+Junction 1647,True,True,43.664022488348074,-79.47146885912669
+Kamouraska,True,True,47.4680992,-69.7909498
+Kamouraska_SCS,True,True,,
+Katahdin PÃƒÂ¢te QuÃƒÂ©bec,True,True,,
+Kildare,False,True,46.078336,-73.5523887
+Kingsey,True,True,45.857978,-72.069283
+Kipawa,True,True,46.7811942,-78.9862187
+Kruger Inc Bromptonville,True,True,,
+Kruger Inc Trois-RiviÃƒÂ¨res,False,True,,
+LAcadie,True,False,45.87919233537258,-72.53266056806714
+LAnnonciation,True,True,,
+LAnse Pleureuse,True,True,,
+LAssomption,True,True,,
+LIsle Maligne,True,True,,
+La Baie,False,True,48.405959,-71.069183
+La Durantaye,True,True,46.835066,-70.85598
+La Gabelle,False,True,46.44853335,-72.74107537170389
+La Grande-1,True,False,48.7151352,6.2596602
+La Grande-2,True,False,45.3816858,-72.8412893
+La Grande-2A,True,False,53.780806999999996,-77.54891330388159
+La Grande-3,False,True,53.7274814,-75.98719657432466
+La Grande-4,False,True,53.878361350000006,-73.46849868419923
+La PocatiÃƒÂ¨re,True,False,,
+La Prairie,True,True,45.4175472,-73.4891432
+La SociÃƒÂ©tÃƒÂ© en commandite revenu Noranda,False,True,,
+La SuÃƒÂ¨te,True,True,,
+La Trappe,True,True,45.4962688,-74.0265679
+La Tuque,True,True,47.441092,-72.78511
+La VÃƒÂ©rendrye,True,True,,
+Lac Bloom,True,True,52.829379349999996,-67.2437254334759
+Lac-Alfred,True,True,48.3957056,-67.75891387347299
+Lac-Hope,True,True,47.25425745,-77.28142836195065
+Lac-des-ÃƒÅ½les,False,True,,
+Lachenaie,True,True,45.702283,-73.5535424
+Lachute,True,True,45.6560478,-74.3401388
+LaflÃƒÂ¨che,False,True,,
+Lafontaine,True,True,45.8116516,-74.014184
+Laforge-1,False,True,54.1704862,-72.6042223
+Laforge-2,False,True,47.5962712,-79.4853307
+Lambton,True,True,45.8385077,-71.0910689
+LanaudiÃƒÂ¨re,True,True,,
+Landry,False,True,45.2750278,-74.0968456
+Langelier,True,True,45.5827257,-73.5431577
+Langlois,True,True,46.728348,-70.54114
+Larocque,True,True,45.4158769,-72.09975126183052
+Laure,True,True,48.32179805,-74.41234547326698
+Laurendeau,False,True,45.43620265,-73.60544000484967
+Laurent,True,True,47.1519,-72.2818354
+Laurentides,True,True,46.6070866,-75.1209782075808
+Lavaltrie,True,True,45.883078,-73.282242
+Le Corbusier,True,True,45.5520825,-73.72255830409135
+Le FranÃƒÂ§ois,True,True,,
+Le Moyne,True,False,46.958114,-71.0393319
+Le Nordais-1,True,True,49.0594699,-66.7585946
+Le Nordais-2,True,True,49.0594699,-66.7585946
+Le Plateau,True,True,45.4405234,-75.7797332
+Lebel,False,True,45.4475221,-75.7380008
+Leclerc,True,True,,
+Leman,True,True,49.2577153,-69.5450717
+Leneuf,True,True,47.0899776,-72.09585699311879
+Les Basques,True,True,48.1282639,-69.0332332
+Les Boules,True,True,48.6839287,-67.9841822
+Les CÃƒÂ¨dres,True,True,,
+Limbour,True,True,45.49444105,-75.75639677251989
+Limoilou,True,True,46.8262728,-71.233149
+LiniÃƒÂ¨re,False,True,,
+Longue-Pointe,True,True,45.5780418,-73.53746749323068
+Lorrainville,True,False,47.354641,-79.351501
+LotbiniÃƒÂ¨re,True,True,,
+Louvicourt,True,False,48.0700355,-77.3807566
+Lucerne,True,True,45.7562723,-75.7300712
+LÃƒÂ©ry,True,True,,
+LÃƒÂ©vis,True,True,,
+LÃƒÅ½le,True,True,,
+LÃƒÅ½le-Perrot,True,False,,
+Madawaska,False,True,47.48593874886473,-68.47194968241556
+Magnan,False,True,49.879428000000004,-79.4386778343079
+Magog,True,True,45.2658014,-72.1480686
+Magpie,True,True,50.3078598,-64.4999864
+Maissonneuve,False,True,,
+Malartic-2,True,False,48.137225,-78.125153
+Manic-1,True,True,49.19624005518989,-68.32839204590813
+Manic-2,False,True,46.0539253,-71.9562359
+Manic-3,True,True,49.7407017,-68.5945136447803
+Manic-5,False,True,50.6422916,-68.736306
+Manic-5A,False,True,46.7035326688093,-71.18691394768163
+Manicouagan,True,True,50.4356692,-68.7676678
+Maniwaki,True,True,46.3778839,-75.9807967
+Marcotte,True,True,46.7807744,-73.2234448
+Marie-Victorin,False,True,45.56801505,-73.56919408645481
+Mascouche,True,True,45.7453521,-73.6005591
+Massif-du-Sud,False,True,46.585034,-70.44851431985381
+Masson-Nord,True,True,45.5454175,-75.4213652
+Masson-Sud,False,True,45.5452687,-75.4211068
+Matagami,True,False,49.7575884,-77.6300251
+Matane,True,True,48.8468773,-67.5295498
+MatapÃƒÂ©dia,False,True,,
+Mauricie,True,True,47.57124705,-73.20809134761296
+McCormick,True,True,49.19300885,-68.32691228536461
+Mercier,True,True,45.310444,-73.746051
+Micmac,True,True,48.609741850000006,-70.50899784989917
+Micoua,True,True,,
+Mine Doyon,True,True,48.26547105,-78.55017682514514
+Mine Gonzague-Langlois,False,True,,
+Mine Jeffrey,True,False,45.7726471,-71.95257552412112
+Mine Malartic,False,True,48.11851215,-78.08886028257761
+Mines Agnico-Eagle LimitÃƒÂ©e,True,True,,
+Mines Casa-Berardi,False,True,,
+Mines Selbaie,True,False,,
+Mirabel,False,True,45.6452452,-74.0731738
+Mistassini,True,True,48.892019,-72.2084055
+Mittal Canada Inc,True,True,,
+Mittal Canada Inc Contrecoeur,True,True,,
+Monseigneur-Ãƒâ€°mard,False,True,,
+Mont-Copper,True,True,48.9621597,-65.5124088
+Mont-Joli,True,True,48.583875,-68.183899
+Mont-Laurier,True,True,46.5524071,-75.4968899
+Mont-Louis,True,True,49.2191155,-65.6972276
+Mont-Miller,False,True,48.9603814,-65.474662
+Mont-Rothery,True,True,48.9870126,-65.3658587
+Mont-Royal,True,True,45.5085881,-73.5897111
+Mont-Tremblant,False,True,46.11588,-74.5891426
+Montagnais,True,True,47.91461759575676,-71.90657030205759
+Montagne-SÃƒÂ¨che,True,True,,
+Montmagny,False,True,46.9826328,-70.555916
+MontrÃƒÂ©al-Est,True,True,,
+MontÃƒÂ©rÃƒÂ©gie,True,True,,
+Moras,True,True,46.24014115,-72.65622771165715
+Murailles,True,True,48.506437148407514,-70.4648205989948
+MÃƒÂ©gantic,True,True,,
+MÃƒÂ©kanic,True,True,,
+MÃƒÂ©tallurgie Magnola Inc,True,True,,
+Napierville,False,True,45.18608,-73.4042485
+Natashquan,False,True,50.1839077,-61.8174062
+Nemiscau,True,True,51.6879428,-76.2568664
+Neubois,True,True,47.06618665,-77.29973996010068
+NeufchÃƒÂ¢tel,True,True,,
+New Richmond,True,False,48.1651194,-65.8655584
+Nicolet,True,True,46.2272898,-72.6192665
+Nikamo,True,False,,
+Niobec,True,True,48.532098899999994,-71.14996136645
+Normand,True,False,46.6973109,-71.30426825
+Normandin,False,True,48.837153,-72.529678
+Normetal,True,True,48.996438,-79.362488
+Notre-Dame,False,True,48.2467777,-79.0166072
+Notre-Dame-du-Laus,True,False,46.0899,-75.62439
+Notre-Dame-du-Nord,True,True,47.593199,-79.487457
+Obalski,True,True,49.7475006,-74.3980202
+Ormstown,True,True,45.1255418,-73.9922809
+Ouimet,True,True,46.1699852,-74.58924317944053
+Outaouais,True,True,46.6099678,-76.7719627720078
+Outardes,True,False,50.7771784,-69.3811298
+Outardes-2,False,True,45.9076891,-73.2607234
+Outardes-3,True,False,45.9078756,-73.2606304
+Outardes-4,False,True,49.70566085,-68.9050614964652
+P.C.I. Chimie Canada Inc,True,True,,
+PPG Canada Inc,True,True,,
+Palmarolle,True,False,48.661943,-79.200439
+Pandora,False,True,45.5032872,-73.5706814
+Papier Masson Inc,True,False,,
+Papiers-Scott Inc,False,True,,
+Papineauville,True,False,45.61884,-75.020142
+Paquin,True,True,47.6329897,-79.3132339
+Parent,False,True,47.9195154,-74.6185295
+Parisville,True,True,46.518713,-72.064133
+PaspÃƒÂ©biac,True,True,,
+Patriotes,True,True,45.7562513,-73.24408155272687
+Paugan,True,True,45.810699549999995,-75.9328932541377
+PentecÃƒÂ´te,True,True,,
+PercÃƒÂ©,False,True,,
+Petite-Nation,True,True,45.852564900000004,-75.12670561529993
+Pierre Boucher,False,True,45.6125338,-73.4565642
+Pierre-Le Gardeur,True,True,45.718885900000004,-73.51726880996449
+Plessisville,True,True,46.219515,-71.771965
+Plouffe,False,True,46.4461678,-75.5575827
+Pointe-Noire,False,True,46.80664,-75.7425446
+Poirier,True,True,45.949586156235405,-74.19799998781056
+Port Cartier,True,True,50.0187481,-66.8756913
+Port-Alfred,False,True,48.3290069,-70.8788924
+Praxair Canada Contrecoeur,True,True,,
+PremiÃƒÂ¨re Chute,True,True,,
+Provost,False,True,45.36983288830195,-73.76340557127885
+PÃƒÂ©ribonka,False,True,,
+PÃƒÂ©rigny,True,True,,
+PÃƒÂ©tremont Inc,False,True,,
+Qit-Fer-et-Titane,False,True,,
+Quevillon,True,False,49.0083908,-76.9395233
+Quyon,True,True,45.5204631,-76.2302306
+QuÃƒÂ©bec,True,True,,
+QuÃƒÂ©bec Lithium,True,True,,
+Radisson,True,True,45.5896475,-73.5397875
+Ramezay,True,True,45.508764299999996,-73.55316909929684
+Rapide-2,True,True,48.2205964,-78.3759423
+Rapide-7,True,True,48.214262,-78.32535
+Rapide-Blanc,True,True,47.790592450000005,-72.96269459384149
+Rapide-des-Coeurs,True,True,47.786694600000004,-73.3752530398013
+Rapides-Farmers,True,True,,
+Rapides-des-Iles,True,True,48.3529811,-72.2176902
+Rapides-des-Quinze,True,True,47.5990242,-79.4483467
+Reed,True,True,46.0531711,-71.312395
+Renaud,False,True,46.8116645,-71.2395643
+Reneault,True,True,48.4665992,-79.0408816
+Repetigny,False,True,,
+Richelieu,False,True,45.4439193,-73.2488055
+Rigaud,True,True,45.4794481,-74.3019608
+Rimouski,True,True,48.450155,-68.529968
+RiviÃƒÂ¨re-Sainte-Anne,True,True,,
+RiviÃƒÂ¨re-au-Renard,True,False,,
+RiviÃƒÂ¨re-au-Tonnerre,True,True,,
+RiviÃƒÂ¨re-aux-Bouleaux,True,True,,
+RiviÃƒÂ¨re-aux-Rochers,True,True,,
+RiviÃƒÂ¨re-du-Loup,True,True,,
+RiviÃƒÂ¨re-du-Moulin,True,True,,
+RiviÃƒÂ¨re-du-loup,True,True,,
+RiviÃƒÂ¨re-ÃƒÂ -la-Chaloupe,True,True,,
+Roberval,True,False,48.514785,-72.224808
+Rockfield,True,True,45.439642075826356,-73.65782219435026
+Rolland,True,True,46.6644243,-76.09036648232481
+Romaine-1,True,True,50.38593355,-63.260307946624934
+Romaine-2,True,True,50.6242462,-63.194130997842706
+Romaine-3,True,True,51.11408085,-63.40029252162382
+Romaine-4,True,True,51.359594900000005,-63.49716299580088
+Rosemont,True,False,45.5314962,-73.5973383
+Rosiers,True,True,48.8562821,-64.2010241
+Roussillon,True,True,45.3433881,-73.5900357
+Rouville,True,True,45.4234799,-73.0378779
+Rouyn,True,True,48.2382498,-79.0201438
+Royalmount,True,True,45.500762050000006,-73.66217635588133
+SFK PÃƒÂ¢te SENC,True,True,,
+SGL Canada,True,True,,
+Saguenay,True,True,48.405959,-71.069183
+Saint-Alexandre,True,True,45.230266549999996,-73.12452476062859
+Saint-Ambroise,False,True,48.557523,-71.324615
+Saint-Basile,True,True,46.7565352,-71.8248449
+Saint-Blaise,True,True,45.2113406,-73.28738
+Saint-Bruno-de-Montarville,True,True,45.5256161,-73.3391798
+Saint-Chrysostome,True,True,45.1027107,-73.7599069
+Saint-ClÃƒÂ©ment,True,True,,
+Saint-CÃƒÂ©saire,True,True,,
+Saint-Donat,False,True,46.318718,-74.221916
+Saint-Eustache,False,True,45.5646052,-73.8929714
+Saint-FranÃƒÂ§ois,True,True,,
+Saint-FÃƒÂ©licien,True,True,,
+Saint-Georges,True,True,46.122987,-70.671959
+Saint-Jean,True,True,45.21290625,-73.21942518689312
+Saint-Joseph,True,True,46.8494476,-71.2929097
+Saint-JÃƒÂ©rÃƒÂ´me,True,True,,
+Saint-Lazare,False,True,45.3995886,-74.1359632
+Saint-Lin,False,True,45.897741,-73.7574166
+Saint-Louis,True,False,45.854152,-72.977715
+Saint-Maxime,True,True,49.1904619,-65.62753482007003
+Saint-Michel,True,True,45.5597489,-73.5999622
+Saint-Pascal,True,True,47.5266271,-69.8074463
+Saint-Patrick,True,True,46.358488,-72.5443572
+Saint-Polycarpe,True,False,45.3021238,-74.3041891
+Saint-Robert-Bellarmin,False,True,45.749798,-70.586472
+Saint-RÃƒÂ©mi,True,True,,
+Saint-Sauveur,True,False,45.894309,-74.158058
+Saint-Sulpice,False,True,45.826646,-73.358116
+Saint-SÃƒÂ©bastien,True,True,,
+Saint-Ulric-Saint-LÃƒÂ©andre,True,True,,
+Saint-Ãƒâ€°variste,True,True,,
+Sainte-Agathe-des-Monts,True,True,46.046072,-74.279938
+Sainte-Anne-des-Plaines,False,True,45.76417,-73.818855
+Sainte-Claire,True,False,46.600629,-70.864906
+Sainte-Germaine,True,True,48.601133,-79.116669
+Sainte-Marguerite-1,True,True,48.316454,-67.084712
+Sainte-Marguerite-2,True,True,48.315673,-67.084404
+Sainte-Marguerite-3,True,False,47.04192365714285,-70.88830578571428
+Sainte-Marie,False,True,46.450395,-71.030731
+Sainte-PerpÃƒÂ©tue,True,True,,
+Sainte-Rosalie,True,True,45.6452982,-72.8981076
+Sainte-Rose,True,True,45.625284,-73.7644249
+Sainte-ThÃƒÂ©rÃƒÂ¨se-Ouest,True,True,,
+Sainte-Ãƒâ€°mÃƒÂ©lie,True,True,,
+Salaberry,True,True,46.0528433,-71.4328767
+Saraguay,True,True,45.5109688,-73.7495725
+Sarcelle,True,False,52.6678087,-76.63236835023662
+Sayabec,True,True,48.566157,-67.688141
+Seigneurie de BeauprÃƒÂ©,True,True,,
+Senneterre,True,True,48.390458,-77.242813
+Sept-ÃƒÅ½les,True,True,,
+Shawinigan-2,False,True,46.5396581,-72.7518637
+Shawinigan-3,True,True,46.5396581,-72.7518637
+Sherbrooke,True,True,45.403271,-71.889038
+Shipshaw,True,True,48.4598044,-71.2609844
+Sidbec-Dosco,True,True,,
+Silicium-BÃƒÂ©cancour,False,True,,
+Simard,True,True,46.8928491,-71.322699
+Sleeper et Akhurst,False,True,,
+Sorel,True,True,46.044404,-73.104744
+Sorel-Sud,True,True,46.0428486,-73.1148817
+Sources,True,True,45.7510888,-71.7670146
+Spruce Falls Inc,True,True,,
+Squatec,False,True,47.8814362,-68.7253306
+Stanstead,False,True,45.0106604,-72.0972499
+Stukely,True,False,45.321254,-72.418442
+Sully,False,True,47.4554491,-69.1521582
+Sully JCT,True,True,,
+Tembec Inc TÃƒÂ©miscaming,False,True,,
+Temcell,True,True,,
+Templeton,True,True,45.4983669,-75.6082192
+Terrebonne,True,True,45.6951527,-73.6350148
+Thetford,True,True,46.091329,-71.30127
+Thibaudeau,True,True,45.3186017,-73.881845
+Thurso-Papineau,True,True,45.598185,-75.246048
+Tilly,True,True,46.6467078,-71.53878952334757
+Toulnustouc,False,True,49.9706305,-68.15939380426352
+Touraine,True,True,45.493909650000006,-75.734663440555
+Trans Canada Ãƒâ€°nergie,False,True,,
+Trenche,True,False,47.7449387,-72.8819776
+Trois-Pistoles,True,True,48.122101,-69.169922
+Trois-RiviÃƒÂ¨res,True,True,,
+Uniboard Canada Inc,True,True,48.55627025,-67.65539453226316
+Usine Alma,False,True,48.58529825,-71.69103529648955
+Usine Beauharnois Alcan,True,True,,
+Usine JonquiÃƒÂ¨re,True,True,,
+Val dOr,False,True,,
+Val-TÃƒÂ©treau,True,False,,
+Valleyfield,True,True,45.2555575,-74.1316718
+Varennes,True,True,45.6834691,-73.4362737
+Vaudreuil-Soulanges,True,True,45.3781798,-74.2292199
+Vents du Kempt,False,True,,
+Viger,True,True,45.512541150000004,-73.55318567035573
+Vignan,True,True,45.4970523,-75.70046002521293
+Ville de Joliette,True,False,46.02357705,-73.44271611350774
+Ville de Magog,False,True,45.2649413,-72.1468359
+Ville de Saguenay,False,True,48.405959,-71.069183
+Ville de Sherbrooke Galt,True,True,,
+Ville de Sherbrooke MassÃƒÂ©,True,True,,
+Ville de Sherbrooke Orford,True,True,,
+Ville de Sherbrooke Saint-FranÃƒÂ§ois,True,False,,
+Villeroy,True,True,46.388386,-71.875305
+Viterra Inc.,False,True,,
+Waconichi,False,True,50.21710732426201,-73.8082767
+Wakefield,True,True,45.639968,-75.92926
+Waswanipi,True,True,49.6934501,-76.14958691395637
+Waterloo,False,True,45.3441569,-72.5162169
+Weedon,True,True,45.7016827,-71.4655195
+Wemindji,False,True,52.9247619,-78.80623302926833
+Windsor,True,True,45.5697799,-72.0034954
+Wyman,True,True,45.5342316,-76.2997241
+Yamaska,False,True,46.004355,-72.913513

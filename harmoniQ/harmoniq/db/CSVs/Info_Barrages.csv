@@ -1,4 +1,4 @@
-Nom,Longitude,Latitude,Type,Puissance_Installee_MW,Hauteur_de_chute_m,Nb_turbines,Debits_nom,Type_turbine,eta_turb,Volume_reservoir,nb_turbines_maintenance,id_HQ
+Nom,Latitude,Longitude,Type,Puissance_Installee_MW,Hauteur_de_chute_m,Nb_turbines,Debits_nom,Type_turbine,eta_turb,Volume_reservoir,nb_turbines_maintenance,id_HQ
 Robert-Bourassa,-77.5327778,53.7819444,Reservoir,5616,137.16,16,302.353565055947,Francis,0.91,460702900000,1,6416
 La Grande-4,-73.4652778,53.8866667,Reservoir,2779,116.7,9,312.615591958021,Francis,0.91,19423000000,0,1033
 La Grande-3,-75.988438,53.727721,Reservoir,2417,79,12,301.233846075977,Francis,0.91,59994000000,0,1034

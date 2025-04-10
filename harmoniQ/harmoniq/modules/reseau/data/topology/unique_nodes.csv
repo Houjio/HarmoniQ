@@ -1,0 +1,562 @@
+node_name,used_as_start,used_as_end
+Abitibi,True,False
+Abitibi Consolidated Alma,False,True
+Abitibi Consolidated Amos,True,True
+Abitibi Consolidated KÃƒÂ©nogami,True,True
+Achigan,True,True
+Acton,True,True
+Adamsville,False,True
+AdÃƒÂ©lard-Godbout,True,True
+Alain-Grandbois,True,True
+Albanel,True,True
+Alcan Usine Shawinigan,False,True
+Alcoa,True,True
+Alcoa-Aluminierie de Deschambault SENC,True,True
+Alma,True,True
+Almaville,False,True
+Aluminerie Alouette,True,False
+Aluminerie-de-BÃƒÂ©cancour,False,True
+AluminiÃƒÂ¨re Grande-Baie Alcan,True,True
+Amos,True,True
+Amqui,True,True
+Anjou,True,True
+Anne-HÃƒÂ©bert,False,True
+Anse-ÃƒÂ -Valleau,True,True
+Antoine-Lemieux,False,True
+Appalaches,True,True
+Aqueduc,True,True
+Argonal Inc,True,True
+Arnaud,True,True
+Arthabaska,True,True
+Arthur-Buies,True,True
+Asbestos,True,True
+Atwater,True,True
+B.O.C. Canada Inc,True,True
+Baie dUrfÃƒÂ©,True,False
+Baie-Saint-Paul,True,True
+Baie-TrinitÃƒÂ©,True,True
+Basell Canada Inc,True,False
+Beauceville,True,True
+Beauceville-Est,True,True
+Beauharnois-Est,True,True
+Beauharnois-Ouest,True,True
+Beaulieu,True,True
+Beaumont,True,False
+Beaumont GS,True,False
+Beauport,True,True
+BeauprÃƒÂ©,True,True
+Bedford,False,True
+Bergeronnes,True,True
+Berri,True,False
+Bersimis-1,True,True
+Bersimis-2,True,False
+Berthier,True,False
+Blainville,True,True
+Bois-Francs,True,True
+Bolduc,True,True
+Boralex,False,True
+Boucherville,True,True
+Boulevard-Labelle,False,True
+Bourget,True,True
+Bout-de-lÃƒÅ½le,True,True
+Bowater Gatineau,False,True
+Bowater Produits Forestiers,True,True
+Brisay,True,False
+Bromptonville,True,True
+Brossard,True,True
+Bryson,True,True
+Buckingham,True,True
+BÃƒÂ©cancour,True,True
+BÃƒÂ©cancour GS,False,True
+BÃƒÂ©langer,False,True
+Cabano,True,True
+Cacouna,True,True
+Cadieux,True,True
+Cadillac,True,True
+Calumet,True,True
+Cap-de-la-Madeleine,False,True
+Carignan,True,True
+Carillon,True,False
+Carleton,True,True
+Casavant,False,True
+Cascades Canada East Angus,False,True
+Cascades Canada Saguenay,True,True
+Cascades Groupe Papiers,True,True
+CascapÃƒÂ©dia,True,True
+Causapscal,True,True
+Central-2,False,True
+Chambly,True,True
+Chamouchouane,True,True
+Chapais,True,False
+Charette,True,True
+Charland,True,True
+Charlesbourg,True,True
+Charlevoix,True,True
+ChaudiÃƒÂ¨re,True,True
+Chelsea,True,True
+Chenaux,True,False
+ChenÃƒÂ©ville,False,True
+Chibougamau,True,True
+Chicoutimi,False,True
+Chicoutimi-Nord,True,True
+Chigoubiche,False,True
+Chisasibi,False,True
+Chissibi,True,True
+Chomedey,True,True
+Chute-Allard,True,False
+Chute-Hemmings,True,True
+Chute-des-Passes,True,False
+Chute-du-diable,True,False
+Chute-ÃƒÂ -Caron,True,True
+Chute-ÃƒÂ -la-Savane,True,True
+ChÃƒÂ¢teauguay,True,True
+ChÃƒÂ©nier,True,True
+Cleveland,True,True
+Coaticook,True,True
+CogÃƒÂ©nÃƒÂ©ration Saint-FÃƒÂ©licien,True,True
+Coigny,True,True
+Coleraine,True,True
+Compagnie Papiers Stadacona S.E.C.,False,True
+Companie-MiniÃƒÂ¨re-QuÃƒÂ©bec-Cartier,True,True
+Compass YUL II,False,True
+Contrecoeur,True,True
+Copper Mountain,True,True
+Corporation MiniÃƒÂ¨re Inmet,False,True
+Coteau-du-Lac,False,True
+Cournoyer,True,False
+Cowansville,False,True
+CÃƒÂ´te-Nord,True,True
+Daaquam,False,True
+Daveluyville,True,False
+De Lorimier,True,True
+Delisle,True,True
+Delson,True,True
+Des Cantons,True,True
+Des HÃƒÂªtres,True,True
+Des Irlandais,True,True
+Desbiens,False,True
+Deschambault,True,True
+Doc-Grignon,True,True
+Domtar QuÃƒÂ©villon,True,True
+Domtar Windsor,True,True
+Dorchester,True,True
+Dorion,True,True
+Du Portage,False,True
+Du Tremblay,True,True
+Dubuc,False,True
+Duchesnay,True,True
+Duvernay,True,True
+DÃƒÂ©gelis,False,True
+EKA Chimie Canada Inc Magog,True,True
+East Angus,True,True
+East Broughton,False,True
+Eastmain-1,False,True
+Eka Chimie Canada Inc,True,True
+Elkem Metal Canada,True,True
+Emballages Smurfit-Stone,False,True
+Emballages-Smurfit-Stone La Tuque,False,True
+Erco Mondial Buckingham,True,False
+F.F. Soucy S.E.C.,True,True
+FPS Canada Inc,True,True
+Falconbridge LimitÃƒÂ©e MontrÃƒÂ©al-Est,True,False
+Farnham,True,True
+Figuery,True,False
+Fleury,True,True
+Forges-de-Sorel,True,True
+Francheville,True,True
+Frontenac-1,True,True
+Frontenac-2,False,True
+GEC-Alstom-Fagan,False,True
+Gamelin,False,True
+GaspÃƒÂ©,True,True
+GaspÃƒÂ©sia,False,True
+Gatineau,True,True
+Glenwood,True,False
+Godbout,True,True
+Goldex,True,True
+Goodyear Canada,True,False
+GoÃƒÂ©mon,True,True
+Gracefield,True,True
+Granby,True,True
+Grand-BrulÃƒÂ©,True,True
+Grand-Portage,False,True
+Grand-PrÃƒÂ©,True,False
+Grande VallÃƒÂ©e,False,True
+Grantham,False,True
+Grondines,True,True
+Gros-Morne,False,True
+Groulx,True,True
+Guy,True,True
+Hadley,True,True
+Hampstead,True,True
+Hart-Jaune,False,True
+Hauterive,True,True
+Havre-Saint-Pierre,True,True
+Hemmingford,False,True
+Henri-Bourassa,True,True
+Heriot,True,True
+Hertel,True,True
+High Falls,True,True
+Hull-2,False,True
+Huntingdon,False,True
+Hydrogenal Inc,True,True
+IREQ,True,True
+Iberville,True,True
+Institute-de-Recherche,True,False
+Interconnexion-Maclaren,True,True
+Interquisa,False,True
+Iron-Ore-du-Canada,False,True
+Jacques-Cartier,True,True
+Jean-R Marcotte,True,True
+Jeanne-dArc,True,True
+Johan-Beetz,True,True
+Joliette,True,True
+Joly,True,True
+JonquiÃƒÂ¨re,True,True
+Joutel,False,True
+Judith-Jasmin,True,True
+Jules-A.-Brillant,True,True
+Junction 1646,True,True
+Junction 1647,True,True
+Kamouraska,True,True
+Kamouraska_SCS,True,True
+Katahdin PÃƒÂ¢te QuÃƒÂ©bec,True,True
+Kildare,False,True
+Kingsey,True,True
+Kipawa,True,True
+Kruger Inc Bromptonville,True,True
+Kruger Inc Trois-RiviÃƒÂ¨res,False,True
+LAcadie,True,False
+LAnnonciation,True,True
+LAnse Pleureuse,True,True
+LAssomption,True,True
+LIsle Maligne,True,True
+La Baie,False,True
+La Durantaye,True,True
+La Gabelle,False,True
+La Grande-1,True,False
+La Grande-2,True,False
+La Grande-2A,True,False
+La Grande-3,False,True
+La Grande-4,False,True
+La PocatiÃƒÂ¨re,True,False
+La Prairie,True,True
+La SociÃƒÂ©tÃƒÂ© en commandite revenu Noranda,False,True
+La SuÃƒÂ¨te,True,True
+La Trappe,True,True
+La Tuque,True,True
+La VÃƒÂ©rendrye,True,True
+Lac Bloom,True,True
+Lac-Alfred,True,True
+Lac-Hope,True,True
+Lac-des-ÃƒÅ½les,False,True
+Lachenaie,True,True
+Lachute,True,True
+LaflÃƒÂ¨che,False,True
+Lafontaine,True,True
+Laforge-1,False,True
+Laforge-2,False,True
+Lambton,True,True
+LanaudiÃƒÂ¨re,True,True
+Landry,False,True
+Langelier,True,True
+Langlois,True,True
+Larocque,True,True
+Laure,True,True
+Laurendeau,False,True
+Laurent,True,True
+Laurentides,True,True
+Lavaltrie,True,True
+Le Corbusier,True,True
+Le FranÃƒÂ§ois,True,True
+Le Moyne,True,False
+Le Nordais-1,True,True
+Le Nordais-2,True,True
+Le Plateau,True,True
+Lebel,False,True
+Leclerc,True,True
+Leman,True,True
+Leneuf,True,True
+Les Basques,True,True
+Les Boules,True,True
+Les CÃƒÂ¨dres,True,True
+Limbour,True,True
+Limoilou,True,True
+LiniÃƒÂ¨re,False,True
+Longue-Pointe,True,True
+Lorrainville,True,False
+LotbiniÃƒÂ¨re,True,True
+Louvicourt,True,False
+Lucerne,True,True
+LÃƒÂ©ry,True,True
+LÃƒÂ©vis,True,True
+LÃƒÅ½le,True,True
+LÃƒÅ½le-Perrot,True,False
+Madawaska,False,True
+Magnan,False,True
+Magog,True,True
+Magpie,True,True
+Maissonneuve,False,True
+Malartic-2,True,False
+Manic-1,True,True
+Manic-2,False,True
+Manic-3,True,True
+Manic-5,False,True
+Manic-5A,False,True
+Manicouagan,True,True
+Maniwaki,True,True
+Marcotte,True,True
+Marie-Victorin,False,True
+Mascouche,True,True
+Massif-du-Sud,False,True
+Masson-Nord,True,True
+Masson-Sud,False,True
+Matagami,True,False
+Matane,True,True
+MatapÃƒÂ©dia,False,True
+Mauricie,True,True
+McCormick,True,True
+Mercier,True,True
+Micmac,True,True
+Micoua,True,True
+Mine Doyon,True,True
+Mine Gonzague-Langlois,False,True
+Mine Jeffrey,True,False
+Mine Malartic,False,True
+Mines Agnico-Eagle LimitÃƒÂ©e,True,True
+Mines Casa-Berardi,False,True
+Mines Selbaie,True,False
+Mirabel,False,True
+Mistassini,True,True
+Mittal Canada Inc,True,True
+Mittal Canada Inc Contrecoeur,True,True
+Monseigneur-Ãƒâ€°mard,False,True
+Mont-Copper,True,True
+Mont-Joli,True,True
+Mont-Laurier,True,True
+Mont-Louis,True,True
+Mont-Miller,False,True
+Mont-Rothery,True,True
+Mont-Royal,True,True
+Mont-Tremblant,False,True
+Montagnais,True,True
+Montagne-SÃƒÂ¨che,True,True
+Montmagny,False,True
+MontrÃƒÂ©al-Est,True,True
+MontÃƒÂ©rÃƒÂ©gie,True,True
+Moras,True,True
+Murailles,True,True
+MÃƒÂ©gantic,True,True
+MÃƒÂ©kanic,True,True
+MÃƒÂ©tallurgie Magnola Inc,True,True
+Napierville,False,True
+Natashquan,False,True
+Nemiscau,True,True
+Neubois,True,True
+NeufchÃƒÂ¢tel,True,True
+New Richmond,True,False
+Nicolet,True,True
+Nikamo,True,False
+Niobec,True,True
+Normand,True,False
+Normandin,False,True
+Normetal,True,True
+Notre-Dame,False,True
+Notre-Dame-du-Laus,True,False
+Notre-Dame-du-Nord,True,True
+Obalski,True,True
+Ormstown,True,True
+Ouimet,True,True
+Outaouais,True,True
+Outardes,True,False
+Outardes-2,False,True
+Outardes-3,True,False
+Outardes-4,False,True
+P.C.I. Chimie Canada Inc,True,True
+PPG Canada Inc,True,True
+Palmarolle,True,False
+Pandora,False,True
+Papier Masson Inc,True,False
+Papiers-Scott Inc,False,True
+Papineauville,True,False
+Paquin,True,True
+Parent,False,True
+Parisville,True,True
+PaspÃƒÂ©biac,True,True
+Patriotes,True,True
+Paugan,True,True
+PentecÃƒÂ´te,True,True
+PercÃƒÂ©,False,True
+Petite-Nation,True,True
+Pierre Boucher,False,True
+Pierre-Le Gardeur,True,True
+Plessisville,True,True
+Plouffe,False,True
+Pointe-Noire,False,True
+Poirier,True,True
+Port Cartier,True,True
+Port-Alfred,False,True
+Praxair Canada Contrecoeur,True,True
+PremiÃƒÂ¨re Chute,True,True
+Provost,False,True
+PÃƒÂ©ribonka,False,True
+PÃƒÂ©rigny,True,True
+PÃƒÂ©tremont Inc,False,True
+Qit-Fer-et-Titane,False,True
+Quevillon,True,False
+Quyon,True,True
+QuÃƒÂ©bec,True,True
+QuÃƒÂ©bec Lithium,True,True
+Radisson,True,True
+Ramezay,True,True
+Rapide-2,True,True
+Rapide-7,True,True
+Rapide-Blanc,True,True
+Rapide-des-Coeurs,True,True
+Rapides-Farmers,True,True
+Rapides-des-Iles,True,True
+Rapides-des-Quinze,True,True
+Reed,True,True
+Renaud,False,True
+Reneault,True,True
+Repetigny,False,True
+Richelieu,False,True
+Rigaud,True,True
+Rimouski,True,True
+RiviÃƒÂ¨re-Sainte-Anne,True,True
+RiviÃƒÂ¨re-au-Renard,True,False
+RiviÃƒÂ¨re-au-Tonnerre,True,True
+RiviÃƒÂ¨re-aux-Bouleaux,True,True
+RiviÃƒÂ¨re-aux-Rochers,True,True
+RiviÃƒÂ¨re-du-Loup,True,True
+RiviÃƒÂ¨re-du-Moulin,True,True
+RiviÃƒÂ¨re-du-loup,True,True
+RiviÃƒÂ¨re-ÃƒÂ -la-Chaloupe,True,True
+Roberval,True,False
+Rockfield,True,True
+Rolland,True,True
+Romaine-1,True,True
+Romaine-2,True,True
+Romaine-3,True,True
+Romaine-4,True,True
+Rosemont,True,False
+Rosiers,True,True
+Roussillon,True,True
+Rouville,True,True
+Rouyn,True,True
+Royalmount,True,True
+SFK PÃƒÂ¢te SENC,True,True
+SGL Canada,True,True
+Saguenay,True,True
+Saint-Alexandre,True,True
+Saint-Ambroise,False,True
+Saint-Basile,True,True
+Saint-Blaise,True,True
+Saint-Bruno-de-Montarville,True,True
+Saint-Chrysostome,True,True
+Saint-ClÃƒÂ©ment,True,True
+Saint-CÃƒÂ©saire,True,True
+Saint-Donat,False,True
+Saint-Eustache,False,True
+Saint-FranÃƒÂ§ois,True,True
+Saint-FÃƒÂ©licien,True,True
+Saint-Georges,True,True
+Saint-Jean,True,True
+Saint-Joseph,True,True
+Saint-JÃƒÂ©rÃƒÂ´me,True,True
+Saint-Lazare,False,True
+Saint-Lin,False,True
+Saint-Louis,True,False
+Saint-Maxime,True,True
+Saint-Michel,True,True
+Saint-Pascal,True,True
+Saint-Patrick,True,True
+Saint-Polycarpe,True,False
+Saint-Robert-Bellarmin,False,True
+Saint-RÃƒÂ©mi,True,True
+Saint-Sauveur,True,False
+Saint-Sulpice,False,True
+Saint-SÃƒÂ©bastien,True,True
+Saint-Ulric-Saint-LÃƒÂ©andre,True,True
+Saint-Ãƒâ€°variste,True,True
+Sainte-Agathe-des-Monts,True,True
+Sainte-Anne-des-Plaines,False,True
+Sainte-Claire,True,False
+Sainte-Germaine,True,True
+Sainte-Marguerite-1,True,True
+Sainte-Marguerite-2,True,True
+Sainte-Marguerite-3,True,False
+Sainte-Marie,False,True
+Sainte-PerpÃƒÂ©tue,True,True
+Sainte-Rosalie,True,True
+Sainte-Rose,True,True
+Sainte-ThÃƒÂ©rÃƒÂ¨se-Ouest,True,True
+Sainte-Ãƒâ€°mÃƒÂ©lie,True,True
+Salaberry,True,True
+Saraguay,True,True
+Sarcelle,True,False
+Sayabec,True,True
+Seigneurie de BeauprÃƒÂ©,True,True
+Senneterre,True,True
+Sept-ÃƒÅ½les,True,True
+Shawinigan-2,False,True
+Shawinigan-3,True,True
+Sherbrooke,True,True
+Shipshaw,True,True
+Sidbec-Dosco,True,True
+Silicium-BÃƒÂ©cancour,False,True
+Simard,True,True
+Sleeper et Akhurst,False,True
+Sorel,True,True
+Sorel-Sud,True,True
+Sources,True,True
+Spruce Falls Inc,True,True
+Squatec,False,True
+Stanstead,False,True
+Stukely,True,False
+Sully,False,True
+Sully JCT,True,True
+Tembec Inc TÃƒÂ©miscaming,False,True
+Temcell,True,True
+Templeton,True,True
+Terrebonne,True,True
+Thetford,True,True
+Thibaudeau,True,True
+Thurso-Papineau,True,True
+Tilly,True,True
+Toulnustouc,False,True
+Touraine,True,True
+Trans Canada Ãƒâ€°nergie,False,True
+Trenche,True,False
+Trois-Pistoles,True,True
+Trois-RiviÃƒÂ¨res,True,True
+Uniboard Canada Inc,True,True
+Usine Alma,False,True
+Usine Beauharnois Alcan,True,True
+Usine JonquiÃƒÂ¨re,True,True
+Val dOr,False,True
+Val-TÃƒÂ©treau,True,False
+Valleyfield,True,True
+Varennes,True,True
+Vaudreuil-Soulanges,True,True
+Vents du Kempt,False,True
+Viger,True,True
+Vignan,True,True
+Ville de Joliette,True,False
+Ville de Magog,False,True
+Ville de Saguenay,False,True
+Ville de Sherbrooke Galt,True,True
+Ville de Sherbrooke MassÃƒÂ©,True,True
+Ville de Sherbrooke Orford,True,True
+Ville de Sherbrooke Saint-FranÃƒÂ§ois,True,False
+Villeroy,True,True
+Viterra Inc.,False,True
+Waconichi,False,True
+Wakefield,True,True
+Waswanipi,True,True
+Waterloo,False,True
+Weedon,True,True
+Wemindji,False,True
+Windsor,True,True
+Wyman,True,True
+Yamaska,False,True

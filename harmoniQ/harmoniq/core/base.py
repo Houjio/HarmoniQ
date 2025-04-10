@@ -18,7 +18,7 @@ class Infrastructure:
         self.scenario = None
 
     def __repr__(self):
-        return f"<Infrastructure {self.donnees.nom} de type {self.donnees.type}>"
+        return f"<Infrastructure {self.donnees.nom} de type {type(self.donnees)}>"
 
     def charger_scenario(self, scenario: ScenarioBase) -> None:
         self.scenario = scenario

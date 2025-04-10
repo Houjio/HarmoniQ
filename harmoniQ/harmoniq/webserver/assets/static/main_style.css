@@ -96,3 +96,9 @@ html, body {
         font-size: 1.2rem;
     }
 }
+
+
+img.logo {
+    height: 5em;
+    margin-top: 4em;
+}

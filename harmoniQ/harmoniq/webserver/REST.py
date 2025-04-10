@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 import pandas as pd
-import time
 
 from harmoniq.db import schemas, engine, CRUD
 from harmoniq.db.CRUD import (
@@ -17,12 +16,16 @@ from harmoniq.db.CRUD import (
     update_data,
     delete_data,
 )
-from harmoniq.db.demande import read_demande_data
+from harmoniq.db.demande import read_demande_data, read_demande_data_sankey
 from harmoniq.core import meteo
 from harmoniq.db.engine import get_db
 from harmoniq.core.fausse_données import production_aleatoire
 
 from harmoniq.modules.eolienne import InfraParcEolienne
+from harmoniq.modules.solaire import InfraSolaire
+from harmoniq.modules.thermique import InfraThermique
+from harmoniq.modules.nucleaire import InfraNucleaire
+from harmoniq.modules.hydro import InfraHydro
 
 router = APIRouter(
     prefix="/api",
@@ -157,19 +160,6 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
         sql_class, base_class, create_class, response_class, table_name_lower
     )
 
-
-# Éolienne
-eolienne_router = api_routers.get("eolienne")
-if eolienne_router is None:
-    raise Exception("Eolienne router not found")
-
-
-@eolienne_router.get("/parc/{eolienne_parc_id}")
-async def read_eoliennes_in_parc(eolienne_parc_id: int, db: Session = Depends(get_db)):
-    result = await engine.all_eoliennes_in_parc(db, eolienne_parc_id)
-    return result
-
-
 # Demande
 demande_router = APIRouter(
     prefix="/demande",
@@ -189,6 +179,20 @@ async def read_demande(
         raise HTTPException(status_code=404, detail="Scenario not found")
 
     demande = await read_demande_data(scenario, CUID)
+    return demande
+
+
+@demande_router.post("/sankey")
+async def read_demande_sankey(
+    scenario_id: int,
+    CUID: Optional[int] = None,
+    db: Session = Depends(get_db),
+):
+    scenario = await read_data_by_id(db, schemas.Scenario, scenario_id)
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+
+    demande = await read_demande_data_sankey(scenario, CUID)
     return demande
 
 
@@ -239,24 +243,125 @@ parc_eolien_router = api_routers["eolienneparc"]
 
 
 @parc_eolien_router.post("/{parc_eolien_id}/production")
-def calculer_production_parc_eolien(
+async def calculer_production_parc_eolien(
     parc_eolien_id: int, scenario_id: int, db: Session = Depends(get_db)
 ):
-    list_eolienne = engine.all_eoliennes_in_parc(db, parc_eolien_id)
-    scenario = CRUD.read_scenario_by_id(db, scenario_id)
-    if list_eolienne is None:
+    eolienne_parc_task = read_data_by_id(db, schemas.EolienneParc, parc_eolien_id)
+    scenario_task = read_data_by_id(db, schemas.Scenario, scenario_id)
+
+    eolienne_parc, scenario = await asyncio.gather(eolienne_parc_task, scenario_task)
+    if eolienne_parc is None:
         raise HTTPException(status_code=404, detail="Parc éolien not found")
 
     if scenario is None:
         raise HTTPException(status_code=404, detail="Scenario not found")
 
-    eolienne_infra = InfraParcEolienne(list_eolienne)
-    eolienne_infra.charger_scenario(scenario)
+    eolienne_infra = InfraParcEolienne(eolienne_parc)
+    await eolienne_infra.charger_scenario(scenario)
     production: pd.DataFrame = eolienne_infra.calculer_production()
+    production = production.fillna(0)
+    return production
 
-    json_prod = production.to_json()
 
-    return json_prod
+# TODO DRY
+# Parc solaire
+solaire_router = api_routers["solaire"]
+
+@solaire_router.post("/{solaire_id}/production")
+async def calculer_production_solaire(
+    solaire_id: int, scenario_id: int, db: Session = Depends(get_db)
+):
+    solaire_task = read_data_by_id(db, schemas.Solaire, solaire_id)
+    scenario_task = read_data_by_id(db, schemas.Scenario, scenario_id)
+
+    solaire, scenario = await asyncio.gather(solaire_task, scenario_task)
+    if solaire is None:
+        raise HTTPException(status_code=404, detail="Solaire not found")
+
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+
+    solaire_infra = InfraSolaire(solaire)
+    solaire_infra.charger_scenario(scenario)
+    production: pd.DataFrame = solaire_infra.calculer_production()
+    production = production.fillna(0)
+    return production
+
+
+# Thermique
+thermique_router = api_routers["thermique"]
+@thermique_router.post("/{thermique_id}/production")
+
+async def calculer_production_thermique(
+    thermique_id: int, scenario_id: int, db: Session = Depends(get_db)
+):
+    thermique_task = read_data_by_id(db, schemas.Thermique, thermique_id)
+    scenario_task = read_data_by_id(db, schemas.Scenario, scenario_id)
+
+    thermique, scenario = await asyncio.gather(thermique_task, scenario_task)
+    if thermique is None:
+        raise HTTPException(status_code=404, detail="Thermique not found")
+
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+
+    thermique_infra = InfraThermique(thermique)
+    thermique_infra.charger_scenario(scenario)
+    production: pd.DataFrame = thermique_infra.calculer_production()
+    production = production.fillna(0)
+    return production
+
+# Nucléaire
+nucleaire_router = api_routers["nucleaire"]
+
+@nucleaire_router.post("/{nucleaire_id}/production")
+async def calculer_production_nucleaire(
+    nucleaire_id: int, scenario_id: int, db: Session = Depends(get_db)
+):
+    nucleaire_task = read_data_by_id(db, schemas.Nucleaire, nucleaire_id)
+    scenario_task = read_data_by_id(db, schemas.Scenario, scenario_id)
+
+    nucleaire, scenario = await asyncio.gather(nucleaire_task, scenario_task)
+    if nucleaire is None:
+        raise HTTPException(status_code=404, detail="Nucleaire not found")
+
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+    
+    nucleaire_infra = InfraNucleaire(nucleaire)
+    nucleaire_infra.charger_scenario(scenario)
+    production: pd.DataFrame = nucleaire_infra.calculer_production()
+    production = production.fillna(0)
+    return production
+
+
+# Hydro
+hydro_router = api_routers["hydro"]
+
+@hydro_router.post("/{hydro_id}/production")
+async def calculer_production_hydro(
+    hydro_id: int, scenario_id: int, db: Session = Depends(get_db)
+):
+    hydro_task = read_data_by_id(db, schemas.Hydro, hydro_id)
+    scenario_task = read_data_by_id(db, schemas.Scenario, scenario_id)
+
+    hydro, scenario = await asyncio.gather(hydro_task, scenario_task)
+    if hydro is None:
+        raise HTTPException(status_code=404, detail="Hydro not found")
+
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+
+    if hydro.type_barrage != "Fil de l'eau":
+        raise HTTPException(
+            status_code=400, detail="Production calculation is only available for run-of-river dams"
+        )
+
+    hydro_infra = InfraHydro(hydro)
+    hydro_infra.charger_scenario(scenario)
+    production: pd.DataFrame = hydro_infra.calculer_production()
+    production = production.fillna(0)
+    return production
 
 
 # Fausses données
@@ -269,7 +374,7 @@ faker_router = APIRouter(
 
 @faker_router.post("/production")
 async def get_production_aleatoire(scenario_id: int, db: Session = Depends(get_db)):
-    scenario = read_data_by_id(db, schemas.Scenario, scenario_id)
+    scenario = await read_data_by_id(db, schemas.Scenario, scenario_id)
     if scenario is None:
         raise HTTPException(status_code=200, detail="Scenario not found")
 

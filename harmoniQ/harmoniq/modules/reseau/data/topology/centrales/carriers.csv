@@ -1,0 +1,7 @@
+name,co2_emissions,color
+hydro_reservoir,0.008,#2171b5
+hydro_fil,0.004,#6baed6
+eolien,0.011,#41ab5d
+solaire,0.045,#feb24c
+thermique,0.469,#cb181d
+nucleaire,0.035,#cb7718
