@@ -371,6 +371,9 @@ class EnergyUtils:
         import networkx as nx
         import numpy as np
         
+        # Assurer que tous les DataFrames temporels ont les mêmes index que les snapshots du réseau
+        EnergyUtils.align_time_indexes(network)
+        
         # 1. Construire le graphe du réseau existant
         G = nx.Graph()
         for bus in network.buses.index:
@@ -433,43 +436,150 @@ class EnergyUtils:
         if hasattr(network.generators_t, 'p_max_pu'):
             # Pour chaque pas de temps, vérifier si la capacité est suffisante
             for timestamp in network.snapshots:
-                total_demand_t = network.loads_t.p_set.loc[timestamp].sum()
-                
-                # Calculer la capacité de génération disponible
-                available_capacity = 0
-                for gen in network.generators.index:
-                    p_nom = network.generators.loc[gen, 'p_nom']
-                    p_max_pu = 1.0  # Par défaut
+                # Vérifier si le timestamp existe dans p_set avant d'y accéder
+                try:
+                    if timestamp in network.loads_t.p_set.index:
+                        total_demand_t = network.loads_t.p_set.loc[timestamp].sum()
+                    else:
+                        # Si le timestamp n'existe pas, utiliser la moyenne ou ignorer
+                        logger.warning(f"Timestamp {timestamp} non trouvé dans network.loads_t.p_set. Utilisation de valeur par défaut.")
+                        if not network.loads_t.p_set.empty:
+                            total_demand_t = network.loads_t.p_set.mean().sum()  # Moyenne comme valeur par défaut
+                        else:
+                            total_demand_t = 0  # Aucune demande si aucune donnée disponible
                     
-                    if gen in network.generators_t.p_max_pu.columns:
-                        p_max_pu = network.generators_t.p_max_pu.loc[timestamp, gen]
+                    # Calculer la capacité de génération disponible
+                    available_capacity = 0
+                    for gen in network.generators.index:
+                        p_nom = network.generators.loc[gen, 'p_nom']
+                        p_max_pu = 1.0  # Par défaut
+                        
+                        if gen in network.generators_t.p_max_pu.columns:
+                            if timestamp in network.generators_t.p_max_pu.index:
+                                p_max_pu = network.generators_t.p_max_pu.loc[timestamp, gen]
+                        
+                        available_capacity += p_nom * p_max_pu
                     
-                    available_capacity += p_nom * p_max_pu
-                
-                # Si la capacité est insuffisante, ajouter un générateur d'urgence
-                if available_capacity < total_demand_t:
-                    capacity_gap = total_demand_t - available_capacity
-                    gen_name = f"emergency_gen_{timestamp.strftime('%Y%m%d')}"
-                    
-                    if gen_name not in network.generators.index:
-                        network.add(
-                            "Generator",
-                            gen_name,
-                            bus=reference_bus,
-                            p_nom=capacity_gap * 1.1,  # 10% de marge
-                            marginal_cost=800,  # Très coûteux
-                            carrier="emergency"
-                        )
-                        logger.info(f"Générateur d'urgence ajouté pour {timestamp}: {capacity_gap:.2f} MW")
-                    
-                    # Assurer que le générateur est disponible pour ce pas de temps
-                    if gen_name not in network.generators_t.p_max_pu.columns:
-                        network.generators_t.p_max_pu[gen_name] = 0
-                    
-                    network.generators_t.p_max_pu.at[timestamp, gen_name] = 1.0
+                    # Si la capacité est insuffisante, ajouter un générateur d'urgence
+                    if available_capacity < total_demand_t:
+                        capacity_gap = total_demand_t - available_capacity
+                        gen_name = f"emergency_gen_{timestamp.strftime('%Y%m%d')}"
+                        
+                        if gen_name not in network.generators.index:
+                            network.add(
+                                "Generator",
+                                gen_name,
+                                bus=reference_bus,
+                                p_nom=capacity_gap * 1.1,  # 10% de marge
+                                marginal_cost=800,  # Très coûteux
+                                carrier="emergency"
+                            )
+                            logger.info(f"Générateur d'urgence ajouté pour {timestamp}: {capacity_gap:.2f} MW")
+                        
+                        # Assurer que le générateur est disponible pour ce pas de temps
+                        if gen_name not in network.generators_t.p_max_pu.columns:
+                            network.generators_t.p_max_pu[gen_name] = 0
+                        
+                        if timestamp in network.generators_t.p_max_pu.index:
+                            network.generators_t.p_max_pu.at[timestamp, gen_name] = 1.0
+                except KeyError as e:
+                    logger.error(f"Erreur lors du traitement du timestamp {timestamp}: {str(e)}")
+                    # Continuer avec le timestamp suivant
+                    continue
         
         # 6. Créer une matrice "safety_factor" pour tous les générateurs
         network.generators.p_nom_extendable = True
         network.generators.p_nom_max = network.generators.p_nom * 1.5  # 50% de flexibilité 
         
         return network
+
+    @staticmethod
+    def align_time_indexes(network):
+        """
+        Aligne tous les index temporels du réseau avec les snapshots.
+        
+        Cette méthode:
+        1. Identifie tous les DataFrames temporels dans le réseau
+        2. Réindexe tous ces DataFrames pour qu'ils correspondent aux snapshots du réseau
+        3. Remplit les valeurs manquantes par des valeurs appropriées (moyenne, valeur précédente, etc.)
+        
+        Args:
+            network: Réseau PyPSA à traiter
+        """
+        logger.info("Alignement des index temporels avec les snapshots du réseau...")
+        
+        if not hasattr(network, 'snapshots') or len(network.snapshots) == 0:
+            logger.warning("Pas de snapshots définis dans le réseau")
+            return
+        
+        # Vérifier et aligner les index temporels des générateurs
+        if hasattr(network, 'generators_t'):
+            for attr_name, df in network.generators_t.items():
+                if isinstance(df, pd.DataFrame) and not df.empty:
+                    if not df.index.equals(network.snapshots):
+                        logger.info(f"Réindexation de network.generators_t.{attr_name}")
+                        
+                        aligned_df = pd.DataFrame(index=network.snapshots, columns=df.columns)
+                        
+                        for col in df.columns:
+                            # Pour les indices communs, prenons les valeurs existantes
+                            common_idx = df.index.intersection(network.snapshots)
+                            aligned_df.loc[common_idx, col] = df.loc[common_idx, col]
+                            
+                            # Pour les indices manquants, utilisons une stratégie de remplissage
+                            missing_idx = network.snapshots.difference(df.index)
+                            if not missing_idx.empty:
+                                if not df.empty:
+                                    last_val = df.loc[df.index[-1], col]
+                                    aligned_df.loc[missing_idx, col] = last_val
+                                # Générer des valeurs aléatoires basées sur la moyenne et l'écart-type
+                                else:
+                                    default_val = 0.0
+                                    if attr_name == 'p_max_pu':
+                                        default_val = 0.9  # Valeur par défaut pour p_max_pu
+                                    elif attr_name == 'marginal_cost':
+                                        default_val = 10.0  # Valeur par défaut pour marginal_cost
+                                    
+                                    aligned_df.loc[missing_idx, col] = default_val
+
+                        network.generators_t[attr_name] = aligned_df
+        
+        # Vérifier et aligner les index temporels des charges
+        if hasattr(network, 'loads_t'):
+            for attr_name, df in network.loads_t.items():
+                if isinstance(df, pd.DataFrame) and not df.empty:
+                    if not df.index.equals(network.snapshots):
+                        logger.info(f"Réindexation de network.loads_t.{attr_name}")
+                        
+                        aligned_df = pd.DataFrame(index=network.snapshots, columns=df.columns)
+
+                        for col in df.columns:
+                            common_idx = df.index.intersection(network.snapshots)
+                            aligned_df.loc[common_idx, col] = df.loc[common_idx, col]
+
+                            missing_idx = network.snapshots.difference(df.index)
+                            if not missing_idx.empty:
+                                if not df.empty:
+                                    # Si nous avons un historique, utilisons la valeur du même jour de la semaine précédente
+                                    # ou à défaut la moyenne avec un peu d'aléatoire
+                                    mean_val = df[col].mean()
+                                    std_val = df[col].std() if len(df) > 1 else mean_val * 0.1
+                                    
+                                    for idx in missing_idx:
+                                        # Chercher une semaine avant
+                                        prev_week = idx - pd.Timedelta(days=7)
+                                        if prev_week in df.index:
+                                            val = df.loc[prev_week, col]
+                                        else:
+                                            # Ajouter un peu d'aléatoire autour de la moyenne
+                                            noise = np.random.normal(0, std_val * 0.1)
+                                            val = max(0, mean_val + noise)
+                                        
+                                        aligned_df.loc[idx, col] = val
+                                else:
+                                    # Si nous n'avons aucune donnée, utiliser une valeur par défaut
+                                    aligned_df.loc[missing_idx, col] = 0.0
+                        
+                        network.loads_t[attr_name] = aligned_df
+        
+        logger.info("Alignement des index temporels terminé")

@@ -177,5 +177,5 @@ if __name__ == "__main__":
     #     energie = infraHydro.calculer_energie(production)
     #     emissions = infraHydro.emission(energie, facteur_charge)
     #     print(emissions)
-    plt.plot(production.index, production.values)
-    plt.show()
+    # plt.plot(production.index, production.values)
+    # plt.show()

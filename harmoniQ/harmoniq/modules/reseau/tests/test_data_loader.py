@@ -168,7 +168,7 @@ def test_timeseries_data():
     try:
         db = next(get_db())
         liste_infra = asyncio.run(read_data_by_id(db, ListeInfrastructures, 1))
-        scenario = asyncio.run(read_data_by_id(db, Scenario, 3))
+        scenario = asyncio.run(read_data_by_id(db, Scenario,1))
         
         loader = NetworkDataLoader(data_dir=str(parent_dir / "data"))
         loader.set_infrastructure_ids(liste_infra)
@@ -177,7 +177,7 @@ def test_timeseries_data():
         network = loader.load_network_data()
         
         # Chargement des données temporelles
-        network = loader.load_timeseries_data(network, scenario, year="2035", start_date="2035-01-01", end_date="2035-01-31")
+        network = loader.load_timeseries_data(network, scenario, year="2035", start_date=scenario.date_de_debut, end_date=scenario.date_de_fin)
         
         # Vérification des snapshots
         print("\n=== SNAPSHOTS ===")
@@ -193,32 +193,33 @@ def test_timeseries_data():
             print(f"Période couverte: {p_max_pu.index[0]} - {p_max_pu.index[-1]}")
             
             # Vérification des éoliennes
-            eolien_gens = network.generators[network.generators.carrier == 'eolien']
-            eolien_names = eolien_gens.index.tolist()
+            # eolien_gens = network.generators[network.generators.carrier == 'eolien']
+            # eolien_names = eolien_gens.index.tolist()
             
-            eolien_series = [col for col in p_max_pu.columns if col in eolien_names]
-            print(f"\nSéries temporelles pour les éoliennes: {len(eolien_series)}/{len(eolien_names)}")
+            # eolien_series = [col for col in p_max_pu.columns if col in eolien_names]
+            # print(f"\nSéries temporelles pour les éoliennes: {len(eolien_series)}/{len(eolien_names)}")
             
-            for name in eolien_names:
-                if name in p_max_pu.columns:
-                    serie = p_max_pu[name]
-                    print(f"- {name}: min={serie.min():.4f}, max={serie.max():.4f}, moyenne={serie.mean():.4f}")
-                else:
-                    print(f"- {name}: ❌ Pas de série temporelle")
-
-            # # Vérification des éoliennes
-            # solaire_gens = network.generators[network.generators.carrier == 'solaire']
-            # solaire_names = solaire_gens.index.tolist()
-            
-            # solaire_series = [col for col in p_max_pu.columns if col in solaire_names]
-            # print(f"\nSéries temporelles pour les éoliennes: {len(solaire_series)}/{len(solaire_names)}")
-            
-            # for name in solaire_names:
+            # for name in eolien_names:
             #     if name in p_max_pu.columns:
             #         serie = p_max_pu[name]
             #         print(f"- {name}: min={serie.min():.4f}, max={serie.max():.4f}, moyenne={serie.mean():.4f}")
             #     else:
             #         print(f"- {name}: ❌ Pas de série temporelle")
+
+            # Vérification des solaire
+            print("\n=== P_MAX_PU SOLAIRES ===")
+            solaire_gens = network.generators[network.generators.carrier == 'solaire']
+            solaire_names = solaire_gens.index.tolist()
+            
+            solaire_series = [col for col in p_max_pu.columns if col in solaire_names]
+            print(f"\nSéries temporelles pour les solaires: {len(solaire_series)}/{len(solaire_names)}")
+            
+            for name in solaire_names:
+                if name in p_max_pu.columns:
+                    serie = p_max_pu[name]
+                    print(f"- {name}: min={serie.min():.4f}, max={serie.max():.4f}, moyenne={serie.mean():.4f}")
+                else:
+                    print(f"- {name}: ❌ Pas de série temporelle")
                     
             # Vérification des valeurs
             invalid_values = (p_max_pu < 0).sum().sum() + (p_max_pu > 1).sum().sum()

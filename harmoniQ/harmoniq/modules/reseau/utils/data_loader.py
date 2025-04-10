@@ -16,6 +16,8 @@ import numpy as np
 import os
 import hashlib
 from harmoniq.modules.eolienne import InfraParcEolienne
+from harmoniq.modules.nucleaire import Nucleaire as NucleaireInfra  
+from harmoniq.modules.solaire import Solaire as SolaireInfra
 from harmoniq.db.engine import get_db
 from harmoniq.db.demande import read_demande_data
 from harmoniq.db.schemas import EolienneParc, Solaire, Hydro, Nucleaire, Thermique, Scenario, BusType
@@ -462,13 +464,68 @@ class NetworkDataLoader:
         p_max_pu_df = pd.DataFrame(index=timestamps)
         marginal_cost_df = pd.DataFrame(index=timestamps)
         
+        
+        # Génération pour les parcs solaires
+        if self.solaire_ids:
+            solaires = asyncio.run(read_multiple_by_id(db, Solaire, self.solaire_ids))
+            
+            for parc in solaires:
+                infraSolaire = SolaireInfra(parc)
+                infraSolaire.charger_scenario(scenario)
+                production_result = infraSolaire.calculer_production()
+                
+                if production_result is not None:
+                    # Pour le solaire, le résultat est un tuple (dict_données, dataframe)
+                    production_dict, production_df = production_result
+                    nom = parc.nom
+                    
+                    if nom in network.generators.index and nom in production_df['nom_centrale'].values:
+                        # Trouver les données correspondantes dans le dataframe
+                        centrale_row = production_df[production_df['nom_centrale'] == nom].iloc[0]
+                        
+                        # Calcul de la puissance moyenne (Wh annuels → MW)
+                        puissance_moyenne_mw = centrale_row['energie_annuelle_wh'] / 8760 / 1e6
+                        
+                        # Calcul du p_max_pu = puissance moyenne / puissance nominale
+                        p_nom = parc.puissance_nominal  # Déjà en MW
+                        p_max_pu = puissance_moyenne_mw / p_nom
+                        
+                        # Assigner la même valeur pour tous les pas de temps
+                        p_max_pu_df[nom] = p_max_pu
+        
+        # Génération pour les centrales nucléaires
+        if self.nucleaire_ids:
+            nucleaires = asyncio.run(read_multiple_by_id(db, Nucleaire, self.nucleaire_ids))
+            
+            for centrale in nucleaires:
+                infraNucleaire = NucleaireInfra(centrale)
+                infraNucleaire.charger_scenario(scenario)
+                production_result = infraNucleaire.calculer_production()
+                
+                if production_result is not None:
+                    # Pour le nucléaire, le résultat est un tuple (dict_données, dataframe)
+                    production_dict, production_df = production_result
+                    nom = centrale.centrale_nucleaire_nom
+                    
+                    if nom in network.generators.index and nom in production_df['nom_centrale'].values:
+                        centrale_row = production_df[production_df['nom_centrale'] == nom].iloc[0]
+                        
+                        # Calcul de la puissance moyenne (Wh annuels → MW)
+                        puissance_moyenne_mw = centrale_row['energie_annuelle_wh'] / 8760 / 1e6
+                        
+                        # Calcul du p_max_pu = puissance moyenne / puissance nominale
+                        p_nom = centrale.puissance_nominal * 1e-3  # Conversion en MW
+                        p_max_pu = puissance_moyenne_mw / p_nom
+                        
+                        p_max_pu_df[nom] = p_max_pu
+
         # Génération pour les parcs éoliens
         if self.eolienne_ids:
             eoliennes = asyncio.run(read_multiple_by_id(db, EolienneParc, self.eolienne_ids))
             
             for parc in eoliennes:
                 infraEolienne = InfraParcEolienne(parc)
-                infraEolienne.charger_scenario(scenario)
+                asyncio.run(infraEolienne.charger_scenario(scenario))
                 production_iteration = infraEolienne.calculer_production()
                 
                 if production_iteration is not None and not production_iteration.empty:
@@ -479,7 +536,7 @@ class NetworkDataLoader:
                         if 'puissance' in production_iteration.columns:
                             p_max_pu_df[nom] = production_iteration['puissance'] / p_nom
                             p_max_pu_df[nom] = p_max_pu_df[nom].fillna(0.25)
-
+        
         marginal_cost_defaults = {
             'hydro_fil': 0.1,      # Faible coût - priorité haute
             'solaire': 0.1,        # Faible coût - priorité haute 
@@ -508,13 +565,8 @@ class NetworkDataLoader:
             
             if gen_name not in p_max_pu_df.columns:
                 # Générer des séries temporelles adaptées au type d'énergie
-                if carrier == 'solaire':
-                    daylight = ((hour_indices >= 6) & (hour_indices <= 18)).astype(float)
-                    seasonal = 0.5 + 0.5 * np.sin(np.pi * (month_indices - 6) / 6)
-                    solar_profile = daylight * seasonal * (0.3 + 0.7 * np.random.random(len(timestamps)))
-                    p_max_pu_df[gen_name] = solar_profile
                     
-                elif carrier == 'hydro_fil':
+                if carrier == 'hydro_fil':
                     seasonal = 0.7 + 0.3 * np.sin(np.pi * (month_indices - 3) / 6)
                     noise = 0.1 * np.random.normal(0, 1, len(timestamps))
                     profile = np.clip(seasonal + noise, 0.5, 1.0)
@@ -526,13 +578,6 @@ class NetworkDataLoader:
                 elif carrier == 'thermique':
                     p_max_pu_df[gen_name] = 0.90 + 0.05 * np.random.random(len(timestamps))
                     
-                elif carrier == 'nucléaire':
-                    baseload = np.ones(len(timestamps)) * 0.95
-                    # Simuler maintenance sur certaines périodes
-                    if len(timestamps) > 30:
-                        maintenance_start = np.random.randint(0, len(timestamps) - 30)
-                        baseload[maintenance_start:maintenance_start+30] = 0.25
-                    p_max_pu_df[gen_name] = baseload
                     
                 else:
                     # Valeur par défaut pour les autres types
