@@ -17,27 +17,36 @@ import logging
 logger = logging.getLogger("Solaire")
 
 
-class InfraParcSolaire(Infrastructure):
+class Solaire(Infrastructure):
     def __init__(self, donnees: SolaireBase):
-        super().__init__(donnees)
 
+        super().__init__(donnees)
+        self.donnees:SolaireBase = donnees
+        self.production: pd.DataFrame = None
 
     def charger_scenario(self, scenario):
         self.scenario: ScenarioBase = scenario
+        self.production = None
 
     @necessite_scenario
     def calculer_production(self) -> pd.DataFrame:
-        _, resultats_df = calculate_energy_solar_plants(self.donnees)
+        if self.production is not None:
+            return self.production
+        
+        nom = self.donnees.nom
+        logger.info(f"Calcul de la production pour {nom}")
 
-        return resultats_df
-
-    def calculer_cout_construction(self) -> float:
-        """Calculer le coût de construction de la centrale solaire"""
-        return cost_solar_powerplant(self.donnees)
-
-    def calculer_co2_eq_construction(self) -> float:
-        """Calculer les émissions de CO2 équivalentes de la construction"""
-        return co2_emissions_solar(self.donnees)
+        self.production = calculate_energy_solar_plants(
+            latitude=self.donnees.latitude,
+            longitude=self.donnees.longitude,
+            angle_panneau=self.donnees.angle_panneau,
+            orientation_panneau=self.donnees.orientation_panneau,
+            puissance_nominal=self.donnees.puissance_nominal,
+            nombre_panneau=self.donnees.nombre_panneau,
+            date_start=self.scenario.date_de_debut,
+            date_end=self.scenario.date_de_fin,
+        )
+        return self.production
 
 
 if __name__ == "__main__":
@@ -45,11 +54,11 @@ if __name__ == "__main__":
     from harmoniq.db.engine import get_db
 
     db = next(get_db())
-    # Récupérer la première centrale solaire
-    centrale_solaire = read_all_solaire(db)[0]
-    infraSolaire = InfraParcSolaire(centrale_solaire)
+    centrale = read_all_solaire(db)[0]
+    infraSolaire = Solaire(centrale)
 
-    # Charger le scénario
     scenario = read_all_scenario(db)[0]
+
     infraSolaire.charger_scenario(scenario)
+
     production = infraSolaire.calculer_production()
