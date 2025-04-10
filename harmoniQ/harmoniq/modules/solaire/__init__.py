@@ -37,6 +37,7 @@ class Solaire(Infrastructure):
         logger.info(f"Calcul de la production pour {nom}")
 
         self.production = calculate_energy_solar_plants(
+            nom=self.donnees.nom,
             latitude=self.donnees.latitude,
             longitude=self.donnees.longitude,
             angle_panneau=self.donnees.angle_panneau,
@@ -47,6 +48,13 @@ class Solaire(Infrastructure):
             date_end=self.scenario.date_de_fin,
         )
         return self.production
+    
+    @necessite_scenario
+    def calculer_cout_construction(self):
+        self.couts  = cost_solar_powerplant(puissance_mw=self.donnees.puissance_nominal)
+        return self.couts
+    
+    
 
 
 if __name__ == "__main__":
@@ -62,3 +70,5 @@ if __name__ == "__main__":
     infraSolaire.charger_scenario(scenario)
 
     production = infraSolaire.calculer_production()
+
+    cout = infraSolaire.calculer_cout_construction()
