@@ -42,6 +42,7 @@ population_relative = {
     "Gaspesie–Iles-de-la-Madeleine": 0.0102,
     "Chaudiere-Appalaches": 0.0503,
     "Laval": 0.0508,
+    
     "Lanaudiere": 0.0620,
     "Laurentides": 0.0744,
     "Monteregie": 0.1675,

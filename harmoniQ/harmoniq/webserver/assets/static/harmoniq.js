@@ -648,21 +648,69 @@ function charger_demande(scenario_id, mrc_id) {
     //             console.error('Erreur lors du chargement de la demande:', error);
     //         }
     //     });
+//SANKEY START
+fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
+    .then(data => {
+        console.log('Demande Sankey chargée avec succès');
+        demande = data;
 
-    fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
-        .then(data => {
-            console.log('Demande Sankey chargée avec succès');
-            demande = data;
-        })
-        .catch(error => {
-            if (error.message.includes('404')) {
-                console.error('Demande non trouvée:', error);
-            } else {
-                console.error('Erreur lors du chargement de la demande Sankey:', error);
+        // Generate Sankey diagram
+        const sectorLabels = Object.values(demande.sector);
+        const energyLabels = ["Electricity", "Gaz"];
+        const allLabels = energyLabels.concat(sectorLabels);
+
+        const electricitySourceIndex = 0; // Electricité
+        const gazSourceIndex = 1;         // Gaz
+
+        const sources = [];
+        const targets = [];
+        const values = [];
+
+        for (let i = 0; i < sectorLabels.length; i++) {
+            const targetIndex = i + energyLabels.length;
+
+            // Electricity to sector
+            sources.push(electricitySourceIndex);
+            targets.push(targetIndex);
+            values.push(demande.total_electricity[i]);
+
+            // Gaz to sector
+            sources.push(gazSourceIndex);
+            targets.push(targetIndex);
+            values.push(demande.total_gaz[i]);
             }
-        });
-}
 
+        const sankeyData = [{
+            type: "sankey",
+            orientation: "h",
+            node: {
+                pad: 15,
+                thickness: 20,
+                label: allLabels
+            },
+            link: {
+                source: sources,
+                target: targets,
+                value: values
+            }
+        }];
+
+        const layout = {
+            title: "Flux d'énergie vers les secteurs",
+            font: { size: 12 }
+        };
+
+        Plotly.newPlot("sankey-plot", sankeyData, layout);
+    })
+    .catch(error => {
+        if (error.message.includes('404')) {
+            console.error('Demande non trouvée:', error);
+        } else {
+            console.error('Erreur lors du chargement de la demande Sankey:', error);
+        }
+    });
+//SANKEY END
+}
 function changeScenario() {
     let id = $("#scenario-actif").val();
     

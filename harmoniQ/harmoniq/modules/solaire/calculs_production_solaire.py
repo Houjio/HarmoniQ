@@ -96,12 +96,108 @@ def convert_solar(value, module, mode="surface_to_power"):
         )
 
 
-start_time = time.time()
+# def calculate_energy_solar_plants(coordinates_centrales):
+
+#     surface_tilt=45
+#     surface_orientation=180
+
+#     # Initialisation des modèles
+#     sandia_modules = pvlib.pvsystem.retrieve_sam("SandiaMod")
+#     sapm_inverters = pvlib.pvsystem.retrieve_sam("cecinverter")
+
+#     module = sandia_modules["Canadian_Solar_CS5P_220M___2009_"]
+#     inverter = sapm_inverters["ABB__MICRO_0_25_I_OUTD_US_208__208V_"]
+#     temperature_model_parameters = pvlib.temperature.TEMPERATURE_MODEL_PARAMETERS[
+#         "sapm"
+#     ]["open_rack_glass_glass"]
+
+#     resultats_centrales = {}
+#     results_list = []  # Liste pour stocker les résultats pour le DataFrame
+#     energie_totale = 0
+
+#     for centrale in coordinates_centrales:
+#         latitude, longitude, name, altitude, timezone, puissance_kw = centrale
+
+#         # Récupération des données météo
+#         weather = pvlib.iotools.get_pvgis_tmy(latitude, longitude)[0]
+#         weather.index.name = "utc_time"
+
+#         # Calcul du nombre de modules nécessaires
+#         puissance_module_w = module["Impo"] * module["Vmpo"]
+#         nombre_modules = int(np.ceil((puissance_kw * 1000) / puissance_module_w))
+
+#         # Calcul de la production
+#         print(f"Calcul de la production pour {name} ({puissance_kw} kW)...")
+#         ac = calculate_solar_parameters(
+#             weather,
+#             latitude,
+#             longitude,
+#             altitude,
+#             temperature_model_parameters,
+#             module,
+#             inverter,
+#             surface_tilt,
+#             surface_orientation,
+#         )
+
+#         # Mise à l'échelle selon la puissance de la centrale
+#         ac_scaled = ac * nombre_modules
+#         annual_energy = ac_scaled.sum()
+#         energie_totale += annual_energy
+
+#         # Stockage des résultats pour cette centrale dans le dictionnaire
+#         resultats_centrales[name] = {
+#             "energie_annuelle_wh": annual_energy,
+#             "energie_horaire": ac_scaled,
+#             "nombre_modules": nombre_modules,
+#             "puissance_kw": puissance_kw,
+#         }
+
+#         # Stockage des résultats pour cette centrale dans la liste pour le DataFrame
+#         results_list.append(
+#             {
+#                 "nom_centrale": name,
+#                 "latitude": latitude,
+#                 "longitude": longitude,
+#                 "puissance_kw": puissance_kw,
+#                 "energie_annuelle_kwh": annual_energy / 1000,  # Conversion en kWh
+#                 "nombre_modules": nombre_modules,
+#             }
+#         )
+
+#     resultats_centrales["energie_totale_wh"] = energie_totale
+#     resultats_centrales_df = pd.DataFrame(results_list)
+
+#     return resultats_centrales, resultats_centrales_df
+nom = "varennes"
+latitude = 45.6833
+longitude = -73.4333
+angle_panneau = 45
+orientation_panneau = 180
+puissance_nominal = 15
+nombre_panneau = 10000
+date_start = pd.Timestamp("2022-01-01")
+date_end = pd.Timestamp("2022-12-31")
 
 
 def calculate_energy_solar_plants(
-    coordinates_centrales, surface_tilt=45, surface_orientation=180
-):
+    nom : str,
+    latitude: float,
+    longitude: float,
+    angle_panneau: float,
+    orientation_panneau: float,
+    puissance_nominal: float,
+    nombre_panneau: int,
+    date_start: pd.Timestamp,
+    date_end: pd.Timestamp,
+) -> pd.DataFrame:
+    """
+    Calcule la production énergétique des centrales solaires.
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame contenant la production énergétique horaire.
+    """
 
     # Initialisation des modèles
     sandia_modules = pvlib.pvsystem.retrieve_sam("SandiaMod")
@@ -126,10 +222,11 @@ def calculate_energy_solar_plants(
 
         # Calcul du nombre de modules nécessaires
         puissance_module_w = module["Impo"] * module["Vmpo"]
-        nombre_modules = int(np.ceil((puissance_kw * 1000) / puissance_module_w))
+        nombre_modules = int(np.ceil((puissance_nominal * 1e6) / puissance_module_w))
+        altitude = 0  # Valeur par défaut pour l'altitude
 
         # Calcul de la production
-        print(f"Calcul de la production pour {name} ({puissance_kw} kW)...")
+        print(f"Calcul de la production pour {nom} ({puissance_nominal} MW)...")
         ac = calculate_solar_parameters(
             weather,
             latitude,
@@ -138,8 +235,8 @@ def calculate_energy_solar_plants(
             temperature_model_parameters,
             module,
             inverter,
-            surface_tilt,
-            surface_orientation,
+            angle_panneau,
+            orientation_panneau,
         )
 
         # Mise à l'échelle selon la puissance de la centrale
@@ -148,21 +245,21 @@ def calculate_energy_solar_plants(
         energie_totale += annual_energy
 
         # Stockage des résultats pour cette centrale dans le dictionnaire
-        resultats_centrales[name] = {
+        resultats_centrales[nom] = {
             "energie_annuelle_wh": annual_energy,
             "energie_horaire": ac_scaled,
             "nombre_modules": nombre_modules,
-            "puissance_kw": puissance_kw,
+            "puissance_nominal_MW": puissance_nominal,
         }
 
         # Stockage des résultats pour cette centrale dans la liste pour le DataFrame
         results_list.append(
             {
-                "nom_centrale": name,
+                "nom_centrale": nom,
                 "latitude": latitude,
                 "longitude": longitude,
-                "puissance_kw": puissance_kw,
-                "energie_annuelle_kwh": annual_energy / 1000,  # Conversion en kWh
+                "puissance_nominale_MW": puissance_nominal,
+                "energie_annuelle_wh": annual_energy,
                 "nombre_modules": nombre_modules,
             }
         )
@@ -248,7 +345,7 @@ def calculate_regional_residential_solar(
     return resultats_regions, resultats_regions_df
 
 
-def cost_solar_powerplant(coordinates_centrales, resultats_centrales):
+def cost_solar_powerplant(puissance_mw):
     """
     Calcule le coût total pour chaque centrale solaire.
 
@@ -265,65 +362,47 @@ def cost_solar_powerplant(coordinates_centrales, resultats_centrales):
         Dictionnaire contenant le coût total en dollars pour chaque centrale
     """
     couts = {}
+    # Coût de référence par MW pour le Québec
+    cout_par_mw = 4_210_000  # Estimation moyenne des coûts actuels
 
-    for centrale in coordinates_centrales:
-        nom = centrale[2]
-        puissance_mw = centrale[5] / 1000  # Conversion kW en MW
+    # Coût total prenant en compte les coûts indirects et opérationnels
+    cout_total = puissance_mw * cout_par_mw
 
-        # Coût de référence par MW pour le Québec
-        cout_par_mw = 4_210_000  # Estimation moyenne des coûts actuels
-
-        # Coût total prenant en compte les coûts indirects et opérationnels
-        cout_total = puissance_mw * cout_par_mw
-
-        couts[nom] = cout_total
+    couts[nom] = cout_total
 
     return couts
 
 
-def calculate_installation_cost(coordinates_centrales):
+def calculate_installation_cost(puissance_mw):
     """
-    Calcule le coût d'installation pour chaque centrale solaire avec une estimation plus précise.
-
-    Parameters
-    ----------
-    coordinates_centrales : list of tuples
-        Liste des coordonnées et puissances des centrales
-
     Returns
     -------
     dict
         Dictionnaire contenant le coût d'installation pour chaque centrale
     """
     couts_installation = {}
-
-    for centrale in coordinates_centrales:
-        nom = centrale[2]
-        puissance_mw = centrale[5] / 1000  # Conversion kW en MW
-
-        # Coûts de base par MW selon la taille de l'installation
-        if puissance_mw < 1:
-            cout_base = 4_500_000  # Plus cher pour petites installations
-        elif 1 <= puissance_mw < 5:
+    # Coûts de base par MW selon la taille de l'installation
+    if puissance_mw < 1:
+        cout_base = 4_500_000  # Plus cher pour petites installations
+    elif 1 <= puissance_mw < 5:
             cout_base = 4_210_000  # Coût moyen
-        else:
-            cout_base = 3_900_000  # Économies d'échelle pour grandes installations
+    else:
+        cout_base = 3_900_000  # Économies d'échelle pour grandes installations
 
-        # Facteurs d'ajustement
-        facteur_echelle = 0.85  # Économies d'échelle
-        facteur_complexite = 1.1  # Complexité du site et infrastructure
+    # Facteurs d'ajustement
+    facteur_echelle = 0.85  # Économies d'échelle
+    facteur_complexite = 1.1  # Complexité du site et infrastructure
 
-        # Calcul du coût d'installation avec facteurs
-        cout_installation = (
-            cout_base * (puissance_mw**facteur_echelle) * facteur_complexite
+    # Calcul du coût d'installation avec facteurs
+    cout_installation = (
+        cout_base * (puissance_mw**facteur_echelle) * facteur_complexite
         )
-
-        couts_installation[nom] = cout_installation
+    couts_installation[nom] = cout_installation
 
     return couts_installation
 
 
-def calculate_lifetime(coordinates_centrales):
+def calculate_lifetime(puissance_mw):
     """
     Estime la durée de vie des centrales solaires en fonction de leurs puissances installées.
 
@@ -340,18 +419,15 @@ def calculate_lifetime(coordinates_centrales):
     """
     durees_vie = {}
 
-    for centrale in coordinates_centrales:
-        nom = centrale[2]
-        puissance_mw = centrale[5] / 1000  # Conversion kW en MW
 
-        if puissance_mw < 1:
-            duree_vie = 25  # Petites installations
-        elif 1 <= puissance_mw < 10:
-            duree_vie = 30  # Installations moyennes
-        else:
-            duree_vie = 35  # Grandes installations
+    if puissance_mw < 1:
+        duree_vie = 25  # Petites installations
+    elif 1 <= puissance_mw < 10:
+        duree_vie = 30  # Installations moyennes
+    else:
+        duree_vie = 35  # Grandes installations
 
-        durees_vie[nom] = duree_vie
+    durees_vie[nom] = duree_vie
 
     return durees_vie
 
@@ -404,41 +480,20 @@ if __name__ == "__main__":
     #     surface_orientation=180,
     # )
 
-    resultats_centrales, resultats_centrales_df = calculate_energy_solar_plants(
-        coordinates_centrales
-    )
+    resultats_centrales, resultats_centrales_df = calculate_energy_solar_plants(nom,latitude,
+    longitude,
+    angle_panneau,
+    orientation_panneau,
+    puissance_nominal,
+    nombre_panneau,
+    date_start,
+    date_end)
     energie_centrales = resultats_centrales["energie_totale_wh"]
-    # couts = cost_solar_powerplant(coordinates_centrales, resultats_centrales)
-    # couts_installation = calculate_installation_cost(coordinates_centrales)
-    # durees_vie = calculate_lifetime(coordinates_centrales)
+    couts = cost_solar_powerplant(puissance_mw=10)
+    couts_installation = calculate_installation_cost(puissance_mw=10)
+    durees_vie = calculate_lifetime(puissance_mw=10)
     # emissions_co2 = co2_emissions_solar(coordinates_centrales, resultats_centrales)
 
-    # # Affichage des résultats
-    # print("\n=== RÉSULTATS PAR CENTRALE ===")
-    # for centrale in coordinates_centrales:
-    #     nom = centrale[2]
-    #     duree_vie = durees_vie[nom]
-    #     print(f"\n{nom}:")
-    #     print(
-    #         f"  Production annuelle : {resultats_centrales[nom]['energie_annuelle_wh']/1000:,.2f} kWh"
-    #     )
-    #     print(f"  Puissance installée : {centrale[5]:,.2f} kW")
-    #     print(f"  Coût total : {couts[nom]:,.2f} $")
-    #     print(f"  Coût d'installation : {couts_installation[nom]:,.2f} $")
-    #     print(f"  Durée de vie estimée : {duree_vie} ans")
-    #     print(
-    #         f"  Émissions CO₂ totales : {emissions_co2[nom]:,.2f} kg CO₂eq sur {duree_vie} ans"
-    #     )
-
-    # print("\n=== RÉSUMÉ DES RÉSULTATS POUR TOUTES LES RÉGIONS ===")
-    # energie_totale = 0
-    # for nom_region, data in resultats_regions.items():
-    #     energie_totale += data["energie_annuelle_kwh"]
-
-    # print(f"\nProduction totale pour toutes les régions : {energie_totale:,.2f} kWh")
-
-end_time = time.time()
-print(f"\nTemps d'exécution : {end_time - start_time:.2f} secondes")
 
 
 # # ------------   Validation avec données réelles Hydro-Québec ----------------------##
