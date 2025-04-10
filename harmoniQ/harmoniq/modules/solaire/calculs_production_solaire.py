@@ -103,7 +103,7 @@ orientation_panneau = 180
 puissance_nominal = 9.5
 nombre_panneau = 10000
 date_start = pd.Timestamp("2035-01-01")
-date_end = pd.Timestamp("2036-01-01")
+date_end = pd.Timestamp("2040-01-7")
 
 
 def calculate_energy_solar_plants(
@@ -165,8 +165,26 @@ def calculate_energy_solar_plants(
     ac_scaled = np.maximum(ac_scaled, 0)
 
     # Création de la plage de dates pour remplacer les datetime
-    datetime_index = pd.date_range(start=date_start, end=date_end - pd.Timedelta(hours=1), freq="H")
+    datetime_index = pd.date_range(start=date_start, end=date_end, freq="H")
+
+# Gestion des cas où la plage dépasse une année
+    if len(ac_scaled) == 8760 and len(datetime_index) > 8760:
+        # Ajouter les heures supplémentaires au-delà d'une année
+        extra_hours = len(datetime_index) - 8760
+        ac_scaled = np.concatenate([ac_scaled, np.zeros(extra_hours)])
     
+
+    # Création du DataFrame avec la production horaire
+    resultats_centrales_df = pd.DataFrame(
+        {
+            "datetime": datetime_index,  # Utiliser la plage horaire générée
+            "production_horaire_wh": ac_scaled,
+        }
+    )
+    resultats_centrales_df.set_index("datetime", inplace=True)
+    print(resultats_centrales_df)
+    return resultats_centrales_df
+
     # Création du DataFrame avec la production horaire
     resultats_centrales_df = pd.DataFrame(
         {
@@ -178,7 +196,7 @@ def calculate_energy_solar_plants(
     resultats_centrales_df.set_index("datetime", inplace=True)
 
     print(resultats_centrales_df)
-    
+
     return resultats_centrales_df
 
 def calculate_regional_residential_solar(
