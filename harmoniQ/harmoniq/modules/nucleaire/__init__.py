@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger("Nucleaire")
 
 
-class Nucleaire(Infrastructure):
+class InfraNucleaire(Infrastructure):
     def __init__(self, donnees: NucleaireBase):
 
         super().__init__(donnees)
@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     db = next(get_db())
     centrale = read_all_nucleaire(db)[0]
-    infraNucleaire = Nucleaire(centrale)
+    infraNucleaire = InfraNucleaire(centrale)
 
     scenario = read_all_scenario(db)[0]
 

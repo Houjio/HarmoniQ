@@ -118,11 +118,12 @@ async def read_demande_data_temporal(
 
 if __name__ == "__main__":
     # Test the function
+    import asyncio
     scenario = Scenario(
         weather=1,
         consomation=1,
         date_de_debut="2035-01-01",
         date_de_fin="2035-01-31",
     )
-    df = read_demande_data(scenario, CUID=2431)
+    df = asyncio.run(read_demande_data(scenario, CUID=2431))
     print(df)
