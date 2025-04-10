@@ -144,32 +144,46 @@ def get_run_of_river_dam_power(barrage):
     head = barrage.donnees.hauteur_chute
     nb_turb_maintenance = barrage.donnees.nb_turbines_maintenance
     nb_turbines = barrage.donnees.nb_turbines - nb_turb_maintenance
+    P_nom = barrage.donnees.puissance_nominal * 1000 / (nb_turbines + nb_turb_maintenance)
     type_turb = barrage.donnees.modele_turbine
     type_barrage = barrage.donnees.type_barrage
     debit = barrage.debit
-    barrage.apport["dateTime"] = pd.to_datetime(barrage.apport["dateTime"])
-    barrage.apport = barrage.apport.set_index("dateTime")
-
-    debit[nom_barrage] += barrage.apport["streamflow"].values
+    Units = "IS"
+    hp_type = "Diversion"
     # print(debit)
 
     if type_barrage == "Reservoir":
         print("Erreur : Le barrage entré n'est pas un barrage au fil de l'eau")
     else:
-        Units = "IS"
-        hp_type = "Diversion"
-        debit[nom_barrage] /= nb_turbines
-        hp = calculate_hp_potential(
-            flow=debit,
-            flow_column=nom_barrage,
-            design_flow=debit_nom,
-            head=head,
-            units=Units,
-            hydropower_type=hp_type,
-            turbine_type=type_turb,
-            annual_caclulation=True,
-            annual_maintenance_flag=False,
-        )
+        if nom_barrage == "Beauharnois_Francis" or nom_barrage == "Beauharnois_Kaplan":
+            debit["Beauharnois"] /= nb_turbines
+            hp = calculate_hp_potential(
+                flow=debit,
+                flow_column="Beauharnois",
+                design_flow=debit_nom,
+                head=head,
+                rated_power=P_nom,
+                units=Units,
+                hydropower_type=hp_type,
+                turbine_type=type_turb,
+                annual_caclulation=True,
+                annual_maintenance_flag=False,
+            )
+        else:
+            debit[nom_barrage] /= nb_turbines
+            hp = calculate_hp_potential(
+                flow=debit,
+                flow_column=nom_barrage,
+                design_flow=debit_nom,
+                rated_power=P_nom,
+                head=head,
+                units=Units,
+                hydropower_type=hp_type,
+                turbine_type=type_turb,
+                annual_caclulation=True,
+                annual_maintenance_flag=False,
+            )            
+            
         hp.dataframe_output["power_MW"] = (
             hp.dataframe_output["power_kW"] * (nb_turbines - nb_turb_maintenance)
         ) / 1000
