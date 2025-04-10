@@ -25,6 +25,13 @@ class PositionBase(BaseModel):
         return f"({self.latitude}, {self.longitude})"
 
 
+class InfrastructureBase(BaseModel): # TODO make the other classes inherit
+    nom: str
+    latitude: float
+    longitude: float
+    puissance_nominal: float
+    # TODO, make cost and GHG data necissary
+
 class Optimisme(PyEnum):
     pessimiste = 1
     moyen = 2

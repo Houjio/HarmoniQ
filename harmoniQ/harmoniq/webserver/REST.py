@@ -256,7 +256,7 @@ async def calculer_production_parc_eolien(
     eolienne_infra = InfraParcEolienne(eolienne_parc)
     await eolienne_infra.charger_scenario(scenario)
     production: pd.DataFrame = eolienne_infra.calculer_production()
-
+    production = production.fillna(0)
     return production
 
 

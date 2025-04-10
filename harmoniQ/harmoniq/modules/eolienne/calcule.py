@@ -135,9 +135,9 @@ def get_parc_power(parc: EolienneParc, meteo: pd.DataFrame) -> pd.DataFrame:
     # Calculate the energy produced
     df = pd.DataFrame(
         {
-            "tempsdate": meteo.index,
-            "vitesse_vent_kmh": meteo["vitesse_vent_kmh"],
-            "direction_vent": meteo["direction_vent"],
+            "tempsdate": meteo.index.values,
+            "vitesse_vent_kmh": meteo["vitesse_vent_kmh"].values,
+            "direction_vent": meteo["direction_vent"].values,
             "puissance": power_parc,
         }
     )

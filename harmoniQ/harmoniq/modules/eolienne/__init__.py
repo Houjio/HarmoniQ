@@ -51,7 +51,7 @@ class InfraParcEolienne(Infrastructure):
 
 
 if __name__ == "__main__":
-    from harmoniq.db.CRUD import read_all_eolienne_parc, read_all_scenario
+    from harmoniq.db.CRUD import read_all_scenario, read_all_eolienne_parc
     import asyncio
     from harmoniq.db.engine import get_db
 
@@ -72,9 +72,7 @@ if __name__ == "__main__":
             production_totale = production_iteration
         else:
             production_totale["puissance"] += production_iteration["puissance"]
-
-    print(read_all_eolienne_parc(db))
-    # print(f"Production totale pour tous les parcs: {production_totale["puissance"]} kW")
+        break
 
     prod_totale = production_totale["puissance"].sum() / 1000  # Convertir en MW
     print(f"Production totale: {prod_totale} MW")
