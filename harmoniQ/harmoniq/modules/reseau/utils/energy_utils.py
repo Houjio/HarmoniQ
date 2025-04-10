@@ -341,6 +341,12 @@ class EnergyUtils:
                     resampled_df = df.resample('D').sum() if use_sum else df.resample('D').mean()
                     resampled_df.index = daily_snapshots[:len(resampled_df)]
                     
+                    # CORRECTION: Marquer les données de charge (p_set) comme étant en énergie et non en puissance
+                    if use_sum:
+                        # Ajouter un attribut pour indiquer que les données sont en MWh/jour (énergie) et non en MW (puissance)
+                        resampled_df._energy_not_power = True
+                        logger.info(f"Données de charge (p_set) marquées comme ÉNERGIE (MWh/jour) et non puissance (MW)")
+                    
                     # Créer le dictionnaire si nécessaire
                     if not hasattr(new_network, component_t_name):
                         setattr(new_network, component_t_name, pypsa.descriptors.Dict({}))
@@ -370,11 +376,9 @@ class EnergyUtils:
         """
         import networkx as nx
         import numpy as np
-        
-        # Assurer que tous les DataFrames temporels ont les mêmes index que les snapshots du réseau
+
         EnergyUtils.align_time_indexes(network)
-        
-        # 1. Construire le graphe du réseau existant
+
         G = nx.Graph()
         for bus in network.buses.index:
             G.add_node(bus)
@@ -386,7 +390,6 @@ class EnergyUtils:
         logger.info(f"Réseau avec {len(components)} composants non connectés")
         
         if reference_bus is None:
-            # Trouver un bus avec charge et générateur
             buses_with_load = set(network.loads.bus)
             buses_with_gen = set(network.generators.bus)
             common_buses = buses_with_load.intersection(buses_with_gen)
@@ -397,20 +400,17 @@ class EnergyUtils:
                 reference_bus = list(buses_with_gen)[0]
             else:
                 reference_bus = network.buses.index[0]
-        
-        
-        # 2. Créer un type de ligne virtuelle à haute capacité
+
         if "virtual_line_type" not in network.line_types.index:
             network.add(
                 "LineType",
                 "virtual_line_type",
-                r=0.001,   # Résistance très faible
-                x=0.01,    # Réactance minimale 
-                b=0,       # Susceptance nulle
-                s_nom=1000000  # Capacité très élevée
+                r=0.001,  
+                x=0.01,
+                b=0,   
+                s_nom=1000000
             )
         
-        # 3. Connecter tous les composants avec des lignes virtuelles
         if len(components) > 1:
             
             # Pour chaque composant, connecter un bus au bus de référence
@@ -420,7 +420,6 @@ class EnergyUtils:
                 
                 comp_bus = list(comp)[0]  # Premier bus du composant
                 
-                # Ajouter une ligne virtuelle
                 line_name = f"virtual_full_mesh_line_{i}"
                 if line_name not in network.lines.index:
                     network.add(
@@ -432,16 +431,15 @@ class EnergyUtils:
                         s_nom=1000000
                     )
         
-        # 5. Vérifier la capacité totale de génération à chaque pas de temps
+        # Vérifier la capacité totale de génération à chaque pas de temps
         if hasattr(network.generators_t, 'p_max_pu'):
             # Pour chaque pas de temps, vérifier si la capacité est suffisante
             for timestamp in network.snapshots:
-                # Vérifier si le timestamp existe dans p_set avant d'y accéder
+                # Vérifier si le timestamp existe dans p_set
                 try:
                     if timestamp in network.loads_t.p_set.index:
                         total_demand_t = network.loads_t.p_set.loc[timestamp].sum()
                     else:
-                        # Si le timestamp n'existe pas, utiliser la moyenne ou ignorer
                         logger.warning(f"Timestamp {timestamp} non trouvé dans network.loads_t.p_set. Utilisation de valeur par défaut.")
                         if not network.loads_t.p_set.empty:
                             total_demand_t = network.loads_t.p_set.mean().sum()  # Moyenne comme valeur par défaut
@@ -472,11 +470,9 @@ class EnergyUtils:
                                 bus=reference_bus,
                                 p_nom=capacity_gap * 1.1,  # 10% de marge
                                 marginal_cost=800,  # Très coûteux
-                                carrier="emergency"
+                                carrier="import"
                             )
-                            logger.info(f"Générateur d'urgence ajouté pour {timestamp}: {capacity_gap:.2f} MW")
                         
-                        # Assurer que le générateur est disponible pour ce pas de temps
                         if gen_name not in network.generators_t.p_max_pu.columns:
                             network.generators_t.p_max_pu[gen_name] = 0
                         
@@ -500,8 +496,8 @@ class EnergyUtils:
         
         Cette méthode:
         1. Identifie tous les DataFrames temporels dans le réseau
-        2. Réindexe tous ces DataFrames pour qu'ils correspondent aux snapshots du réseau
-        3. Remplit les valeurs manquantes par des valeurs appropriées (moyenne, valeur précédente, etc.)
+        2. Réindexe tous ces DataFrames pour qu'ils correspondent aux snapshots
+        3. Remplit les valeurs manquantes par des valeurs appropriées
         
         Args:
             network: Réseau PyPSA à traiter
@@ -512,7 +508,7 @@ class EnergyUtils:
             logger.warning("Pas de snapshots définis dans le réseau")
             return
         
-        # Vérifier et aligner les index temporels des générateurs
+        # Aligner les index temporels des générateurs
         if hasattr(network, 'generators_t'):
             for attr_name, df in network.generators_t.items():
                 if isinstance(df, pd.DataFrame) and not df.empty:
@@ -526,25 +522,24 @@ class EnergyUtils:
                             common_idx = df.index.intersection(network.snapshots)
                             aligned_df.loc[common_idx, col] = df.loc[common_idx, col]
                             
-                            # Pour les indices manquants, utilisons une stratégie de remplissage
+                            # Pour les indices manquants, utiliser une stratégie de remplissage
                             missing_idx = network.snapshots.difference(df.index)
                             if not missing_idx.empty:
                                 if not df.empty:
                                     last_val = df.loc[df.index[-1], col]
                                     aligned_df.loc[missing_idx, col] = last_val
-                                # Générer des valeurs aléatoires basées sur la moyenne et l'écart-type
                                 else:
                                     default_val = 0.0
                                     if attr_name == 'p_max_pu':
-                                        default_val = 0.9  # Valeur par défaut pour p_max_pu
+                                        default_val = 0.9
                                     elif attr_name == 'marginal_cost':
-                                        default_val = 10.0  # Valeur par défaut pour marginal_cost
+                                        default_val = 10.0
                                     
                                     aligned_df.loc[missing_idx, col] = default_val
 
                         network.generators_t[attr_name] = aligned_df
         
-        # Vérifier et aligner les index temporels des charges
+        # Aligner les index temporels des charges
         if hasattr(network, 'loads_t'):
             for attr_name, df in network.loads_t.items():
                 if isinstance(df, pd.DataFrame) and not df.empty:
@@ -560,26 +555,173 @@ class EnergyUtils:
                             missing_idx = network.snapshots.difference(df.index)
                             if not missing_idx.empty:
                                 if not df.empty:
-                                    # Si nous avons un historique, utilisons la valeur du même jour de la semaine précédente
-                                    # ou à défaut la moyenne avec un peu d'aléatoire
                                     mean_val = df[col].mean()
                                     std_val = df[col].std() if len(df) > 1 else mean_val * 0.1
                                     
                                     for idx in missing_idx:
-                                        # Chercher une semaine avant
                                         prev_week = idx - pd.Timedelta(days=7)
                                         if prev_week in df.index:
                                             val = df.loc[prev_week, col]
                                         else:
-                                            # Ajouter un peu d'aléatoire autour de la moyenne
                                             noise = np.random.normal(0, std_val * 0.1)
                                             val = max(0, mean_val + noise)
                                         
                                         aligned_df.loc[idx, col] = val
                                 else:
-                                    # Si nous n'avons aucune donnée, utiliser une valeur par défaut
                                     aligned_df.loc[missing_idx, col] = 0.0
                         
                         network.loads_t[attr_name] = aligned_df
         
         logger.info("Alignement des index temporels terminé")
+
+    @staticmethod
+    def calculate_energy_from_power(network, power_data, is_journalier=None):
+        """
+        Calcule correctement l'énergie à partir des valeurs de puissance en tenant compte 
+        de la durée des snapshots.
+        
+        Args:
+            network: Réseau PyPSA contenant les snapshots
+            power_data: DataFrame ou Series contenant des valeurs de puissance en MW
+            is_journalier: Si True, force le mode journalier (override de la détection auto)
+            
+        Returns:
+            Même structure que power_data, mais avec des valeurs en MWh
+        """
+        # Déterminer si nous sommes en mode journalier
+        daily_snapshots = False
+        
+        if is_journalier is not None:
+            daily_snapshots = is_journalier
+        elif len(network.snapshots) > 1:
+            time_diff = network.snapshots[1] - network.snapshots[0]
+            if time_diff >= pd.Timedelta(hours=23):
+                daily_snapshots = True
+        
+        # Vérifier si les données sont déjà en énergie
+        data_is_energy = getattr(power_data, '_energy_not_power', False)
+        
+        if isinstance(power_data, pd.DataFrame):
+            energy_data = power_data.copy()
+            
+            if daily_snapshots and not data_is_energy:
+                logger.info(f"Mode journalier: Conversion puissance (MW) → énergie (MWh/jour)")
+                energy_data = energy_data * 24
+            
+        elif isinstance(power_data, pd.Series):
+            energy_data = power_data.copy()
+            
+            if daily_snapshots and not data_is_energy:
+                energy_data = energy_data * 24
+        
+        else:
+            energy_data = power_data
+            if daily_snapshots and not data_is_energy:
+                energy_data = energy_data * 24
+        
+        return energy_data
+
+    @staticmethod
+    def debug_network_energy_allocation(network, period='auto', is_journalier=None):
+        """
+        Affiche des informations détaillées sur l'allocation d'énergie dans le réseau.
+        
+        Args:
+            network: Le réseau PyPSA à analyser
+            period: 'daily', 'hourly', ou 'auto' pour détection automatique
+            is_journalier: Si True, force le mode journalier (override du paramètre period)
+        """
+        logger = logging.getLogger("EnergyUtils")
+        
+        # Déterminer le mode (journalier/horaire)
+        hours_per_snapshot = 1  # Par défaut: horaire
+        
+        if is_journalier is not None:
+            # Utiliser la valeur explicite si fournie
+            if is_journalier:
+                hours_per_snapshot = 24
+                period = 'daily'
+            else:
+                hours_per_snapshot = 1
+                period = 'hourly'
+            logger.info(f"Mode {'journalier' if is_journalier else 'horaire'} spécifié explicitement")
+        elif period == 'auto':
+            # Détection automatique basée sur l'écart entre snapshots
+            if len(network.snapshots) > 1:
+                time_diff = network.snapshots[1] - network.snapshots[0]
+                if time_diff >= pd.Timedelta(hours=23):
+                    hours_per_snapshot = 24
+                    period = 'daily'
+                    logger.info(f"Mode journalier détecté automatiquement (écart: {time_diff})")
+                else:
+                    hours_per_snapshot = 1
+                    period = 'hourly'
+                    logger.info(f"Mode horaire détecté automatiquement (écart: {time_diff})")
+        else:
+            # Utiliser directement la valeur spécifiée
+            hours_per_snapshot = 24 if period == 'daily' else 1
+        
+        # Facteur de conversion puissance → énergie
+        hours_per_snapshot = 24 if period == 'daily' else 1
+        
+        # Analyser par type d'énergie
+        carriers = network.generators.carrier.unique()
+        
+        total_power = network.generators_t['p'].sum().sum()
+        total_energy = total_power * hours_per_snapshot
+        
+        logger.info(f"Analyse détaillée de l'allocation d'énergie:")
+        logger.info(f"Snapshots: {len(network.snapshots)} ({period})")
+        
+        if period == 'daily':
+            logger.info(f"Puissance moyenne journalière: {total_power/len(network.snapshots):.2f} MW")
+            logger.info(f"Puissance totale cumulée: {total_power:.2f} MW")
+            logger.info(f"Énergie journalière moyenne: {total_energy/len(network.snapshots):.2f} MWh/jour")
+            logger.info(f"Énergie totale: {total_energy:.2f} MWh ({total_energy/1e6:.2f} TWh)")
+        else:
+            logger.info(f"Puissance moyenne: {total_power/len(network.snapshots):.2f} MW")  
+            logger.info(f"Puissance totale cumulée: {total_power:.2f} MW")
+            logger.info(f"Énergie totale: {total_energy:.2f} MWh ({total_energy/1e6:.2f} TWh)")
+        
+        for carrier in carriers:
+            carrier_gens = network.generators[network.generators.carrier == carrier].index
+            if len(carrier_gens) > 0:
+                # Capacité installée
+                capacity = network.generators[network.generators.carrier == carrier].p_nom.sum()
+                
+                # Production totale
+                carrier_power = network.generators_t['p'][carrier_gens].sum().sum()
+                carrier_energy = carrier_power * hours_per_snapshot
+                
+                # Facteur de capacité moyen
+                if capacity > 0:
+                    capacity_factor = carrier_power / (capacity * len(network.snapshots))
+                else:
+                    capacity_factor = 0
+                
+                # Pourcentage du mix
+                percentage = 100 * carrier_power / total_power if total_power > 0 else 0
+                
+                logger.info(f"  {carrier}:")
+                logger.info(f"    - Capacité installée: {capacity:.2f} MW")
+                logger.info(f"    - Puissance produite: {carrier_power:.2f} MW ({percentage:.1f}%)")
+                logger.info(f"    - Énergie produite: {carrier_energy:.2f} MWh")
+                logger.info(f"    - Facteur de capacité: {capacity_factor*100:.1f}%")
+                
+                # Contrainte d'accès aux données?
+                if carrier_power == 0 and capacity > 0:
+                    logger.warning(f"    ⚠️ {carrier} a une capacité de {capacity:.2f} MW mais produit 0 MW")
+                    
+                    # Vérifier si les générateurs ont des données p_max_pu disponibles
+                    if hasattr(network.generators_t, 'p_max_pu'):
+                        p_max_pu_available = sum(1 for gen in carrier_gens if gen in network.generators_t.p_max_pu.columns)
+                        if p_max_pu_available < len(carrier_gens):
+                            logger.warning(f"    ⚠️ Seulement {p_max_pu_available}/{len(carrier_gens)} générateurs ont des données p_max_pu")
+                    
+                    # Vérifier les coûts marginaux
+                    if hasattr(network.generators_t, 'marginal_cost'):
+                        for gen in carrier_gens:
+                            if gen in network.generators_t.marginal_cost.columns:
+                                cost_min = network.generators_t.marginal_cost[gen].min()
+                                cost_max = network.generators_t.marginal_cost[gen].max()
+                                logger.info(f"    - Coût marginal pour {gen}: {cost_min:.2f}-{cost_max:.2f}")

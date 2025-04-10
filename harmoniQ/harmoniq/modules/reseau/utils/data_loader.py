@@ -469,55 +469,54 @@ class NetworkDataLoader:
         if self.solaire_ids:
             solaires = asyncio.run(read_multiple_by_id(db, Solaire, self.solaire_ids))
             
-            for parc in solaires:
+            for idx, parc in enumerate(solaires):
                 infraSolaire = SolaireInfra(parc)
                 infraSolaire.charger_scenario(scenario)
-                production_result = infraSolaire.calculer_production()
+                production_df = infraSolaire.calculer_production()
                 
-                if production_result is not None:
-                    # Pour le solaire, le résultat est un tuple (dict_données, dataframe)
-                    production_dict, production_df = production_result
+                if production_df is not None:
                     nom = parc.nom
-                    
-                    if nom in network.generators.index and nom in production_df['nom_centrale'].values:
-                        # Trouver les données correspondantes dans le dataframe
-                        centrale_row = production_df[production_df['nom_centrale'] == nom].iloc[0]
-                        
-                        # Calcul de la puissance moyenne (Wh annuels → MW)
-                        puissance_moyenne_mw = centrale_row['energie_annuelle_wh'] / 8760 / 1e6
-                        
-                        # Calcul du p_max_pu = puissance moyenne / puissance nominale
-                        p_nom = parc.puissance_nominal  # Déjà en MW
-                        p_max_pu = puissance_moyenne_mw / p_nom
-                        
-                        # Assigner la même valeur pour tous les pas de temps
-                        p_max_pu_df[nom] = p_max_pu
+                    if nom in network.generators.index:
+                        if 'production_horaire_wh' in production_df.columns:
+                            # Calculer p_max_pu pour chaque heure = production_horaire_wh / (puissance_nominale * 1e6)
+                            p_nom = parc.puissance_nominal * 1e6  # Conversion de MW à W
+                            
+                            p_values = production_df['production_horaire_wh'].values
+                            hourly_index = production_df.index if 'datetime' not in production_df.columns else pd.to_datetime(production_df['datetime'])
+                            hourly_production = pd.Series(p_values, index=hourly_index)
+                            
+                            aligned_production = hourly_production.reindex(network.snapshots).fillna(0)
+                            
+                            # Calculer p_max_pu = production_horaire / puissance_nominale
+                            p_max_pu_df[nom] = aligned_production / p_nom
+                            p_max_pu_df[nom] = p_max_pu_df[nom].fillna(0.1)  # Remplacer NaN par 0
         
         # Génération pour les centrales nucléaires
         if self.nucleaire_ids:
             nucleaires = asyncio.run(read_multiple_by_id(db, Nucleaire, self.nucleaire_ids))
             
-            for centrale in nucleaires:
+            for idx, centrale in enumerate(nucleaires):
                 infraNucleaire = NucleaireInfra(centrale)
                 infraNucleaire.charger_scenario(scenario)
-                production_result = infraNucleaire.calculer_production()
+                production_df = infraNucleaire.calculer_production()
                 
-                if production_result is not None:
-                    # Pour le nucléaire, le résultat est un tuple (dict_données, dataframe)
-                    production_dict, production_df = production_result
+                if production_df is not None:
                     nom = centrale.centrale_nucleaire_nom
-                    
-                    if nom in network.generators.index and nom in production_df['nom_centrale'].values:
-                        centrale_row = production_df[production_df['nom_centrale'] == nom].iloc[0]
-                        
-                        # Calcul de la puissance moyenne (Wh annuels → MW)
-                        puissance_moyenne_mw = centrale_row['energie_annuelle_wh'] / 8760 / 1e6
-                        
-                        # Calcul du p_max_pu = puissance moyenne / puissance nominale
-                        p_nom = centrale.puissance_nominal * 1e-3  # Conversion en MW
-                        p_max_pu = puissance_moyenne_mw / p_nom
-                        
-                        p_max_pu_df[nom] = p_max_pu
+                    if nom in network.generators.index:
+                        # Vérifier si on a des données horaires
+                        if 'production_horaire_wh' in production_df.columns:
+                            # Calculer p_max_pu pour chaque heure = production_horaire_wh / (puissance_nominale * 1e6)
+                            p_nom = centrale.puissance_nominal  # Déjà en W
+                            
+                            p_values = production_df['production_horaire_wh'].values
+                            hourly_index = production_df.index if 'datetime' not in production_df.columns else pd.to_datetime(production_df['datetime'])
+                            hourly_production = pd.Series(p_values, index=hourly_index)
+                            
+                            aligned_production = hourly_production.reindex(network.snapshots).fillna(0)
+                            
+                            # Calculer p_max_pu = production_horaire / puissance_nominale
+                            p_max_pu_df[nom] = aligned_production / p_nom
+                            p_max_pu_df[nom] = p_max_pu_df[nom].fillna(0.85)
 
         # Génération pour les parcs éoliens
         if self.eolienne_ids:
@@ -593,11 +592,14 @@ class NetworkDataLoader:
 
     def load_demand_data(self, network: pypsa.Network, scenario, start_date=None, end_date=None) -> pd.DataFrame:
         """
-        Charge et distribue les données de demande énergétique avec une forte variabilité.
+        Charge et distribue les données de demande énergétique.
         
-        Cette méthode crée une distribution randomisée de la demande:
-        - Préservation du total de la demande à chaque pas de temps
-        - Utilise le cache pour les années 2035 et 2050
+        Cette méthode:
+        1. Charge les données brutes depuis la DB (en kWh)
+        2. Convertit les kWh en MW 
+        3. Somme les demandes pour tous les secteurs à chaque heure
+        4. Applique un facteur de mise à l'échelle pour atteindre la demande cible (~260 TWh)
+        5. Distribue la demande entre les différentes charges du réseau
         
         Args:
             network: Le réseau PyPSA
@@ -624,7 +626,7 @@ class NetworkDataLoader:
         if n_loads == 0:
             return pd.DataFrame()
             
-        # Vérifier si une version en cache existe pour les années 2035 et 2050
+        # Vérifier si une version en cache existe
         cache_key = f"demand_{scenario_year}_{start_date}_{end_date}_loads{n_loads}"
         cache_hash = hashlib.md5(cache_key.encode()).hexdigest()[:12]
         cache_file = DEMAND_CACHE_DIR / f"demand_{scenario_year}_{cache_hash}.parquet"
@@ -649,41 +651,89 @@ class NetworkDataLoader:
             date_de_fin=end_date or getattr(scenario, 'date_de_fin', None)
         )
         
-        # Charger la demande totale (CUID = 1)
+        # Charger la demande totale
         demand_df = asyncio.run(read_demande_data(db_scenario, CUID=1))
+        logger.info(f"Données de demande chargées: {len(demand_df)} lignes")
         
-        # FIXME: Problème avec read_demande_data qui retourne potentiellement tous les scénarios (43680 valeurs)
-        # Une solution temporaire est appliquée ici pour limiter aux données d'une année
-        # Limiter aux données d'une année (8736 heures)
-        if len(demand_df) > 8736:
-            logger.warning(f"Demande tronquée: {len(demand_df)} valeurs -> 8736 valeurs (1 année)")
-            demand_df = demand_df.iloc[:8736]
+        # Convertir les dates en datetime
+        if 'date' in demand_df.columns:
+            demand_df['date'] = pd.to_datetime(demand_df['date'])
         
-        demand_df['total_demand'] = (demand_df['electricity'] + demand_df['gaz'])*1e-6  # MW
+        # 1. Convertir les kWh en MW
+        if 'electricity' in demand_df.columns:
+            demand_df['electricity'] /= 1000
+            logger.info(f"Électricité convertie en MW: moyenne = {demand_df['electricity'].mean():.2f} MW")
+        
+        if 'gaz' in demand_df.columns:
+            demand_df['gaz'] /= 1000
+        
+        # 2. Groupement par secteur
+        if 'sector' in demand_df.columns:
+            demand_df = demand_df.groupby('date').sum(numeric_only=True).reset_index()
+            logger.info(f"Sommation par secteur: {len(demand_df)} lignes uniques")
+        else:
+            # Vérifier les dates dupliquées
+            date_counts = demand_df['date'].value_counts()
+            if (date_counts > 1).any():
+                demand_df = demand_df.groupby('date').sum(numeric_only=True).reset_index()
+                logger.info(f"Sommation des doublons: {len(demand_df)} lignes uniques")
+        
+        # 3. Filtrer par année
+        if scenario_year:
+            year_filter = pd.to_datetime(demand_df['date']).dt.year == int(scenario_year)
+            if year_filter.any():
+                demand_df = demand_df[year_filter]
+                logger.info(f"Filtrage par année {scenario_year}: {len(demand_df)} lignes")
+        
+        # 4. Calculer la demande totale
+        if 'electricity' in demand_df.columns and 'gaz' in demand_df.columns:
+            demand_df['total_demand'] = demand_df['electricity'] + demand_df['gaz']
+        elif 'electricity' in demand_df.columns:
+            demand_df['total_demand'] = demand_df['electricity']
+        else:
+            demand_df['total_demand'] = 20000  # Valeur par défaut
+            logger.warning(f"Utilisation d'une valeur de demande par défaut: 20000 MW")
+        
+        # 5. Appliquer un facteur d'échelle si nécessaire
+        avg_demand = demand_df['total_demand'].mean()
+        annual_energy_twh = avg_demand * 8760 / 1e6
+        
+        target_energy_twh = 260.0
+        target_avg_demand = 30000.0
+        
+        if abs(annual_energy_twh - target_energy_twh) > 50:
+            correction_factor = target_avg_demand / avg_demand
+            logger.info(f"Application d'un facteur d'échelle: {correction_factor:.2f}x pour atteindre ~{target_energy_twh:.1f} TWh")
+            demand_df['total_demand'] *= correction_factor
+        
         demand_df = demand_df.set_index('date')
         demand_df.index = pd.to_datetime(demand_df.index)
-        
         load_demand_df = pd.DataFrame(index=demand_df.index, columns=loads)
         np.random.seed(42)
         
-        # 1. "catégories" de charges
+        # Assigner des catégories pour les différentes charges
         load_categories = {}
         for load in loads:
             category = np.random.choice(['small', 'medium', 'large', 'xlarge'], 
                                        p=[0.4, 0.3, 0.2, 0.1])
             load_categories[load] = category
         
+        # Distribuer la demande entre les charges
         n_timestamps = len(demand_df)
         
         for t in range(n_timestamps):
             timestamp = demand_df.index[t]
             total_demand_val = demand_df.loc[timestamp, 'total_demand']
+            
+            # Normaliser en float
             if isinstance(total_demand_val, (pd.Series, np.ndarray)):
                 total_demand = float(total_demand_val.iloc[0] if hasattr(total_demand_val, 'iloc') else total_demand_val[0])
             else:
                 total_demand = float(total_demand_val)
+            
+            # Générer des poids aléatoires pour la distribution
             random_weights = np.zeros(n_loads)
-            time_factor = 0.7 + 0.6 * np.sin(t / 20.0)  # Varie entre 0.1 et 1.3
+            time_factor = 0.7 + 0.6 * np.sin(t / 20.0)
             
             for i, load in enumerate(loads):
                 category = load_categories[load]
@@ -701,6 +751,7 @@ class NetworkDataLoader:
                 noise_factor = 0.7 + 0.6 * np.random.random()
                 random_weights[i] = max(0.01, base * time_specific * noise_factor * time_factor)
             
+            # Normaliser pour que la somme soit égale à la demande totale
             total_weights = np.sum(random_weights)
             normalized_weights = random_weights / total_weights * total_demand
             
@@ -708,7 +759,13 @@ class NetworkDataLoader:
             for i, load in enumerate(loads):
                 load_demand_df.loc[timestamp, load] = normalized_weights[i]
         
-        # Sauvegarder dans le cache pour les années 2035 et 2050
+        if len(network.snapshots) > 1:
+            time_diff = network.snapshots[1] - network.snapshots[0]
+            if time_diff >= pd.Timedelta(hours=23):
+                load_demand_df._energy_not_power = True
+                logger.info("Mode journalier détecté: données marquées comme ÉNERGIE (MWh/jour)")
+        
+        # Sauvegarder dans le cache pour les années futures
         if scenario_year in ['2035', '2050']:
             try:
                 logger.info(f"Sauvegarde de la demande dans le cache: {cache_file}")
