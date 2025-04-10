@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger("Thermique")
 
 
-class Thermique(Infrastructure):
+class InfraThermique(Infrastructure):
     def __init__(self, donnees: ThermiqueBase):
 
         super().__init__(donnees)
@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     db = next(get_db())
     centrale = read_all_thermique(db)[0]
-    infraThermique = Thermique(centrale)
+    infraThermique = InfraThermique(centrale)
 
     scenario = read_all_scenario(db)[0]
 

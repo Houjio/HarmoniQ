@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-from data_solaire import (
+from harmoniq.modules.solaire.data_solaire import (
     coordinates_centrales,
     coordinates_residential,
     population_relative,
@@ -103,7 +103,7 @@ orientation_panneau = 180
 puissance_nominal = 9.5
 nombre_panneau = 10000
 date_start = pd.Timestamp("2035-01-01")
-date_end = pd.Timestamp("2036-01-01")
+date_end = pd.Timestamp("2037-06-01")
 
 
 def calculate_energy_solar_plants(
@@ -165,21 +165,40 @@ def calculate_energy_solar_plants(
     ac_scaled = np.maximum(ac_scaled, 0)
 
     # Création de la plage de dates pour remplacer les datetime
-    datetime_index = pd.date_range(start=date_start, end=date_end - pd.Timedelta(hours=1), freq="H")
-    
+    datetime_index = pd.date_range(start=date_start, end=date_end, freq="H")
+
+    # Gestion des cas où la longueur de datetime_index dépasse celle de ac
+    if len(ac) < len(datetime_index):
+
+        # Dupliquer les données de ac pour remplir les heures supplémentaires
+        ac_extended = np.tile(ac, int(np.ceil(len(datetime_index) / len(ac))))[:len(datetime_index)]
+
+        # Clip les valeurs pour les heures supplémentaires
+        for i in range(len(ac), len(datetime_index)):
+            year_offset = (datetime_index[i].year - datetime_index[0].year)
+            ac_extended[i] = np.clip(ac_extended[i % len(ac)], 0, ac_extended[i % len(ac)] * year_offset)
+
+        # Fixer les valeurs négatives à zéro
+        ac_extended = np.maximum(ac_extended, 0)
+    else:
+        # Si datetime_index est inférieur ou égal à ac, tronquer ac
+        ac_extended = ac[:len(datetime_index)]
+        ac_extended = np.maximum(ac_extended, 0)
+
+
     # Création du DataFrame avec la production horaire
     resultats_centrales_df = pd.DataFrame(
         {
             "datetime": datetime_index,  # Utiliser la plage horaire générée
-
-            "production_horaire_wh": ac_scaled,
+            "production_horaire_wh": ac_extended,
         }
     )
     resultats_centrales_df.set_index("datetime", inplace=True)
-
-    print(resultats_centrales_df)
     
+    print(resultats_centrales_df)
+
     return resultats_centrales_df
+    
 
 def calculate_regional_residential_solar(
     coordinates_residential: List[tuple],

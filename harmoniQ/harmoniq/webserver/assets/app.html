@@ -232,6 +232,29 @@
 
 </div>
 
+<div class="modal fade" id="graphModal" tabindex="-1" aria-labelledby="graphModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="graphModalLabel">Graphique</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center align-items-center" style="height: 100%;">
+                <p class="text-danger" id="graph-error" style="display: none;">
+                    Une erreur est survenue. Cette infrastructure ne marche peut être pas.
+                </p>
+                <div class="spinner-border text-primary" role="status" id="graph-loading">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div id="graph-plot">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.33.1/plotly.min.js" integrity="sha512-V0j9LhrK9IMNdFYZqh+IqU4cjo7wdxyHNyH+L0td4HryBuZ7Oq6QxP2/CWr6TituX31+gv5PnolvERuTbz8UNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
@@ -242,7 +265,8 @@
 
 <script>
     // Globals
-    var demande;
+    var demandeSankey;
+    var demandeTemporel;
     var production;
     var map;
 </script>

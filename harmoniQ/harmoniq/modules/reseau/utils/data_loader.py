@@ -16,8 +16,8 @@ import numpy as np
 import os
 import hashlib
 from harmoniq.modules.eolienne import InfraParcEolienne
-from harmoniq.modules.nucleaire import Nucleaire as NucleaireInfra  
-from harmoniq.modules.solaire import Solaire as SolaireInfra
+from harmoniq.modules.solaire import InfraSolaire
+from harmoniq.modules.nucleaire import InfraNucleaire
 from harmoniq.db.engine import get_db
 from harmoniq.db.demande import read_demande_data
 from harmoniq.db.schemas import EolienneParc, Solaire, Hydro, Nucleaire, Thermique, Scenario, BusType
@@ -470,7 +470,7 @@ class NetworkDataLoader:
             solaires = asyncio.run(read_multiple_by_id(db, Solaire, self.solaire_ids))
             
             for idx, parc in enumerate(solaires):
-                infraSolaire = SolaireInfra(parc)
+                infraSolaire = InfraSolaire(parc)
                 infraSolaire.charger_scenario(scenario)
                 production_df = infraSolaire.calculer_production()
                 
@@ -496,7 +496,7 @@ class NetworkDataLoader:
             nucleaires = asyncio.run(read_multiple_by_id(db, Nucleaire, self.nucleaire_ids))
             
             for idx, centrale in enumerate(nucleaires):
-                infraNucleaire = NucleaireInfra(centrale)
+                infraNucleaire = InfraNucleaire(centrale)
                 infraNucleaire.charger_scenario(scenario)
                 production_df = infraNucleaire.calculer_production()
                 
