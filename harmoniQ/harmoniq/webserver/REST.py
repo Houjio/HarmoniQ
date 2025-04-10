@@ -16,7 +16,7 @@ from harmoniq.db.CRUD import (
     update_data,
     delete_data,
 )
-from harmoniq.db.demande import read_demande_data, read_demande_data_sankey
+from harmoniq.db.demande import read_demande_data, read_demande_data_sankey, read_demande_data_temporal
 from harmoniq.core import meteo
 from harmoniq.db.engine import get_db
 from harmoniq.core.fausse_données import production_aleatoire
@@ -193,6 +193,19 @@ async def read_demande_sankey(
         raise HTTPException(status_code=404, detail="Scenario not found")
 
     demande = await read_demande_data_sankey(scenario, CUID)
+    return demande
+
+@demande_router.post("/temporal")
+async def read_demande_temporal(
+    scenario_id: int,
+    CUID: Optional[int] = None,
+    db: Session = Depends(get_db),
+):
+    scenario = await read_data_by_id(db, schemas.Scenario, scenario_id)
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+
+    demande = await read_demande_data_temporal(scenario, CUID)
     return demande
 
 
