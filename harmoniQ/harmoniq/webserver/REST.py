@@ -16,7 +16,12 @@ from harmoniq.db.CRUD import (
     update_data,
     delete_data,
 )
-from harmoniq.db.demande import read_demande_data, read_demande_data_sankey, read_demande_data_temporal
+from harmoniq.db.demande import (
+    read_demande_data, 
+    read_demande_data_sankey, 
+    read_demande_data_temporal,
+    get_all_mrc
+)
 from harmoniq.core import meteo
 from harmoniq.db.engine import get_db
 from harmoniq.core.fausse_données import production_aleatoire
@@ -167,6 +172,13 @@ demande_router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+@demande_router.get("/mrc")
+async def get_mrc_list(db: Session = Depends(get_db)):
+    """
+    Get all MRC (Municipalité Régionale de Comté) data.
+    """
+    mrc_data = await get_all_mrc()
+    return mrc_data
 
 @demande_router.post("/")
 async def read_demande(
