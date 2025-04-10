@@ -31,30 +31,3 @@ class NetworkValidator:
     Classe gérant la validation du réseau électrique.
     """
 
-    def validate_network(self, network: pypsa.Network) -> bool:
-        """
-        Valide la cohérence du réseau chargé.
-
-        Args:
-            network: Réseau PyPSA à valider
-
-        Returns:
-            bool: True si le réseau est valide
-
-        Raises:
-            DataLoadError: Si des incohérences sont détectées
-        """
-        try:
-            if len(network.buses) == 0:
-                raise DataLoadError("Aucun bus trouvé dans le réseau")
-            if len(network.generators) == 0:
-                raise DataLoadError("Aucun générateur trouvé dans le réseau")
-            if len(network.lines) == 0:
-                raise DataLoadError("Aucune ligne trouvée dans le réseau")
-            if hasattr(network, 'snapshots') and len(network.snapshots) == 0:
-                raise DataLoadError("Aucune donnée temporelle trouvée")
-            return True
-        except Exception as e:
-            raise DataLoadError(f"Validation du réseau échouée: {str(e)}")
-        
-    # Add new method here

@@ -13,16 +13,6 @@ Example:
     >>> network = builder.optimize_network(network)
     >>> results = builder.analyze_results(network)
 
-Notes:
-    Le réseau est construit à partir des données CSV organisées comme suit :
-    - data/
-        ├── regions/          # Points de connexion (buses.csv)
-        ├── topology/         # Structure du réseau
-        │   ├── lines/        # Lignes de transmission
-        │   └── centrales/    # Générateurs et types
-        └── timeseries/       # Données temporelles
-            └── 2024/         # Année considérée
-
 Contributeurs : Yanis Aksas (yanis.aksas@polymtl.ca)
                 Add Contributor here
 """
@@ -33,7 +23,7 @@ from pathlib import Path
 from typing import Dict, Optional, Tuple
 from datetime import datetime
 
-from utils import NetworkDataLoader, DATA_DIR
+from utils import NetworkDataLoader
 from .optimization import NetworkOptimizer
 from .power_flow import PowerFlowAnalyzer
 

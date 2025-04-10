@@ -39,7 +39,9 @@ dependencies = [
     "geopandas",
     "env-canada",
     "pypsa",
-    "pypsa[hdf5]"
+    "pypsa[hdf5]",
+    "pyarrow",
+    "fastparquet"
 ]
 
 [project.scripts]
