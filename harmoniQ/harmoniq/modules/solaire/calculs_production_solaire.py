@@ -103,7 +103,7 @@ orientation_panneau = 180
 puissance_nominal = 9.5
 nombre_panneau = 10000
 date_start = pd.Timestamp("2035-01-01")
-date_end = pd.Timestamp("2040-01-7")
+date_end = pd.Timestamp("2037-06-01")
 
 
 def calculate_energy_solar_plants(
@@ -167,37 +167,38 @@ def calculate_energy_solar_plants(
     # Création de la plage de dates pour remplacer les datetime
     datetime_index = pd.date_range(start=date_start, end=date_end, freq="H")
 
-# Gestion des cas où la plage dépasse une année
-    if len(ac_scaled) == 8760 and len(datetime_index) > 8760:
-        # Ajouter les heures supplémentaires au-delà d'une année
-        extra_hours = len(datetime_index) - 8760
-        ac_scaled = np.concatenate([ac_scaled, np.zeros(extra_hours)])
+    # Gestion des cas où la longueur de datetime_index dépasse celle de ac
+    if len(ac) < len(datetime_index):
+
+        # Dupliquer les données de ac pour remplir les heures supplémentaires
+        ac_extended = np.tile(ac, int(np.ceil(len(datetime_index) / len(ac))))[:len(datetime_index)]
+
+        # Clip les valeurs pour les heures supplémentaires
+        for i in range(len(ac), len(datetime_index)):
+            year_offset = (datetime_index[i].year - datetime_index[0].year)
+            ac_extended[i] = np.clip(ac_extended[i % len(ac)], 0, ac_extended[i % len(ac)] * year_offset)
+
+        # Fixer les valeurs négatives à zéro
+        ac_extended = np.maximum(ac_extended, 0)
+    else:
+        # Si datetime_index est inférieur ou égal à ac, tronquer ac
+        ac_extended = ac[:len(datetime_index)]
+        ac_extended = np.maximum(ac_extended, 0)
+
+
+    # Création du DataFrame avec la production horaire
+    resultats_centrales_df = pd.DataFrame(
+        {
+            "datetime": datetime_index,  # Utiliser la plage horaire générée
+            "production_horaire_wh": ac_extended,
+        }
+    )
+    resultats_centrales_df.set_index("datetime", inplace=True)
     
-
-    # Création du DataFrame avec la production horaire
-    resultats_centrales_df = pd.DataFrame(
-        {
-            "datetime": datetime_index,  # Utiliser la plage horaire générée
-            "production_horaire_wh": ac_scaled,
-        }
-    )
-    resultats_centrales_df.set_index("datetime", inplace=True)
-    print(resultats_centrales_df)
-    return resultats_centrales_df
-
-    # Création du DataFrame avec la production horaire
-    resultats_centrales_df = pd.DataFrame(
-        {
-            "datetime": datetime_index,  # Utiliser la plage horaire générée
-
-            "production_horaire_wh": ac_scaled,
-        }
-    )
-    resultats_centrales_df.set_index("datetime", inplace=True)
-
     print(resultats_centrales_df)
 
     return resultats_centrales_df
+    
 
 def calculate_regional_residential_solar(
     coordinates_residential: List[tuple],
