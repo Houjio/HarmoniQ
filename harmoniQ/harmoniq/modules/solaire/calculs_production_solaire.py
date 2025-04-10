@@ -95,89 +95,15 @@ def convert_solar(value, module, mode="surface_to_power"):
             "Mode invalide. Utilisez 'surface_to_power' ou 'power_to_surface'."
         )
 
-
-# def calculate_energy_solar_plants(coordinates_centrales):
-
-#     surface_tilt=45
-#     surface_orientation=180
-
-#     # Initialisation des modèles
-#     sandia_modules = pvlib.pvsystem.retrieve_sam("SandiaMod")
-#     sapm_inverters = pvlib.pvsystem.retrieve_sam("cecinverter")
-
-#     module = sandia_modules["Canadian_Solar_CS5P_220M___2009_"]
-#     inverter = sapm_inverters["ABB__MICRO_0_25_I_OUTD_US_208__208V_"]
-#     temperature_model_parameters = pvlib.temperature.TEMPERATURE_MODEL_PARAMETERS[
-#         "sapm"
-#     ]["open_rack_glass_glass"]
-
-#     resultats_centrales = {}
-#     results_list = []  # Liste pour stocker les résultats pour le DataFrame
-#     energie_totale = 0
-
-#     for centrale in coordinates_centrales:
-#         latitude, longitude, name, altitude, timezone, puissance_kw = centrale
-
-#         # Récupération des données météo
-#         weather = pvlib.iotools.get_pvgis_tmy(latitude, longitude)[0]
-#         weather.index.name = "utc_time"
-
-#         # Calcul du nombre de modules nécessaires
-#         puissance_module_w = module["Impo"] * module["Vmpo"]
-#         nombre_modules = int(np.ceil((puissance_kw * 1000) / puissance_module_w))
-
-#         # Calcul de la production
-#         print(f"Calcul de la production pour {name} ({puissance_kw} kW)...")
-#         ac = calculate_solar_parameters(
-#             weather,
-#             latitude,
-#             longitude,
-#             altitude,
-#             temperature_model_parameters,
-#             module,
-#             inverter,
-#             surface_tilt,
-#             surface_orientation,
-#         )
-
-#         # Mise à l'échelle selon la puissance de la centrale
-#         ac_scaled = ac * nombre_modules
-#         annual_energy = ac_scaled.sum()
-#         energie_totale += annual_energy
-
-#         # Stockage des résultats pour cette centrale dans le dictionnaire
-#         resultats_centrales[name] = {
-#             "energie_annuelle_wh": annual_energy,
-#             "energie_horaire": ac_scaled,
-#             "nombre_modules": nombre_modules,
-#             "puissance_kw": puissance_kw,
-#         }
-
-#         # Stockage des résultats pour cette centrale dans la liste pour le DataFrame
-#         results_list.append(
-#             {
-#                 "nom_centrale": name,
-#                 "latitude": latitude,
-#                 "longitude": longitude,
-#                 "puissance_kw": puissance_kw,
-#                 "energie_annuelle_kwh": annual_energy / 1000,  # Conversion en kWh
-#                 "nombre_modules": nombre_modules,
-#             }
-#         )
-
-#     resultats_centrales["energie_totale_wh"] = energie_totale
-#     resultats_centrales_df = pd.DataFrame(results_list)
-
-#     return resultats_centrales, resultats_centrales_df
 nom = "varennes"
 latitude = 45.6833
 longitude = -73.4333
 angle_panneau = 45
 orientation_panneau = 180
-puissance_nominal = 15
+puissance_nominal = 9.5
 nombre_panneau = 10000
-date_start = pd.Timestamp("2022-01-01")
-date_end = pd.Timestamp("2022-12-31")
+date_start = pd.Timestamp("2035-01-01")
+date_end = pd.Timestamp("2036-01-01")
 
 
 def calculate_energy_solar_plants(
@@ -209,66 +135,51 @@ def calculate_energy_solar_plants(
         "sapm"
     ]["open_rack_glass_glass"]
 
-    resultats_centrales = {}
-    results_list = []  # Liste pour stocker les résultats pour le DataFrame
-    energie_totale = 0
+    # Récupération des données météo
+    weather = pvlib.iotools.get_pvgis_tmy(latitude, longitude)[0]
+    weather.index.name = "utc_time"
 
-    for centrale in coordinates_centrales:
-        latitude, longitude, name, altitude, timezone, puissance_kw = centrale
+    # Calcul du nombre de modules nécessaires
+    puissance_module_w = module["Impo"] * module["Vmpo"]
+    print(puissance_module_w)
+    nombre_modules = int(np.ceil((puissance_nominal * 1e6) / puissance_module_w))
+    altitude = 0  # Valeur par défaut pour l'altitude
 
-        # Récupération des données météo
-        weather = pvlib.iotools.get_pvgis_tmy(latitude, longitude)[0]
-        weather.index.name = "utc_time"
-
-        # Calcul du nombre de modules nécessaires
-        puissance_module_w = module["Impo"] * module["Vmpo"]
-        nombre_modules = int(np.ceil((puissance_nominal * 1e6) / puissance_module_w))
-        altitude = 0  # Valeur par défaut pour l'altitude
-
-        # Calcul de la production
-        print(f"Calcul de la production pour {nom} ({puissance_nominal} MW)...")
-        ac = calculate_solar_parameters(
-            weather,
-            latitude,
-            longitude,
-            altitude,
-            temperature_model_parameters,
-            module,
-            inverter,
-            angle_panneau,
-            orientation_panneau,
+    # Calcul de la production
+    print(f"Calcul de la production pour {nom} ({puissance_nominal} MW)...")
+    ac = calculate_solar_parameters(
+        weather,
+        latitude,
+        longitude,
+        altitude,
+        temperature_model_parameters,
+        module,
+        inverter,
+        angle_panneau,
+        orientation_panneau,
         )
+    # Mise à l'échelle selon la puissance de la centrale
+    ac_scaled = ac * nombre_modules
 
-        # Mise à l'échelle selon la puissance de la centrale
-        ac_scaled = ac * nombre_modules
-        annual_energy = ac_scaled.sum()
-        energie_totale += annual_energy
+    # Fixer les valeurs négatives à zéro
+    ac_scaled = np.maximum(ac_scaled, 0)
 
-        # Stockage des résultats pour cette centrale dans le dictionnaire
-        resultats_centrales[nom] = {
-            "energie_annuelle_wh": annual_energy,
-            "energie_horaire": ac_scaled,
-            "nombre_modules": nombre_modules,
-            "puissance_nominal_MW": puissance_nominal,
+    # Création de la plage de dates pour remplacer les datetime
+    datetime_index = pd.date_range(start=date_start, end=date_end - pd.Timedelta(hours=1), freq="H")
+    
+    # Création du DataFrame avec la production horaire
+    resultats_centrales_df = pd.DataFrame(
+        {
+            "datetime": datetime_index,  # Utiliser la plage horaire générée
+
+            "production_horaire_wh": ac_scaled,
         }
+    )
+    resultats_centrales_df.set_index("datetime", inplace=True)
 
-        # Stockage des résultats pour cette centrale dans la liste pour le DataFrame
-        results_list.append(
-            {
-                "nom_centrale": nom,
-                "latitude": latitude,
-                "longitude": longitude,
-                "puissance_nominale_MW": puissance_nominal,
-                "energie_annuelle_wh": annual_energy,
-                "nombre_modules": nombre_modules,
-            }
-        )
-
-    resultats_centrales["energie_totale_wh"] = energie_totale
-    resultats_centrales_df = pd.DataFrame(results_list)
-
-    return resultats_centrales, resultats_centrales_df
-
+    print(resultats_centrales_df)
+    
+    return resultats_centrales_df
 
 def calculate_regional_residential_solar(
     coordinates_residential: List[tuple],
@@ -480,7 +391,7 @@ if __name__ == "__main__":
     #     surface_orientation=180,
     # )
 
-    resultats_centrales, resultats_centrales_df = calculate_energy_solar_plants(nom,latitude,
+    resultats_centrales_df = calculate_energy_solar_plants(nom,latitude,
     longitude,
     angle_panneau,
     orientation_panneau,
@@ -488,7 +399,6 @@ if __name__ == "__main__":
     nombre_panneau,
     date_start,
     date_end)
-    energie_centrales = resultats_centrales["energie_totale_wh"]
     couts = cost_solar_powerplant(puissance_mw=10)
     couts_installation = calculate_installation_cost(puissance_mw=10)
     durees_vie = calculate_lifetime(puissance_mw=10)

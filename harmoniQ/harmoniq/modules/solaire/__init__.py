@@ -45,7 +45,7 @@ class Solaire(Infrastructure):
             puissance_nominal=self.donnees.puissance_nominal,
             nombre_panneau=self.donnees.nombre_panneau,
             date_start=self.scenario.date_de_debut,
-            date_end=self.scenario.date_de_fin,
+            date_end=self.scenario.date_de_fin + pd.DateOffset(days=1),
         )
         return self.production
     
