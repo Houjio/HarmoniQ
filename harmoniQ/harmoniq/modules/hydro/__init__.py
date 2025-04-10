@@ -23,7 +23,6 @@ APPORT_DIR = CURRENT_DIR / "apport_naturel"
 
 
 class InfraHydro:
-
     def __init__(self, donnees: List[HydroBase]):
         # super().__init__(donnees)
         self.donnees = donnees
@@ -88,7 +87,6 @@ class InfraHydro:
                 )
 
     def calculer_production(self) -> pd.DataFrame:  # Fonctionne
-
         if self.donnees.type_barrage == "Fil de l'eau":
             return get_run_of_river_dam_power(self)
 

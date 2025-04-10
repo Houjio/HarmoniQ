@@ -87,21 +87,6 @@ function toggleButtonState(buttonId, state) {
     $(`#${buttonId}`).prop('disabled', !state);
 }
 
-// Utility function to update list items
-function updateListItems(listElement, items, activeIds = []) {
-    listElement.innerHTML = '';
-    items.forEach(item => {
-        const isActive = activeIds.includes(item.id.toString());
-        listElement.innerHTML += `
-            <li class="list-group-item list-group-item-action ${isActive ? 'list-group-item-secondary' : ''}" 
-                role="button" elementid="${item.id}" 
-                ${isActive ? 'active="true"' : ''} 
-                onclick="add_infra(this)">
-                ${item.nom}
-            </li>`;
-    });
-}
-
 function unimplemented() {
     alert('Fonctionnalité non implémentée');
 }
@@ -197,14 +182,24 @@ function createListElement({ nom, id, type }) {
             elementid="${id}" 
             type="${type}" 
             style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #ddd; margin-bottom: 5px; border-radius: 5px;"
-            onclick="add_infra(this)">
+            onclick="add_infra(this)"
+            title="Cliquez pour sélectionner ou désélectionner cette infrastructure">
             <span>${nom}</span>
-            <img 
-                src="/static/icons/info.png" 
-                alt="Info" 
-                style="width: 20px; height: 20px; cursor: pointer;" 
+            <div>
+            <i 
+                class="fas fa-line-chart" 
+                style="color: #007bff; cursor: pointer;" 
+                onclick="simulate_single(event, '${id}', '${type}', '${nom}')"
+                title="Simuler cette infrastructure"
+            ></i>
+            <span class="mx-1"></span>
+            <i 
+                class="fas fa-info-circle" 
+                style="color: #007bff; cursor: pointer;" 
                 onclick="handleInfoClick(event, '${id}', '${type}')"
-            />
+                title="Afficher les informations de cette infrastructure"
+            ></i>
+            </div>
         </li>
     `;
 }
@@ -409,6 +404,84 @@ function lancer_simulation() {
     // });
 }
 
+function simulate_single(event, infraId, type, name) {
+    event.stopPropagation();
+
+    // Check if scenario is selected
+    if ($('#scenario-actif').val() === '' || $('#scenario-actif').val() === null) {
+        alert('Veuillez sélectionner un scenario pour simuler cette infrastructure');
+        return;
+    }
+
+    $("#graph-error").hide();
+    $("#graph-loading").show();
+
+    const modal = new bootstrap.Modal(document.getElementById("graphModal"));
+    modal.show();
+
+    let scenario_name = $("#scenario-actif option:selected").text();
+    $("#graphModalLabel").text(`Production d'énergie de ${name} (Scénario: ${scenario_name})`);
+    Plotly.purge("graph-plot");
+
+    fetchData(`/api/${type}/${infraId}/production?scenario_id=${$('#scenario-actif').val()}`, 'POST')
+        .then(data => {
+            $("#graph-loading").hide();
+            console.log('Simulation de l\'infrastructure réussie:', data);
+            single_graph(type, data);
+        })
+        .catch(error => {
+            if (error.message.includes('501')) {
+                unimplemented();
+                modal.hide();
+            } else {
+                $("#graph-loading").hide();
+                console.error('Erreur lors de la simulation de l\'infrastructure:', error);
+                $("#graph-error").show();
+            }
+        });
+}
+
+function single_graph(type, data) {
+    var unit;
+    var xval;
+    var yval;
+    console.log(type, data)
+    if (type == "eolienneparc") {
+        unit = "MWh";
+        xval = Object.values(data.tempsdate);
+        yval = Object.values(data.puissance);
+    } else if (type == "thermique" || type == "nucleaire") {
+        unit = "MWh";
+        xval = Object.keys(data.production_mwh);
+        yval = Object.values(data.production_mwh);
+    } else if (type == "solaire") {
+        unit = "Wh";
+        xval = Object.keys(data.production_horaire_wh);
+        yval = Object.values(data.production_horaire_wh);
+    }
+
+    const layout = {
+        xaxis: {
+            title: "Date",
+            tickformat: "%d %b %Y"
+        },
+        yaxis: {
+            title: "Production (" + unit + ")",
+            autorange: true
+        },
+    }
+
+    const trace = {
+        x: xval,
+        y: yval,
+        type: 'scatter',
+        mode: 'lines+markers',
+        marker: { color: 'blue' },
+        line: { shape: 'spline' }
+    };
+
+    Plotly.newPlot("graph-plot", [trace], layout);
+}
 
 function add_infra(element) {
     // Vérifier si un groupe est sélectionné
@@ -759,13 +832,20 @@ function infraModal(create_class, post_url, lat, lon) {
     const schema = openApiJson.components.schemas[create_class];
     const required = schema.required || [];
     const props = schema.properties;
+    const upname = post_url.split("/").pop();
+
+    // Pretty jankey
+    if (upname === "hydro") {
+        alert("La fonctionnalité pour les infrastructures hydroélectriques est en cours de développement. Cette démonstration est fournie à titre indicatif.");
+    }
+    const ppname = prettyNames[upname]
 
     let modalHTML = `
         <div class="modal-dialog" role="document">
             <form id="form-${create_class.toLowerCase()}">
                 <div class="modal-content">
                     <div class="modal-header w-100 d-flex justify-content-between">
-                        <h5 class="modal-title">Créer Infrastructure</h5>
+                        <h5 class="modal-title">Créer ${ppname}</h5>
                         <button type="button" class="close btn-primary" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true"><i class="fas fa-times"></i></span>
                         </button>
