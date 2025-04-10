@@ -709,6 +709,9 @@ function charger_demande(scenario_id, mrc_id) {
     demandeFetchController = new AbortController();
     const signal = demandeFetchController.signal;
 
+    $("#temporal-plot").empty();
+    $("#sankey-plot").empty();
+
     fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
         .then(data => {
             console.log('Demande Sankey chargée avec succès');
@@ -756,8 +759,8 @@ function charger_demande(scenario_id, mrc_id) {
             }];
 
             const layout = {
-                title: "Flux d'énergie vers les secteurs",
-                font: { size: 12 }
+                title: "Flux d'énergie vers les secteurs pour scénario " + $("#scenario-actif option:selected").text(),
+                font: { size: 10 }
             };
 
             Plotly.newPlot("sankey-plot", sankeyData, layout);
@@ -770,17 +773,18 @@ function charger_demande(scenario_id, mrc_id) {
             }
         });
 
-    fetchData("/api/demande/temporel/?scenario_id=" + scenario_id, 'POST', signal)
+    fetchData("/api/demande/temporal/?scenario_id=" + scenario_id, 'POST', signal)
         .then(data => {
             console.log('Demande temporelle chargée avec succès');
-            demandeTemporel = data;
+
+            demandeTemporal = data;
 
             // Generate time series plot
-            const xval = Object.keys(demandeTemporel.total_electricity);
-            const yval = Object.values(demandeTemporel.total_electricity);
+            const xval = Object.keys(demandeTemporal.total_electricity);
+            const yval = Object.values(demandeTemporal.total_electricity);
 
             const layout = {
-                title: "Demande d'énergie",
+                title: "Demande d'énergie pour scénario " + $("#scenario-actif option:selected").text(),
                 xaxis: {
                     title: "Date",
                     tickformat: "%d %b %Y"
@@ -800,7 +804,7 @@ function charger_demande(scenario_id, mrc_id) {
                 line: { shape: 'spline' }
             };
 
-            Plotly.newPlot("demande-plot", [trace], layout);
+            Plotly.newPlot("temporal-plot", [trace], layout);
         })
         .catch(error => {
             if (error.message.includes('404')) {
