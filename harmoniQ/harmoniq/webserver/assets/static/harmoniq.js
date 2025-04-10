@@ -475,7 +475,7 @@ function single_graph(type, data) {
         x: xval,
         y: yval,
         type: 'scatter',
-        mode: 'lines+markers',
+        mode: 'lines',
         marker: { color: 'blue' },
         line: { shape: 'spline' }
     };
@@ -709,80 +709,110 @@ function charger_demande(scenario_id, mrc_id) {
     demandeFetchController = new AbortController();
     const signal = demandeFetchController.signal;
 
-    // fetchData(`/api/demande/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', null, signal)
-    //     .then(data => {
-    //         console.log('Demande chargée avec succès');
-    //         demande = data;
-    //     })
-    //     .catch(error => {
-    //         if (error.message.includes('404')) {
-    //             console.error('Demande non trouvée:', error);
-    //         } else {
-    //             console.error('Erreur lors du chargement de la demande:', error);
-    //         }
-    //     });
-//SANKEY START
-fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
-    .then(data => {
-        console.log('Demande Sankey chargée avec succès');
-        demande = data;
+    $("#temporal-plot").empty();
+    $("#sankey-plot").empty();
 
-        // Generate Sankey diagram
-        const sectorLabels = Object.values(demande.sector);
-        const energyLabels = ["Electricity", "Gaz"];
-        const allLabels = energyLabels.concat(sectorLabels);
+    fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
+        .then(data => {
+            console.log('Demande Sankey chargée avec succès');
+            demandeSankey = data;
 
-        const electricitySourceIndex = 0; // Electricité
-        const gazSourceIndex = 1;         // Gaz
+            // Generate Sankey diagram
+            const sectorLabels = Object.values(demandeSankey.sector);
+            const energyLabels = ["Electricity", "Gaz"];
+            const allLabels = energyLabels.concat(sectorLabels);
 
-        const sources = [];
-        const targets = [];
-        const values = [];
+            const electricitySourceIndex = 0; // Electricité
+            const gazSourceIndex = 1;         // Gaz
 
-        for (let i = 0; i < sectorLabels.length; i++) {
-            const targetIndex = i + energyLabels.length;
+            const sources = [];
+            const targets = [];
+            const values = [];
 
-            // Electricity to sector
-            sources.push(electricitySourceIndex);
-            targets.push(targetIndex);
-            values.push(demande.total_electricity[i]);
+            for (let i = 0; i < sectorLabels.length; i++) {
+                const targetIndex = i + energyLabels.length;
 
-            // Gaz to sector
-            sources.push(gazSourceIndex);
-            targets.push(targetIndex);
-            values.push(demande.total_gaz[i]);
+                // Electricity to sector
+                sources.push(electricitySourceIndex);
+                targets.push(targetIndex);
+                values.push(demandeSankey.total_electricity[i]);
+
+                // Gaz to sector
+                sources.push(gazSourceIndex);
+                targets.push(targetIndex);
+                values.push(demandeSankey.total_gaz[i]);
+                }
+
+            const sankeyData = [{
+                type: "sankey",
+                orientation: "h",
+                node: {
+                    pad: 15,
+                    thickness: 20,
+                    label: allLabels
+                },
+                link: {
+                    source: sources,
+                    target: targets,
+                    value: values
+                }
+            }];
+
+            const layout = {
+                title: "Flux d'énergie vers les secteurs pour scénario " + $("#scenario-actif option:selected").text(),
+                font: { size: 10 }
+            };
+
+            Plotly.newPlot("sankey-plot", sankeyData, layout);
+        })
+        .catch(error => {
+            if (error.message.includes('404')) {
+                console.error('Demande non trouvée:', error);
+            } else {
+                console.error('Erreur lors du chargement de la demande Sankey:', error);
             }
+        });
 
-        const sankeyData = [{
-            type: "sankey",
-            orientation: "h",
-            node: {
-                pad: 15,
-                thickness: 20,
-                label: allLabels
-            },
-            link: {
-                source: sources,
-                target: targets,
-                value: values
+    fetchData("/api/demande/temporal/?scenario_id=" + scenario_id, 'POST', signal)
+        .then(data => {
+            console.log('Demande temporelle chargée avec succès');
+
+            demandeTemporal = data;
+
+            // Generate time series plot
+            const xval = Object.keys(demandeTemporal.total_electricity);
+            const yval = Object.values(demandeTemporal.total_electricity);
+
+            const layout = {
+                title: "Demande d'énergie pour scénario " + $("#scenario-actif option:selected").text(),
+                xaxis: {
+                    title: "Date",
+                    tickformat: "%d %b %Y"
+                },
+                yaxis: {
+                    title: "Demande (MWh)",
+                    autorange: true
+                }
+            };
+
+            const trace = {
+                x: xval,
+                y: yval,
+                type: 'scatter',
+                mode: 'lines',
+                marker: { color: 'blue' },
+                line: { shape: 'spline' }
+            };
+
+            Plotly.newPlot("temporal-plot", [trace], layout);
+        })
+        .catch(error => {
+            if (error.message.includes('404')) {
+                console.error('Demande non trouvée:', error);
+            } else {
+                console.error('Erreur lors du chargement de la demande temporelle:', error);
             }
-        }];
-
-        const layout = {
-            title: "Flux d'énergie vers les secteurs",
-            font: { size: 12 }
-        };
-
-        Plotly.newPlot("sankey-plot", sankeyData, layout);
-    })
-    .catch(error => {
-        if (error.message.includes('404')) {
-            console.error('Demande non trouvée:', error);
-        } else {
-            console.error('Erreur lors du chargement de la demande Sankey:', error);
-        }
-    });
-//SANKEY END
+        });
 }
 function changeScenario() {
     let id = $("#scenario-actif").val();

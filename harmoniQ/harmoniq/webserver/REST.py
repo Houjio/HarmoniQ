@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 import pandas as pd
+import time
 
 from harmoniq.db import schemas, engine, CRUD
 from harmoniq.db.CRUD import (
@@ -16,12 +17,13 @@ from harmoniq.db.CRUD import (
     update_data,
     delete_data,
 )
-from harmoniq.db.demande import read_demande_data, read_demande_data_sankey
+from harmoniq.db.demande import read_demande_data, read_demande_data_sankey, read_demande_data_temporal
 from harmoniq.core import meteo
 from harmoniq.db.engine import get_db
 from harmoniq.core.fausse_données import production_aleatoire
 
 from harmoniq.modules.eolienne import InfraParcEolienne
+from harmoniq.modules.reseau import InfraReseau
 from harmoniq.modules.solaire import InfraSolaire
 from harmoniq.modules.thermique import InfraThermique
 from harmoniq.modules.nucleaire import InfraNucleaire
@@ -193,6 +195,19 @@ async def read_demande_sankey(
         raise HTTPException(status_code=404, detail="Scenario not found")
 
     demande = await read_demande_data_sankey(scenario, CUID)
+    return demande
+
+@demande_router.post("/temporal")
+async def read_demande_temporal(
+    scenario_id: int,
+    CUID: Optional[int] = None,
+    db: Session = Depends(get_db),
+):
+    scenario = await read_data_by_id(db, schemas.Scenario, scenario_id)
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+
+    demande = await read_demande_data_temporal(scenario, CUID)
     return demande
 
 
@@ -384,6 +399,65 @@ async def get_production_aleatoire(scenario_id: int, db: Session = Depends(get_d
 
 router.include_router(faker_router)
 
+
+reseau_router = APIRouter(
+    prefix="/reseau",
+    tags=["Reseau"],
+    responses={404: {"description": "Not found"}},
+)
+
+@reseau_router.post("/production")
+async def calculer_production_reseau(
+    scenario_id: int, 
+    liste_infra_id: int, 
+    is_journalier: bool = False,
+    db: Session = Depends(get_db)
+):
+
+    scenario_task = read_data_by_id(db, schemas.Scenario, scenario_id)
+    liste_infra_task = read_data_by_id(db, schemas.ListeInfrastructures, liste_infra_id)
+    
+    scenario, liste_infra = await asyncio.gather(scenario_task, liste_infra_task)
+    
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="Scénario non trouvé")
+    if liste_infra is None:
+        raise HTTPException(status_code=404, detail="Liste d'infrastructures non trouvée")
+    
+    infra_reseau = InfraReseau(liste_infra)
+    infra_reseau.charger_scenario(scenario)
+    
+    start_time = time.time()
+    production = infra_reseau.calculer_production(liste_infra, is_journalier)
+    execution_time = time.time() - start_time
+    
+    if production.empty:
+        raise HTTPException(status_code=500, detail="Calcul de production échoué")
+    
+    # Filtrer pour ne conserver que les colonnes de totaux
+    total_columns = ['totale'] + [col for col in production.columns if col.startswith('total_')]
+    production_totals = production[total_columns]
+    
+    production_json = production_totals.reset_index().rename(columns={'index': 'timestamp'})
+    
+    if 'timestamp' in production_json.columns:
+        production_json['timestamp'] = production_json['timestamp'].astype(str)
+    
+    response = {
+        "metadata": {
+            "scenario_id": scenario_id,
+            "liste_infra_id": liste_infra_id,
+            "is_journalier": is_journalier,
+            "execution_time_seconds": execution_time,
+            "timestamps": len(production),
+            "carriers": [col.replace('total_', '') for col in total_columns if col != 'totale']
+        },
+        "production": production_json.to_dict(orient='records')
+    }
+    
+    return response
+
+router.include_router(reseau_router)
 
 # Ajout des routes aux endpoint
 for _, api_router in api_routers.items():

@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Dict, Optional, Tuple
 from datetime import datetime
 
-from utils import NetworkDataLoader
+from harmoniq.modules.reseau.utils import NetworkDataLoader
 from .optimization import NetworkOptimizer
 from .power_flow import PowerFlowAnalyzer
 
