@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 import pandas as pd
+import time
 
 from harmoniq.db import schemas, engine, CRUD
 from harmoniq.db.CRUD import (
