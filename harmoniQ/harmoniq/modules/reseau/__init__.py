@@ -4,7 +4,7 @@ from harmoniq.db.CRUD import read_all_hydro, read_multiple_by_id
 from harmoniq.db.engine import get_db
 from harmoniq.modules.hydro.calcule import reservoir_infill
 
-from .core import NetworkBuilder, PowerFlowAnalyzer, NetworkOptimizer
+from harmoniq.modules.reseau.core import NetworkBuilder, PowerFlowAnalyzer, NetworkOptimizer
 from harmoniq.modules.reseau.utils import EnergyUtils
 
 import pandas as pd
@@ -19,7 +19,7 @@ import hashlib
 logger = logging.getLogger("Reseau")
 
 MODULES_DIR = Path(__file__).parent
-NETWORK_CACHE_DIR = MODULES_DIR / "cache"/ "network_cache"
+NETWORK_CACHE_DIR = MODULES_DIR / "n_cache"/ "network_cache"
 os.makedirs(NETWORK_CACHE_DIR, exist_ok=True)
 
 
@@ -401,13 +401,12 @@ class InfraReseau(Infrastructure):
         logger.info("Workflow d'optimisation terminé")
         return network, statistics
     
-    @necessite_scenario
-    async def calculer_production(self, liste_infra,is_journalier=False) -> pd.DataFrame:
+    async def calculer_production(self, liste_infra, is_journalier=False) -> pd.DataFrame:
         """
         Calcule la production optimisée par type d'énergie.
         """
         if self.network is None or not self.statistics:
-            await self.workflow_import_export(liste_infra,is_journalier)
+            await self.workflow_import_export(liste_infra, is_journalier)
         
         if not hasattr(self.network, 'generators_t') or not hasattr(self.network.generators_t, 'p'):
             logger.error("Aucune donnée de production disponible")
@@ -425,13 +424,14 @@ class InfraReseau(Infrastructure):
                 period = 'hourly'
                 logger.info(f"Snapshots horazires détectés (écart: {time_diff})")
                 
-        # EnergyUtils.debug_network_energy_allocation(self.network, period)
-        
-        # Récupérer les puissances optimisées
         production_power = self.network.generators_t['p'].copy()
         
-        # Vérifier si les données sont déjà en énergie
-        loads_is_energy = getattr(self.network.loads_t.p_set, '_energy_not_power', False)
+        # Regrouper tous les générateurs d'urgence en une seule colonne
+        emergency_gens = [col for col in production_power.columns if col.startswith('emergency_gen_')]
+        if emergency_gens:
+            production_power['total_emergency'] = production_power[emergency_gens].sum(axis=1)
+            production_power = production_power.drop(columns=emergency_gens)
+            logger.info(f"Regroupement de {len(emergency_gens)} générateurs d'urgence en une seule colonne")
         
         # Convertir les puissances en énergie (MWh)
         production = EnergyUtils.calculate_energy_from_power(self.network, production_power)
@@ -444,13 +444,21 @@ class InfraReseau(Infrastructure):
         for carrier in carriers:
             gens = self.network.generators[self.network.generators.carrier == carrier].index
             if len(gens) > 0:
-                production[f'total_{carrier}'] = production[gens].sum(axis=1)
+                # Exclure les générateurs d'urgence déjà regroupés
+                gens = [g for g in gens if not g.startswith('emergency_gen_')]
+                if gens:  # S'assurer qu'il reste des générateurs à sommer
+                    production[f'total_{carrier}'] = production[gens].sum(axis=1)
         
-        # Afficher les totaux
+        # Ajouter une colonne spécifique pour les générateurs d'urgence
+        if 'total_emergency' in production_power.columns:
+            carrier = 'emergency'
+            if f'total_{carrier}' not in production.columns:
+                production[f'total_{carrier}'] = production['total_emergency']
+        
         total_production_mwh = production['totale'].sum()
         logger.info(f"Énergie totale calculée: {total_production_mwh:.2f} MWh ({total_production_mwh/1e6:.4f} TWh)")
         
-        for carrier in carriers:
+        for carrier in list(carriers) + (['emergency'] if 'total_emergency' in production_power.columns else []):
             carrier_col = f'total_{carrier}'
             if carrier_col in production.columns:
                 carrier_total = production[carrier_col].sum()
@@ -470,7 +478,7 @@ if __name__ == "__main__":
     liste_infrastructures = asyncio.run(read_data_by_id(db, ListeInfrastructures, 1))
     infraReseau = InfraReseau(liste_infrastructures)
     
-    scenario = read_all_scenario(db)[0]
+    scenario = read_all_scenario(db)[1]
     infraReseau.charger_scenario(scenario)
 
     network, statistics = asyncio.run(infraReseau.workflow_import_export(liste_infrastructures, is_journalier=True))

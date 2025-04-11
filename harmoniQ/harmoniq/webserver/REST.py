@@ -416,10 +416,10 @@ async def calculer_production_reseau(
         raise HTTPException(status_code=500, detail="Calcul de production échoué")
     
     # Filtrer pour ne conserver que les colonnes de totaux
-    total_columns = ['totale'] + [col for col in production.columns if col.startswith('total_')]
-    production_totals = production[total_columns]
+    # total_columns = ['totale'] + [col for col in production.columns if col.startswith('total_')]
+    # production_totals = production[total_columns]
     
-    production_json = production_totals.reset_index().rename(columns={'index': 'timestamp'})
+    production_json = production.reset_index().rename(columns={'index': 'timestamp'})
     
     if 'timestamp' in production_json.columns:
         production_json['timestamp'] = production_json['timestamp'].astype(str)
@@ -430,8 +430,7 @@ async def calculer_production_reseau(
             "liste_infra_id": liste_infra_id,
             "is_journalier": is_journalier,
             "execution_time_seconds": execution_time,
-            "timestamps": len(production),
-            "carriers": [col.replace('total_', '') for col in total_columns if col != 'totale']
+            "timestamps": len(production)
         },
         "production": production_json.to_dict(orient='records')
     }
