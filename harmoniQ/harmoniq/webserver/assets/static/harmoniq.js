@@ -648,68 +648,163 @@ function charger_demande(scenario_id, mrc_id) {
     //             console.error('Erreur lors du chargement de la demande:', error);
     //         }
     //     });
-//SANKEY START
-fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
-    .then(data => {
-        console.log('Demande Sankey chargée avec succès');
-        demande = data;
 
-        // Generate Sankey diagram
-        const sectorLabels = Object.values(demande.sector);
-        const energyLabels = ["Electricity", "Gaz"];
-        const allLabels = energyLabels.concat(sectorLabels);
 
-        const electricitySourceIndex = 0; // Electricité
-        const gazSourceIndex = 1;         // Gaz
+    // SANKEY START
+    fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
+        .then(data => {
+            console.log('Demande Sankey chargée avec succès');
 
-        const sources = [];
-        const targets = [];
-        const values = [];
+            demande = data;
 
-        for (let i = 0; i < sectorLabels.length; i++) {
-            const targetIndex = i + energyLabels.length;
-
-            // Electricity to sector
-            sources.push(electricitySourceIndex);
-            targets.push(targetIndex);
-            values.push(demande.total_electricity[i]);
-
-            // Gaz to sector
-            sources.push(gazSourceIndex);
-            targets.push(targetIndex);
-            values.push(demande.total_gaz[i]);
+            const production = {
+              source: {
+                0: "Hydro",
+                1: "Éolien",
+                2: "Solaire",
+                3: "Thermique",
+                4: "Nucléaire",
+                5: "Imports"
+              },
+              total_electricity: {
+                0: 50000000000,
+                1: 15000000000,
+                2: 10000000000,
+                3: 8000000000,
+                4: 25000000000,
+                5: 50000000000
+              }
+            };
+            
+            const others = {
+              other_targets: {
+                0: "Exports",
+                1: "Pertes"
+              },
+              other_targets_values: {
+                0: 12100000000,
+                1: 100000000
+              }
+            };
+            
+            const productionLabels = Object.values(production.source);
+            const energyLabels = ["Electricité", "Gaz"];
+            const sectorLabels = Object.values(demande.sector);
+            const otherLabels = Object.values(others.other_targets);
+            
+            const baseNodeLabels = [
+              ...productionLabels,
+              ...energyLabels,
+              ...sectorLabels,
+              ...otherLabels
+            ];
+            
+            const electricityIndex = productionLabels.length;      // 6
+            const gazIndex = electricityIndex + 1;                 // 7
+            const sectorStartIndex = gazIndex + 1;                 // 8
+            const otherStartIndex = sectorStartIndex + sectorLabels.length;
+            
+            const sources = [];
+            const targets = [];
+            const values = [];
+            
+            // Production → Electricity
+            for (let i = 0; i < productionLabels.length; i++) {
+              sources.push(i);
+              targets.push(electricityIndex);
+              values.push(production.total_electricity[i]);
             }
-
-        const sankeyData = [{
-            type: "sankey",
-            orientation: "h",
-            node: {
+            
+            // Electricity and Gaz → Sectors
+            for (let i = 0; i < sectorLabels.length; i++) {
+              const targetIndex = sectorStartIndex + i;
+              const electricity = demande.total_electricity[i] || 0;
+              const gaz = demande.total_gaz[i] || 0;
+            
+              if (electricity > 0) {
+                sources.push(electricityIndex);
+                targets.push(targetIndex);
+                values.push(electricity);
+              }
+            
+              if (gaz > 0) {
+                sources.push(gazIndex);
+                targets.push(targetIndex);
+                values.push(gaz);
+              }
+            }
+            
+            // Electricity → Exports/Pertes
+            Object.entries(others.other_targets_values).forEach(([idx, val]) => {
+              const targetIndex = otherStartIndex + parseInt(idx);
+              if (val > 0) {
+                sources.push(electricityIndex);
+                targets.push(targetIndex);
+                values.push(val);
+              }
+            });
+            
+            // 🔧 Format number to readable energy
+            function formatEnergy(val) {
+              if (val >= 1e9) return (val / 1e9).toFixed(1) + " GWh";
+              if (val >= 1e6) return (val / 1e6).toFixed(1) + " MWh";
+              if (val >= 1e3) return (val / 1e3).toFixed(1) + " kWh";
+              return val + " Wh";
+            }
+            
+            // 🔁 Compute incoming flow total per node
+            const nodeFlowTotals = Array(baseNodeLabels.length).fill(0);
+            for (let i = 0; i < targets.length; i++) {
+              const t = targets[i];
+              nodeFlowTotals[t] += values[i];
+            }
+            
+            // 🏷 Build final labels with totals (if any flow exists)
+            const nodeLabels = baseNodeLabels.map((label, i) => {
+              return nodeFlowTotals[i] > 0
+                ? `${label} (${formatEnergy(nodeFlowTotals[i])})`
+                : label;
+            });
+            
+            const sankeyData = [{
+              type: "sankey",
+              orientation: "h",
+              node: {
                 pad: 15,
-                thickness: 20,
-                label: allLabels
-            },
-            link: {
+                thickness: 25,
+                line: { color: "black", width: 0.7 },
+                label: nodeLabels
+              },
+              link: {
                 source: sources,
                 target: targets,
-                value: values
+                value: values,
+                hovertemplate: '%{source.label} → %{target.label}<br><b>%{value:.2s}Wh</b><extra></extra>'
+              }
+            }];
+            
+            const layout = {
+              title: "Flux énergétique : Production à Consommation",
+              font: { size: 12 },
+              margin: { l: 0, r: 0, t: 30, b: 10 },
+              width: 900,
+              height: 500,
+              autosize: false
+            };
+            
+            Plotly.newPlot("sankey-plot", sankeyData, layout);
+            
+
+                        
+        })
+        .catch(error => {
+            if (error.message.includes('404')) {
+                console.error('Demande non trouvée:', error);
+            } else {
+                console.error('Erreur lors du chargement de la demande Sankey:', error);
             }
-        }];
-
-        const layout = {
-            title: "Flux d'énergie vers les secteurs",
-            font: { size: 12 }
-        };
-
-        Plotly.newPlot("sankey-plot", sankeyData, layout);
-    })
-    .catch(error => {
-        if (error.message.includes('404')) {
-            console.error('Demande non trouvée:', error);
-        } else {
-            console.error('Erreur lors du chargement de la demande Sankey:', error);
-        }
-    });
-//SANKEY END
+        });
+    // SANKEY END
 }
 function changeScenario() {
     let id = $("#scenario-actif").val();
