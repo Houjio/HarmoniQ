@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import List
 
 from harmoniq.db.engine import sql_tables
+from harmoniq.db import schemas
 
 
 async def read_all_data(db: Session, table: Table):
@@ -44,3 +45,14 @@ async def delete_data(db: Session, table: Table, id: int):
     db.delete(db_data)
     db.commit()
     return {"message": f"Instance of {table.__name__} deleted successfully"}
+
+# Async fixers
+
+async def read_all_bus_async(db: Session):
+    return await read_all_data(db, schemas.Bus)
+
+async def read_all_line_async(db: Session):
+    return await read_all_data(db, schemas.Line)
+
+async def read_all_line_type_async(db: Session):
+    return await read_all_data(db, schemas.LineType)

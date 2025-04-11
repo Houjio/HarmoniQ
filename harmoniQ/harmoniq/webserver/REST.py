@@ -17,7 +17,11 @@ from harmoniq.db.CRUD import (
     update_data,
     delete_data,
 )
-from harmoniq.db.demande import read_demande_data, read_demande_data_sankey, read_demande_data_temporal
+from harmoniq.db.demande import (
+    read_demande_data, 
+    read_demande_data_sankey, 
+    read_demande_data_temporal,
+)
 from harmoniq.core import meteo
 from harmoniq.db.engine import get_db
 from harmoniq.core.fausse_données import production_aleatoire
@@ -38,28 +42,6 @@ router = APIRouter(
 @router.get("/ping")
 async def ping():
     return {"ping": "pong"}
-
-
-@router.post("/simulation")
-async def simulation(
-    scenario_id: int, liste_infra_id: int, db: Session = Depends(get_db)
-):
-    print(f"Scenario ID: {scenario_id}")
-    print(f"Infrastructure ID: {liste_infra_id}")
-    scenario = CRUD.read_scenario_by_id(db, scenario_id)
-    if scenario is None:
-        raise HTTPException(status_code=404, detail="Scenario not found")
-
-    infra = CRUD.read_liste_infrastructures_by_id(db, liste_infra_id)
-    if infra is None:
-        raise HTTPException(status_code=404, detail="Infrastructure not found")
-
-    print("Scenario:")
-    print(scenario)
-    print("Infra:")
-    print(infra)
-
-    raise HTTPException(status_code=501, detail="Simulation not implemented")
 
 
 # Initialisation des fonctions CRUD des tables de la base de données
@@ -169,7 +151,6 @@ demande_router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-
 @demande_router.post("/")
 async def read_demande(
     scenario_id: int,
@@ -181,7 +162,7 @@ async def read_demande(
         raise HTTPException(status_code=404, detail="Scenario not found")
 
     demande = await read_demande_data(scenario, CUID)
-    return demande
+    return "ping"
 
 
 @demande_router.post("/sankey")
@@ -428,17 +409,17 @@ async def calculer_production_reseau(
     infra_reseau.charger_scenario(scenario)
     
     start_time = time.time()
-    production = infra_reseau.calculer_production(liste_infra, is_journalier)
+    production = await infra_reseau.calculer_production(liste_infra, is_journalier)
     execution_time = time.time() - start_time
     
     if production.empty:
         raise HTTPException(status_code=500, detail="Calcul de production échoué")
     
     # Filtrer pour ne conserver que les colonnes de totaux
-    total_columns = ['totale'] + [col for col in production.columns if col.startswith('total_')]
-    production_totals = production[total_columns]
+    # total_columns = ['totale'] + [col for col in production.columns if col.startswith('total_')]
+    # production_totals = production[total_columns]
     
-    production_json = production_totals.reset_index().rename(columns={'index': 'timestamp'})
+    production_json = production.reset_index().rename(columns={'index': 'timestamp'})
     
     if 'timestamp' in production_json.columns:
         production_json['timestamp'] = production_json['timestamp'].astype(str)
@@ -449,8 +430,7 @@ async def calculer_production_reseau(
             "liste_infra_id": liste_infra_id,
             "is_journalier": is_journalier,
             "execution_time_seconds": execution_time,
-            "timestamps": len(production),
-            "carriers": [col.replace('total_', '') for col in total_columns if col != 'totale']
+            "timestamps": len(production)
         },
         "production": production_json.to_dict(orient='records')
     }
