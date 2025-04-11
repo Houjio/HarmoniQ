@@ -31,7 +31,7 @@ DATA_DIR = CURRENT_DIR / ".." / "data"
 
 MODULES_DIR = Path(__file__).parent.parent.parent.parent
 RESEAU_DIR = MODULES_DIR / "modules" / "reseau"
-DEMAND_CACHE_DIR = RESEAU_DIR / "cache"/ "demand_cache"
+DEMAND_CACHE_DIR = RESEAU_DIR / "n_cache"/ "demand_cache"
 os.makedirs(DEMAND_CACHE_DIR, exist_ok=True)
 
 import logging
@@ -662,7 +662,6 @@ class NetworkDataLoader:
         # 1. Convertir les kWh en MW
         if 'electricity' in demand_df.columns:
             demand_df['electricity'] /= 1000
-            logger.info(f"Électricité convertie en MW: moyenne = {demand_df['electricity'].mean():.2f} MW")
         
         if 'gaz' in demand_df.columns:
             demand_df['gaz'] /= 1000
@@ -670,20 +669,17 @@ class NetworkDataLoader:
         # 2. Groupement par secteur
         if 'sector' in demand_df.columns:
             demand_df = demand_df.groupby('date').sum(numeric_only=True).reset_index()
-            logger.info(f"Sommation par secteur: {len(demand_df)} lignes uniques")
         else:
             # Vérifier les dates dupliquées
             date_counts = demand_df['date'].value_counts()
             if (date_counts > 1).any():
                 demand_df = demand_df.groupby('date').sum(numeric_only=True).reset_index()
-                logger.info(f"Sommation des doublons: {len(demand_df)} lignes uniques")
-        
+
         # 3. Filtrer par année
         if scenario_year:
             year_filter = pd.to_datetime(demand_df['date']).dt.year == int(scenario_year)
             if year_filter.any():
                 demand_df = demand_df[year_filter]
-                logger.info(f"Filtrage par année {scenario_year}: {len(demand_df)} lignes")
         
         # 4. Calculer la demande totale
         if 'electricity' in demand_df.columns and 'gaz' in demand_df.columns:
@@ -692,14 +688,21 @@ class NetworkDataLoader:
             demand_df['total_demand'] = demand_df['electricity']
         else:
             demand_df['total_demand'] = 20000  # Valeur par défaut
-            logger.warning(f"Utilisation d'une valeur de demande par défaut: 20000 MW")
         
         # 5. Appliquer un facteur d'échelle si nécessaire
         avg_demand = demand_df['total_demand'].mean()
         annual_energy_twh = avg_demand * 8760 / 1e6
         
-        target_energy_twh = 260.0
-        target_avg_demand = 30000.0
+        # Définir les cibles en fonction de l'année
+            
+        if scenario_year == "2050":
+            target_energy_twh = 375.0
+            target_avg_demand = 43000.0
+            logger.info(f"Année 2050 détectée: cible de consommation à {target_energy_twh} TWh")
+        else:  # 2035 ou autres années
+            target_energy_twh = 260.0
+            target_avg_demand = 30000.0
+            logger.info(f"Année {scenario_year or 'inconnue'} détectée: cible de consommation à {target_energy_twh} TWh")
         
         if abs(annual_energy_twh - target_energy_twh) > 50:
             correction_factor = target_avg_demand / avg_demand
