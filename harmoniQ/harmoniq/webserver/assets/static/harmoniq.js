@@ -87,21 +87,6 @@ function toggleButtonState(buttonId, state) {
     $(`#${buttonId}`).prop('disabled', !state);
 }
 
-// Utility function to update list items
-function updateListItems(listElement, items, activeIds = []) {
-    listElement.innerHTML = '';
-    items.forEach(item => {
-        const isActive = activeIds.includes(item.id.toString());
-        listElement.innerHTML += `
-            <li class="list-group-item list-group-item-action ${isActive ? 'list-group-item-secondary' : ''}" 
-                role="button" elementid="${item.id}" 
-                ${isActive ? 'active="true"' : ''} 
-                onclick="add_infra(this)">
-                ${item.nom}
-            </li>`;
-    });
-}
-
 function unimplemented() {
     alert('Fonctionnalité non implémentée');
 }
@@ -197,14 +182,24 @@ function createListElement({ nom, id, type }) {
             elementid="${id}" 
             type="${type}" 
             style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid #ddd; margin-bottom: 5px; border-radius: 5px;"
-            onclick="add_infra(this)">
+            onclick="add_infra(this)"
+            title="Cliquez pour sélectionner ou désélectionner cette infrastructure">
             <span>${nom}</span>
-            <img 
-                src="/static/icons/info.png" 
-                alt="Info" 
-                style="width: 20px; height: 20px; cursor: pointer;" 
+            <div>
+            <i 
+                class="fas fa-line-chart" 
+                style="color: #007bff; cursor: pointer;" 
+                onclick="simulate_single(event, '${id}', '${type}', '${nom}')"
+                title="Simuler cette infrastructure"
+            ></i>
+            <span class="mx-1"></span>
+            <i 
+                class="fas fa-info-circle" 
+                style="color: #007bff; cursor: pointer;" 
                 onclick="handleInfoClick(event, '${id}', '${type}')"
-            />
+                title="Afficher les informations de cette infrastructure"
+            ></i>
+            </div>
         </li>
     `;
 }
@@ -409,6 +404,84 @@ function lancer_simulation() {
     // });
 }
 
+function simulate_single(event, infraId, type, name) {
+    event.stopPropagation();
+
+    // Check if scenario is selected
+    if ($('#scenario-actif').val() === '' || $('#scenario-actif').val() === null) {
+        alert('Veuillez sélectionner un scenario pour simuler cette infrastructure');
+        return;
+    }
+
+    $("#graph-error").hide();
+    $("#graph-loading").show();
+
+    const modal = new bootstrap.Modal(document.getElementById("graphModal"));
+    modal.show();
+
+    let scenario_name = $("#scenario-actif option:selected").text();
+    $("#graphModalLabel").text(`Production d'énergie de ${name} (Scénario: ${scenario_name})`);
+    Plotly.purge("graph-plot");
+
+    fetchData(`/api/${type}/${infraId}/production?scenario_id=${$('#scenario-actif').val()}`, 'POST')
+        .then(data => {
+            $("#graph-loading").hide();
+            console.log('Simulation de l\'infrastructure réussie:', data);
+            single_graph(type, data);
+        })
+        .catch(error => {
+            if (error.message.includes('501')) {
+                unimplemented();
+                modal.hide();
+            } else {
+                $("#graph-loading").hide();
+                console.error('Erreur lors de la simulation de l\'infrastructure:', error);
+                $("#graph-error").show();
+            }
+        });
+}
+
+function single_graph(type, data) {
+    var unit;
+    var xval;
+    var yval;
+    console.log(type, data)
+    if (type == "eolienneparc") {
+        unit = "MWh";
+        xval = Object.values(data.tempsdate);
+        yval = Object.values(data.puissance);
+    } else if (type == "thermique" || type == "nucleaire") {
+        unit = "MWh";
+        xval = Object.keys(data.production_mwh);
+        yval = Object.values(data.production_mwh);
+    } else if (type == "solaire") {
+        unit = "Wh";
+        xval = Object.keys(data.production_horaire_wh);
+        yval = Object.values(data.production_horaire_wh);
+    }
+
+    const layout = {
+        xaxis: {
+            title: "Date",
+            tickformat: "%d %b %Y"
+        },
+        yaxis: {
+            title: "Production (" + unit + ")",
+            autorange: true
+        },
+    }
+
+    const trace = {
+        x: xval,
+        y: yval,
+        type: 'scatter',
+        mode: 'lines',
+        marker: { color: 'blue' },
+        line: { shape: 'spline' }
+    };
+
+    Plotly.newPlot("graph-plot", [trace], layout);
+}
 
 function add_infra(element) {
     // Vérifier si un groupe est sélectionné
@@ -648,163 +721,68 @@ function charger_demande(scenario_id, mrc_id) {
     //             console.error('Erreur lors du chargement de la demande:', error);
     //         }
     //     });
+//SANKEY START
+fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
+    .then(data => {
+        console.log('Demande Sankey chargée avec succès');
+        demande = data;
 
+        // Generate Sankey diagram
+        const sectorLabels = Object.values(demande.sector);
+        const energyLabels = ["Electricity", "Gaz"];
+        const allLabels = energyLabels.concat(sectorLabels);
 
-    // SANKEY START
-    fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
-        .then(data => {
-            console.log('Demande Sankey chargée avec succès');
+        const electricitySourceIndex = 0; // Electricité
+        const gazSourceIndex = 1;         // Gaz
 
-            demande = data;
+        const sources = [];
+        const targets = [];
+        const values = [];
 
-            const production = {
-              source: {
-                0: "Hydro",
-                1: "Éolien",
-                2: "Solaire",
-                3: "Thermique",
-                4: "Nucléaire",
-                5: "Imports"
-              },
-              total_electricity: {
-                0: 50000000000,
-                1: 15000000000,
-                2: 10000000000,
-                3: 8000000000,
-                4: 25000000000,
-                5: 50000000000
-              }
-            };
-            
-            const others = {
-              other_targets: {
-                0: "Exports",
-                1: "Pertes"
-              },
-              other_targets_values: {
-                0: 12100000000,
-                1: 100000000
-              }
-            };
-            
-            const productionLabels = Object.values(production.source);
-            const energyLabels = ["Electricité", "Gaz"];
-            const sectorLabels = Object.values(demande.sector);
-            const otherLabels = Object.values(others.other_targets);
-            
-            const baseNodeLabels = [
-              ...productionLabels,
-              ...energyLabels,
-              ...sectorLabels,
-              ...otherLabels
-            ];
-            
-            const electricityIndex = productionLabels.length;      // 6
-            const gazIndex = electricityIndex + 1;                 // 7
-            const sectorStartIndex = gazIndex + 1;                 // 8
-            const otherStartIndex = sectorStartIndex + sectorLabels.length;
-            
-            const sources = [];
-            const targets = [];
-            const values = [];
-            
-            // Production → Electricity
-            for (let i = 0; i < productionLabels.length; i++) {
-              sources.push(i);
-              targets.push(electricityIndex);
-              values.push(production.total_electricity[i]);
+        for (let i = 0; i < sectorLabels.length; i++) {
+            const targetIndex = i + energyLabels.length;
+
+            // Electricity to sector
+            sources.push(electricitySourceIndex);
+            targets.push(targetIndex);
+            values.push(demande.total_electricity[i]);
+
+            // Gaz to sector
+            sources.push(gazSourceIndex);
+            targets.push(targetIndex);
+            values.push(demande.total_gaz[i]);
             }
-            
-            // Electricity and Gaz → Sectors
-            for (let i = 0; i < sectorLabels.length; i++) {
-              const targetIndex = sectorStartIndex + i;
-              const electricity = demande.total_electricity[i] || 0;
-              const gaz = demande.total_gaz[i] || 0;
-            
-              if (electricity > 0) {
-                sources.push(electricityIndex);
-                targets.push(targetIndex);
-                values.push(electricity);
-              }
-            
-              if (gaz > 0) {
-                sources.push(gazIndex);
-                targets.push(targetIndex);
-                values.push(gaz);
-              }
-            }
-            
-            // Electricity → Exports/Pertes
-            Object.entries(others.other_targets_values).forEach(([idx, val]) => {
-              const targetIndex = otherStartIndex + parseInt(idx);
-              if (val > 0) {
-                sources.push(electricityIndex);
-                targets.push(targetIndex);
-                values.push(val);
-              }
-            });
-            
-            // 🔧 Format number to readable energy
-            function formatEnergy(val) {
-              if (val >= 1e9) return (val / 1e9).toFixed(1) + " GWh";
-              if (val >= 1e6) return (val / 1e6).toFixed(1) + " MWh";
-              if (val >= 1e3) return (val / 1e3).toFixed(1) + " kWh";
-              return val + " Wh";
-            }
-            
-            // 🔁 Compute incoming flow total per node
-            const nodeFlowTotals = Array(baseNodeLabels.length).fill(0);
-            for (let i = 0; i < targets.length; i++) {
-              const t = targets[i];
-              nodeFlowTotals[t] += values[i];
-            }
-            
-            // 🏷 Build final labels with totals (if any flow exists)
-            const nodeLabels = baseNodeLabels.map((label, i) => {
-              return nodeFlowTotals[i] > 0
-                ? `${label} (${formatEnergy(nodeFlowTotals[i])})`
-                : label;
-            });
-            
-            const sankeyData = [{
-              type: "sankey",
-              orientation: "h",
-              node: {
+
+        const sankeyData = [{
+            type: "sankey",
+            orientation: "h",
+            node: {
                 pad: 15,
-                thickness: 25,
-                line: { color: "black", width: 0.7 },
-                label: nodeLabels
-              },
-              link: {
+                thickness: 20,
+                label: allLabels
+            },
+            link: {
                 source: sources,
                 target: targets,
-                value: values,
-                hovertemplate: '%{source.label} → %{target.label}<br><b>%{value:.2s}Wh</b><extra></extra>'
-              }
-            }];
-            
-            const layout = {
-              title: "Flux énergétique : Production à Consommation",
-              font: { size: 12 },
-              margin: { l: 0, r: 0, t: 30, b: 10 },
-              width: 900,
-              height: 500,
-              autosize: false
-            };
-            
-            Plotly.newPlot("sankey-plot", sankeyData, layout);
-            
-
-                        
-        })
-        .catch(error => {
-            if (error.message.includes('404')) {
-                console.error('Demande non trouvée:', error);
-            } else {
-                console.error('Erreur lors du chargement de la demande Sankey:', error);
+                value: values
             }
-        });
-    // SANKEY END
+        }];
+
+        const layout = {
+            title: "Flux d'énergie vers les secteurs",
+            font: { size: 12 }
+        };
+
+        Plotly.newPlot("sankey-plot", sankeyData, layout);
+    })
+    .catch(error => {
+        if (error.message.includes('404')) {
+            console.error('Demande non trouvée:', error);
+        } else {
+            console.error('Erreur lors du chargement de la demande Sankey:', error);
+        }
+    });
+//SANKEY END
 }
 function changeScenario() {
     let id = $("#scenario-actif").val();
@@ -854,13 +832,20 @@ function infraModal(create_class, post_url, lat, lon) {
     const schema = openApiJson.components.schemas[create_class];
     const required = schema.required || [];
     const props = schema.properties;
+    const upname = post_url.split("/").pop();
+
+    // Pretty jankey
+    if (upname === "hydro") {
+        alert("La fonctionnalité pour les infrastructures hydroélectriques est en cours de développement. Cette démonstration est fournie à titre indicatif.");
+    }
+    const ppname = prettyNames[upname]
 
     let modalHTML = `
         <div class="modal-dialog" role="document">
             <form id="form-${create_class.toLowerCase()}">
                 <div class="modal-content">
                     <div class="modal-header w-100 d-flex justify-content-between">
-                        <h5 class="modal-title">Créer Infrastructure</h5>
+                        <h5 class="modal-title">Créer ${ppname}</h5>
                         <button type="button" class="close btn-primary" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true"><i class="fas fa-times"></i></span>
                         </button>

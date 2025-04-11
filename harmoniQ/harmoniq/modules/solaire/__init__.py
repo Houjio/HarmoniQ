@@ -17,7 +17,7 @@ import logging
 logger = logging.getLogger("Solaire")
 
 
-class Solaire(Infrastructure):
+class InfraSolaire(Infrastructure):
     def __init__(self, donnees: SolaireBase):
 
         super().__init__(donnees)
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     db = next(get_db())
     centrale = read_all_solaire(db)[0]
-    infraSolaire = Solaire(centrale)
+    infraSolaire = InfraSolaire(centrale)
 
     scenario = read_all_scenario(db)[0]
 
