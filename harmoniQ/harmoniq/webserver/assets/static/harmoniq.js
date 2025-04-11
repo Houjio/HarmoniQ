@@ -717,13 +717,23 @@ function charger_demande(scenario_id, mrc_id) {
     demandeFetchController = new AbortController();
     const signal = demandeFetchController.signal;
 
-    $("#temporal-plot").empty();
-    $("#sankey-plot").empty();
-
-    fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
-        .then(data => {
-            console.log('Demande Sankey chargée avec succès');
-            demandeSankey = data;
+    // fetchData(`/api/demande/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', null, signal)
+    //     .then(data => {
+    //         console.log('Demande chargée avec succès');
+    //         demande = data;
+    //     })
+    //     .catch(error => {
+    //         if (error.message.includes('404')) {
+    //             console.error('Demande non trouvée:', error);
+    //         } else {
+    //             console.error('Erreur lors du chargement de la demande:', error);
+    //         }
+    //     });
+//SANKEY START
+fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
+    .then(data => {
+        console.log('Demande Sankey chargée avec succès');
+        demande = data;
 
             generateSankey();
         })
