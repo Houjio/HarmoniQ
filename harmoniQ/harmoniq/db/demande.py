@@ -11,15 +11,6 @@ from typing import Optional
 _conn = sqlite3.connect(f"file:{DEMANDE_PATH}?mode=ro", uri=True)
 
 
-async def get_all_mrc() -> pd.DataFrame:
-    query = """
-        SELECT DISTINCT m.id, m.CUID, m.weather, m.sector, m.scenario, m.year
-        FROM Metadata m
-        JOIN Demande d ON d.meta_id = m.id
-    """
-    df = pd.read_sql_query(query, _conn)
-    return df
-
 async def get_all_sectors() -> pd.DataFrame:
     query = """
         SELECT DISTINCT m.sector

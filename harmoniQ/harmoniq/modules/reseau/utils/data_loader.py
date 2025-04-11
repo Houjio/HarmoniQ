@@ -21,9 +21,9 @@ from harmoniq.modules.nucleaire import InfraNucleaire
 from harmoniq.db.engine import get_db
 from harmoniq.db.demande import read_demande_data
 from harmoniq.db.schemas import EolienneParc, Solaire, Hydro, Nucleaire, Thermique, Scenario, BusType
-from harmoniq.db.CRUD import (read_all_bus, read_all_line, read_all_line_type,
+from harmoniq.db.CRUD import (read_all_bus_async, read_all_line_async, read_all_line_type_async,
                               read_all_eolienne_parc, read_all_solaire, read_all_hydro,
-                              read_all_nucleaire, read_all_thermique, read_multiple_by_id)
+                              read_all_nucleaire, read_all_thermique, read_multiple_by_id, read_all_data)
 
 
 CURRENT_DIR = Path(__file__).parent
@@ -94,7 +94,7 @@ class NetworkDataLoader:
         if liste_infra.central_thermique:
             self.thermique_ids = [int(id) for id in liste_infra.central_thermique.split(',')]
 
-    def load_network_data(self) -> pypsa.Network:
+    async def load_network_data(self) -> pypsa.Network:
         """
         Charge les données statiques du réseau.
         
@@ -111,7 +111,7 @@ class NetworkDataLoader:
         db = next(get_db())
         
         # Chargement des bus
-        buses = read_all_bus(db)
+        buses =  await read_all_bus_async(db)
         buses_df = pd.DataFrame([bus.__dict__ for bus in buses])
         if not buses_df.empty:
             buses_df = buses_df.drop(columns=['_sa_instance_state'], errors='ignore')
@@ -129,7 +129,7 @@ class NetworkDataLoader:
                     )
         
         # Chargement des types de lignes
-        line_types = read_all_line_type(db)
+        line_types = await read_all_line_type_async(db)
         line_types_df = pd.DataFrame([lt.__dict__ for lt in line_types])
         if not line_types_df.empty:
             line_types_df = line_types_df.drop(columns=['_sa_instance_state'], errors='ignore')
@@ -139,7 +139,7 @@ class NetworkDataLoader:
                 network.add("LineType", name=idx, **row.to_dict())
         
         # Chargement des lignes
-        lines = read_all_line(db)
+        lines = await read_all_line_async(db)
         lines_df = pd.DataFrame([line.__dict__ for line in lines])
         if not lines_df.empty:
             lines_df = lines_df.drop(columns=['_sa_instance_state'], errors='ignore')
@@ -155,12 +155,12 @@ class NetworkDataLoader:
             network.add("Carrier", name=idx, **row.to_dict())
 
         # Chargement des générateurs par type
-        network = self.fill_non_pilotable(network, "eolienne")
-        network = self.fill_non_pilotable(network, "solaire")
-        network = self.fill_non_pilotable(network, "hydro_fil")
-        network = self.fill_non_pilotable(network, "nucleaire")
-        network = self.fill_pilotable(network, "hydro_reservoir")
-        network = self.fill_pilotable(network, "thermique")
+        network = await self.fill_non_pilotable(network, "eolienne")
+        network = await self.fill_non_pilotable(network, "solaire")
+        network = await self.fill_non_pilotable(network, "hydro_fil")
+        network = await self.fill_non_pilotable(network, "nucleaire")
+        network = await self.fill_pilotable(network, "hydro_reservoir")
+        network = await self.fill_pilotable(network, "thermique")
         
         # Chargement des contraintes globales
         global_constraints_df = pd.read_csv(
@@ -171,7 +171,7 @@ class NetworkDataLoader:
             
         return network
 
-    def load_timeseries_data(self, 
+    async def load_timeseries_data(self, 
                            network: pypsa.Network,
                            scenario,
                            year: str,
@@ -207,7 +207,7 @@ class NetworkDataLoader:
         )
         network.set_snapshots(snapshots)
         
-        p_max_pu_df, marginal_cost_df = self.generate_timeseries(network, scenario)
+        p_max_pu_df, marginal_cost_df = await self.generate_timeseries(network, scenario)
         
         p_max_pu_df = p_max_pu_df.astype('float64')
         marginal_cost_df = marginal_cost_df.astype('float64')
@@ -241,7 +241,7 @@ class NetworkDataLoader:
         network.generators_t.marginal_cost = marginal_cost_df
         
         # Chargement des demandes énergétiques
-        load_demand_df = self.load_demand_data(network, scenario, start_date, end_date)
+        load_demand_df = await self.load_demand_data(network, scenario, start_date, end_date)
         
         if not load_demand_df.empty:
             # Convertir l'index en DatetimeIndex si nécessaire
@@ -253,7 +253,7 @@ class NetworkDataLoader:
         
         return network
 
-    def fill_non_pilotable(self, network: pypsa.Network, source_type: str) -> pypsa.Network:
+    async def fill_non_pilotable(self, network: pypsa.Network, source_type: str) -> pypsa.Network:
         """
         Remplit les données pour les générateurs non pilotables.
         
@@ -270,9 +270,9 @@ class NetworkDataLoader:
         # Sélection des données selon le type de source
         if source_type == "eolienne":
             if self.eolienne_ids:
-                centrales = asyncio.run(read_multiple_by_id(db, EolienneParc, self.eolienne_ids))
+                centrales = await read_multiple_by_id(db, EolienneParc, self.eolienne_ids)
             else:
-                centrales = read_all_eolienne_parc(db)
+                centrales = await read_all_data(db, EolienneParc)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if not df.empty:
                 # Mapping des colonnes pour éoliennes
@@ -282,9 +282,9 @@ class NetworkDataLoader:
 
         elif source_type == "solaire":
             if self.solaire_ids:
-                centrales = asyncio.run(read_multiple_by_id(db, Solaire, self.solaire_ids))
+                centrales = await read_multiple_by_id(db, Solaire, self.solaire_ids)
             else:
-                centrales = read_all_solaire(db)
+                centrales = await read_all_data(db, Solaire)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if not df.empty:
                 # Mapping des colonnes pour solaire
@@ -294,9 +294,9 @@ class NetworkDataLoader:
 
         elif source_type == "hydro_fil":
             if self.hydro_ids:
-                centrales = asyncio.run(read_multiple_by_id(db, Hydro, self.hydro_ids))
+                centrales = await read_multiple_by_id(db, Hydro, self.hydro_ids)
             else:
-                centrales = read_all_hydro(db)
+                centrales = await read_all_data(db, Hydro)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if not df.empty:
                 df = df[df['type_barrage'] == "Fil de l'eau"]
@@ -306,9 +306,9 @@ class NetworkDataLoader:
 
         elif source_type == "nucleaire":
             if self.nucleaire_ids:
-                centrales = asyncio.run(read_multiple_by_id(db, Nucleaire, self.nucleaire_ids))
+                centrales = await read_multiple_by_id(db, Nucleaire, self.nucleaire_ids)
             else:
-                centrales = read_all_nucleaire(db)
+                centrales = await read_all_data(db, Nucleaire)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if not df.empty:
                 df['name'] = df['centrale_nucleaire_nom']
@@ -358,7 +358,7 @@ class NetworkDataLoader:
         
         return network
         
-    def fill_pilotable(self, network: pypsa.Network, source_type: str) -> pypsa.Network:
+    async def fill_pilotable(self, network: pypsa.Network, source_type: str) -> pypsa.Network:
         """
         Remplit les données pour les générateurs pilotables.
         
@@ -374,9 +374,9 @@ class NetworkDataLoader:
         
         if source_type == "hydro_reservoir":
             if self.hydro_ids:
-                centrales = asyncio.run(read_multiple_by_id(db, Hydro, self.hydro_ids))
+                centrales = await read_multiple_by_id(db, Hydro, self.hydro_ids)
             else:
-                centrales = read_all_hydro(db)
+                centrales = await read_all_data(db, Hydro)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if not df.empty:
                 df = df[df['type_barrage'] == "Reservoir"]
@@ -386,9 +386,9 @@ class NetworkDataLoader:
 
         elif source_type == "thermique":
             if self.thermique_ids:
-                centrales = asyncio.run(read_multiple_by_id(db, Thermique, self.thermique_ids))
+                centrales = await read_multiple_by_id(db, Thermique, self.thermique_ids)
             else:
-                centrales = read_all_thermique(db)
+                centrales = await read_all_data(db, Thermique)
             df = pd.DataFrame([c.__dict__ for c in centrales])
             if not df.empty:
                 df['name'] = df['nom']
@@ -440,7 +440,7 @@ class NetworkDataLoader:
         
         return network
         
-    def generate_timeseries(self, network: pypsa.Network, scenario) -> tuple:
+    async def generate_timeseries(self, network: pypsa.Network, scenario) -> tuple:
         """
         Génère les données temporelles pour tous les générateurs.
         
@@ -467,7 +467,7 @@ class NetworkDataLoader:
         
         # Génération pour les parcs solaires
         if self.solaire_ids:
-            solaires = asyncio.run(read_multiple_by_id(db, Solaire, self.solaire_ids))
+            solaires = await read_multiple_by_id(db, Solaire, self.solaire_ids)
             
             for idx, parc in enumerate(solaires):
                 infraSolaire = InfraSolaire(parc)
@@ -493,7 +493,7 @@ class NetworkDataLoader:
         
         # Génération pour les centrales nucléaires
         if self.nucleaire_ids:
-            nucleaires = asyncio.run(read_multiple_by_id(db, Nucleaire, self.nucleaire_ids))
+            nucleaires = await read_multiple_by_id(db, Nucleaire, self.nucleaire_ids)
             
             for idx, centrale in enumerate(nucleaires):
                 infraNucleaire = InfraNucleaire(centrale)
@@ -520,11 +520,11 @@ class NetworkDataLoader:
 
         # Génération pour les parcs éoliens
         if self.eolienne_ids:
-            eoliennes = asyncio.run(read_multiple_by_id(db, EolienneParc, self.eolienne_ids))
+            eoliennes = await read_multiple_by_id(db, EolienneParc, self.eolienne_ids)
             
             for parc in eoliennes:
                 infraEolienne = InfraParcEolienne(parc)
-                asyncio.run(infraEolienne.charger_scenario(scenario))
+                await infraEolienne.charger_scenario(scenario)
                 production_iteration = infraEolienne.calculer_production()
                 
                 if production_iteration is not None and not production_iteration.empty:
@@ -590,7 +590,7 @@ class NetworkDataLoader:
         
         return p_max_pu_df, marginal_cost_df
 
-    def load_demand_data(self, network: pypsa.Network, scenario, start_date=None, end_date=None) -> pd.DataFrame:
+    async def load_demand_data(self, network: pypsa.Network, scenario, start_date=None, end_date=None) -> pd.DataFrame:
         """
         Charge et distribue les données de demande énergétique.
         
@@ -652,7 +652,7 @@ class NetworkDataLoader:
         )
         
         # Charger la demande totale
-        demand_df = asyncio.run(read_demande_data(db_scenario, CUID=1))
+        demand_df = await read_demande_data(db_scenario, CUID=1)
         logger.info(f"Données de demande chargées: {len(demand_df)} lignes")
         
         # Convertir les dates en datetime
@@ -794,7 +794,7 @@ if __name__ == "__main__":
     loader = NetworkDataLoader()
     if hasattr(liste_infrastructures, 'parc_eoliens'):
         loader.set_infrastructure_ids(liste_infrastructures)
-    network = loader.load_network_data()
+    network = asyncio.run(loader.load_network_data())
     print(f"Network has {len(network.buses)} buses, {len(network.loads)} loads")
     print("Generating randomized demand data...")
     start_time = time.time()

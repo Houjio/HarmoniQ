@@ -123,6 +123,7 @@ class WeatherHelper:
         logger.info(f"Saved cache file {cache_file}")
 
     def set_back_time(self, data: pd.DataFrame) -> pd.DataFrame:
+        logger.info(f"Setting back time for {self.position} from {self.start_time} to {self.end_time}")
         if self._timeshift is not None:
             data.index = data.index + self._timeshift
 
@@ -136,6 +137,7 @@ class WeatherHelper:
         if self.test_cache():
             logger.info(f"Loading data from cache")
             self._data = self.load_cache()
+            self._data = self.set_back_time(self._data)
             return self._data
 
         self._nearby_stations = await self._get_nearest_station()

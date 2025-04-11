@@ -54,7 +54,7 @@ class InfraReseau(Infrastructure):
         logger.info(f"Scénario chargé: {scenario.nom}")
         
     @necessite_scenario
-    def creer_reseau(self, liste_infra=None) -> pypsa.Network:
+    async def creer_reseau(self, liste_infra=None) -> pypsa.Network:
         """
         Crée un réseau PyPSA complet à partir des données statiques
         et des séries temporelles associées au scénario, avec mise en cache.
@@ -111,7 +111,7 @@ class InfraReseau(Infrastructure):
         start_date = self.scenario.date_de_debut
         end_date = self.scenario.date_de_fin
         
-        network = self.builder.create_network(self.scenario, liste_infra, annee, start_date, end_date)
+        network = await self.builder.create_network(self.scenario, liste_infra, annee, start_date, end_date)
         
         
         # Normaliser les types de données avant sauvegarde
@@ -149,7 +149,7 @@ class InfraReseau(Infrastructure):
                         pass
 
     @necessite_scenario
-    def calculer_capacite_import_export(self, liste_infra) -> float:
+    async def calculer_capacite_import_export(self, liste_infra) -> float:
         """
         Calcule la capacité maximale d'import/export (Pmax) en équilibrant
         le déséquilibre énergétique global.
@@ -163,7 +163,7 @@ class InfraReseau(Infrastructure):
         logger.info("Calcul de la capacité d'import/export...")
         
         if self.network is None:
-            self.creer_reseau(liste_infra)
+            await self.creer_reseau(liste_infra)
         
         annee = str(self.scenario.date_de_debut.year)
         
@@ -240,7 +240,7 @@ class InfraReseau(Infrastructure):
         return Pmax
 
     @necessite_scenario
-    def fake_optimiser_reservoirs(self, liste_infra, Pmax=None, is_journalier=None) -> Tuple[pypsa.Network, Dict]:
+    async def fake_optimiser_reservoirs(self, liste_infra, Pmax=None, is_journalier=None) -> Tuple[pypsa.Network, Dict]:
         """
         Optimise le réseau avec une gestion simulée des réservoirs.
         
@@ -263,11 +263,11 @@ class InfraReseau(Infrastructure):
         is_journalier = self.is_journalier if is_journalier is None else is_journalier
         
         if self.network is None:
-            self.creer_reseau(liste_infra)
+            await self.creer_reseau(liste_infra)
         
         if Pmax is None:
             if not hasattr(self, 'Pmax'):
-                Pmax = self.calculer_capacite_import_export(liste_infra)
+                Pmax = await self.calculer_capacite_import_export(liste_infra)
             else:
                 Pmax = self.Pmax
         
@@ -340,7 +340,7 @@ class InfraReseau(Infrastructure):
         return optimized_network, statistics
 
     @necessite_scenario
-    def optimiser_avec_gestion_reservoirs(self, liste_infra, Pmax=None, is_journalier=None) -> pypsa.Network:
+    async def optimiser_avec_gestion_reservoirs(self, liste_infra, Pmax=None, is_journalier=None) -> pypsa.Network:
         """
         Optimisation avec gestion dynamique des réservoirs.
         
@@ -363,19 +363,19 @@ class InfraReseau(Infrastructure):
         is_journalier = self.is_journalier if is_journalier is None else is_journalier
         
         if self.network is None:
-            self.creer_reseau(liste_infra)
+            await self.creer_reseau(liste_infra)
         
         if Pmax is None:
             if not hasattr(self, 'Pmax'):
-                Pmax = self.calculer_capacite_import_export(liste_infra)
+                Pmax = await self.calculer_capacite_import_export(liste_infra)
             else:
                 Pmax = self.Pmax
         
-        network, _ = self.fake_optimiser_reservoirs(liste_infra, Pmax, is_journalier)
+        network, _ = await self.fake_optimiser_reservoirs(liste_infra, Pmax, is_journalier)
         return network
 
     @necessite_scenario
-    def workflow_import_export(self, liste_infra, is_journalier=False) -> Tuple[pypsa.Network, Dict]:
+    async def workflow_import_export(self, liste_infra, is_journalier=False) -> Tuple[pypsa.Network, Dict]:
         """
         Exécute le workflow complet d'import/export avec gestion des réservoirs.
         
@@ -395,19 +395,19 @@ class InfraReseau(Infrastructure):
         # Mettre à jour le mode de l'instance
         self.is_journalier = is_journalier
         
-        Pmax = self.calculer_capacite_import_export(liste_infra)
-        network, statistics = self.fake_optimiser_reservoirs(liste_infra, Pmax, is_journalier)
+        Pmax = await self.calculer_capacite_import_export(liste_infra)
+        network, statistics = await self.fake_optimiser_reservoirs(liste_infra, Pmax, is_journalier)
         
         logger.info("Workflow d'optimisation terminé")
         return network, statistics
     
     @necessite_scenario
-    def calculer_production(self, liste_infra,is_journalier=False) -> pd.DataFrame:
+    async def calculer_production(self, liste_infra,is_journalier=False) -> pd.DataFrame:
         """
         Calcule la production optimisée par type d'énergie.
         """
         if self.network is None or not self.statistics:
-            self.workflow_import_export(liste_infra,is_journalier)
+            await self.workflow_import_export(liste_infra,is_journalier)
         
         if not hasattr(self.network, 'generators_t') or not hasattr(self.network.generators_t, 'p'):
             logger.error("Aucune donnée de production disponible")
@@ -473,7 +473,7 @@ if __name__ == "__main__":
     scenario = read_all_scenario(db)[0]
     infraReseau.charger_scenario(scenario)
 
-    network, statistics = infraReseau.workflow_import_export(liste_infrastructures, is_journalier=True)
+    network, statistics = asyncio.run(infraReseau.workflow_import_export(liste_infrastructures, is_journalier=True))
     print(f"Mode journalier activé: calculs réalisés avec un pas de 24h")
     print(f"Capacité d'import/export (Pmax): {statistics['Pmax_calcule']:.2f} MW")
     

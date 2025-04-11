@@ -385,23 +385,31 @@ function lancer_simulation() {
         return;
     }
 
-    alert("Le graphique est purement à titre indicatif et ne représente pas les données réelles.");
-    charger_production(scenario);
+    fetchData(`/api/reseau/production/?scenario_id=${scenario}&liste_infra_id=${groupe}&is_journalier=false`, 'POST')
+        .then(data => {
+            console.log('Simulation réussie:', data);
+            charger_demande(scenario, groupe);
 
-    // $.ajax({
-    //     type: 'POST',
-    //     url: `/api/simulation?scenario_id=${scenario}&liste_infra_id=${groupe}`,
-    //     contentType: 'application/json',
-    //     success: function(response) {
-    //         console.log('Simulation lancée avec succès:', response);
-    //     },
-    //     error: function(error) {
-    //         if (error.status === 501) {
-    //             unimplemented();
-    //         }
-    //         console.error('Erreur lors du lancement de la simulation:', error);
-    //     }
-    // });
+            production = data;
+            updateTemporalGraph(production);
+
+            $("#run").html('Lancer la simulation');
+            $("#run").prop('disabled', false);
+        })
+        .catch(error => {
+            if (error.message.includes('501')) {
+                unimplemented();
+            } else {
+                console.error('Erreur lors de la simulation:', error);
+                alert('Erreur lors de la simulation: ' + error.message);
+                $("#run").html('Lancer la simulation');
+                $("#run").prop('disabled', false);
+            }
+        }); 
+
+    $("#run").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>')
+    $("#run").prop('disabled', true);
+    alert("Ce processus peut prendre un certain temps (3-5 minutes).")
 }
 
 function simulate_single(event, infraId, type, name) {
@@ -447,15 +455,15 @@ function single_graph(type, data) {
     var yval;
     console.log(type, data)
     if (type == "eolienneparc") {
-        unit = "MWh";
+        unit = "MW";
         xval = Object.values(data.tempsdate);
         yval = Object.values(data.puissance);
     } else if (type == "thermique" || type == "nucleaire") {
-        unit = "MWh";
+        unit = "MW";
         xval = Object.keys(data.production_mwh);
         yval = Object.values(data.production_mwh);
     } else if (type == "solaire") {
-        unit = "Wh";
+        unit = "W";
         xval = Object.keys(data.production_horaire_wh);
         yval = Object.values(data.production_horaire_wh);
     }
@@ -717,53 +725,7 @@ function charger_demande(scenario_id, mrc_id) {
             console.log('Demande Sankey chargée avec succès');
             demandeSankey = data;
 
-            // Generate Sankey diagram
-            const sectorLabels = Object.values(demandeSankey.sector);
-            const energyLabels = ["Electricity", "Gaz"];
-            const allLabels = energyLabels.concat(sectorLabels);
-
-            const electricitySourceIndex = 0; // Electricité
-            const gazSourceIndex = 1;         // Gaz
-
-            const sources = [];
-            const targets = [];
-            const values = [];
-
-            for (let i = 0; i < sectorLabels.length; i++) {
-                const targetIndex = i + energyLabels.length;
-
-                // Electricity to sector
-                sources.push(electricitySourceIndex);
-                targets.push(targetIndex);
-                values.push(demandeSankey.total_electricity[i]);
-
-                // Gaz to sector
-                sources.push(gazSourceIndex);
-                targets.push(targetIndex);
-                values.push(demandeSankey.total_gaz[i]);
-                }
-
-            const sankeyData = [{
-                type: "sankey",
-                orientation: "h",
-                node: {
-                    pad: 15,
-                    thickness: 20,
-                    label: allLabels
-                },
-                link: {
-                    source: sources,
-                    target: targets,
-                    value: values
-                }
-            }];
-
-            const layout = {
-                title: "Flux d'énergie vers les secteurs pour scénario " + $("#scenario-actif option:selected").text(),
-                font: { size: 10 }
-            };
-
-            Plotly.newPlot("sankey-plot", sankeyData, layout);
+            generateSankey();
         })
         .catch(error => {
             if (error.message.includes('404')) {
@@ -778,33 +740,7 @@ function charger_demande(scenario_id, mrc_id) {
             console.log('Demande temporelle chargée avec succès');
 
             demandeTemporal = data;
-
-            // Generate time series plot
-            const xval = Object.keys(demandeTemporal.total_electricity);
-            const yval = Object.values(demandeTemporal.total_electricity);
-
-            const layout = {
-                title: "Demande d'énergie pour scénario " + $("#scenario-actif option:selected").text(),
-                xaxis: {
-                    title: "Date",
-                    tickformat: "%d %b %Y"
-                },
-                yaxis: {
-                    title: "Demande (MWh)",
-                    autorange: true
-                }
-            };
-
-            const trace = {
-                x: xval,
-                y: yval,
-                type: 'scatter',
-                mode: 'lines',
-                marker: { color: 'blue' },
-                line: { shape: 'spline' }
-            };
-
-            Plotly.newPlot("temporal-plot", [trace], layout);
+            generateTemporalPlot();
         })
         .catch(error => {
             if (error.message.includes('404')) {

@@ -21,7 +21,6 @@ from harmoniq.db.demande import (
     read_demande_data, 
     read_demande_data_sankey, 
     read_demande_data_temporal,
-    get_all_mrc
 )
 from harmoniq.core import meteo
 from harmoniq.db.engine import get_db
@@ -174,14 +173,6 @@ demande_router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-@demande_router.get("/mrc")
-async def get_mrc_list(db: Session = Depends(get_db)):
-    """
-    Get all MRC (Municipalité Régionale de Comté) data.
-    """
-    mrc_data = await get_all_mrc()
-    return mrc_data
-
 @demande_router.post("/")
 async def read_demande(
     scenario_id: int,
@@ -193,7 +184,7 @@ async def read_demande(
         raise HTTPException(status_code=404, detail="Scenario not found")
 
     demande = await read_demande_data(scenario, CUID)
-    return demande
+    return "ping"
 
 
 @demande_router.post("/sankey")
@@ -440,7 +431,7 @@ async def calculer_production_reseau(
     infra_reseau.charger_scenario(scenario)
     
     start_time = time.time()
-    production = infra_reseau.calculer_production(liste_infra, is_journalier)
+    production = await infra_reseau.calculer_production(liste_infra, is_journalier)
     execution_time = time.time() - start_time
     
     if production.empty:
