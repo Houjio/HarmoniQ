@@ -69,16 +69,16 @@ function generateSankey() {
 
 function generateTemporalPlot() {
     const xval = Object.keys(demandeTemporal.total_electricity);
-    const yval = Object.values(demandeTemporal.total_electricity);
+    const yval = Object.values(demandeTemporal.total_electricity).map(value => value / 1000);
 
     const layout = {
-        title: "Demande et production pour scénario " + $("#scenario-actif option:selected").text(),
+        title: "Demande pour scénario " + $("#scenario-actif option:selected").text(),
         xaxis: {
             title: "Date",
             tickformat: "%d %b %Y"
         },
         yaxis: {
-            title: "Demande/Production (MW)",
+            title: "Demande (MW)",
             autorange: true
         },
         legend: {
@@ -97,7 +97,6 @@ function generateTemporalPlot() {
         mode: 'lines',
         marker: { color: 'blue' },
         line: { shape: 'spline' },
-        name: "Demande électrique",
         hovertemplate: "%{x}<br>%{y:.2f} MW<extra></extra>"
     };
 
@@ -106,27 +105,121 @@ function generateTemporalPlot() {
 
 function updateTemporalGraph() {
     // Add production traces
-    const productionTraces = [];
-    const productionData = demandeTemporal.production;
-    const productionNames = Object.keys(productionData);
-    const productionColors = ['red', 'green', 'orange', 'purple', 'pink'];
-    const productionColorMap = {};
-    productionNames.forEach((name, index) => {
-        productionColorMap[name] = productionColors[index % productionColors.length];
-    });
-    for (const name in productionData) {
-        const trace = {
-            x: Object.keys(productionData[name]),
-            y: Object.values(productionData[name]),
+    const productionData = production.production;
+    let x = productionData.map(instance => (instance["snapshot"]));
+    let y = productionData.map(instance => (instance["totale"]));
+    let eolien = productionData.map(instance => (instance["total_eolien"]));
+    let solaire = productionData.map(instance => (instance["total_solaire"]));
+    let hydro_fil = productionData.map(instance => (instance["total_hydro_fil"]));
+    let hydro_res = productionData.map(instance => (instance["total_hydro_reservoir"]));
+    let imports = productionData.map(instance => (instance["total_import"]));
+    let nucleaire = productionData.map(instance => (instance["total_nucleaire"]));
+    let thermique = productionData.map(instance => (instance["total_thermique"]));
+
+    let demandeX = Object.keys(demandeTemporal.total_electricity);
+    let demandeY = Object.values(demandeTemporal.total_electricity).map(value => value / 1000);
+
+    const productionTraces = [
+        {
+            x: demandeX,
+            y: demandeY,
             type: 'scatter',
             mode: 'lines',
-            marker: { color: productionColorMap[name] },
-            line: { shape: 'spline' },
-            name: name,
+            name: 'Demande',
+            line: { shape: 'spline', color: 'black' },
             hovertemplate: "%{x}<br>%{y:.2f} MW<extra></extra>"
-        };
-        productionTraces.push(trace);
-    }
-    // Add production traces to the plot
-    Plotly.addTraces('temporal-plot', productionTraces);
+        },
+        {
+            x: x,
+            y: y,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Production totale',
+            line: { shape: 'spline', color: 'green' },
+            hovertemplate: "%{x}<br>%{y:.2f} MW<extra></extra>"
+        },
+        {
+            x: x,
+            y: eolien,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Éolien',
+            line: { shape: 'spline', color: 'orange' },
+            hovertemplate: "%{x}<br>%{y:.2f} MW<extra></extra>"
+        },
+        {
+            x: x,
+            y: solaire,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Solaire',
+            line: { shape: 'spline', color: 'yellow' },
+            hovertemplate: "%{x}<br>%{y:.2f} MW<extra></extra>"
+        },
+        {
+            x: x,
+            y: hydro_fil,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Hydro (fil)',
+            line: { shape: 'spline', color: 'blue' },
+            hovertemplate: "%{x}<br>%{y:.2f} MW<extra></extra>"
+        },
+        {
+            x: x,
+            y: hydro_res,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Hydro (réservoir)',
+            line: { shape: 'spline', color: 'cyan' },
+            hovertemplate: "%{x}<br>%{y:.2f} MW<extra></extra>"
+        },
+        {
+            x: x,
+            y: imports,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Importations',
+            line: { shape: 'spline', color: 'purple' },
+            hovertemplate: "%{x}<br>%{y:.2f} MW<extra></extra>"
+        },
+        {
+            x: x,
+            y: nucleaire,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Nucléaire',
+            line: { shape: 'spline', color: 'red' },
+            hovertemplate: "%{x}<br>%{y:.2f} MW<extra></extra>"
+        },
+        {
+            x: x,
+            y: thermique,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Thermique',
+            line: { shape: 'spline', color: 'brown' },
+            hovertemplate: "%{x}<br>%{y:.2f} MW<extra></extra>"
+        }
+    ];
+
+    Plotly.purge("temporal-plot");
+    Plotly.newPlot("temporal-plot", productionTraces, {
+        title: "Production et Demande pour scénario " + $("#scenario-actif option:selected").text(),
+        xaxis: {
+            title: "Date",
+            tickformat: "%d %b %Y"
+        },
+        yaxis: {
+            title: "Puissance (MW)",
+            autorange: true
+        },
+        legend: {
+            orientation: "h",
+            yanchor: "bottom",
+            y: 1.02,
+            xanchor: "right",
+            x: 1
+        }
+    });
 }

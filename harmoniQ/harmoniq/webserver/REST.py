@@ -44,28 +44,6 @@ async def ping():
     return {"ping": "pong"}
 
 
-@router.post("/simulation")
-async def simulation(
-    scenario_id: int, liste_infra_id: int, db: Session = Depends(get_db)
-):
-    print(f"Scenario ID: {scenario_id}")
-    print(f"Infrastructure ID: {liste_infra_id}")
-    scenario = CRUD.read_scenario_by_id(db, scenario_id)
-    if scenario is None:
-        raise HTTPException(status_code=404, detail="Scenario not found")
-
-    infra = CRUD.read_liste_infrastructures_by_id(db, liste_infra_id)
-    if infra is None:
-        raise HTTPException(status_code=404, detail="Infrastructure not found")
-
-    print("Scenario:")
-    print(scenario)
-    print("Infra:")
-    print(infra)
-
-    raise HTTPException(status_code=501, detail="Simulation not implemented")
-
-
 # Initialisation des fonctions CRUD des tables de la base de données
 api_routers = {}
 for sql_class, pydantic_classes in engine.sql_tables.items():

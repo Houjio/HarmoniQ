@@ -388,10 +388,8 @@ function lancer_simulation() {
     fetchData(`/api/reseau/production/?scenario_id=${scenario}&liste_infra_id=${groupe}&is_journalier=false`, 'POST')
         .then(data => {
             console.log('Simulation réussie:', data);
-            charger_demande(scenario, groupe);
-
             production = data;
-            updateTemporalGraph(production);
+            updateTemporalGraph();
 
             $("#run").html('Lancer la simulation');
             $("#run").prop('disabled', false);
@@ -717,33 +715,20 @@ function charger_demande(scenario_id, mrc_id) {
     demandeFetchController = new AbortController();
     const signal = demandeFetchController.signal;
 
-    // fetchData(`/api/demande/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', null, signal)
-    //     .then(data => {
-    //         console.log('Demande chargée avec succès');
-    //         demande = data;
-    //     })
-    //     .catch(error => {
-    //         if (error.message.includes('404')) {
-    //             console.error('Demande non trouvée:', error);
-    //         } else {
-    //             console.error('Erreur lors du chargement de la demande:', error);
-    //         }
-    //     });
-//SANKEY START
-fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
-    .then(data => {
-        console.log('Demande Sankey chargée avec succès');
-        demande = data;
 
-            generateSankey();
-        })
-        .catch(error => {
-            if (error.message.includes('404')) {
-                console.error('Demande non trouvée:', error);
-            } else {
-                console.error('Erreur lors du chargement de la demande Sankey:', error);
-            }
-        });
+    fetchData(`/api/demande/sankey/?scenario_id=${scenario_id}&CUID=${mrc_id || ''}`, 'POST', signal)
+        .then(data => {
+            console.log('Demande Sankey chargée avec succès');
+                demandeSankey = data;
+                generateSankey();
+            })
+            .catch(error => {
+                if (error.message.includes('404')) {
+                    console.error('Demande non trouvée:', error);
+                } else {
+                    console.error('Erreur lors du chargement de la demande Sankey:', error);
+                }
+            });
 
     fetchData("/api/demande/temporal/?scenario_id=" + scenario_id, 'POST', signal)
         .then(data => {
