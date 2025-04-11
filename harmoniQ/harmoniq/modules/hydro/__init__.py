@@ -133,56 +133,18 @@ class InfraHydro(Infrastructure):
 
 
 if __name__ == "__main__":
+
     from harmoniq.modules.hydro import InfraHydro
     from harmoniq.db.CRUD import read_all_hydro, read_all_scenario
     from harmoniq.db.engine import get_db
 
-
     db = next(get_db())
-    production = pd.DataFrame({"hydro" : [0 for _ in range(0,8760)]})
-    barrage = read_all_hydro(db) #La-grande-1
+    centrale = read_all_hydro(db)[4]
+    infraHydro = InfraHydro(centrale)
+
     scenario = read_all_scenario(db)[0]
- 
-    print("f")
-    for i in range(0,len(barrage)):
-        if barrage[i].nom != "Gull-Island" and barrage[i].type_barrage == "Fil de l'eau":
+    print(f"Scenario: {scenario.nom}, type barrage: {centrale.type_barrage}")
 
-            infraHydro = InfraHydro(barrage[i])
-            infraHydro.charger_scenario(scenario)
-        # # date_repetee = np.repeat(infraHydro.apport["time"].values,24)
-        # # offset = np.tile(pd.to_timedelta(np.arange(24), unit="h"), len(infraHydro.apport))
-        # # temps = date_repetee + offset
-        # apport_repete = np.repeat(infraHydro.apport["streamflow"].values, 24)
-        # apport_df = pd.DataFrame({"dateTime":temps, "streamflow" : apport_repete})
-        # # Get the last recorded inflow
-        # last_inflow = apport_df.iloc[-1]["streamflow"]  # Adjust column name if necessary
-        # # Create the new row with the inflow from the last hour
-        # new_entry = pd.DataFrame({
-        # "dateTime": [pd.Timestamp("2026-01-01 00:00:00")],
-        # "streamflow": [last_inflow]
-        # })
-        # # Append the new row to the DataFrame
-        # apport_df = pd.concat([apport_df, new_entry], ignore_index=True)
-        # infraHydro.apport = apport_df
-            production["hydro"] += infraHydro.calculer_production().values
-            cout = infraHydro.calculer_cout_construction()
-            facteur_charge = infraHydro.calculer_facteur_charge(production)
-            facteur_env = infraHydro.PDF_environnement(facteur_charge)
-            daly = infraHydro.daly_futur(facteur_charge)
-            energie = infraHydro.calculer_energie(production)
-            emissions = infraHydro.emission(energie, facteur_charge)
-
-        # elif barrage[i].type_barrage == "Reservoir":
-
-        #     infraHydro = InfraHydro(barrage[i])
-        #     production["hydro"] += demande[barrage[i].donnees.nom]
-
-            # plt.plot(production.index, production.values)
-            # plt.show()
-    
-    plt.plot(infraHydro.debit.index,production["hydro"])
-    plt.title("Production totale des centrales au fil de l'eau")
-    plt.ylabel("Puissance [MW]")
-    plt.show()
-    print(max(production["hydro"]))        
-    print(production)
+    infraHydro.charger_scenario(scenario)
+    infraHydro.calculer_production()
+    print(infraHydro.production)
