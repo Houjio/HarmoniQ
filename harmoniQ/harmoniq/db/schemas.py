@@ -8,7 +8,7 @@ from sqlalchemy.sql.schema import ForeignKey
 import pandera as pa
 from pydantic import BaseModel, TypeAdapter, Field, field_validator, validator
 from typing import List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import isodate
 from enum import Enum as PyEnum
 
@@ -626,3 +626,13 @@ weather_schema = pa.DataFrameSchema(
     index=pa.Index(pa.DateTime, name="datetemps"),
     strict=True,
 )
+
+
+class ProductionRecord(BaseModel):
+    timestamp: datetime        # date+heure de la mesure
+    date: date                 # date seule (pratique pour regroupements journaliers)
+    source: str                # e.g. "éolien", "solaire", "hydro", …
+    energie_kwh: float         # production pendant l’intervalle, en kWh
+
+class ProductionResponse(BaseModel):
+    records: list[ProductionRecord]

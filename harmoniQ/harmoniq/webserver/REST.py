@@ -33,6 +33,7 @@ from harmoniq.modules.thermique import InfraThermique
 from harmoniq.modules.nucleaire import InfraNucleaire
 from harmoniq.modules.hydro import InfraHydro
 
+
 router = APIRouter(
     prefix="/api",
     responses={404: {"description": "Not found"}},
