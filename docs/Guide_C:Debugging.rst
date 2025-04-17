@@ -1,67 +1,67 @@
-General Debugging Guide for HarmoniQ Web Application
-====================================================
+Partie C : Guide de Débogage pour l'Application Web HarmoniQ
+============================================================
 
-This document provides troubleshooting steps, commands, and useful information for debugging the HarmoniQ web application.
+Ce document fournit des étapes de dépannage, des commandes et des informations utiles pour déboguer l'application web HarmoniQ.
 
-Handling the "Address already in use" Error
--------------------------------------------
+Gestion de l'erreur "Address already in use"
+--------------------------------------------
 
-If you encounter the following error during the application startup:
+Si vous rencontrez l'erreur suivante lors du démarrage de l'application :
 
     [Errno 48] Address already in use
 
-This means that the port you are trying to use is already occupied by another process. To fix this, you should restart the application with a different port.
+Cela signifie que le port que vous essayez d'utiliser est déjà occupé par un autre processus. Pour résoudre ce problème, vous devez redémarrer l'application avec un port différent.
 
 Solution
 ~~~~~~~~
-To start the application on a new port, use the following command:
+Pour démarrer l'application sur un nouveau port, utilisez la commande suivante :
 
 .. code-block:: bash
 
     launch-app --debug --port ####
 
-Replace `####` with the desired port number (e.g., 5001, 5002, etc.).
-You can also check which process is using the port with the following command:
+Remplacez `####` par le numéro de port souhaité (par exemple, 5001, 5002, etc.).
+Vous pouvez également vérifier quel processus utilise le port avec la commande suivante :
 
 .. code-block:: bash
 
     lsof -i :<port_number>
 
-FastAPI Information on the Website
------------------------------------
+Informations sur FastAPI sur le site web
+----------------------------------------
 
-After launching the application, you can access the FastAPI documentation and interact with the API manually. This is a valuable tool for debugging and executing specific methods.
+Après avoir lancé l'application, vous pouvez accéder à la documentation FastAPI et interagir manuellement avec l'API. C'est un outil précieux pour déboguer et exécuter des méthodes spécifiques.
 
-To access the FastAPI documentation, visit the following URL:
+Pour accéder à la documentation FastAPI, visitez l'URL suivante :
 
 .. code-block:: bash
 
     http://0.0.0.0:####/docs
 
-Replace `####` with the port number you used to launch the application (e.g., 5000, 5001, etc.).
+Remplacez `####` par le numéro de port que vous avez utilisé pour lancer l'application (par exemple, 5000, 5001, etc.).
 
-This FastAPI interface allows you to:
-- View all available endpoints and their parameters
-- Manually execute methods and inspect responses
-- Test specific API calls directly from the browser interface
+Cette interface FastAPI vous permet de :
+- Voir tous les points de terminaison disponibles et leurs paramètres
+- Exécuter manuellement des méthodes et inspecter les réponses
+- Tester des appels API spécifiques directement depuis l'interface du navigateur
 
-Command-Line Help Methods
--------------------------
+Méthodes d'aide en ligne de commande
+------------------------------------
 
-In case you need more information about how to use specific commands, here are some useful command-line help methods.
+Si vous avez besoin de plus d'informations sur l'utilisation de commandes spécifiques, voici quelques méthodes d'aide utiles en ligne de commande.
 
-Initializing the Database (`init-db`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Initialisation de la base de données (`init-db`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To initialize the database or perform operations such as resetting, filling, or populating it, you can use the `init-db` command.
+Pour initialiser la base de données ou effectuer des opérations telles que la réinitialisation, le remplissage ou la population, vous pouvez utiliser la commande `init-db`.
 
-To see the help for the `init-db` command, run:
+Pour voir l'aide de la commande `init-db`, exécutez :
 
 .. code-block:: bash
 
     init-db -h
 
-This will display the following usage options:
+Cela affichera les options d'utilisation suivantes :
 
 .. code-block:: bash
 
@@ -76,47 +76,47 @@ This will display the following usage options:
       -f, --fill     Remplit la base de données si elle est vide
       -p, --populate Remplit la base de données avec des données de référence
 
-Example
+Exemple
 ~~~~~~~
-To initialize the database with test data, use:
+Pour initialiser la base de données avec des données de test, utilisez :
 
 .. code-block:: bash
 
     init-db -t
 
-This will set up the database with predefined test data.
+Cela configurera la base de données avec des données de test prédéfinies.
 
-Launching the App (`launch-app`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Lancement de l'application (`launch-app`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To start the HarmoniQ web application, use the `launch-app` command. You can also specify options like `--debug`, `--host`, and `--port` to customize the startup process.
+Pour démarrer l'application web HarmoniQ, utilisez la commande `launch-app`. Vous pouvez également spécifier des options comme `--debug`, `--host` et `--port` pour personnaliser le processus de démarrage.
 
-To view the help message for the `launch-app` command, run:
+Pour afficher le message d'aide pour la commande `launch-app`, exécutez :
 
 .. code-block:: bash
 
     launch-app -h
 
-This will display the following usage options:
+Cela affichera les options d'utilisation suivantes :
 
 .. code-block:: bash
 
     usage: launch-app [-h] [--debug] [--host HOST] [--port PORT]
 
-    Launch the web interface
+    Lancer l'interface web
 
     options:
-      -h, --help     Show this help message and exit
-      --debug        Enable debug mode
-      --host HOST    Server IP address
-      --port PORT    Server port
+      -h, --help     Affiche ce message d'aide et quitte
+      --debug        Active le mode débogage
+      --host HOST    Adresse IP du serveur
+      --port PORT    Port du serveur
 
-Example
+Exemple
 ~~~~~~~
-To launch the application in debug mode on port 5001, use:
+Pour lancer l'application en mode débogage sur le port 5001, utilisez :
 
 .. code-block:: bash
 
     launch-app --debug --port 5001
 
-This will start the application with debugging enabled, allowing you to see detailed error messages and logs in the console.
+Cela démarrera l'application avec le mode débogage activé, vous permettant de voir des messages d'erreur détaillés et des journaux dans la console.

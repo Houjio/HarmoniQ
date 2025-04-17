@@ -1,5 +1,5 @@
 ==========================================
-Partie C : Environnement et Lancement
+Partie B : Environnement et Lancement
 ==========================================
 Choisissez une méthode pour créer un environnement Python.
 
