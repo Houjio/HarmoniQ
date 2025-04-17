@@ -120,7 +120,7 @@ function initialiserListeInfra() {
 function addMarker(lat, lon, type, data) {
     const icon = map_icons[type];
 
-    // Construire le contenu du popup en fonction du type
+    // Construction du contenu du popup
     let popupContent = `<b>${data.nom}</b><br>Catégorie: ${prettyNames[type]}<br>`;
 
     if (type === 'eolienneparc') {
@@ -131,17 +131,17 @@ function addMarker(lat, lon, type, data) {
         `;
     } else if (type === 'hydro') {
         popupContent += `
-            type de barrage: ${data.type_barrage || 'N/A'} <br>
+            Type de barrage: ${data.type_barrage || 'N/A'}<br>
             Débit nominal: ${data.debits_nominal ? parseFloat(data.debits_nominal).toFixed(1) : 'N/A'} m³/s<br>
             Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
             Volume du réservoir: ${
                 data.volume_reservoir
-                ? data.volume_reservoir >= 1e9
-                    ? (data.volume_reservoir / 1e9).toFixed(1) + ' Gm³' // Milliards de m³
-                    : data.volume_reservoir >= 1e6
-                        ? (data.volume_reservoir / 1e6).toFixed(1) + ' Mm³' // Millions de m³
-                        : (data.volume_reservoir / 1e3).toFixed(1) + ' km³' // Milliers de m³
-                : 'N/A'
+                    ? data.volume_reservoir >= 1e9
+                        ? (data.volume_reservoir / 1e9).toFixed(1) + ' Gm³'
+                        : data.volume_reservoir >= 1e6
+                            ? (data.volume_reservoir / 1e6).toFixed(1) + ' Mm³'
+                            : (data.volume_reservoir / 1e3).toFixed(1) + ' km³'
+                    : 'N/A'
             }<br>
         `;
     } else if (type === 'solaire') {
@@ -150,19 +150,25 @@ function addMarker(lat, lon, type, data) {
             Orientation des panneaux: ${data.orientation_panneau || 'N/A'}<br>
             Puissance nominale: ${data.puissance_nominal || 'N/A'} MW
         `;
-    } else if (type === 'thermique') {
-        popupContent += `
-            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
-            Type d'intrant: ${data.type_intrant || 'N/A'}
-        `;
-    } else if (type === 'nucleaire') { // Ajout pour la catégorie nucléaire
+    } else if (type === 'thermique' || type === 'nucleaire') {
         popupContent += `
             Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
             Type d'intrant: ${data.type_intrant || 'N/A'}
         `;
     }
 
-    // Ajouter le marqueur à la carte avec le popup
+    // --- nouveau bouton Supprimer ---
+    popupContent += `
+        <div style="margin-top:8px;">
+            <button 
+                class="btn btn-sm btn-danger" 
+                onclick="deleteInfraFromMap('${type}', '${data.id}')">
+                Supprimer
+            </button>
+        </div>
+    `;
+
+    // Ajout du marqueur à la carte avec ce popup
     const marker = L.marker([lat, lon], { icon: icon })
         .addTo(map)
         .bindPopup(popupContent);
@@ -170,10 +176,54 @@ function addMarker(lat, lon, type, data) {
     marker.on('click', function () {
         this.openPopup();
     });
-    // Stocker le marqueur dans l'objet global
+
+    // On stocke le marqueur pour pouvoir le supprimer plus tard
     const markerKey = `${type}-${data.id}`;
     markers[markerKey] = marker;
 }
+
+/**
+ * Supprime une infrastructure côté serveur et met à jour la carte et la liste.
+ * @param {string} type Le type d’infrastructure (e.g. 'solaire', 'nucleaire', etc.)
+ * @param {string} id   L’ID de l’infrastructure à supprimer
+ */
+function deleteInfraFromMap(type, id) {
+    // Confirmation utilisateur
+    if (!confirm("Êtes‑vous sûr de vouloir supprimer cette infrastructure ?")) {
+        return;
+    }
+
+    // Envoi de la requête DELETE à l’API
+    fetch(`/api/${type}/${id}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        // 1) Retirer le marqueur de la carte
+        const markerKey = `${type}-${id}`;
+        if (markers[markerKey]) {
+            map.removeLayer(markers[markerKey]);
+            delete markers[markerKey];
+        }
+
+        // 2) Retirer l’élément de la liste HTML (s’il existe)
+        const listItem = document.querySelector(`li[elementid="${id}"][type="${type}"]`);
+        if (listItem) {
+            listItem.remove();
+        }
+
+        alert("Infrastructure supprimée avec succès.");
+    })
+    .catch(error => {
+        console.error("Erreur lors de la suppression :", error);
+        alert("Impossible de supprimer l’infrastructure : " + error.message);
+    });
+}
+
+
 
 function createListElement({ nom, id, type }) {
     return `
