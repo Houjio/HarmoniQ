@@ -4,6 +4,7 @@ General Debugging Guide for HarmoniQ Web Application
 This document provides troubleshooting steps, commands, and useful information for debugging the HarmoniQ web application.
 
 1. Handling the "Address already in use" Error
+
 ----------------------------------------------
 
 If you encounter the following error during the application startup:
@@ -16,14 +17,16 @@ This means that the port you are trying to use is already occupied by another pr
 ### Solution:
 To start the application on a new port, use the following command:
 
-```bash
-launch-app --debug --port ####
-```
+.. code-block:: bash
+
+    launch-app --debug --port ####
+
 Replace `####` with the desired port number (e.g., 5001, 5002, etc.).
 You can also check which process is using the port with the following command:
-```bash
-lsof -i :<port_number>
-```
+
+.. code-block:: bash
+
+    lsof -i :<port_number>
 
 
 2. FastAPI Information on the Website
@@ -33,9 +36,10 @@ After launching the application, you can access the FastAPI documentation and in
 
 To access the FastAPI documentation, visit the following URL:
 
-```plaintext
-http://0.0.0.0:####/docs
-```
+.. code-block:: bash
+
+    http://0.0.0.0:####/docs
+
 Replace `####` with the port number you used to launch the application (e.g., 5000, 5001, etc.).
 
 
@@ -54,33 +58,34 @@ To initialize the database or perform operations such as resetting, filling, or 
 
 To see the help for the `init-db` command, run:
 
-```bash
-init-db -h
-```
+.. code-block:: bash
+
+    init-db -h
 
 
 This will display the following usage options:
 
-```plaintext
-usage: init-db [-h] [-t] [-R] [-f] [-p]
+.. code-block:: bash
 
-Initialise la base de données
+    usage: init-db [-h] [-t] [-R] [-f] [-p]
 
-options:
-  -h, --help     Affiche ce message d'aide et quitte
-  -t, --test     Utilise la base de données de test
-  -R, --reset    Réinitialise la base de données
-  -f, --fill     Remplit la base de données si elle est vide
-  -p, --populate Remplit la base de données avec des données de référence
+    Initialise la base de données
+
+    options:
+      -h, --help     Affiche ce message d'aide et quitte
+      -t, --test     Utilise la base de données de test
+      -R, --reset    Réinitialise la base de données
+      -f, --fill     Remplit la base de données si elle est vide
+      -p, --populate Remplit la base de données avec des données de référence
 
 
 
 ### Example:
 To initialize the database with test data, use:
 
-```bash
-init-db -t
-```
+.. code-block:: bash
+
+    init-db -t
 
 
 This will set up the database with predefined test data.
@@ -90,24 +95,29 @@ To start the HarmoniQ web application, use the `launch-app` command. You can als
 
 To view the help message for the `launch-app` command, run:
 
-```bash
-launch-app -h
-```
+.. code-block:: bash
+
+    launch-app -h
+
 This will display the following usage options:
-```plaintext
-usage: launch-app [-h] [--debug] [--host HOST] [--port PORT]
 
-Launch the web interface
+.. code-block:: bash
 
-options:
-  -h, --help     Show this help message and exit
-  --debug        Enable debug mode
-  --host HOST    Server IP address
-  --port PORT    Server port
+    usage: launch-app [-h] [--debug] [--host HOST] [--port PORT]
+
+    Launch the web interface
+
+    options:
+      -h, --help     Show this help message and exit
+      --debug        Enable debug mode
+      --host HOST    Server IP address
+      --port PORT    Server port
 
 ### Example:
 To launch the application in debug mode on port 5001, use:
-```bash
-launch-app --debug --port 5001
-```
+
+.. code-block:: bash
+
+    launch-app --debug --port 5001
+
 This will start the application with debugging enabled, allowing you to see detailed error messages and logs in the console.
