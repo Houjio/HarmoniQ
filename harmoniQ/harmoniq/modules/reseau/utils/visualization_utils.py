@@ -9,12 +9,6 @@ Ce module fournit des outils de visualisation pour analyser le réseau
 - Statistiques de flux de puissance
 - ++
 
-Example:
-    >>> from network.utils import NetworkVisualizer
-    >>> visualizer = NetworkVisualizer(network)
-    >>> visualizer.plot_network_map()
-    >>> visualizer.plot_load_distribution()
-
 Notes:
     Les couleurs utilisées pour les visualisations sont définies dans
     carriers.csv pour assurer une cohérence visuelle.
@@ -143,27 +137,6 @@ class NetworkVisualizer:
         plt.legend()
         plt.xticks(rotation=45)
         plt.tight_layout()
-
-    def create_network_report(self, 
-                            output_dir: str,
-                            timestamp: Optional[str] = None) -> None:
-        """
-        Génère un rapport complet avec toutes les visualisations.
-
-        Args:
-            output_dir: Répertoire de sortie
-            timestamp: Instant spécifique pour certaines visualisations
-        """
-        # Carte du réseau
-        self.plot_network_map(save_path=f"{output_dir}/network_map.html")
-        
-        # Profils de charge
-        self.plot_load_profile()
-        plt.savefig(f"{output_dir}/load_profile.png")
-        
-        # Coûts marginaux
-        self.plot_marginal_costs()
-        plt.savefig(f"{output_dir}/marginal_costs.png")
 
     # Add new method here
 

@@ -4,6 +4,6 @@ from .optimization import NetworkOptimizer
 
 __all__ = [
     'NetworkBuilder',
-    'NetworkOptimizer'
+    'NetworkOptimizer',
     'PowerFlowAnalyzer'
 ]

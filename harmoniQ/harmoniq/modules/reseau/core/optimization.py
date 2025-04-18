@@ -1,20 +1,10 @@
 """
 Module d'optimisation du réseau électrique.
 
-Ce module gère l'optimisation de la production électrique en utilisant PyPSA.
-L'optimisation est basée sur :
-- Les coûts marginaux des centrales pilotables (réservoirs, thermique)
-- La disponibilité des centrales non-pilotables (fil de l'eau, éolien, solaire)
-- Les contraintes du réseau de transport
-
-Example:
-    >>> from network.core import NetworkOptimizer
-    >>> optimizer = NetworkOptimizer(network)
-    >>> network = optimizer.optimize()
-    >>> results = optimizer.get_optimization_results()
+Gère l'optimisation de la production électrique en minimisant les coûts
+tout en respectant les contraintes du réseau.
 
 Contributeurs : Yanis Aksas (yanis.aksas@polymtl.ca)
-                Add Contributor here
 """
 
 import pypsa
@@ -28,15 +18,14 @@ class NetworkOptimizer:
     """
     Optimiseur du réseau électrique.
     
-    Cette classe gère l'optimisation de la production en minimisant les coûts
-    tout en respectant les contraintes du réseau. Elle utilise les coûts marginaux
-    pour piloter les centrales à réservoir.
+    Optimise la production en minimisant les coûts tout en respectant 
+    les contraintes du réseau. Utilise les coûts marginaux pour piloter 
+    les centrales à réservoir.
 
     Attributes:
-        network (pypsa.Network): Réseau à optimiser
-        solver_name (str): Solveur à utiliser
-        solver_options (dict): Options de configuration du solveur
-        is_journalier (bool): Si True, les données sont traitées avec un pas de 24h
+        network: Réseau à optimiser
+        solver_name: Solveur à utiliser
+        is_journalier: Si True, les données sont traitées avec un pas de 24h
     """
 
     def __init__(self, network: pypsa.Network, solver_name: str = "highs", is_journalier=None):
@@ -45,7 +34,7 @@ class NetworkOptimizer:
 
         Args:
             network: Réseau PyPSA à optimiser
-            solver_name: Nom du solveur linéaire à utiliser ('highs' par défaut)
+            solver_name: Nom du solveur linéaire à utiliser
             is_journalier: Si True, les données sont traitées avec un pas de 24h
         """
         self.network = network
@@ -65,10 +54,10 @@ class NetworkOptimizer:
         """
         Exécute l'optimisation du réseau avec gestion robuste des erreurs SVD.
         
-        Cette méthode optimise la production en minimisant les coûts totaux,
-        et gère les erreurs SVD qui peuvent survenir lors de l'extraction des résultats.
+        Cette méthode optimise la production en minimisant les coûts totaux
         """
         # Utiliser notre optimisateur manuel au lieu de PyPSA standard
+        # TODO: Remplacer par un appel à l'optimiseur PyPSA standard n.optimize()
         return self.optimize_manually()
 
     def optimize_manually(self) -> pypsa.Network:
@@ -86,7 +75,7 @@ class NetworkOptimizer:
         """
         import logging
         logger = logging.getLogger("ManualOptimizer")
-        logger.info(f"Démarrage de l'optimisation manuelle en mode {'journalier' if self.is_journalier else 'horaire'}...")
+        logger.info(f"Démarrage de l'optimisation en mode {'journalier' if self.is_journalier else 'horaire'}...")
         
 
         loads_is_energy = getattr(self.network.loads_t.p_set, '_energy_not_power', self.is_journalier)
@@ -116,7 +105,7 @@ class NetworkOptimizer:
         carriers_by_priority = [
             'eolien', 'solaire', 'hydro_fil', 'nucléaire',  # Priorité 1: Fatales
             'hydro_reservoir',                              # Priorité 2: Réservoirs  
-            'thermique', 'import', 'emergency'              # Priorité 3: Thermiques
+            'thermique', 'import'                           # Priorité 3: Thermiques et imports
         ]
         
         generators_by_carrier = {}
@@ -125,7 +114,6 @@ class NetworkOptimizer:
                 self.network.generators.carrier == carrier
             ].index.tolist()
         
-        # Calculer les capacités maximales disponibles par type
         max_capacities = {}
         for carrier in carriers_by_priority:
             generators = generators_by_carrier.get(carrier, [])
@@ -134,7 +122,6 @@ class NetworkOptimizer:
                 max_capacities[carrier] = total_capacity
                 logger.info(f"Capacité maximale {carrier}: {total_capacity:.2f} MW")
         
-        # Variables pour suivre la production
         total_annual_load = 0
         total_annual_generation = 0
         production_by_carrier = {carrier: 0 for carrier in carriers_by_priority}
@@ -178,7 +165,6 @@ class NetworkOptimizer:
             hydro_reservoir_allocation = min_hydro_reservoir
             hydro_reservoir_supplied = 0
             if hydro_reservoir_gens:
-                # Trier les réservoirs par coût marginal croissant
                 sorted_hydro_reservoir = self._sort_generators_by_cost(hydro_reservoir_gens, snapshot)
                 
                 for gen in sorted_hydro_reservoir:
@@ -202,7 +188,6 @@ class NetworkOptimizer:
                 
                 production_by_carrier['hydro_reservoir'] += hydro_reservoir_supplied
             
-            # Traiter les sources fatales par ordre de mérite
             fatale_carriers = ['eolien', 'solaire', 'hydro_fil', 'nucléaire']
             load_supplied_by_fatale = 0
             
@@ -212,8 +197,7 @@ class NetworkOptimizer:
                 
                 if not generators or remaining_load <= 0:
                     continue
-                
-                # Calculer la capacité maximale disponible pour ce type à ce moment
+
                 available_capacity = 0
                 for gen in generators:
                     p_nom = self.network.generators.at[gen, 'p_nom']
@@ -223,23 +207,15 @@ class NetworkOptimizer:
                         snapshot in self.network.generators_t.p_max_pu.index):
                         p_max_pu = self.network.generators_t.p_max_pu.at[snapshot, gen]
                     available_capacity += p_nom * p_max_pu
-                
-                # Limiter à la capacité disponible
+
                 carrier_allocation = min(available_capacity, remaining_load)
-                
-                # Trier les générateurs par coût marginal croissant
                 sorted_generators = self._sort_generators_by_cost(generators, snapshot)
                 
-                # Allouer la production dans l'ordre de mérite
                 carrier_supplied = 0
                 for gen in sorted_generators:
                     if remaining_load <= 0:
-                        break
-                        
-                    # Capacité disponible pour ce générateur
+                        break                        
                     p_nom = self.network.generators.at[gen, 'p_nom']
-                    
-                    # Disponibilité (p_max_pu)
                     p_max_pu = 1.0
                     if (hasattr(self.network.generators_t, 'p_max_pu') and
                         gen in self.network.generators_t.p_max_pu.columns and
@@ -247,44 +223,34 @@ class NetworkOptimizer:
                         p_max_pu = self.network.generators_t.p_max_pu.at[snapshot, gen]
                     
                     max_available = p_nom * p_max_pu
-                    
-                    # Limité par la demande restante pour ce type
                     power = min(max_available, carrier_allocation - carrier_supplied, remaining_load)
                     
                     if power <= 0:
                         continue
                     
-                    # Enregistrer la production pour ce générateur
                     self.network.generators_t['p'].at[snapshot, gen] = power
-                    
-                    # Mise à jour des compteurs
                     carrier_supplied += power
                     remaining_load -= power
                     
                     if carrier_supplied >= carrier_allocation or remaining_load <= 0:
                         break
                 
-                # Mise à jour des compteurs
                 load_supplied_by_fatale += carrier_supplied
                 production_by_carrier[carrier] += carrier_supplied
             
             # 4. Allouer plus d'hydroréservoirs si nécessaire
             additional_hydro_reservoir = 0
             if remaining_load > 0 and hydro_reservoir_gens:
-                # Calcul de la capacité hydroréservoir restante disponible
                 remaining_hydro_capacity = max_hydro_reservoir - hydro_reservoir_supplied
                 
                 if remaining_hydro_capacity > 0:
                     additional_allocation = min(remaining_hydro_capacity, remaining_load)
-                    
-                    # Trier à nouveau pour prendre en compte d'éventuels changements de coûts
                     sorted_hydro_reservoir = self._sort_generators_by_cost(hydro_reservoir_gens, snapshot)
                     
                     for gen in sorted_hydro_reservoir:
                         if remaining_load <= 0:
                             break
-                            
-                        # Ne pas réutiliser la puissance déjà allouée
+
                         current_power = self.network.generators_t['p'].at[snapshot, gen]
                         p_nom = self.network.generators.at[gen, 'p_nom']
                         p_max_pu = 1.0
@@ -331,11 +297,7 @@ class NetworkOptimizer:
                 
                 # Limiter à la capacité disponible et à la demande restante
                 carrier_allocation = min(available_capacity, remaining_load)
-                
-                # Trier par coût
-                sorted_generators = self._sort_generators_by_cost(generators, snapshot)
-                
-                # Allouer la production dans l'ordre de mérite
+                sorted_generators = self._sort_generators_by_cost(generators, snapshot)                
                 carrier_supplied = 0
                 for gen in sorted_generators:
                     if remaining_load <= 0:
@@ -349,8 +311,7 @@ class NetworkOptimizer:
                         p_max_pu = self.network.generators_t.p_max_pu.at[snapshot, gen]
                     
                     max_available = p_nom * p_max_pu
-                    
-                    # Limité par l'allocation restante et la demande restante
+
                     power = min(max_available, carrier_allocation - carrier_supplied, remaining_load)
                     
                     if power <= 0:
@@ -364,10 +325,11 @@ class NetworkOptimizer:
                         break
                 production_by_carrier[carrier] += carrier_supplied
 
+            # Si besoin, ajouter un générateur d'urgence
             if remaining_load > 1.0:  # Tolérance de 1 MW
                 # Si besoin, ajouter un générateur d'urgence
-                emergency_gen = f"emergency_{snapshot.strftime('%Y%m%d')}"
-                if emergency_gen not in self.network.generators.index:
+                import_gen = f"import_gen_{snapshot.strftime('%Y%m%d')}"
+                if import_gen not in self.network.generators.index:
                     # Chercher un bus approprié
                     suitable_buses = self.network.buses[self.network.buses.type.isin(['prod', 'conso'])].index
                     if len(suitable_buses) > 0:
@@ -375,32 +337,24 @@ class NetworkOptimizer:
 
                         self.network.add(
                             "Generator",
-                            emergency_gen,
+                            import_gen,
                             bus=emergency_bus,
-                            p_nom=remaining_load * 1.2,  # 20% de marge
-                            marginal_cost=800,  # Très coûteux
+                            p_nom=remaining_load * 1.2,
+                            marginal_cost=800,
                             carrier="import"
                         )
-                        
-                        # Produire l'énergie manquante
-                        self.network.generators_t['p'].at[snapshot, emergency_gen] = remaining_load
-                        
-                        # Mise à jour des statistiques
-                        production_by_carrier['emergency'] += remaining_load
+
+                        self.network.generators_t['p'].at[snapshot, import_gen] = remaining_load
+                        production_by_carrier['import'] += remaining_load
                         remaining_load = 0
                     else:
-                        logger.error("Impossible de trouver un bus approprié pour le générateur d'urgence")
-            
-            # Calculer la production totale pour ce pas de temps
+                        logger.error("Impossible de trouver un bus approprié pour le générateur d'import")
+
             total_generation_snapshot = self.network.generators_t['p'].loc[snapshot].sum()
             total_annual_generation += total_generation_snapshot
-        
-        # Rapport final
+
         logger.info(f"Optimisation manuelle terminée.")
-        
-        # Afficher des statistiques sur puissance vs énergie
-        avg_demand = total_annual_load/len(self.network.snapshots)
-        logger.info(f"Demande totale moyenne: {avg_demand:.2f} MW")
+        logger.info(f"Demande totale moyenne: {total_annual_load/len(self.network.snapshots):.2f} MW")
         
         # Rapport sur l'énergie
         if self.is_journalier:
@@ -410,13 +364,6 @@ class NetworkOptimizer:
             total_energy_mwh = total_annual_generation
             logger.info(f"Mode horaire: Énergie totale produite: {total_energy_mwh:.2f} MWh ({total_energy_mwh/1e6:.2f} TWh)")
         
-        # Production par type
-        for carrier in carriers_by_priority:
-            if production_by_carrier[carrier] > 0:
-                percentage = 100 * production_by_carrier[carrier] / total_annual_generation
-                logger.info(f"Production {carrier}: {production_by_carrier[carrier]:.2f} MW ({percentage:.1f}%)")
-        
-        # Marquer le réseau comme optimisé
         self.network.status = "ok"
         self.network.termination_condition = "manual"
         
@@ -460,8 +407,7 @@ class NetworkOptimizer:
                 cost = default_costs.get(carrier, 10.0)
             
             costs[gen] = float(cost)
-        
-        # Trier par coût croissant, en garantissant des valeurs numériques valides
+
         return sorted(generators, key=lambda g: costs[g])
 
     def get_optimization_results(self) -> Dict:
@@ -475,24 +421,18 @@ class NetworkOptimizer:
             - Statistiques d'utilisation des réservoirs
             - Contraintes actives
         """
-        # Removed requirement for network.objective - we'll calculate it instead
         
-        # Calculate total cost if not already set
         if not hasattr(self.network, 'objective'):
             total_cost = 0.0
-            # Calculate cost based on production and marginal costs
             for gen in self.network.generators.index:
                 if gen in self.network.generators_t['p'].columns:
                     production = self.network.generators_t['p'][gen]
-                    
-                    # Get the marginal cost for each time step if available
+
                     if (hasattr(self.network.generators_t, 'marginal_cost') and 
                         gen in self.network.generators_t.marginal_cost.columns):
                         marginal_costs = self.network.generators_t.marginal_cost[gen]
-                        # Multiply production by marginal cost for each time step
                         cost = (production * marginal_costs).sum()
                     else:
-                        # Use static marginal cost
                         mc = self.network.generators.at[gen, 'marginal_cost'] if 'marginal_cost' in self.network.generators.columns else 0
                         cost = production.sum() * mc
                         
@@ -508,20 +448,20 @@ class NetworkOptimizer:
             self.network.generators.carrier.isin(['hydro_fil', 'eolien', 'solaire'])
         ].index
 
+        if hasattr(self.network, 'generators_t') and hasattr(self.network.generators_t, 'p'):
+            production_by_type = self.network.generators_t['p'].T.groupby(
+                self.network.generators.carrier
+            ).sum().T
+        else:
+            production_by_type = pd.DataFrame()
+            
         return {
             "status": getattr(self.network, 'status', 'unknown'),
             "objective_value": float(self.network.objective),
             "total_cost": float(self.network.objective),
             "pilotable_production": self.network.generators_t['p'][pilotable_gens].sum().sum(),
             "non_pilotable_production": self.network.generators_t['p'][non_pilotable_gens].sum().sum(),
-            "production_by_type": self.network.generators_t['p'].groupby(
-                self.network.generators.carrier, axis=1
-            ).sum(),
-            "line_loading_max": self.network.lines_t['p0'].abs().max(),
-            "n_active_line_constraints": (
-                self.network.lines_t['p0'].abs() > 0.99 * self.network.lines.s_nom
-            ).sum().sum(),
-            "global_constraints": self.network.global_constraints if hasattr(self.network, "global_constraints") else None
+            "production_by_type": production_by_type
         }
 
     def check_optimization_feasibility(self) -> Tuple[bool, str]:
@@ -540,7 +480,7 @@ class NetworkOptimizer:
         messages = []
         is_feasible = True
         
-        # 1. Capacité totale (production vs demande)
+        # Capacité totale (production vs demande)
         total_capacity = self.network.generators.p_nom.sum()
         max_load = self.network.loads_t.p_set.sum(axis=1).max()
         
@@ -548,7 +488,7 @@ class NetworkOptimizer:
             is_feasible = False
             messages.append(f"Capacité insuffisante: {total_capacity:.2f} MW < {max_load:.2f} MW")
         
-        # 2. Vérifier la connectivité du réseau
+        # Vérifier la connectivité du réseau
         import networkx as nx
         G = nx.Graph()
         
@@ -572,7 +512,7 @@ class NetworkOptimizer:
                     load_sum = self.network.loads_t.p_set[loads_in_comp].sum(axis=1).max()
                     messages.append(f"Composant {i} avec {len(loads_in_comp)} charges totalisant {load_sum:.2f} MW sans générateurs")
         
-        # 3. Vérifier les capacités des lignes
+        # Vérifier les capacités des lignes
         if hasattr(self.network.lines, 's_nom') and len(self.network.lines) > 0:
             for snapshot in self.network.snapshots[:1]:
                 buses_with_gen = set(self.network.generators.bus)
@@ -624,7 +564,7 @@ class NetworkOptimizer:
                         is_feasible = False
                         messages.append(f"Capacité des lignes insuffisante: {line_capacities:.2f} MW < {total_deficit:.2f} MW")
         
-        # 4. Vérifier l'alignement temporel
+        # Vérifier l'alignement temporel
         if (hasattr(self.network, 'loads_t') and hasattr(self.network.loads_t, 'p_set') and
             hasattr(self.network, 'generators_t') and hasattr(self.network.generators_t, 'p_max_pu')):
             

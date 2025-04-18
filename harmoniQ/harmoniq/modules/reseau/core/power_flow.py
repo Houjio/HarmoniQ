@@ -1,24 +1,10 @@
 """
 Module de calcul et d'analyse des flux de puissance.
 
-Ce module gère les calculs de flux de puissance et l'analyse des résultats
-pour le réseau électrique d'Hydro-Québec. Il permet d'effectuer des calculs
-AC et DC et d'analyser les flux dans les lignes.
-
-Example:
-    >>> from network.core import PowerFlowAnalyzer
-    >>> analyzer = PowerFlowAnalyzer(network)
-    >>> success = analyzer.run_power_flow()
-    >>> results = analyzer.get_line_statistics()
-
-Notes:
-    Les calculs utilisent les données de :
-    - buses.csv pour les points de connexion
-    - lines.csv pour les caractéristiques des lignes
-    - line_types.csv pour les paramètres standards
+Gère les calculs de flux de puissance (AC et DC) et l'analyse des résultats
+pour le réseau électrique.
 
 Contributeurs : Yanis Aksas (yanis.aksas@polymtl.ca)
-                Add Contributor here
 """
 
 import pypsa
@@ -31,13 +17,13 @@ class PowerFlowAnalyzer:
     """
     Analyseur de flux de puissance pour le réseau électrique.
     
-    Cette classe gère les calculs de flux de puissance et fournit
-    des méthodes d'analyse pour évaluer l'état du réseau.
+    Gère les calculs de flux de puissance et fournit des méthodes d'analyse
+    pour évaluer l'état du réseau.
 
     Attributes:
-        network (pypsa.Network): Réseau à analyser
-        mode (str): Mode de calcul par défaut ('ac' ou 'dc')
-        results_available (bool): Indique si des résultats sont disponibles
+        network: Réseau à analyser
+        mode: Mode de calcul par défaut ('ac' ou 'dc')
+        results_available: Indique si des résultats sont disponibles
     """
 
     def __init__(self, network: pypsa.Network, mode: str = "dc"):
@@ -71,7 +57,7 @@ class PowerFlowAnalyzer:
         try:
             calc_mode = mode if mode else self.mode
             
-            if calc_mode == "ac":
+            if (calc_mode == "ac"):
                 self.network.lpf(snapshots=snapshot)
                 success = self.network.pf(snapshots=snapshot,x_tol=1e-5)
             else:
@@ -102,7 +88,6 @@ class PowerFlowAnalyzer:
         power_flow = self.network.lines_t.p0
         capacity = self.network.lines.s_nom
 
-        # Calculer le pourcentage de chargement manuellement
         loading_percent = (power_flow.abs() / capacity) * 100
 
         results = pd.DataFrame({
@@ -164,24 +149,5 @@ class PowerFlowAnalyzer:
             ).to_dict()
         }
 
-    def get_voltage_profile(self) -> Optional[pd.DataFrame]:
-        """
-        Analyse les profils de tension (mode AC uniquement).
-
-        Returns:
-            DataFrame avec les tensions aux bus ou None en mode DC
-        """
-        if not self.results_available:
-            raise RuntimeError("Aucun résultat de calcul disponible")
-
-        if self.mode == "dc":
-            return None
-
-        return pd.DataFrame({
-            'voltage_pu': self.network.buses_t.v_mag_pu.mean(),
-            'voltage_min': self.network.buses_t.v_mag_pu.min(),
-            'voltage_max': self.network.buses_t.v_mag_pu.max(),
-            'angle_deg': self.network.buses_t.v_ang.mean() * 180 / np.pi
-        })
     
     # Add new method here

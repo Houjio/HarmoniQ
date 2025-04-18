@@ -1,20 +1,11 @@
 """
-Module principal pour la construction et l'analyse du réseau électrique.
+Module pour la construction et l'analyse du réseau électrique.
 
-Ce module orchestre la construction, l'optimisation et l'analyse du réseau
-électrique d'Hydro-Québec en utilisant PyPSA. Il coordonne l'utilisation
-des différents composants (chargement des données, optimisation, calculs 
-de flux de puissance).
-
-Example:
-    >>> from network.core import NetworkBuilder
-    >>> builder = NetworkBuilder()
-    >>> network = builder.create_network("2024")
-    >>> network = builder.optimize_network(network)
-    >>> results = builder.analyze_results(network)
+Orchestre la construction, l'optimisation et l'analyse du réseau électrique
+en coordonnant les différents composants (chargement des données, optimisation,
+calculs de flux de puissance).
 
 Contributeurs : Yanis Aksas (yanis.aksas@polymtl.ca)
-                Add Contributor here
 """
 
 import pypsa
@@ -32,15 +23,12 @@ class NetworkBuilder:
     """
     Classe principale pour l'orchestration du modèle de réseau électrique.
     
-    Cette classe coordonne les différentes étapes de la modélisation :
-    - Construction du réseau à partir des données CSV
-    - Optimisation de la production
-    - Calculs de flux de puissance
-    - Analyse des résultats
+    Coordonne les différentes étapes de la modélisation : construction,
+    optimisation, calculs de flux de puissance et analyse des résultats.
 
     Attributes:
-        data_loader (NetworkDataLoader): Gestionnaire de chargement des données
-        current_network (pypsa.Network): Réseau PyPSA en cours d'analyse
+        data_loader: Gestionnaire de chargement des données
+        current_network: Réseau PyPSA en cours d'analyse
     """
 
     def __init__(self, data_dir: str = None):
@@ -48,7 +36,7 @@ class NetworkBuilder:
         Initialise le constructeur de réseau.
 
         Args:
-            data_dir: Chemin vers le répertoire des données, si None utilise le répertoire par défaut
+            data_dir: Chemin vers le répertoire des données
         """
         self.data_loader = NetworkDataLoader(data_dir)
         self.current_network = None
@@ -131,23 +119,18 @@ class NetworkBuilder:
         if network is None:
             raise ValueError("Aucun réseau disponible pour le calcul")
 
-        # Création de l'analyseur
         analyzer = PowerFlowAnalyzer(network, mode=mode)
-        
-        # Calcul du load flow
         success = analyzer.run_power_flow()
         
         if not success:
             raise RuntimeError("Le calcul de flux de puissance a échoué")
         
-        # Collecte des résultats
         results = {
             "line_loading": analyzer.get_line_loading(),
             "critical_lines": analyzer.get_critical_lines(),
             "losses": analyzer.analyze_network_losses()
         }
         
-        # Ajoute les résultats de tension si en mode AC
         if mode == "ac":
             results["voltage_profile"] = analyzer.get_voltage_profile()
         

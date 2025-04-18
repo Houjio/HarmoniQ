@@ -4,11 +4,6 @@ Module utilitaire pour la gestion des séries temporelles.
 Ce module fournit des fonctions supplémentaires pour manipuler et analyser
 les données temporelles du réseau électrique d'Hydro-Québec.
 
-Example:
-    >>> from network.utils import TimeSeriesManager
-    >>> manager = TimeSeriesManager()
-    >>> peaks = manager.find_peak_demand(network, '2024-01')
-
 Contributeurs : Yanis Aksas (yanis.aksas@polymtl.ca)
                 Add Contributor here
 """
@@ -61,7 +56,6 @@ class TimeSeriesManager:
         loads.index = pd.to_datetime(loads.index)
         loads['season'] = loads.index.quarter
 
-        # Distingue les générateurs pilotables et non-pilotables
         non_pilotable_gens = network.generators[
             network.generators.carrier.isin(['hydro_fil', 'eolien', 'solaire'])
         ].index
@@ -117,35 +111,5 @@ class TimeSeriesManager:
         production_stats['value'] = data.mean(axis=1)
 
         return production_stats
-
-    @staticmethod
-    def check_temporal_consistency(network: pypsa.Network) -> bool:
-        """
-        Vérifie la cohérence temporelle des données.
-
-        Returns:
-            bool: True si toutes les séries temporelles sont cohérentes
-        """
-        # Récupère tous les timestamps
-        load_times = set(network.loads_t.p_set.index)
-        non_pilotable_times = set(network.generators_t.p_max_pu.index)
-        pilotable_times = set(network.generators_t.marginal_cost.index)
-        
-        # Vérifie que tous les timestamps correspondent
-        return load_times == non_pilotable_times == pilotable_times
-
-    @staticmethod
-    def get_time_resolution(network: pypsa.Network) -> str:
-        """
-        Détermine la résolution temporelle des données.
-
-        Returns:
-            str: Description de la résolution (ex: '1H' pour horaire)
-        """
-        if len(network.snapshots) < 2:
-            return "N/A"
-        
-        diff = network.snapshots[1] - network.snapshots[0]
-        return str(diff)
     
     # Add new method here

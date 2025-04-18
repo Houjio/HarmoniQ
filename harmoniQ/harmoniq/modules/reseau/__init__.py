@@ -1,3 +1,12 @@
+"""
+Module de gestion du réseau électrique.
+
+Implémente les fonctionnalités pour l'optimisation du réseau électrique,
+la gestion des imports/exports et le pilotage des réservoirs.
+
+Contributeurs : Yanis Aksas (yanis.aksas@polymtl.ca)
+"""
+
 from harmoniq.core.base import Infrastructure, necessite_scenario
 from harmoniq.db.schemas import ScenarioBase, ListeInfrastructures
 from harmoniq.db.engine import get_db
@@ -17,7 +26,7 @@ import hashlib
 logger = logging.getLogger("Reseau")
 
 MODULES_DIR = Path(__file__).parent
-NETWORK_CACHE_DIR = MODULES_DIR / "n_cache"/ "network_cache"
+NETWORK_CACHE_DIR = MODULES_DIR / "cache"/ "network_cache"
 os.makedirs(NETWORK_CACHE_DIR, exist_ok=True)
 
 
@@ -26,7 +35,7 @@ class InfraReseau(Infrastructure):
     Gestion du réseau électrique avec optimisation des imports/exports
     et pilotage adaptatif des réservoirs.
     
-    Cette classe implémente le workflow complet du réseau électrique:
+    Implémente le workflow du réseau électrique:
     1. Chargement et création du réseau
     2. Calcul de la capacité d'import/export
     3. Optimisation temporelle avec gestion des réservoirs
@@ -111,8 +120,6 @@ class InfraReseau(Infrastructure):
         
         network = await self.builder.create_network(self.scenario, liste_infra, annee, start_date, end_date)
         
-        
-        # Normaliser les types de données avant sauvegarde
         self._normaliser_types_reseau(network)
         
         # Sauvegarder en format netCDF
@@ -257,7 +264,6 @@ class InfraReseau(Infrastructure):
         """
         logger.info("Optimisation avec gestion simulée des réservoirs...")
         
-        # Utiliser la valeur transmise ou la valeur par défaut de l'instance
         is_journalier = self.is_journalier if is_journalier is None else is_journalier
         
         if self.network is None:
@@ -269,7 +275,6 @@ class InfraReseau(Infrastructure):
             else:
                 Pmax = self.Pmax
         
-        # Réechantillonner à une fréquence journalière si demandé
         if is_journalier:
             logger.info("Passage en mode journalier (pas de temps = 24h)")
             self.network = EnergyUtils.reechantillonner_reseau_journalier(self.network)
@@ -282,12 +287,10 @@ class InfraReseau(Infrastructure):
             logger.warning("Aucun barrage à réservoir trouvé dans le réseau")
             return self.network, {}
         
-        # Générer des niveaux de réservoir simulés
         niveaux_reservoirs = EnergyUtils.generer_faux_niveaux_reservoirs(
             self.network.snapshots, barrages_reservoir
         )
-        
-        # Calculer les coûts marginaux basés sur les niveaux
+
         marginal_costs = pd.DataFrame(index=self.network.snapshots)
         for barrage in barrages_reservoir:
             costs = []
@@ -295,8 +298,7 @@ class InfraReseau(Infrastructure):
                 niveau = niveaux_reservoirs.loc[timestamp, barrage]
                 costs.append(EnergyUtils.calcul_cout_reservoir(niveau))
             marginal_costs[barrage] = costs
-        
-        # Ajouter les coûts marginaux au réseau
+
         if not hasattr(self.network, 'generators_t'):
             self.network.generators_t = {}
         if 'marginal_cost' not in self.network.generators_t:
@@ -310,23 +312,23 @@ class InfraReseau(Infrastructure):
         self.network = EnergyUtils.ajouter_interconnexion_import_export(self.network, Pmax)
         self.network = EnergyUtils.ensure_network_solvability(self.network)
         
-        # Optimiser le réseau avec l'optimisateur manuel au lieu de PyPSA standard
+        # Optimiser le réseau avec l'optimisateur manuel (possibilité de le faire depuis le NetworkBuilder aussi)
         optimizer = NetworkOptimizer(self.network, is_journalier=is_journalier)
-        # On vérifie quand même la faisabilité pour information
         feasible, message = optimizer.check_optimization_feasibility()
         logger.info(f"Feasibility check: {feasible}, {message}")
         
-        # Utilise notre méthode d'optimisation manuelle
         optimized_network = optimizer.optimize_manually()
         optimization_results = optimizer.get_optimization_results()
+
+        # TODO : Ajouter le calcul du power flow (DC ou AC) (Du NetworkBuilder ou du PowerFlowAnalyzer)
 
         statistics = {
             "Pmax_calcule": Pmax,
             "niveaux_reservoirs": niveaux_reservoirs,
             "optimization_results": optimization_results,
-            "production_par_type": optimized_network.generators_t['p'].groupby(
-                optimized_network.generators.carrier, axis=1
-            ).sum(),
+            "production_par_type": optimized_network.generators_t['p'].T.groupby(
+                optimized_network.generators.carrier
+            ).sum().T,
             "energie_importee": optimized_network.generators_t['p'].get(f"import_{bus_frontiere}", pd.Series()).sum() 
                 if f"import_{bus_frontiere}" in optimized_network.generators_t['p'].columns else 0,
             "energie_exportee": optimized_network.loads_t['p'].get(f"export_{bus_frontiere}", pd.Series()).sum() 
@@ -356,8 +358,7 @@ class InfraReseau(Infrastructure):
             pypsa.Network: Réseau optimisé
         """
         logger.info("Optimisation avec gestion des réservoirs...")
-        
-        # Utiliser la valeur transmise ou la valeur par défaut de l'instance
+
         is_journalier = self.is_journalier if is_journalier is None else is_journalier
         
         if self.network is None:
@@ -375,8 +376,8 @@ class InfraReseau(Infrastructure):
     @necessite_scenario
     async def workflow_import_export(self, liste_infra, is_journalier=False) -> Tuple[pypsa.Network, Dict]:
         """
-        Exécute le workflow complet d'import/export avec gestion des réservoirs.
-        
+        Exécute le workflow complet.
+
         Cette méthode combine les deux phases:
         1. Calcul de la capacité d'import/export
         2. Optimisation avec gestion des réservoirs
@@ -390,7 +391,6 @@ class InfraReseau(Infrastructure):
         """
         logger.info(f"Démarrage du workflow d'optimisation en mode {'journalier' if is_journalier else 'horaire'}...")
         
-        # Mettre à jour le mode de l'instance
         self.is_journalier = is_journalier
         
         Pmax = await self.calculer_capacite_import_export(liste_infra)
@@ -410,7 +410,6 @@ class InfraReseau(Infrastructure):
             logger.error("Aucune donnée de production disponible")
             return pd.DataFrame()
             
-        # Détecter si nous avons des snapshots journaliers ou horaires
         daily_snapshots = False
         if len(self.network.snapshots) > 1:
             time_diff = self.network.snapshots[1] - self.network.snapshots[0]
@@ -424,12 +423,14 @@ class InfraReseau(Infrastructure):
                 
         production_power = self.network.generators_t['p'].copy()
         
-        # Regrouper tous les générateurs d'urgence en une seule colonne
-        emergency_gens = [col for col in production_power.columns if col.startswith('emergency_gen_')]
-        if emergency_gens:
-            production_power['total_emergency'] = production_power[emergency_gens].sum(axis=1)
-            production_power = production_power.drop(columns=emergency_gens)
-            logger.info(f"Regroupement de {len(emergency_gens)} générateurs d'urgence en une seule colonne")
+        # Regrouper tous les générateurs d'import d'urgence en une seule colonne
+        import_gens = [col for col in production_power.columns if col.startswith('import_gen_')]
+        if import_gens:
+            if 'total_import' not in production_power.columns:
+                production_power['total_import'] = 0
+            production_power['total_import'] += production_power[import_gens].sum(axis=1)
+            production_power = production_power.drop(columns=import_gens)
+            logger.info(f"Regroupement de {len(import_gens)} générateurs d'import en une seule colonne")
         
         # Convertir les puissances en énergie (MWh)
         production = EnergyUtils.calculate_energy_from_power(self.network, production_power)
@@ -442,27 +443,24 @@ class InfraReseau(Infrastructure):
         for carrier in carriers:
             gens = self.network.generators[self.network.generators.carrier == carrier].index
             if len(gens) > 0:
-                # Exclure les générateurs d'urgence déjà regroupés
-                gens = [g for g in gens if not g.startswith('emergency_gen_')]
-                if gens:  # S'assurer qu'il reste des générateurs à sommer
+                gens = [g for g in gens if not g.startswith('import_gen_')]
+                if gens: 
                     production[f'total_{carrier}'] = production[gens].sum(axis=1)
-        
-        # Ajouter une colonne spécifique pour les générateurs d'urgence
-        if 'total_emergency' in production_power.columns:
-            carrier = 'emergency'
-            if f'total_{carrier}' not in production.columns:
-                production[f'total_{carrier}'] = production['total_emergency']
+
+        if 'total_import' in production_power.columns:
+            production['total_import'] = production['total_import']
         
         total_production_mwh = production['totale'].sum()
         logger.info(f"Énergie totale calculée: {total_production_mwh:.2f} MWh ({total_production_mwh/1e6:.4f} TWh)")
         
-        for carrier in list(carriers) + (['emergency'] if 'total_emergency' in production_power.columns else []):
+        for carrier in carriers:
             carrier_col = f'total_{carrier}'
             if carrier_col in production.columns:
                 carrier_total = production[carrier_col].sum()
                 percentage = 100 * carrier_total / total_production_mwh if total_production_mwh > 0 else 0
                 logger.info(f"Énergie {carrier}: {carrier_total:.2f} MWh ({percentage:.2f}%)")
         
+            
         return production
 
 if __name__ == "__main__":
@@ -476,28 +474,10 @@ if __name__ == "__main__":
     liste_infrastructures = asyncio.run(read_data_by_id(db, ListeInfrastructures, 1))
     infraReseau = InfraReseau(liste_infrastructures)
     
-    scenario = read_all_scenario(db)[1]
+    scenario = read_all_scenario(db)[0]
     infraReseau.charger_scenario(scenario)
+    production = asyncio.run(infraReseau.calculer_production(liste_infrastructures, is_journalier=True))
 
-    network, statistics = asyncio.run(infraReseau.workflow_import_export(liste_infrastructures, is_journalier=True))
-    print(f"Mode journalier activé: calculs réalisés avec un pas de 24h")
-    print(f"Capacité d'import/export (Pmax): {statistics['Pmax_calcule']:.2f} MW")
-    
-    import_energy = EnergyUtils.calculate_energy_from_power(network, statistics['energie_importee'])
-    export_energy = EnergyUtils.calculate_energy_from_power(network, statistics['energie_exportee'])
-    
-    print(f"Énergie importée: {import_energy:.2f} MWh")
-    print(f"Énergie exportée: {export_energy:.2f} MWh")
-    
-    production = infraReseau.calculer_production(liste_infrastructures)
-    
-    print(f"Production totale: {production['totale'].sum():.2f} MWh")
-    
-    print("\nProduction par type d'énergie:")
-    carriers = network.generators.carrier.unique()
-    for carrier in carriers:
-        print(f"- {carrier}: {production[f'total_{carrier}'].sum():.2f} MWh")
-    
     # EnergyUtils.debug_network_energy_allocation(network, 'daily')
 
 

@@ -1,3 +1,12 @@
+"""
+Module d'utilitaires pour les calculs énergétiques du réseau.
+
+Fournit des fonctionnalités pour la gestion des réservoirs, le calcul des coûts,
+et l'estimation de la production d'énergie dans le réseau électrique.
+
+Contributeurs : Yanis Aksas (yanis.aksas@polymtl.ca)
+"""
+
 import numpy as np
 import pandas as pd
 from typing import List, Dict, Optional
@@ -83,7 +92,7 @@ class EnergyUtils:
     @staticmethod
     def obtenir_bus_frontiere(reseau, type_bus: str) -> str:
         """
-        Obtient le bus frontière pour les interconnexions.
+        Obtient le bus frontière pour les interconnexions. Pour le moment, simplifié à un seul bus (Stanstead).
         
         Args:
             reseau: Réseau PyPSA
@@ -103,7 +112,7 @@ class EnergyUtils:
     @staticmethod
     def get_niveau_reservoir(productions: pd.DataFrame, niveaux_actuels: dict, timestamp) -> pd.DataFrame:
         """
-        Calcule les nouveaux niveaux de réservoir.
+        Calcule les nouveaux niveaux de réservoir. (A vérifier, la fonction reservoir_infill a pas été testée)
         
         Args:
             productions: DataFrame contenant les productions pour chaque réservoir
@@ -166,8 +175,8 @@ class EnergyUtils:
         Returns:
             float: Coût marginal calculé
         """
-        cout_minimum = 5     # Coût quand le réservoir est plein
-        cout_maximum = 35    # Coût quand le réservoir est presque vide (modifié de 150 à 35)
+        cout_minimum = 5
+        cout_maximum = 35
         niveau_critique = 0.25
         
         niveau = max(0, min(1, niveau))
@@ -186,7 +195,7 @@ class EnergyUtils:
     @staticmethod
     def generer_faux_niveaux_reservoirs(snapshots, barrages_reservoir, seed=None):
         """
-        Génère des niveaux de réservoirs simulés.
+        Génère des niveaux de réservoirs simulés. Version simplifiée pour le temps de calcul.
         
         Args:
             snapshots: DatetimeIndex avec les pas de temps du scénario
@@ -336,14 +345,11 @@ class EnergyUtils:
                     if not isinstance(df.index, pd.DatetimeIndex):
                         df.index = pd.to_datetime(df.index)
                     
-                    # Somme pour les consommations (p_set), moyenne pour le reste
                     use_sum = component_name == "loads" and attr == "p_set"
                     resampled_df = df.resample('D').sum() if use_sum else df.resample('D').mean()
                     resampled_df.index = daily_snapshots[:len(resampled_df)]
                     
-                    # CORRECTION: Marquer les données de charge (p_set) comme étant en énergie et non en puissance
                     if use_sum:
-                        # Ajouter un attribut pour indiquer que les données sont en MWh/jour (énergie) et non en MW (puissance)
                         resampled_df._energy_not_power = True
                         logger.info(f"Données de charge (p_set) marquées comme ÉNERGIE (MWh/jour) et non puissance (MW)")
                     
@@ -360,7 +366,7 @@ class EnergyUtils:
     def ensure_network_solvability(network, reference_bus=None):
         """
         Assure la solvabilité du réseau en créant une topologie complètement connectée
-        et en ajoutant suffisamment de capacité de génération.
+        et en ajoutant suffisamment de capacité de génération si nécessaire.
         
         Cette méthode:
         1. Ajoute des lignes virtuelles pour connecter tous les composants
@@ -431,22 +437,19 @@ class EnergyUtils:
                         s_nom=1000000
                     )
         
-        # Vérifier la capacité totale de génération à chaque pas de temps
         if hasattr(network.generators_t, 'p_max_pu'):
             # Pour chaque pas de temps, vérifier si la capacité est suffisante
+            emergency_gens_data = {}            
             for timestamp in network.snapshots:
-                # Vérifier si le timestamp existe dans p_set
                 try:
                     if timestamp in network.loads_t.p_set.index:
                         total_demand_t = network.loads_t.p_set.loc[timestamp].sum()
                     else:
-                        logger.warning(f"Timestamp {timestamp} non trouvé dans network.loads_t.p_set. Utilisation de valeur par défaut.")
                         if not network.loads_t.p_set.empty:
                             total_demand_t = network.loads_t.p_set.mean().sum()  # Moyenne comme valeur par défaut
                         else:
                             total_demand_t = 0  # Aucune demande si aucune donnée disponible
                     
-                    # Calculer la capacité de génération disponible
                     available_capacity = 0
                     for gen in network.generators.index:
                         p_nom = network.generators.loc[gen, 'p_nom']
@@ -461,38 +464,44 @@ class EnergyUtils:
                     # Si la capacité est insuffisante, ajouter un générateur d'urgence
                     if available_capacity < total_demand_t:
                         capacity_gap = total_demand_t - available_capacity
-                        gen_name = f"emergency_gen_{timestamp.strftime('%Y%m%d')}"
+                        gen_name = f"import_gen_{timestamp.strftime('%Y%m%d')}"
                         
                         if gen_name not in network.generators.index:
                             network.add(
                                 "Generator",
                                 gen_name,
                                 bus=reference_bus,
-                                p_nom=capacity_gap * 1.1,  # 10% de marge
-                                marginal_cost=800,  # Très coûteux
+                                p_nom=capacity_gap * 1.1,
+                                marginal_cost=800,
                                 carrier="import"
                             )
+
+                        emergency_gens_data[gen_name] = 1.0
                         
-                        if gen_name not in network.generators_t.p_max_pu.columns:
-                            network.generators_t.p_max_pu[gen_name] = 0
-                        
-                        if timestamp in network.generators_t.p_max_pu.index:
-                            network.generators_t.p_max_pu.at[timestamp, gen_name] = 1.0
                 except KeyError as e:
                     logger.error(f"Erreur lors du traitement du timestamp {timestamp}: {str(e)}")
-                    # Continuer avec le timestamp suivant
                     continue
+
+            if emergency_gens_data:
+                p_max_pu_copy = network.generators_t.p_max_pu.copy()
+                for gen_name, value in emergency_gens_data.items():
+                    if gen_name not in p_max_pu_copy.columns:
+                        p_max_pu_copy[gen_name] = 0
+                        
+                    for ts in network.snapshots:
+                        if gen_name.endswith(ts.strftime('%Y%m%d')):
+                            p_max_pu_copy.at[ts, gen_name] = value
+                network.generators_t.p_max_pu = p_max_pu_copy
         
-        # 6. Créer une matrice "safety_factor" pour tous les générateurs
         network.generators.p_nom_extendable = True
-        network.generators.p_nom_max = network.generators.p_nom * 1.5  # 50% de flexibilité 
+        network.generators.p_nom_max = network.generators.p_nom * 1.5 
         
         return network
 
     @staticmethod
     def align_time_indexes(network):
         """
-        Aligne tous les index temporels du réseau avec les snapshots.
+        Aligne tous les index temporels du réseau avec les snapshots en cas d'incohérence dans les timestamps des différentes entrées.
         
         Cette méthode:
         1. Identifie tous les DataFrames temporels dans le réseau
@@ -508,12 +517,10 @@ class EnergyUtils:
             logger.warning("Pas de snapshots définis dans le réseau")
             return
         
-        # Aligner les index temporels des générateurs
         if hasattr(network, 'generators_t'):
             for attr_name, df in network.generators_t.items():
                 if isinstance(df, pd.DataFrame) and not df.empty:
                     if not df.index.equals(network.snapshots):
-                        logger.info(f"Réindexation de network.generators_t.{attr_name}")
                         
                         aligned_df = pd.DataFrame(index=network.snapshots, columns=df.columns)
                         
@@ -544,7 +551,6 @@ class EnergyUtils:
             for attr_name, df in network.loads_t.items():
                 if isinstance(df, pd.DataFrame) and not df.empty:
                     if not df.index.equals(network.snapshots):
-                        logger.info(f"Réindexation de network.loads_t.{attr_name}")
                         
                         aligned_df = pd.DataFrame(index=network.snapshots, columns=df.columns)
 
@@ -571,13 +577,11 @@ class EnergyUtils:
                                     aligned_df.loc[missing_idx, col] = 0.0
                         
                         network.loads_t[attr_name] = aligned_df
-        
-        logger.info("Alignement des index temporels terminé")
 
     @staticmethod
     def calculate_energy_from_power(network, power_data, is_journalier=None):
         """
-        Calcule correctement l'énergie à partir des valeurs de puissance en tenant compte 
+        Calcule l'énergie à partir des valeurs de puissance en tenant compte 
         de la durée des snapshots.
         
         Args:
@@ -588,7 +592,6 @@ class EnergyUtils:
         Returns:
             Même structure que power_data, mais avec des valeurs en MWh
         """
-        # Déterminer si nous sommes en mode journalier
         daily_snapshots = False
         
         if is_journalier is not None:
@@ -598,7 +601,6 @@ class EnergyUtils:
             if time_diff >= pd.Timedelta(hours=23):
                 daily_snapshots = True
         
-        # Vérifier si les données sont déjà en énergie
         data_is_energy = getattr(power_data, '_energy_not_power', False)
         
         if isinstance(power_data, pd.DataFrame):
@@ -631,22 +633,18 @@ class EnergyUtils:
             period: 'daily', 'hourly', ou 'auto' pour détection automatique
             is_journalier: Si True, force le mode journalier (override du paramètre period)
         """
-        logger = logging.getLogger("EnergyUtils")
         
-        # Déterminer le mode (journalier/horaire)
-        hours_per_snapshot = 1  # Par défaut: horaire
+        hours_per_snapshot = 1 
         
         if is_journalier is not None:
-            # Utiliser la valeur explicite si fournie
             if is_journalier:
                 hours_per_snapshot = 24
                 period = 'daily'
             else:
                 hours_per_snapshot = 1
                 period = 'hourly'
-            logger.info(f"Mode {'journalier' if is_journalier else 'horaire'} spécifié explicitement")
+            logger.info(f"Mode {'journalier' if is_journalier else 'horaire'} ")
         elif period == 'auto':
-            # Détection automatique basée sur l'écart entre snapshots
             if len(network.snapshots) > 1:
                 time_diff = network.snapshots[1] - network.snapshots[0]
                 if time_diff >= pd.Timedelta(hours=23):
@@ -658,13 +656,11 @@ class EnergyUtils:
                     period = 'hourly'
                     logger.info(f"Mode horaire détecté automatiquement (écart: {time_diff})")
         else:
-            # Utiliser directement la valeur spécifiée
             hours_per_snapshot = 24 if period == 'daily' else 1
         
         # Facteur de conversion puissance → énergie
         hours_per_snapshot = 24 if period == 'daily' else 1
         
-        # Analyser par type d'énergie
         carriers = network.generators.carrier.unique()
         
         total_power = network.generators_t['p'].sum().sum()
@@ -710,13 +706,13 @@ class EnergyUtils:
                 
                 # Contrainte d'accès aux données?
                 if carrier_power == 0 and capacity > 0:
-                    logger.warning(f"    ⚠️ {carrier} a une capacité de {capacity:.2f} MW mais produit 0 MW")
+                    logger.warning(f"{carrier} a une capacité de {capacity:.2f} MW mais produit 0 MW")
                     
                     # Vérifier si les générateurs ont des données p_max_pu disponibles
                     if hasattr(network.generators_t, 'p_max_pu'):
                         p_max_pu_available = sum(1 for gen in carrier_gens if gen in network.generators_t.p_max_pu.columns)
                         if p_max_pu_available < len(carrier_gens):
-                            logger.warning(f"    ⚠️ Seulement {p_max_pu_available}/{len(carrier_gens)} générateurs ont des données p_max_pu")
+                            logger.warning(f"Seulement {p_max_pu_available}/{len(carrier_gens)} générateurs ont des données p_max_pu")
                     
                     # Vérifier les coûts marginaux
                     if hasattr(network.generators_t, 'marginal_cost'):

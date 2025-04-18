@@ -1,25 +1,9 @@
 """
 Module d'utilitaires géographiques pour le réseau électrique.
 
-Ce module fournit des fonctions pour les calculs géographiques liés au réseau
-électrique d'Hydro-Québec, notamment le calcul des distances entre les composants
+Ce module fournit des fonctions pour les calculs géographiques, 
+notamment le calcul des distances entre les composants
 du réseau et l'optimisation des tracés des lignes de transmission.
-
-Classes:
-    GeoUtils: Classe principale pour les calculs géographiques.
-
-Functions:
-    calculate_distance: Calcule la distance entre deux points.
-    optimize_line_path: Optimise le tracé d'une ligne entre deux points.
-
-Example:
-    >>> from network.utils import GeoUtils
-    >>> geo = GeoUtils()
-    >>> distance = geo.calculate_distance(
-    ...     (45.5017, -73.5673),  # Montréal
-    ...     (46.8139, -71.2080)   # Québec
-    ... )
-    >>> print(f"Distance: {distance:.2f} km")
 
 Notes:
     Toutes les coordonnées sont attendues au format (latitude, longitude)
@@ -109,10 +93,6 @@ class GeoUtils:
 
         Returns:
             Longueur totale en kilomètres
-
-        Example:
-            >>> line_points = [(45.5, -73.5), (46.0, -72.8), (46.8, -71.2)]
-            >>> length = geo.calculate_line_length(line_points)
         """
         total_length = 0.0
         for i in range(len(points) - 1):
@@ -132,27 +112,16 @@ class GeoUtils:
         
         Returns:
             Tuple (nom du bus le plus proche, distance en kilomètres)
-        
-        Example:
-            >>> import pandas as pd
-            >>> from network.utils import GeoUtils
-            >>> geo = GeoUtils()
-            >>> buses_df = pd.read_csv('data/regions/buses.csv')
-            >>> point = (45.5, -73.5)  # Point quelque part près de Montréal
-            >>> nearest_bus, distance = geo.find_nearest_bus(point, buses_df)
-            >>> print(f"Bus le plus proche: {nearest_bus}, distance: {distance:.2f} km")
         """
         min_distance = float('inf')
         nearest_bus = None
         
-        # Vérifier si l'entrée est un réseau PyPSA ou un DataFrame
-        if hasattr(buses, 'buses'):  # C'est un réseau PyPSA
+        if hasattr(buses, 'buses'):
             buses_data = buses.buses
-        else:  # C'est un DataFrame pandas
+        else:
             buses_data = buses
         
         for idx, bus in buses_data.iterrows():
-            # Dans le format des données, x est longitude et y est latitude
             bus_point = (bus['y'], bus['x'])
             distance = self.calculate_distance(point, bus_point)
             

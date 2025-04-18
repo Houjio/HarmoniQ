@@ -1,9 +1,10 @@
 """
 Module de chargement des données pour le réseau électrique.
 
-Ce module gère le chargement des données statiques et temporelles 
-du réseau électrique d'Hydro-Québec pour la configuration du réseau 
-et les séries temporelles de production/consommation.
+Gère le chargement des données statiques et temporelles du réseau électrique
+pour la configuration du réseau et les séries temporelles de production/consommation.
+
+Contributeurs : Yanis Aksas (yanis.aksas@polymtl.ca)
 """
 
 import pypsa
@@ -31,7 +32,7 @@ DATA_DIR = CURRENT_DIR / ".." / "data"
 
 MODULES_DIR = Path(__file__).parent.parent.parent.parent
 RESEAU_DIR = MODULES_DIR / "modules" / "reseau"
-DEMAND_CACHE_DIR = RESEAU_DIR / "n_cache"/ "demand_cache"
+DEMAND_CACHE_DIR = RESEAU_DIR / "cache"/ "demand_cache"
 os.makedirs(DEMAND_CACHE_DIR, exist_ok=True)
 
 import logging
@@ -489,7 +490,7 @@ class NetworkDataLoader:
                             
                             # Calculer p_max_pu = production_horaire / puissance_nominale
                             p_max_pu_df[nom] = aligned_production / p_nom
-                            p_max_pu_df[nom] = p_max_pu_df[nom].fillna(0.1)  # Remplacer NaN par 0
+                            p_max_pu_df[nom] = p_max_pu_df[nom].fillna(0.1)  # Remplacer NaN par 0.1
         
         # Génération pour les centrales nucléaires
         if self.nucleaire_ids:
@@ -548,7 +549,6 @@ class NetworkDataLoader:
             'import': 0.5          # Coût moyen - priorité intermédiaire
         }
         
-        # Appliquer les coûts marginaux par défaut 
         for gen_name, gen in network.generators.iterrows():
             carrier = gen.carrier if 'carrier' in gen.index else 'unknown'
 
@@ -557,14 +557,14 @@ class NetworkDataLoader:
                 network.generators.at[gen_name, 'marginal_cost'] = default_cost            
             # Pour le coût marginal temporel
             if carrier in marginal_cost_defaults:
-                # Pour les réservoirs, on utilise un modèle complexe plus tard
                 marginal_cost_df[gen_name] = marginal_cost_defaults[carrier]
             else:
                 marginal_cost_df[gen_name] = gen.marginal_cost if hasattr(gen, 'marginal_cost') else 10.0
             
             if gen_name not in p_max_pu_df.columns:
                 # Générer des séries temporelles adaptées au type d'énergie
-                    
+
+                #TODO : L'hydro_fil devra être ajouté avec le calcul_production de sa classe (comme pour l'éolien et solaire) quand celle ci sera fonctionnelle    
                 if carrier == 'hydro_fil':
                     seasonal = 0.7 + 0.3 * np.sin(np.pi * (month_indices - 3) / 6)
                     noise = 0.1 * np.random.normal(0, 1, len(timestamps))
@@ -614,7 +614,6 @@ class NetworkDataLoader:
         if hasattr(scenario, 'date_de_debut') and scenario.date_de_debut:
             scenario_year = str(pd.to_datetime(scenario.date_de_debut).year)
         
-        # Définir les dates par défaut si nécessaire
         if not start_date and scenario_year:
             start_date = f"{scenario_year}-01-01"
         if not end_date and scenario_year:
@@ -651,7 +650,7 @@ class NetworkDataLoader:
             date_de_fin=end_date or getattr(scenario, 'date_de_fin', None)
         )
         
-        # Charger la demande totale
+        # Charger la demande totale CUID 1
         demand_df = await read_demande_data(db_scenario, CUID=1)
         logger.info(f"Données de demande chargées: {len(demand_df)} lignes")
         
@@ -659,14 +658,13 @@ class NetworkDataLoader:
         if 'date' in demand_df.columns:
             demand_df['date'] = pd.to_datetime(demand_df['date'])
         
-        # 1. Convertir les kWh en MW
+        # Convertir les kWh en MW
         if 'electricity' in demand_df.columns:
             demand_df['electricity'] /= 1000
         
         if 'gaz' in demand_df.columns:
             demand_df['gaz'] /= 1000
         
-        # 2. Groupement par secteur
         if 'sector' in demand_df.columns:
             demand_df = demand_df.groupby('date').sum(numeric_only=True).reset_index()
         else:
@@ -675,13 +673,13 @@ class NetworkDataLoader:
             if (date_counts > 1).any():
                 demand_df = demand_df.groupby('date').sum(numeric_only=True).reset_index()
 
-        # 3. Filtrer par année
+        # Filtrer par année
         if scenario_year:
             year_filter = pd.to_datetime(demand_df['date']).dt.year == int(scenario_year)
             if year_filter.any():
                 demand_df = demand_df[year_filter]
         
-        # 4. Calculer la demande totale
+        # Calculer la demande totale
         if 'electricity' in demand_df.columns and 'gaz' in demand_df.columns:
             demand_df['total_demand'] = demand_df['electricity'] + demand_df['gaz']
         elif 'electricity' in demand_df.columns:
@@ -689,7 +687,8 @@ class NetworkDataLoader:
         else:
             demand_df['total_demand'] = 20000  # Valeur par défaut
         
-        # 5. Appliquer un facteur d'échelle si nécessaire
+        # TODO : A supprimer quand les fichiers de demande seront complet
+        # Appliquer un facteur d'échelle si nécessaire pour avoir une demande cohérente sur 1 an(trous dans les données de demandes)
         avg_demand = demand_df['total_demand'].mean()
         annual_energy_twh = avg_demand * 8760 / 1e6
         
@@ -704,7 +703,7 @@ class NetworkDataLoader:
             target_avg_demand = 30000.0
             logger.info(f"Année {scenario_year or 'inconnue'} détectée: cible de consommation à {target_energy_twh} TWh")
         
-        if abs(annual_energy_twh - target_energy_twh) > 50:
+        if abs(annual_energy_twh - target_energy_twh) > 75.0:
             correction_factor = target_avg_demand / avg_demand
             logger.info(f"Application d'un facteur d'échelle: {correction_factor:.2f}x pour atteindre ~{target_energy_twh:.1f} TWh")
             demand_df['total_demand'] *= correction_factor
@@ -715,6 +714,7 @@ class NetworkDataLoader:
         np.random.seed(42)
         
         # Assigner des catégories pour les différentes charges
+        # TODO : Temporaire, à remplacer par une répartition par CUID eventuellement,
         load_categories = {}
         for load in loads:
             category = np.random.choice(['small', 'medium', 'large', 'xlarge'], 
@@ -728,7 +728,6 @@ class NetworkDataLoader:
             timestamp = demand_df.index[t]
             total_demand_val = demand_df.loc[timestamp, 'total_demand']
             
-            # Normaliser en float
             if isinstance(total_demand_val, (pd.Series, np.ndarray)):
                 total_demand = float(total_demand_val.iloc[0] if hasattr(total_demand_val, 'iloc') else total_demand_val[0])
             else:
@@ -758,7 +757,6 @@ class NetworkDataLoader:
             total_weights = np.sum(random_weights)
             normalized_weights = random_weights / total_weights * total_demand
             
-            # Distribuer la demande selon les poids
             for i, load in enumerate(loads):
                 load_demand_df.loc[timestamp, load] = normalized_weights[i]
         
@@ -799,6 +797,5 @@ if __name__ == "__main__":
         loader.set_infrastructure_ids(liste_infrastructures)
     network = asyncio.run(loader.load_network_data())
     print(f"Network has {len(network.buses)} buses, {len(network.loads)} loads")
-    print("Generating randomized demand data...")
     start_time = time.time()
     load_demand_df = loader.load_demand_data(network, scenario)
