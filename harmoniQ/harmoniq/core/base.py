@@ -2,11 +2,12 @@ from harmoniq.db.schemas import ScenarioBase, BaseModel
 
 import numpy as np
 
+# Base class for all infrastructures
 
 def necessite_scenario(func):
     def wrapper(*args, **kwargs):
         if not args[0].scenario_charger:
-            raise ValueError("Scenario pas charger")
+            raise ValueError("Scenario pas chargé")
         return func(*args, **kwargs)
 
     return wrapper
