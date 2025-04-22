@@ -61,3 +61,6 @@ Installer les bibliothèques système
 
     brew install proj
     brew install pyproj
+
+ATTENTION : L'ajout de Homebrew au PATH depend du fichier dans lequel vous 
+vous situez si vous clonez le git a nouveau, il faudra re-effectuer cette étape.

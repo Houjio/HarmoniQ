@@ -53,6 +53,13 @@ Méthode B : Virtualenv
 
     pip install -e ./harmoniQ[dev]
 
+Et si la commande précédente ne fonctionne pas, essayez :
+.. code-block:: bash
+
+    pip install -e ./harmoniQ
+
+N'oubliez pas d'updaer pip
+
 Vérification du Fichier ``demande.db``
 --------------------------------------
 
