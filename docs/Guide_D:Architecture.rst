@@ -22,3 +22,16 @@ Vue d’ensemble du dépôt HarmoniQ :
    ├─ pyproject.toml            <- métadonnées du projet et dépendances
    ├─ README.md                 <- vue d’ensemble du projet et instructions
    └─ harmoniq_env/             <- environnement virtuel Python
+
+
+.. note::
+
+   Le dépôt est organisé en plusieurs sous‑répertoires, chacun ayant un rôle spécifique dans le projet.
+   Le code applicatif principal est contenu dans le répertoire ``harmoniQ/harmoniq/``.
+   Les tests unitaires et d’intégration sont situés dans le répertoire ``tests/``.
+   Les fichiers de documentation statique se trouvent dans le répertoire ``docs/``.
+
+.. note::
+
+   Les modules de production énérgetique sont appelés dans le fichier REST.py du repertoire ``webserver/``.
+   

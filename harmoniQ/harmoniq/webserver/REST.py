@@ -33,19 +33,21 @@ from harmoniq.modules.thermique import InfraThermique
 from harmoniq.modules.nucleaire import InfraNucleaire
 from harmoniq.modules.hydro import InfraHydro
 
+#Appel des modules de production énergétique, ainsi que d'autres modules, et crée des routes web pour chaque fonction CRUD et autre!
 
 router = APIRouter(
     prefix="/api",
     responses={404: {"description": "Not found"}},
 )
 
-
+# Route de test
 @router.get("/ping")
 async def ping():
     return {"ping": "pong"}
 
+#-----#-----#-----#-----#-----#  Creation des méthodes CRUD  #-----#-----#-----#-----#-----#
 
-# Initialisation des fonctions CRUD des tables de la base de données
+# Création des méthodes CRUD sur FastAPI
 api_routers = {}
 for sql_class, pydantic_classes in engine.sql_tables.items():
     table_name = sql_class.__name__
@@ -145,7 +147,9 @@ for sql_class, pydantic_classes in engine.sql_tables.items():
         sql_class, base_class, create_class, response_class, table_name_lower
     )
 
-# Demande
+#-----#-----#-----#-----#-----#  Demande d'energie  #-----#-----#-----#-----#-----#
+
+# Demande : permet de lire la demande d'energie
 demande_router = APIRouter(
     prefix="/demande",
     tags=["Demande"],
@@ -164,7 +168,6 @@ async def read_demande(
 
     demande = await read_demande_data(scenario, CUID)
     return "ping"
-
 
 @demande_router.post("/sankey")
 async def read_demande_sankey(
@@ -195,13 +198,13 @@ async def read_demande_temporal(
 
 router.include_router(demande_router)
 
-# Meteo
+#-----#-----#-----#-----#-----#  Lecture de la météo  #-----#-----#-----#-----#-----#
+
 meteo_router = APIRouter(
     prefix="/meteo",
     tags=["Meteo"],
     responses={404: {"description": "Not found"}},
 )
-
 
 @meteo_router.post("/get_data")
 def get_meteo_data(
@@ -232,12 +235,11 @@ def get_meteo_data(
         headers={"Content-Disposition": "attachment; filename=weather_data.csv"},
     )
 
-
 router.include_router(meteo_router)
 
-# Parc éolien
-parc_eolien_router = api_routers["eolienneparc"]
+#-----#-----#-----#-----#-----#  Production : Eolien  #-----#-----#-----#-----#-----#
 
+parc_eolien_router = api_routers["eolienneparc"]
 
 @parc_eolien_router.post("/{parc_eolien_id}/production")
 async def calculer_production_parc_eolien(
@@ -259,9 +261,9 @@ async def calculer_production_parc_eolien(
     production = production.fillna(0)
     return production
 
-
 # TODO DRY
-# Parc solaire
+#-----#-----#-----#-----#-----#  Production : Solaire  #-----#-----#-----#-----#-----#
+
 solaire_router = api_routers["solaire"]
 
 @solaire_router.post("/{solaire_id}/production")
@@ -284,8 +286,8 @@ async def calculer_production_solaire(
     production = production.fillna(0)
     return production
 
+#-----#-----#-----#-----#-----#  Production : Thermique  #-----#-----#-----#-----#-----#
 
-# Thermique
 thermique_router = api_routers["thermique"]
 @thermique_router.post("/{thermique_id}/production")
 
@@ -308,7 +310,8 @@ async def calculer_production_thermique(
     production = production.fillna(0)
     return production
 
-# Nucléaire
+#-----#-----#-----#-----#-----#  Production : Nucleaire  #-----#-----#-----#-----#-----#
+
 nucleaire_router = api_routers["nucleaire"]
 
 @nucleaire_router.post("/{nucleaire_id}/production")
@@ -332,7 +335,8 @@ async def calculer_production_nucleaire(
     return production
 
 
-# Hydro
+#-----#-----#-----#-----#-----#  Production : Hydro  #-----#-----#-----#-----#-----#
+
 hydro_router = api_routers["hydro"]
 
 @hydro_router.post("/{hydro_id}/production")
@@ -361,7 +365,8 @@ async def calculer_production_hydro(
     return production
 
 
-# Fausses données
+#-----#-----#-----#-----#-----#  Fake Data  #-----#-----#-----#-----#-----#
+
 faker_router = APIRouter(
     prefix="/faker",
     tags=["Faker"],
@@ -381,6 +386,7 @@ async def get_production_aleatoire(scenario_id: int, db: Session = Depends(get_d
 
 router.include_router(faker_router)
 
+#-----#-----#-----#-----#-----#  Production : Reseau  #-----#-----#-----#-----#-----#
 
 reseau_router = APIRouter(
     prefix="/reseau",
@@ -440,6 +446,7 @@ async def calculer_production_reseau(
 
 router.include_router(reseau_router)
 
-# Ajout des routes aux endpoint
+#-----#-----#-----#-----#-----#  Ajout de toutes les routes  #-----#-----#-----#-----#-----#
+
 for _, api_router in api_routers.items():
     router.include_router(api_router)

@@ -12,6 +12,9 @@ from harmoniq.db import CRUD
 
 import argparse
 
+#C'est dans ce fichier que l'on utilise les fonctions CRUD pour remplir la base de données
+# On voit aparaitre les chemins vers le répertoire contenant les fichiers CSV
+
 
 CURRENT_DIR = Path(__file__).parent
 CSV_DIR = CURRENT_DIR / ".." / "db" / "CSVs"
