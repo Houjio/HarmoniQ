@@ -587,13 +587,6 @@ $("button.select-none").on('click', function(target) {
 });
 
 
-/**
- * Supprime une infrastructure côté serveur, désactive son entrée dans la liste,
- * met à jour la carte et conserve l’élément dans le DOM.
- * Affiche "update1" et le payload de mise à jour pour vérification.
- * @param {string} type Le type d’infrastructure (e.g. 'solaire', 'nucleaire', etc.)
- * @param {string} id   L’ID de l’infrastructure à supprimer
- */
 function deleteInfraFromMap(type, id) {
     // Marqueur de version
     console.log('update1');
