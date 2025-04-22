@@ -1,11 +1,10 @@
 """
 engine.py
 ------
-The engine is what connects your code to the database:
-- Opens and manages the database connections.
-- Knows how to speak the database’s language (SQL for SQLite).
-- Is used by each session to run queries and save or load data.
-
+Le moteur est ce qui connecte votre code à la base de données :
+- Ouvre et gère les connexions à la base.
+- Sait parler le langage de la base de données (SQL pour SQLite).
+- Est utilisé par chaque session pour exécuter des requêtes et sauvegarder ou charger des données.
 """
 
 from sqlalchemy import create_engine

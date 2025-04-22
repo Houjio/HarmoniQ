@@ -1,4 +1,13 @@
-"Liste de modèles de données de la base de données"
+"""
+schelmas.py
+
+Liste de modèles de données de la base de données
+------------------
+Ce fichier regroupe tous les modèles utilisés pour la base de données :
+- Déclarations SQLAlchemy des tables (Scénario, Infrastructures, Éolien, Solaire, Hydro, Thermique, Nucléaire, Bus, Ligne, etc.)
+- Schémas Pydantic pour validation et conversion (Create, Base et Response)
+- Schémas Pandera pour les données météo et les enregistrements de production
+"""
 
 from sqlalchemy import Column, Integer, String, Float, Boolean, Table, Enum
 from sqlalchemy.orm import declarative_base, relationship, Mapped, mapped_column
@@ -33,6 +42,12 @@ class InfrastructureBase(BaseModel): # TODO make the other classes inherit
     puissance_nominal: float
     # TODO, make cost and GHG data necissary
 
+"""
+Notion de "Enum ou PyEnum" pour les types de données:
+- Enum est une classe de base pour créer des énumérations en Python.
+- Exemples d'utilisation : Enum("Nom", "Valeur1 Valeur2 Valeur3")
+- Type d'objet : Enum
+"""
 
 class Optimisme(PyEnum):
     pessimiste = 1
@@ -142,6 +157,7 @@ class ScenarioResponse(ScenarioBase):
         from_attributes = True
 
 #-----#-----#-----#-----# Liste Infra Base #-----#-----#-----#-----#
+#Stocke les infrastructures actives dans la simulation (celles qui sont cochées) sous forme de chaines de caractères séparées par des virgules
 
 class ListeInfrastructures(SQLBase):
     __tablename__ = "liste_infrastructures"
@@ -198,6 +214,7 @@ class ListeInfrastructuresResponse(ListeInfrastructuresBase):
     class Config:
         from_attributes = True
 
+#-----#-----#-----#-----# Eolienne Base #-----#-----#-----#-----#
 
 class TurbineModel(str, PyEnum):
     GE_1_5SLE = "GE 1.5SLE"
@@ -218,7 +235,6 @@ class TurbineModel(str, PyEnum):
     GE_2_2_107 = "GE 2.2-107"
     MM92_CCV = "MM92 CCV"
 
-#-----#-----#-----#-----# Eolienne Base #-----#-----#-----#-----#
 
 class EolienneParcBase(BaseModel):
     nom: str = Field(..., description="Nom du parc éolien")
@@ -645,14 +661,3 @@ weather_schema = pa.DataFrameSchema(
     index=pa.Index(pa.DateTime, name="datetemps"),
     strict=True,
 )
-
-#-----#-----#-----#-----# Production Base #-----#-----#-----#-----#
-
-class ProductionRecord(BaseModel):
-    timestamp: datetime        # date+heure de la mesure
-    date: date                 # date seule (pratique pour regroupements journaliers)
-    source: str                # e.g. "éolien", "solaire", "hydro", …
-    energie_kwh: float         # production pendant l’intervalle, en kWh
-
-class ProductionResponse(BaseModel):
-    records: list[ProductionRecord]
