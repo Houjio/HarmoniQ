@@ -14,6 +14,7 @@ from enum import Enum as PyEnum
 
 SQLBase = declarative_base()
 
+#-----#-----#-----#-----# Latitude Longitude Base #-----#-----#-----#-----#
 
 class PositionBase(BaseModel):
     """Pydantic modèle de base pour les positions"""
@@ -31,6 +32,7 @@ class InfrastructureBase(BaseModel): # TODO make the other classes inherit
     longitude: float
     puissance_nominal: float
     # TODO, make cost and GHG data necissary
+
 
 class Optimisme(PyEnum):
     pessimiste = 1
@@ -76,6 +78,7 @@ class TimeDeltaString(TypeDecorator):
             return isodate.parse_duration(value)
         return value
 
+#-----#-----#-----#-----# Scenario Base #-----#-----#-----#-----#
 
 class Scenario(SQLBase):
     __tablename__ = "scenario"
@@ -138,6 +141,7 @@ class ScenarioResponse(ScenarioBase):
     class Config:
         from_attributes = True
 
+#-----#-----#-----#-----# Liste Infra Base #-----#-----#-----#-----#
 
 class ListeInfrastructures(SQLBase):
     __tablename__ = "liste_infrastructures"
@@ -214,6 +218,8 @@ class TurbineModel(str, PyEnum):
     GE_2_2_107 = "GE 2.2-107"
     MM92_CCV = "MM92 CCV"
 
+#-----#-----#-----#-----# Eolienne Base #-----#-----#-----#-----#
+
 class EolienneParcBase(BaseModel):
     nom: str = Field(..., description="Nom du parc éolien")
     latitude: float = Field(..., description="Latitude moyenne des éoliennes (degrés)")
@@ -257,6 +263,7 @@ class EolienneParc(SQLBase):
     modele_turbine = Column(String)
     puissance_nominal = Column(Float)
 
+#-----#-----#-----#-----# Solaire Base #-----#-----#-----#-----#
 
 class Solaire(SQLBase):
     __tablename__ = "solaire"
@@ -302,6 +309,13 @@ class SolaireBase(BaseModel):
 class SolaireCreate(SolaireBase):
     pass
 
+class SolaireResponse(SolaireBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+#-----#-----#-----#-----# Hydro Base #-----#-----#-----#-----#
 
 class HydroBase(BaseModel):
     nom: str
@@ -353,6 +367,7 @@ class Hydro(SQLBase):
     annee_commission = Column(Integer, nullable=True)
     materiau_conduite = Column(String, nullable=True)
 
+#-----#-----#-----#-----# Solaire Response #-----#-----#-----#-----#
 
 class SolaireResponse(SolaireBase):
     id: int
@@ -360,6 +375,7 @@ class SolaireResponse(SolaireBase):
     class Config:
         from_attributes = True
 
+#-----#-----#-----#-----# Thermique Base #-----#-----#-----#-----#
 
 class TypeIntrantThermique(str, PyEnum):
     GAZ_NATUREL = "Gaz naturel"
@@ -419,6 +435,7 @@ class Thermique(SQLBase):
     annee_commission = Column(Integer, nullable=True)
     type_generateur = Column(Integer, nullable=True)
 
+#-----#-----#-----#-----# Nucleaire Base #-----#-----#-----#-----#
 
 class NucleaireBase(BaseModel):
     nom: str = Field(..., description="Nom de la centrale nucléaire")
@@ -467,6 +484,7 @@ class Nucleaire(SQLBase):
     annee_commission = Column(Integer, nullable=True)
     type_generateur = Column(Integer, nullable=True)
 
+#-----#-----#-----#-----# Bus Base #-----#-----#-----#-----#
 
 class BusControlType(str, PyEnum):
     """Enumération des types de contrôle de bus"""
@@ -523,6 +541,7 @@ class BusResponse(BusBase):
     class Config:
         from_attributes = True
 
+#-----#-----#-----#-----# Line Base #-----#-----#-----#-----#
 
 class LineType(SQLBase):
     __tablename__ = "line_type"
@@ -627,6 +646,7 @@ weather_schema = pa.DataFrameSchema(
     strict=True,
 )
 
+#-----#-----#-----#-----# Production Base #-----#-----#-----#-----#
 
 class ProductionRecord(BaseModel):
     timestamp: datetime        # date+heure de la mesure

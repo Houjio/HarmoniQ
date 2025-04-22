@@ -77,7 +77,8 @@ Pour initialiser la base de données :
     init-db -p
 
 Télécharger les données nécessaires (réservé aux étudiants du projet) :
-
+Si cette commande ne marche pas , vous pouvez alternativement placer manuellement 
+la db demande.db dans le dossier harmoniQ/harmoniQ/harmoniq/db/ .
 .. code-block:: bash
 
     load-db -d

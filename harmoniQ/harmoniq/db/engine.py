@@ -40,6 +40,7 @@ def _get_sql_tables(module) -> Dict[type, Dict[str, type]]:
 
 sql_tables = _get_sql_tables(schemas)
 
+#Launch the session where we have the database
 
 def get_db():
     """
@@ -51,6 +52,8 @@ def get_db():
     finally:
         db.close()
 
+
+# Get all MRCs , MRC stands for Municipalité Régionale de Comté
 
 def get_all_mrcs_population(db: Session, mrc_id: int) -> pd.DataFrame:
     data = (
