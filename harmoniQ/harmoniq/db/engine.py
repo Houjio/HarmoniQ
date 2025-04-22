@@ -1,3 +1,13 @@
+"""
+engine.py
+------
+The engine is what connects your code to the database:
+- Opens and manages the database connections.
+- Knows how to speak the database’s language (SQL for SQLite).
+- Is used by each session to run queries and save or load data.
+
+"""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -13,8 +23,9 @@ engine = create_engine(DATABASE__URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def _get_sql_tables(module) -> Dict[type, Dict[str, type]]:
-    all_classes = [member for _, member in inspect.getmembers(module, inspect.isclass)]
+def _get_sql_tables(schemas_module) -> Dict[type, Dict[str, type]]:
+    all_classes = [member for _, member in inspect.getmembers(schemas_module, inspect.isclass)]
+    # We can also make a liste of all the real classes meaning objects representing the tables 
     base_classes = [
         cls
         for cls in all_classes
@@ -37,10 +48,25 @@ def _get_sql_tables(module) -> Dict[type, Dict[str, type]]:
         }
     return sql_tables
 
-
+#In this there are four types of classes , base ones (from pydantic), create ones (for creating new objects) and response ones (for returning the data)
 sql_tables = _get_sql_tables(schemas)
 
-#Launch the session where we have the database
+"""Example: print(sql_tables)
+{
+<class 'harmoniq.db.schemas.Bus'>: {'base': <class 'harmoniq.db.schemas.BusBase'>, 'create': <class 'harmoniq.db.schemas.BusCreate'>, 'response': <class 'harmoniq.db.schemas.BusResponse'>}, 
+<class 'harmoniq.db.schemas.EolienneParc'>: {'base': <class 'harmoniq.db.schemas.EolienneParcBase'>, 'create': <class 'harmoniq.db.schemas.EolienneParcCreate'>, 'response': <class 'harmoniq.db.schemas.EolienneParcResponse'>}, 
+<class 'harmoniq.db.schemas.Hydro'>: {'base': <class 'harmoniq.db.schemas.HydroBase'>, 'create': <class 'harmoniq.db.schemas.HydroCreate'>, 'response': <class 'harmoniq.db.schemas.HydroResponse'>}, 
+<class 'harmoniq.db.schemas.Line'>: {'base': <class 'harmoniq.db.schemas.LineBase'>, 'create': <class 'harmoniq.db.schemas.LineCreate'>, 'response': <class 'harmoniq.db.schemas.LineResponse'>}, 
+<class 'harmoniq.db.schemas.LineType'>: {'base': <class 'harmoniq.db.schemas.LineTypeBase'>, 'create': <class 'harmoniq.db.schemas.LineTypeCreate'>, 'response': <class 'harmoniq.db.schemas.LineTypeResponse'>}, 
+<class 'harmoniq.db.schemas.ListeInfrastructures'>: {'base': <class 'harmoniq.db.schemas.ListeInfrastructuresBase'>, 'create': <class 'harmoniq.db.schemas.ListeInfrastructuresCreate'>, 'response': <class 'harmoniq.db.schemas.ListeInfrastructuresResponse'>}, 
+<class 'harmoniq.db.schemas.Nucleaire'>: {'base': <class 'harmoniq.db.schemas.NucleaireBase'>, 'create': <class 'harmoniq.db.schemas.NucleaireCreate'>, 'response': <class 'harmoniq.db.schemas.NucleaireResponse'>}, 
+<class 'harmoniq.db.schemas.Scenario'>: {'base': <class 'harmoniq.db.schemas.ScenarioBase'>, 'create': <class 'harmoniq.db.schemas.ScenarioCreate'>, 'response': <class 'harmoniq.db.schemas.ScenarioResponse'>},
+<class 'harmoniq.db.schemas.Solaire'>: {'base': <class 'harmoniq.db.schemas.SolaireBase'>, 'create': <class 'harmoniq.db.schemas.SolaireCreate'>, 'response': <class 'harmoniq.db.schemas.SolaireResponse'>}, 
+<class 'harmoniq.db.schemas.Thermique'>: {'base': <class 'harmoniq.db.schemas.ThermiqueBase'>, 'create': <class 'harmoniq.db.schemas.ThermiqueCreate'>, 'response': <class 'harmoniq.db.schemas.ThermiqueResponse'>}
+}
+"""
+
+#Launch the session where we have the database that will evolve (it is like a dataholder where commands from the API and data will be stored and interact)
 
 def get_db():
     """
