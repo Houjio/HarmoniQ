@@ -3,6 +3,8 @@ import asyncio
 from harmoniq.db import CRUD
 from harmoniq.db.engine import sql_tables
 
+#This program is designed to create CRUD methods for each table in the database.
+#It uses the SQLAlchemy ORM to interact with the database and the Pydantic library to validate data.
 
 def _format_table_name(table_name):
     """
@@ -53,3 +55,4 @@ for sql_class, pydantic_classes in sql_tables.items():
     table_name = sql_class.__name__
     table_name_formated = _format_table_name(table_name)
     _create_crud_methods(CRUD, table_name_formated, sql_class)
+

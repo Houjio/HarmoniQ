@@ -1,12 +1,3 @@
-"""
-engine.py
-------
-Le moteur est ce qui connecte votre code à la base de données :
-- Ouvre et gère les connexions à la base.
-- Sait parler le langage de la base de données (SQL pour SQLite).
-- Est utilisé par chaque session pour exécuter des requêtes et sauvegarder ou charger des données.
-"""
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -16,6 +7,9 @@ import pandas as pd
 
 from harmoniq import DB_PATH
 from harmoniq.db import schemas
+
+# engine.py : Ce fichier est responsable de la création de l'engine SQLAlchemy et de la session de base de données.
+# Il est utilisé pour se connecter à la base de données et exécuter des requêtes.
 
 DATABASE__URL = f"sqlite:///{DB_PATH}"
 engine = create_engine(DATABASE__URL)

@@ -1,14 +1,3 @@
-"""
-schelmas.py
-
-Liste de modèles de données de la base de données
-------------------
-Ce fichier regroupe tous les modèles utilisés pour la base de données :
-- Déclarations SQLAlchemy des tables (Scénario, Infrastructures, Éolien, Solaire, Hydro, Thermique, Nucléaire, Bus, Ligne, etc.)
-- Schémas Pydantic pour validation et conversion (Create, Base et Response)
-- Schémas Pandera pour les données météo et les enregistrements de production
-"""
-
 from sqlalchemy import Column, Integer, String, Float, Boolean, Table, Enum
 from sqlalchemy.orm import declarative_base, relationship, Mapped, mapped_column
 from sqlalchemy.types import TypeDecorator
@@ -20,6 +9,11 @@ from typing import List, Optional
 from datetime import datetime, timedelta, date
 import isodate
 from enum import Enum as PyEnum
+
+# schemas.py : Ce fichier contient les modèles de données utilisés pour la base de données.
+# Il contient des classes pour chaque table de la base de données, ainsi que des schémas Pydantic pour la validation et la sérialisation des données.
+
+#-----#-----#-----#-----# SQLAlchemy Base #-----#-----#-----#-----#
 
 SQLBase = declarative_base()
 

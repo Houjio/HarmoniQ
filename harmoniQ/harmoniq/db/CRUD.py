@@ -1,22 +1,3 @@
-'''
-CRUD.py
-
-async / await & CRUD helpers
-----------------------------
-This module defines generic async CRUD (Create, Read, Update, Delete) helpers for SQLAlchemy tables.
-
-**CRUD helpers**:
-- `create_data`, `read_all_data`, `read_data_by_id`, `read_multiple_by_id`, `update_data`, `delete_data`
-- Accept a `Session`, a table class, and (for create/update) a Pydantic model.
-- Perform standard DB operations and return ORM instances or confirmation messages.
-
-**async / await**:
-- `async def`: defines a coroutine (an async function).
-- `await`: pauses the coroutine until the awaited operation (e.g., a DB query) completes.
-- Event loop: schedules many coroutines, switching between them whenever one is waiting on I/O.
-- Benefits: non-blocking I/O, higher concurrency with fewer threads.
-'''
-
 from sqlalchemy import Table
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -25,7 +6,8 @@ from typing import List
 from harmoniq.db.engine import sql_tables
 from harmoniq.db import schemas
 
-
+# CRUD.py : Ce fichier contient des fonctions utilitaires pour effectuer des opérations CRUD (Create, Read, Update, Delete) sur les tables SQLAlchemy.
+# Ces fonctions sont conçues pour être génériques et peuvent être utilisées pour n'importe quelle table de la base de données.
 # They are designed to be generic and can be used for any table in the database.
 
 
