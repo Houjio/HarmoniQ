@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const layout = {
       title: {
-        text: "Flux de Production et de Consommation d'Énergie",
+        text: "Flux de Production et de Consommation d'Énergie (en kWh)",
         font: { size: 22, family: "Arial", color: "#333" }
       },
       font: { size: 14, family: "Helvetica" },

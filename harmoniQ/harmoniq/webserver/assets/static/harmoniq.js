@@ -113,10 +113,25 @@ function initialiserListeScenario() {
     initializeDropdown('/api/scenario', 'scenario-actif', no_selection_scenario);
 }
 
-// Initialize infrastructure groups
 function initialiserListeInfra() {
-    initializeDropdown('/api/listeinfrastructures', 'groupe-actif', no_selection_infra);
+    initializeDropdown(
+        '/api/listeinfrastructures',
+        'groupe-actif',
+        () => {
+            const dropdown = document.getElementById('groupe-actif');
+            if (dropdown.options.length > 0) {
+                // 1) Sélectionner la première option
+                dropdown.selectedIndex = 0;
+                // 2) Charger automatiquement ce groupe
+                changeInfra();
+            } else {
+                // si pas d'option du tout, on revient au comportement initial
+                no_selection_infra();
+            }
+        }
+    );
 }
+
 
 function addMarker(lat, lon, type, data) {
     const icon = map_icons[type];
@@ -588,9 +603,6 @@ $("button.select-none").on('click', function(target) {
 
 
 function deleteInfraFromMap(type, id) {
-    // Marqueur de version
-    console.log('update1');
-
     const groupeId = $("#groupe-actif").val();
 
     // 1) Supprimer l’infra côté serveur
@@ -607,19 +619,17 @@ function deleteInfraFromMap(type, id) {
             delete markers[markerKey];
         }
 
-        // 3) Désactiver l’élément dans la liste (ne pas le supprimer du DOM)
+        // 3) Supprimer l’élément de la liste (au lieu de juste le désactiver)
         const listItem = document.querySelector(`li[elementid="${id}"][type="${type}"]`);
         if (listItem) {
-            listItem.classList.remove('list-group-item-secondary');
-            listItem.removeAttribute('active');
+            listItem.remove();
         }
 
-        // 4) Calculer la nouvelle configuration de groupe sans l’ID supprimé
+        // 4) Construire la nouvelle config de groupe sans l’ID supprimé
         const updatedValues = load_groupe_ids();
-        const update1 = updatedValues;
-        console.log(update1);  // Affiche le payload de mise à jour
+        console.log('Payload mise à jour :', updatedValues);
 
-        // 5) Envoyer le PUT pour mettre à jour le groupe
+        // 5) Envoyer le PUT pour mettre à jour le groupe côté serveur
         return fetch(`/api/listeinfrastructures/${groupeId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -630,7 +640,7 @@ function deleteInfraFromMap(type, id) {
         if (!response2.ok) {
             throw new Error(`Erreur mise à jour groupe ${response2.status}: ${response2.statusText}`);
         }
-        alert("Infrastructure supprimée et désactivée dans la liste.");
+        alert("Infrastructure supprimée du serveur, de la carte et de la liste.");
     })
     .catch(error => {
         console.error("Erreur lors de la suppression ou mise à jour :", error);
@@ -650,7 +660,6 @@ function deleteScenario(id) {
     })
     .catch(error => console.error('Erreur lors de la suppression du scenario:', error));
 }
-
 
 function confirmDeleteScenario(id, nom) {
     if (confirm('Êtes-vous sûr de vouloir supprimer ' + nom + '?')) {

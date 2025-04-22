@@ -1,3 +1,8 @@
+# juste après les imports du stdlib
+import ssl
+# désactive la vérification de tous les certificats HTTPS
+ssl._create_default_https_context = ssl._create_unverified_context
+
 import asyncio
 
 from env_canada import ECHistorical
