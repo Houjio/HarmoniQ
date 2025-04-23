@@ -24,7 +24,7 @@ Copiez les fichiers CSV téléchargés **tels quels** dans :
 
 .. code-block:: bash
 
-    HarmoniQ/harmoniq/core/meteo/raw
+    HarmoniQ/harmoniQ/harmoniq/core/meteo/raw
 
 
 Lancement du script de traitement
@@ -34,8 +34,8 @@ Depuis le répertoire racine du projet (ayant le bon environement activé) :
 
 .. code-block:: bash
 
-   cd /path/to/HarmoniQ
-   python3 core/meteo/meteo_data_refiner.py
+   cd /path/to/harmoniq --> A remplacer par le bon chemin
+   python3 meteo/meteo_data_refiner.py
 
 
 Le script va :
@@ -52,29 +52,15 @@ Ouvrez `core/meteo/refined/meteo_data.csv` et vérifiez :
 - L'ordre des colonnes.
 - La présence de la colonne `ORIGINAL_DATA`.
 
-Utilisation dans le code
-~~~~~~~~~~~~~~~~~~~~~~~~
+A savoir: ces données .CSV seront utilisées à l'execution de meteo.py dans 
 
-Exemple d'intégration de `WeatherHelper` :
+..code-block:: bash
 
-```python
-from harmoniq.core.meteo import WeatherHelper, Granularity, EnergyType
-from harmoniq.db.schemas import PositionBase
-from datetime import datetime
-import asyncio
+    HarmoniQ/harmoniQ/harmoniq/core/meteo.py
 
-pos = PositionBase(latitude=45.80944, longitude=-73.43472)
-weather = WeatherHelper(
-    position=pos,
-    interpolate=False,
-    start_time=datetime(2024, 1, 1),
-    end_time=datetime(2024, 1, 2),
-    data_type=EnergyType.EOLIEN,
-    granularity=Granularity.HOURLY
-)
-df = asyncio.run(weather.load())
-print(df.head())
-```
+Il est possible de tester meteo.py seul en le lancant directement depuis un terminal avec le bone environement activé :
 
-Vous pouvez maintenant exploiter les données météo dans HarmoniQ !
-```
+.. code-block:: bash
+
+    cd /path/to/harmoniq --> A remplacer par le bon chemin
+    python3 core/meteo.py
