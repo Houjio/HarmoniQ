@@ -1,7 +1,5 @@
-# harmoniq/core/meteo.py
-
+#!/usr/bin/env python3
 import asyncio
-import numpy as np
 from pathlib import Path
 import pandas as pd
 from datetime import datetime, timedelta
@@ -39,7 +37,7 @@ _REFERENCE_YEAR = 2024  # décalage pour périodes futures
 # Cache local
 CACHE = Path(__file__).parent / "cache"
 CACHE.mkdir(parents=True, exist_ok=True)
-# CSV à côté de ce module, dans core/db/
+# CSV à côté de ce module, dans meteo/refined
 CSV_PATH = Path(__file__).resolve().parents[1] / "meteo" / "refined" / "meteo_data.csv"
 print(f"CSV_PATH: {CSV_PATH}")
 
@@ -118,71 +116,57 @@ class WeatherHelper:
         if self._data is not None:
             return self._apply_timeshift(self._data)
 
+        # use cache if available
         if self.test_cache():
             return self._apply_timeshift(self.load_cache())
 
-        # Charger toutes les stations
+        # load per-station data
         station_dfs = await self._read_all_stations()
         if not station_dfs:
             raise ValueError(
                 f"No station data found between {self.start_time} and {self.end_time}"
             )
 
-        # Mettre au schéma
+        # map to weather schema
         cleaned = {sid: self._to_schema(df) for sid, df in station_dfs.items()}
-        
-        # Choix des données
-        if not self.interpolate:
-            # garder la station la plus proche
-            distances = {
-                sid: geodesic(
-                    (self.position.latitude, self.position.longitude),
-                    (df['latitude'].iloc[0], df['longitude'].iloc[0])
-                ).km
-                for sid, df in cleaned.items()
-            }
-            nearest = min(distances, key=distances.get)
-            df_final = cleaned[nearest]
-        else:
-            # interpolation pondérées")
-            coords = [(df['latitude'].iloc[0], df['longitude'].iloc[0]) for df in cleaned.values()]
-            dists = np.array([geodesic((self.position.latitude, self.position.longitude), c).km for c in coords])
-            weights = 1 / dists
-            index = next(iter(cleaned.values())).index
-            df_final = pd.DataFrame(index=index)
-            for col in weather_schema.columns.keys():
-                df_final[col] = np.average([df[col].values for df in cleaned.values()], axis=0, weights=weights)
-            df_final.index.name = 'tempsdate'
-        # tronquer à la période demandée
-        df_final = df_final.loc[(df_final.index >= self.start_time) & (df_final.index <= self.end_time)]
+
+        # always use nearest station only
+        distances = {
+            sid: geodesic(
+                (self.position.latitude, self.position.longitude),
+                (df['latitude'].iloc[0], df['longitude'].iloc[0])
+            ).km
+            for sid, df in cleaned.items()
+        }
+        nearest = min(distances, key=distances.get)
+        df_final = cleaned[nearest].copy()
+
+        # truncate to requested period
+        df_final = df_final.loc[
+            (df_final.index >= self.start_time) & (df_final.index <= self.end_time)
+        ]
+
         self._data = df_final
         self.save_cache(df_final)
         return self._apply_timeshift(df_final)
 
     async def _read_all_stations(self) -> Dict[int, pd.DataFrame]:
-        # Lire tous, parse date et filtrer période
         df = pd.read_csv(CSV_PATH, parse_dates=["LOCAL_DATE"], low_memory=False)
         df = df.rename(columns={"LOCAL_DATE": "date", "x": "longitude", "y": "latitude"})
         df = df.set_index("date").sort_index()
-
-        # limiter à la plage
         df = df.loc[self.start_time:self.end_time]
 
-        # rééchantillonner si journalier
         if self._granularity == Granularity.DAILY:
             df = df.groupby('CLIMATE_IDENTIFIER').resample('D').first().reset_index(level=0)
 
         results = {}
-        # pour chaque station, reindex au pas de temps et stocker
         for sid, grp in df.groupby('CLIMATE_IDENTIFIER'):
-            # Dédupliquer les timestamps pour éviter les erreurs de reindex
             grp = grp[~grp.index.duplicated(keep='first')]
             if self._granularity == Granularity.HOURLY:
                 dates = pd.date_range(self.start_time, self.end_time, freq='h')
             else:
                 dates = pd.date_range(self.start_time, self.end_time, freq='D')
             tmp = grp.reset_index().set_index('date')
-            # Supprimer les éventuels doublons d'index
             tmp = tmp[~tmp.index.duplicated(keep='first')]
             tmp = tmp.reindex(dates)
             tmp.index.name = 'date'
@@ -194,9 +178,8 @@ class WeatherHelper:
         out = pd.DataFrame(index=idx, columns=weather_schema.columns.keys())
         out.index.name = 'tempsdate'
 
-        # colonnes communes
-        out['longitude'] = data['longitude']
-        out['latitude']  = data['latitude']
+        out['longitude']        = data['longitude']
+        out['latitude']         = data['latitude']
         out['precipitation_mm'] = data['PRECIP_AMOUNT']
         out['direction_vent']   = data['WIND_DIRECTION']
         out['vitesse_vent_kmh'] = data['WIND_SPEED']
@@ -205,23 +188,23 @@ class WeatherHelper:
         out['point_de_rosee']   = data['DEW_POINT_TEMP']
 
         if self._granularity == Granularity.HOURLY:
-            out['temperature_C']     = data['TEMP']
-            # journalières vides
-            out[['max_temperature_C','min_tempature_C','pluie_mm','neige_cm','neige_accumulee_cm']] = np.nan
+            out['temperature_C'] = data['TEMP']
+            out[['max_temperature_C','min_tempature_C',
+                 'pluie_mm','neige_cm','neige_accumulee_cm']] = pd.NA
         else:
             out['temperature_C']     = data['TEMP']
             out['max_temperature_C'] = data['TEMP']
             out['min_tempature_C']   = data['TEMP']
             out['pluie_mm']          = data['PRECIP_AMOUNT']
-            out['neige_cm']          = np.nan
-            out['neige_accumulee_cm']= np.nan
+            out['neige_cm']          = pd.NA
+            out['neige_accumulee_cm']= pd.NA
         return out
 
 
 if __name__ == "__main__":
     pos = PositionBase(latitude=45.80944, longitude=-73.43472)
-    start_time = datetime(2024, 1, 1)
-    end_time = datetime(2024, 1, 2)
+    start_time = datetime(2024, 9, 1)
+    end_time = datetime(2024, 9, 4)
     granularity = Granularity.HOURLY
 
     weather = WeatherHelper(
@@ -232,7 +215,7 @@ if __name__ == "__main__":
         data_type=EnergyType.EOLIEN,
         granularity=granularity,
     )
-    
+
     print("#-----#-----#-----#-----#")
     print("Running the load method...")
     print("#-----#-----#-----#-----#")

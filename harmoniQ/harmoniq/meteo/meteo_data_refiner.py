@@ -2,6 +2,10 @@
 import pandas as pd
 from pathlib import Path
 
+# Prevent future downcasting warnings
+pd.set_option('future.no_silent_downcasting', True)
+
+
 def main():
     raw_folder = Path("raw")
     refined_folder = Path("refined")
@@ -39,7 +43,7 @@ def main():
     dfs = []
     total_files = len(csv_files)
     for idx, fp in enumerate(csv_files, start=1):
-        print(f"  [1/{total_files}] Lecture de {fp.name}")
+        print(f"  [{idx}/{total_files}] Lecture de {fp.name}")
         df_part = pd.read_csv(fp)
         df_part.columns = df_part.columns.str.strip()
         df_part = df_part.reindex(columns=ordered_columns)
@@ -71,7 +75,7 @@ def main():
     stations = sorted(df['CLIMATE_IDENTIFIER'].unique())
     station_tables = {}
     for i, sid in enumerate(stations, start=1):
-        print(f"  [4/{len(stations)}] Station {sid}")
+        print(f"  [{i}/{len(stations)}] Station {sid}")
         base = pd.DataFrame(index=full_idx)
         info = df[df['CLIMATE_IDENTIFIER']==sid].iloc[0]
         for c in static_cols:
@@ -86,14 +90,15 @@ def main():
     # === Step 5: Interpolation linéaire par station ===
     print("=== Step 5: Interpolation linéaire par station ===")
     for i, sid in enumerate(stations, start=1):
-        print(f"  [5/{len(stations)}] Station {sid}")
+        print(f"  [{i}/{len(stations)}] Station {sid}")
         sdf = station_tables[sid]
-        # identify numeric vs non-numeric dyn_cols
+        # interpolation is per station; no cross-station interpolation
+        # split by dtype
         num_cols = [c for c in dyn_cols if pd.api.types.is_numeric_dtype(sdf[c])]
         str_cols = [c for c in dyn_cols if c not in num_cols]
-        # linear interpolation over time for numeric columns
+        # numeric: linear over time
         sdf[num_cols] = sdf[num_cols].interpolate(method='time', limit_direction='both')
-        # forward fill for strings, then infer objects to avoid downcasting warning
+        # string: forward-fill then infer types to suppress warnings
         sdf[str_cols] = sdf[str_cols].ffill().infer_objects(copy=False)
         station_tables[sid] = sdf
     print("  ✅ Interpolation linéaire terminée")
