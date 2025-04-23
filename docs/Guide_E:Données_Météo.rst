@@ -30,7 +30,7 @@ Copiez les fichiers CSV téléchargés **tels quels** dans :
 Lancement du script de traitement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Depuis le répertoire racine du projet (ayant le bon environement activé :
+Depuis le répertoire racine du projet (ayant le bon environement activé) :
 
 .. code-block:: bash
 
