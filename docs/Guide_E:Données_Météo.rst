@@ -54,7 +54,7 @@ Ouvrez `core/meteo/refined/meteo_data.csv` et vérifiez :
 
 A savoir: ces données .CSV seront utilisées à l'execution de meteo.py dans HarmoniQ/harmoniQ/harmoniq/core/meteo.py
 
-Il est possible de tester meteo.py seul en le lancant directement depuis un terminal avec le bone environement activé :
+Il est possible de tester meteo.py seul en le lancant directement depuis un terminal avec le bon environement activé :
 
 .. code-block:: bash
 
