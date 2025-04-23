@@ -24,15 +24,13 @@ Copiez les fichiers CSV téléchargés **tels quels** dans :
 
 .. code-block:: bash
 
-   cd /path/to/HarmoniQ/harmoniq/core/meteo
-   mkdir -p raw
-   cp ~/Downloads/*.csv raw/
+    HarmoniQ/harmoniq/core/meteo/raw
 
 
 Lancement du script de traitement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Depuis le répertoire racine du projet :
+Depuis le répertoire racine du projet (ayant le bon environement activé :
 
 .. code-block:: bash
 
