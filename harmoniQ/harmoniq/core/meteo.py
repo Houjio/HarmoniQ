@@ -219,9 +219,9 @@ class WeatherHelper:
 
 
 if __name__ == "__main__":
-    pos = PositionBase(latitude=49.049334, longitude=-66.750423)
-    start_time = datetime(2035, 1, 5)
-    end_time = datetime(2035, 3, 31)
+    pos = PositionBase(latitude=45.80944, longitude=-73.43472)
+    start_time = datetime(2024, 1, 1)
+    end_time = datetime(2024, 1, 2)
     granularity = Granularity.HOURLY
 
     weather = WeatherHelper(
