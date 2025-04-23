@@ -13,6 +13,7 @@ Vue d’ensemble du dépôt HarmoniQ :
    │  │  ├─ _version.py
    │  │  ├─ core/               <- services partagés et décorateurs (base.py, meteo.py, etc.)
    │  │  ├─ db/                 <- modèles SQLAlchemy, schémas Pydantic, CRUD, moteur, BDs de test
+   │  │  ├─ météo/                 <- regulation et formattage des données météo (à effectuer une seule fois lorsque l'on change de donées)
    │  │  ├─ modules/            <- un sous‑package par type d’énergie (éolien, solaire, hydro, etc.)
    │  │  ├─ scripts/            <- scripts utilitaires (init_database, launch_webserver, load_database)
    │  │  └─ webserver/           <- routeurs FastAPI & endpoints REST
