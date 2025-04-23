@@ -52,12 +52,7 @@ Ouvrez `core/meteo/refined/meteo_data.csv` et vérifiez :
 - L'ordre des colonnes.
 - La présence de la colonne `ORIGINAL_DATA`.
 
-A savoir: ces données .CSV seront utilisées à l'execution de meteo.py dans 
-
-..code-block:: bash
-
-    HarmoniQ/harmoniQ/harmoniq/core/meteo.py
-    
+A savoir: ces données .CSV seront utilisées à l'execution de meteo.py dans HarmoniQ/harmoniQ/harmoniq/core/meteo.py
 
 Il est possible de tester meteo.py seul en le lancant directement depuis un terminal avec le bone environement activé :
 
