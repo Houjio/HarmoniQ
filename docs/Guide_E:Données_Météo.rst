@@ -22,6 +22,7 @@ Placement des fichiers
 
 Copiez les fichiers CSV téléchargés **tels quels** dans :
 
+.. code-block:: bash
    cd /path/to/HarmoniQ/harmoniq/core/meteo
    mkdir -p raw
    cp ~/Downloads/*.csv raw/
@@ -31,6 +32,7 @@ Lancement du script de traitement
 
 Depuis le répertoire racine du projet :
 
+.. code-block:: bash
    cd /path/to/HarmoniQ
    python3 core/meteo/meteo_data_refiner.py
 
