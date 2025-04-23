@@ -2,6 +2,7 @@ from harmoniq.core.base import Infrastructure, necessite_scenario
 from harmoniq.core.meteo import WeatherHelper, Granularity, EnergyType
 from harmoniq.db.schemas import ScenarioBase, EolienneParcBase, PositionBase
 from harmoniq.modules.eolienne.calcule import get_parc_power
+import datetime
 
 from typing import List
 import pandas as pd
@@ -28,12 +29,13 @@ class InfraParcEolienne(Infrastructure):
 
         helper = WeatherHelper(
             position=pos,
+            interpolate=True,
             start_time=scenario.date_de_debut,
             end_time=scenario.date_de_fin,
-            interpolate=True,
-            granularity=granularite,
             data_type=wind_energy,
+            granularity=granularite,
         )
+
 
         return helper.load()
 
@@ -76,3 +78,15 @@ if __name__ == "__main__":
 
     prod_totale = production_totale["puissance"].sum() / 1000  # Convertir en MW
     print(f"Production totale: {prod_totale} MW")
+
+
+if __name__ == "__main__":
+    pos = PositionBase(latitude=49.049334, longitude=-66.750423)
+    start_time = datetime(2035, 1, 1)
+    end_time = datetime(2035, 3, 31)
+    granularity = Granularity.HOURLY
+
+    weather = WeatherHelper(
+        pos, True, start_time, end_time, EnergyType.EOLIEN, granularity
+    )
+    df = asyncio.run(weather.load())

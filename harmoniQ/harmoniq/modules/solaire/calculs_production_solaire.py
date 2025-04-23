@@ -158,6 +158,8 @@ def calculate_energy_solar_plants(
         angle_panneau,
         orientation_panneau,
         )
+    
+    
     # Mise à l'échelle selon la puissance de la centrale
     ac_scaled = ac * nombre_modules
 
@@ -165,7 +167,7 @@ def calculate_energy_solar_plants(
     ac_scaled = np.maximum(ac_scaled, 0)
 
     # Création de la plage de dates pour remplacer les datetime
-    datetime_index = pd.date_range(start=date_start, end=date_end, freq="H")
+    datetime_index = pd.date_range(start=date_start, end=date_end, freq="h")
 
     # Gestion des cas où la longueur de datetime_index dépasse celle de ac
     if len(ac) < len(datetime_index):

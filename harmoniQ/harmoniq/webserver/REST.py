@@ -33,6 +33,12 @@ from harmoniq.modules.thermique import InfraThermique
 from harmoniq.modules.nucleaire import InfraNucleaire
 from harmoniq.modules.hydro import InfraHydro
 
+
+import os
+import glob
+from harmoniq.modules.reseau import NETWORK_CACHE_DIR
+from harmoniq.modules.reseau.utils.data_loader import DEMAND_CACHE_DIR
+
 #Appel des modules de production énergétique, ainsi que d'autres modules, et crée des routes web pour chaque fonction CRUD et autre!
 
 router = APIRouter(
@@ -44,6 +50,85 @@ router = APIRouter(
 @router.get("/ping")
 async def ping():
     return {"ping": "pong"}
+
+
+
+
+
+
+
+
+
+
+import os
+import glob
+from fastapi import HTTPException, Depends, status
+from sqlalchemy.orm import Session
+from harmoniq.db.schemas import Scenario
+from harmoniq.db.CRUD import delete_data, read_data_by_id
+from harmoniq.db.engine import get_db
+from harmoniq.modules.reseau import NETWORK_CACHE_DIR
+from harmoniq.modules.reseau.utils.data_loader import DEMAND_CACHE_DIR
+
+
+
+
+
+
+
+@router.delete(
+    "/scenario/{scenario_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete a scenario and purge its on-disk caches"
+)
+async def delete_scenario_and_purge_cache(
+    scenario_id: int,
+    db: Session = Depends(get_db),
+):
+    # 1) Load the scenario
+    scenario = await read_data_by_id(db, Scenario, scenario_id)
+    if not scenario:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+
+    # 2) Purge network cache files for this scenario
+    #    Filenames: network_s<scenario_id>_<year>_i<infra_id>_<hash>.nc
+    pattern_nc = str(NETWORK_CACHE_DIR / f"network_s{scenario_id}_*")
+    for path in glob.glob(pattern_nc):
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+
+    # 3) Purge demand cache files for this scenario
+    #    Filenames: demand_<year>_<start>_<end>_loads<N>.pkl
+    year  = scenario.date_de_debut.year
+    start = scenario.date_de_debut.strftime("%Y-%m-%d")
+    end   = scenario.date_de_fin.strftime("%Y-%m-%d")
+    pattern_dc = str(DEMAND_CACHE_DIR / f"demand_{year}_{start}_{end}_*")
+    for path in glob.glob(pattern_dc):
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+
+    # 4) Delete the scenario record from the database
+    result = await delete_data(db, Scenario, scenario_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+
+    # Returns 204 No Content
+    return
+
+
+
+
+
+
+
+
+
+
+
 
 #-----#-----#-----#-----#-----#  Creation des méthodes CRUD  #-----#-----#-----#-----#-----#
 

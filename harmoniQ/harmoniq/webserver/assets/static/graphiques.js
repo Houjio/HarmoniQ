@@ -108,6 +108,7 @@ function generateTemporalPlot() {
 function updateTemporalGraph() {
     // Add production traces
     const productionData = production.production;
+    console.log(productionData);
     let x = productionData.map(instance => (instance["snapshot"]));
     let y = productionData.map(instance => (instance["totale"]/ 1000));
     let eolien = productionData.map(instance => (instance["total_eolien"]/ 1000));
