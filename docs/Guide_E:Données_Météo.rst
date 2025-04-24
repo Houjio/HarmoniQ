@@ -15,6 +15,10 @@ Téléchargement des données
    https://climate-change.canada.ca/climate-data/#/hourly-climate-data
 
 2. Sélectionnez la période et les stations souhaitées.
+   - Pour la période, choisissez **2010-2020**.
+   - Pour les stations, sélectionnez uniquement des stations QC, les autres provinces ont des structures de données différentes.
+
+   ![Sélection des données](images/selection.png)
 3. Cliquez sur **Télécharger** pour obtenir les fichiers CSV.
 
 Placement des fichiers
