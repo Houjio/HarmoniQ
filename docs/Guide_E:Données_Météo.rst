@@ -28,7 +28,7 @@ Copiez les fichiers CSV téléchargés **tels quels** dans :
 
 .. code-block:: bash
 
-    HarmoniQ/harmoniQ/harmoniq/core/meteo/raw
+    HarmoniQ/harmoniQ/harmoniq/meteo/raw
 
 
 Lancement du script de traitement
