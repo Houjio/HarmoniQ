@@ -48,7 +48,6 @@ class InfraParcEolienne(Infrastructure):
         nom = self.donnees.nom
         logger.info(f"Calcul de la production pour {nom}")
         parc_data = get_parc_power(self.donnees, self.meteo)
-
         return parc_data
 
 
@@ -75,18 +74,7 @@ if __name__ == "__main__":
         else:
             production_totale["puissance"] += production_iteration["puissance"]
         break
-
     prod_totale = production_totale["puissance"].sum() / 1000  # Convertir en MW
     print(f"Production totale: {prod_totale} MW")
 
 
-if __name__ == "__main__":
-    pos = PositionBase(latitude=49.049334, longitude=-66.750423)
-    start_time = datetime(2035, 1, 1)
-    end_time = datetime(2035, 3, 31)
-    granularity = Granularity.HOURLY
-
-    weather = WeatherHelper(
-        pos, True, start_time, end_time, EnergyType.EOLIEN, granularity
-    )
-    df = asyncio.run(weather.load())

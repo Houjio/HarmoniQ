@@ -52,14 +52,6 @@ async def ping():
     return {"ping": "pong"}
 
 
-
-
-
-
-
-
-
-
 import os
 import glob
 from fastapi import HTTPException, Depends, status
@@ -69,11 +61,6 @@ from harmoniq.db.CRUD import delete_data, read_data_by_id
 from harmoniq.db.engine import get_db
 from harmoniq.modules.reseau import NETWORK_CACHE_DIR
 from harmoniq.modules.reseau.utils.data_loader import DEMAND_CACHE_DIR
-
-
-
-
-
 
 
 @router.delete(
@@ -344,6 +331,7 @@ async def calculer_production_parc_eolien(
     await eolienne_infra.charger_scenario(scenario)
     production: pd.DataFrame = eolienne_infra.calculer_production()
     production = production.fillna(0)
+    print("Production Eolienne AHAHAHA", production)
     return production
 
 # TODO DRY

@@ -54,7 +54,7 @@ def piecewise_power_curve(
 
     # Zone 3: nominal power
     power[mask_rated] = rated_power
-
+    
     return power
 
 
@@ -129,9 +129,10 @@ def get_parc_power(parc: EolienneParc, meteo: pd.DataFrame) -> pd.DataFrame:
     ice_losses = ice_loss_factor(meteo["temperature"])
     power_with_ice_losses = power_with_wake_losses * ice_losses
 
+
     # Apply for all turbines in the parc
     power_parc = power_with_ice_losses * parc.nombre_eoliennes
-
+    
     # Calculate the energy produced
     df = pd.DataFrame(
         {

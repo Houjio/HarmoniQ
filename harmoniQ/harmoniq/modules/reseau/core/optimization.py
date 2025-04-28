@@ -131,6 +131,9 @@ class NetworkOptimizer:
             generators = generators_by_carrier.get(carrier, [])
             if generators:
                 total_capacity = sum(self.network.generators.at[gen, 'p_nom'] for gen in generators)
+                # Multiplier la capacité par 10 pour les éoliennes
+                if carrier == 'eolien':
+                    total_capacity *= 10
                 max_capacities[carrier] = total_capacity
                 logger.info(f"Capacité maximale {carrier}: {total_capacity:.2f} MW")
         

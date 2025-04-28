@@ -522,20 +522,38 @@ class NetworkDataLoader:
         if self.eolienne_ids:
             eoliennes = await read_multiple_by_id(db, EolienneParc, self.eolienne_ids)
             
+            
+            
+            
+            
+            
             for parc in eoliennes:
+                print("Lecture du parc éolien:", parc.nom)
                 infraEolienne = InfraParcEolienne(parc)
                 await infraEolienne.charger_scenario(scenario)
                 production_iteration = infraEolienne.calculer_production()
-                
                 if production_iteration is not None and not production_iteration.empty:
                     nom = parc.nom
                     if nom in network.generators.index:
                         # Calcul du p_max_pu = production / puissance_nominale
                         p_nom = (parc.puissance_nominal * parc.nombre_eoliennes)
                         if 'puissance' in production_iteration.columns:
-                            p_max_pu_df[nom] = production_iteration['puissance'] / p_nom
-                            p_max_pu_df[nom] = p_max_pu_df[nom].fillna(0.25)
-        
+                            # 1. Construire la série de production
+                            hourly_production = pd.Series(
+                                production_iteration['puissance'].values,
+                                index=pd.to_datetime(production_iteration['tempsdate'])
+                            )
+                            # 2. Réaligner sur network.snapshots
+                            aligned_production = hourly_production.reindex(network.snapshots).fillna(0)
+
+                            # 3. Calcul p_max_pu
+                            p_max_pu_df[nom] = aligned_production / p_nom
+                            p_max_pu_df[nom] = p_max_pu_df[nom].fillna(0.25)  # sécurité, si jamais certaines heures sont encore manquantes
+                        
+        # Génération pour les centrales thermiques         
+   
+   
+   
         marginal_cost_defaults = {
             'hydro_fil': 0.1,      # Faible coût - priorité haute
             'solaire': 0.1,        # Faible coût - priorité haute 
@@ -588,6 +606,11 @@ class NetworkDataLoader:
         logger.info(f"Profils temporels générés pour {len(p_max_pu_df.columns)} générateurs")
         logger.info(f"Coûts marginaux générés pour {len(marginal_cost_df.columns)} générateurs")
         
+        # EXTRA: Afficher spécifiquement les colonnes des éoliennes
+        eolienne_names = []
+        if self.eolienne_ids:
+            eoliennes = await read_multiple_by_id(db, EolienneParc, self.eolienne_ids)
+            eolienne_names = [parc.nom for parc in eoliennes]             
         return p_max_pu_df, marginal_cost_df
 
     async def load_demand_data(self, network: pypsa.Network, scenario, start_date=None, end_date=None) -> pd.DataFrame:
