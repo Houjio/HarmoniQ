@@ -41,7 +41,7 @@ class InfraParcEolienne(Infrastructure):
 
     async def charger_scenario(self, scenario):
         self.scenario: ScenarioBase = scenario
-        self.meteo: pd.DataFrame = await self._charger_meteo(scenario)
+        self.meteo: pd.DataFrame = self._charger_meteo(scenario)
 
     @necessite_scenario
     def calculer_production(self) -> pd.DataFrame:

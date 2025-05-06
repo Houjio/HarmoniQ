@@ -41,7 +41,10 @@ dependencies = [
     "pypsa",
     "pypsa[hdf5]",
     "pyarrow",
-    "fastparquet"
+    "fastparquet",
+    "openmeteo-requests",
+    "requests-cache",
+    "retry-requests"
 ]
 
 [project.scripts]

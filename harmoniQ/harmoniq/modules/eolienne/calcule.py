@@ -5,13 +5,13 @@ from harmoniq.db.schemas import EolienneParc, weather_schema
 from harmoniq.modules.eolienne.turbine_data import turbine_models
 
 
-def adjust_wind_speed(v_ref, z_ref, z_hub, z0=0.03):
+def adjust_wind_speed(v_meteo, z_meteo, z_eolien, z0=0.03):
     """
     Adjust the wind speed measured at z_ref (m) to the hub height z_hub (m)
     using the logarithmic wind profile law.
     """
     # TODO: @Zineb: PQ on utilise z0 = 0.03 ?
-    return v_ref * (np.log(z_hub / z0) / np.log(z_ref / z0))
+    return v_meteo * (np.log(z_eolien / z0) / np.log(z_meteo / z0))
 
 
 def air_density(temperature, pressure):
