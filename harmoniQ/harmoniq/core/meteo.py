@@ -101,26 +101,26 @@ class Meteo:
 			inclusive = "left"
 		)}
 
-		hourly_data["temperature_2m"] = hourly_temperature_2m
-		hourly_data["relative_humidity_2m"] = hourly_relative_humidity_2m
-		hourly_data["dew_point_2m"] = hourly_dew_point_2m
+		hourly_data["temperature_C"] = hourly_temperature_2m
+		hourly_data["humidite"] = hourly_relative_humidity_2m
+		hourly_data["point_de_rosee"] = hourly_dew_point_2m
 		hourly_data["apparent_temperature"] = hourly_apparent_temperature
-		hourly_data["precipitation"] = hourly_precipitation
-		hourly_data["rain"] = hourly_rain
-		hourly_data["snowfall"] = hourly_snowfall
-		hourly_data["snow_depth"] = hourly_snow_depth
+		hourly_data["precipitation_mm"] = hourly_precipitation
+		hourly_data["pluie_mm"] = hourly_rain
+		hourly_data["neige_cm"] = hourly_snowfall
+		hourly_data["neige_accumulee_cm"] = hourly_snow_depth
 		hourly_data["soil_temperature_0_to_7cm"] = hourly_soil_temperature_0_to_7cm
 		hourly_data["soil_temperature_7_to_28cm"] = hourly_soil_temperature_7_to_28cm
 		hourly_data["soil_temperature_28_to_100cm"] = hourly_soil_temperature_28_to_100cm
 		hourly_data["soil_temperature_100_to_255cm"] = hourly_soil_temperature_100_to_255cm
-		hourly_data["wind_speed_10m"] = hourly_wind_speed_10m
+		hourly_data["vitesse_vent_kmh"] = hourly_wind_speed_10m * 3.6 # Convert m/s to km/h
 		hourly_data["wind_speed_100m"] = hourly_wind_speed_100m
-		hourly_data["wind_direction_10m"] = hourly_wind_direction_10m
+		hourly_data["direction_vent"] = hourly_wind_direction_10m
 		hourly_data["wind_direction_100m"] = hourly_wind_direction_100m
 		hourly_data["wind_gusts_10m"] = hourly_wind_gusts_10m
 		hourly_data["weather_code"] = hourly_weather_code
 		hourly_data["pressure_msl"] = hourly_pressure_msl
-		hourly_data["surface_pressure"] = hourly_surface_pressure
+		hourly_data["pression"] = hourly_surface_pressure / 10 # Convert hPa to kPa
 		hourly_data["cloud_cover"] = hourly_cloud_cover
 		hourly_data["cloud_cover_low"] = hourly_cloud_cover_low
 		hourly_data["cloud_cover_mid"] = hourly_cloud_cover_mid
@@ -181,21 +181,15 @@ class WeatherHelper:
 
         original_start = self.start_time
         original_end = self.end_time
-        print(f"Original start time: {original_start}")
-        print(f"Original end time: {original_end}")
 
         # Utilise 2024 comme année de fallback si simulation dans le futur
         if self.end_time.year > _CURRENT_YEAR:
             self.start_time = self.start_time.replace(year=2024)
             self.end_time = self.end_time.replace(year=2024)
-        print(f"Adjusted start time: {self.start_time}")
-        print(f"Adjusted end time: {self.end_time}")
 
         # Open-Meteo demande un end_date exclusif => ajouter 1 jour
         start_str = self.start_time.strftime("%Y-%m-%d")
         end_str = (self.end_time + timedelta(days=1)).strftime("%Y-%m-%d")
-
-        print(f"Fetching data from {start_str} to {end_str}")
 
         df = self.meteo_client.get_weather_data(
             Latitude=self.position.latitude,
@@ -219,7 +213,6 @@ class WeatherHelper:
         df = df.reindex(expected_range)
 
         self._data = df
-        print(self._data)
         return df
 
 
