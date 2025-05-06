@@ -1214,120 +1214,100 @@ $('#delete-scenario').on('click', function() {
     confirmDeleteScenario(id, nom);
 });
 
+
+function offsetLatLng(lat1, lng1, lat2, lng2, distance_km, index, total) {
+    const toRad = deg => deg * Math.PI / 180;
+    const toDeg = rad => rad * 180 / Math.PI;
+
+    const dx = lng2 - lng1;
+    const dy = lat2 - lat1;
+
+    // angle perpendiculaire (orthogonal)
+    const length = Math.sqrt(dx * dx + dy * dy);
+    if (length === 0) return [[lat1, lng1], [lat2, lng2]];
+
+    const offsetScale = (index - (total - 1) / 2) * (distance_km / 111); // 111 km ≈ 1° lat
+
+    const offsetX = -dy / length * offsetScale;
+    const offsetY = dx / length * offsetScale;
+
+    return [
+        [lat1 + offsetY, lng1 + offsetX],
+        [lat2 + offsetY, lng2 + offsetX]
+    ];
+}
+// Cette fonction modélise les lignes avec démultiplication si "notes" > 1
 function modeliserLignes() {
-    // Charger le fichier CSV
     fetch('/static/lignes_quebec.csv')
         .then(response => {
             if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
             return response.text();
         })
         .then(csvData => {
-            // Diviser le CSV en lignes
             const lignes = csvData.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-
-            // Extraire les en-têtes
             const headers = lignes[0].split(',');
 
-            // Stocker les points pour déterminer leur rôle
-            const points = {};
-
-            // Parcourir les lignes de données pour collecter les points uniquement pour les lignes avec un voltage de 735
-            const lignesSelectionnees = lignes.slice(1).filter(line => {
+            const lignesSelectionnees = lignes.slice(1).map(line => {
                 const values = line.split(',');
-                const ligne = headers.reduce((acc, header, index) => {
-                    acc[header] = values[index];
+                return headers.reduce((acc, header, idx) => {
+                    acc[header] = values[idx];
                     return acc;
                 }, {});
+            }).filter(ligne => parseInt(ligne.voltage) >= 450);
 
-                // Filtrer les lignes avec un voltage de 735
-                return parseInt(ligne.voltage) === 80;
-            });
+            lignesSelectionnees.forEach(ligne => {
+                const lat1 = parseFloat(ligne.latitude_starting);
+                const lon1 = parseFloat(ligne.longitude_starting);
+                const lat2 = parseFloat(ligne.latitude_ending);
+                const lon2 = parseFloat(ligne.longitude_ending);
+                const voltage = parseInt(ligne.voltage);
+                const n = parseInt(ligne.notes || '1');
 
-            lignesSelectionnees.forEach(line => {
-                const values = line.split(',');
-                const ligne = headers.reduce((acc, header, index) => {
-                    acc[header] = values[index];
-                    return acc;
-                }, {});
+                const dx = lon2 - lon1;
+                const dy = lat2 - lat1;
+                const length = Math.hypot(dx, dy);
 
-                const departKey = `${ligne.latitude_starting},${ligne.longitude_starting}`;
-                const arriveeKey = `${ligne.latitude_ending},${ligne.longitude_ending}`;
-
-                // Marquer les points comme départ ou arrivée et ajouter le nom
-                points[departKey] = points[departKey] || { 
-                    lat: ligne.latitude_starting, 
-                    lon: ligne.longitude_starting, 
-                    nom: ligne.network_node_name_starting || 'N/A', 
-                    isDepart: false, 
-                    isArrivee: false 
-                };
-                points[departKey].isDepart = true;
-
-                points[arriveeKey] = points[arriveeKey] || { 
-                    lat: ligne.latitude_ending, 
-                    lon: ligne.longitude_ending, 
-                    nom: ligne.network_node_name_ending || 'N/A', 
-                    isDepart: false, 
-                    isArrivee: false 
-                };
-                points[arriveeKey].isArrivee = true;
-            });
-
-            // Ajouter les points à la carte avec les couleurs appropriées
-            Object.values(points).forEach(point => {
-                let color = 'gray'; // Par défaut, gris pour les points à la fois départ et arrivée
-                if (point.isDepart && !point.isArrivee) {
-                    color = 'blue'; // Bleu pour les points uniquement départ
-                } else if (!point.isDepart && point.isArrivee) {
-                    color = 'red'; // Rouge pour les points uniquement arrivée
+                let px = 0, py = 0;
+                if (length !== 0) {
+                    px = -dy / length;
+                    py = dx / length;
                 }
 
                 const popupContent = `
-                    <b>Nom:</b> ${point.nom || 'N/A'}<br>
-                    <b>Type:</b> ${point.isDepart && point.isArrivee ? 'Départ et Arrivée' : point.isDepart ? 'Départ' : 'Arrivée'}
-                `;
-
-                L.circleMarker([parseFloat(point.lat), parseFloat(point.lon)], {
-                    radius: 2,
-                    color: color,
-                    fillColor: color,
-                    fillOpacity: 0.8
-                }).addTo(map)
-                .bindPopup(popupContent);
-            });
-
-            // Parcourir les lignes de données pour tracer les lignes
-            lignesSelectionnees.forEach(line => {
-                const values = line.split(',');
-                const ligne = headers.reduce((acc, header, index) => {
-                    acc[header] = values[index];
-                    return acc;
-                }, {});
-
-                const busDepart = [parseFloat(ligne.latitude_starting), parseFloat(ligne.longitude_starting)];
-                const busArrivee = [parseFloat(ligne.latitude_ending), parseFloat(ligne.longitude_ending)];
-
-                // Construire le contenu du popup pour la ligne
-                const popupContent = `
-                    <b>Voltage:</b> ${ligne.voltage || 'N/A'} kV<br>
+                    <b>Voltage:</b> ${voltage} kV<br>
                     <b>Longueur:</b> ${ligne.line_length_km || 'N/A'} km<br>
                     <b>Point de départ:</b> ${ligne.network_node_name_starting || 'N/A'}<br>
                     <b>Point d'arrivée:</b> ${ligne.network_node_name_ending || 'N/A'}
                 `;
 
-                // Tracer une ligne entre les deux bus
-                L.polyline([busDepart, busArrivee], {
-                    color: 'gray',
-                    weight: 1
-                }).addTo(map)
-                .bindPopup(popupContent)
-                .on('click', function () {
-                    this.openPopup();
-                });
+                if (voltage <= 450 || n === 1) {
+                    // Lignes simples ou faible voltage
+                    console.log(`Tracé de ${nombreDeCircuits} ligne(s) entre ${ligne.network_node_name_starting} et ${ligne.network_node_name_ending}`);
+                    L.polyline([[lat1, lon1], [lat2, lon2]], {
+                        color: 'gray',
+                        weight: 1,
+                        dashArray: '4, 4'
+                    }).addTo(map).bindPopup(popupContent);
+                } else {
+                    // Lignes multiples haute tension
+                    for (let i = 0; i < n; i++) {
+                        const offset = (i - (n - 1) / 2) * 0.02; // ~2km en décalage lat/lon
+                        const lat1o = lat1 + offset * py;
+                        const lon1o = lon1 + offset * px;
+                        const lat2o = lat2 + offset * py;
+                        const lon2o = lon2 + offset * px;
+                        console.log(`Tracé de ${nombreDeCircuits} ligne(s) entre ${ligne.network_node_name_starting} et ${ligne.network_node_name_ending}`);
+                        L.polyline([[lat1o, lon1o], [lat2o, lon2o]], {
+                            color: 'black',
+                            weight: 1.2
+                        }).addTo(map).bindPopup(popupContent);
+                    }
+                }
             });
         })
         .catch(error => console.error('Erreur lors du chargement des lignes électriques:', error));
 }
+
 
 function mettreAJourIconesSelectionnees() {
     const groupeActifId = $("#groupe-actif").val();
