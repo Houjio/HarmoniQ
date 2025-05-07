@@ -9,6 +9,10 @@ from harmoniq.db.CRUD import read_all_hydro
 CURRENT_DIR = Path(__file__).parent
 APPORT_DIR = CURRENT_DIR / "apport_naturel"
 
+# === Load catch coefficients
+CSVDIR = Path(__file__).parent.parent.parent
+HYDRO_INFO_PATH = CSVDIR / "db" / "CSVs" / "Info_Barrages.csv"
+catch_coeff_map = pd.read_csv(HYDRO_INFO_PATH).set_index("Nom")["catch_coefficient"].to_dict()
 
 def reservoir_infill(
     besoin_puissance, pourcentage_reservoir, apport_naturel, timestamp
@@ -38,6 +42,10 @@ def reservoir_infill(
             nb_turbines = dam_data.nb_turbines - nb_turb_maintenance
             type_turb = dam_data.modele_turbine
             apport = apport_naturel.loc[timestamp, nom]
+            apport = apport_naturel.loc[timestamp, nom]
+            catch_coeff = catch_coeff_map.get(nom, 1.0)  # default to 1.0
+            apport *= catch_coeff
+            
             # debit_amont = get_upstream_flows(temps,df_debit,barrage_amont)
             volume_reel = (
                 volume_remplie * pourcentage_reservoir + apport * 3600

@@ -9,7 +9,6 @@ from harmoniq.modules.hydro.calcule import (
     calculer_emissions_et_ressources,
     get_facteur_de_charge,
     get_energy,
-    reservoir_infill,
 )
 import pandas as pd
 import numpy as np

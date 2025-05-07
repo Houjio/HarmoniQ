@@ -2,7 +2,6 @@ from harmoniq.core.base import Infrastructure, necessite_scenario
 from harmoniq.db.schemas import ScenarioBase, Hydro, ListeInfrastructures
 from harmoniq.db.CRUD import read_all_hydro, read_multiple_by_id
 from harmoniq.db.engine import get_db
-from harmoniq.modules.hydro.calcule import reservoir_infill
 
 from harmoniq.modules.reseau.core import NetworkBuilder, PowerFlowAnalyzer, NetworkOptimizer
 from harmoniq.modules.reseau.utils import EnergyUtils
@@ -54,7 +53,7 @@ class InfraReseau(Infrastructure):
         logger.info(f"Scénario chargé: {scenario.nom}")
         
     @necessite_scenario
-    async def creer_reseau(self, liste_infra=None) -> pypsa.Network:
+    async def creer_reseau(self, liste_infra=None) -> pypsa.Network: #Ne sert uniquement à créer le reseau que si il n'est pas déja crée, ce qui n'arrive à priori pas
         """
         Crée un réseau PyPSA complet à partir des données statiques
         et des séries temporelles associées au scénario, avec mise en cache.
@@ -129,7 +128,7 @@ class InfraReseau(Infrastructure):
         
         return network
 
-    def _normaliser_types_reseau(self, network):
+    def _normaliser_types_reseau(self, network): #normalise les types de données pour la sauvegarde
         """
         Normalise les types de données dans le réseau pour la sauvegarde.
         
@@ -185,6 +184,7 @@ class InfraReseau(Infrastructure):
                 besoins_df = self.network.loads_t.p_set.loc[heure]
                 besoins_heure = besoins_df.sum() if isinstance(besoins_df, pd.Series) else besoins_df.sum().sum()
                 besoins_heure = float(besoins_heure)
+                print("Les besoins à l'heure ", heure, " sont ", besoins_heure)
                 
                 # Production des sources fatales
                 sources_fatales = self.network.generators[
