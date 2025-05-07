@@ -22,7 +22,7 @@ Méthode A : Conda
 
 .. code-block:: bash
 
-    pip install -e ./harmoniQ[dev]
+    pip install -e ./harmoniQ
 
 Méthode B : Virtualenv
 ^^^^^^^^^^^^^^^^^^^^^^
