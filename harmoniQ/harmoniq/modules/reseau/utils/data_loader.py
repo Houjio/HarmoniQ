@@ -249,6 +249,7 @@ class NetworkDataLoader:
                 load_demand_df.index = pd.to_datetime(load_demand_df.index)
             
             load_demand_df = load_demand_df.astype('float64')
+            print("load_demand_df:", load_demand_df)
             network.loads_t.p_set = load_demand_df
         
         return network
@@ -732,6 +733,7 @@ class NetworkDataLoader:
             correction_factor = target_avg_demand / avg_demand
             logger.info(f"Application d'un facteur d'échelle: {correction_factor:.2f}x pour atteindre ~{target_energy_twh:.1f} TWh")
             demand_df['total_demand'] *= correction_factor
+            print("Correction factor appliquée:---------------------------------------------", correction_factor)
         
         demand_df = demand_df.set_index('date')
         demand_df.index = pd.to_datetime(demand_df.index)

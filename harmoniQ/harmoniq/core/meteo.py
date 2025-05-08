@@ -56,10 +56,6 @@ class Meteo:
 
 		# Process first location. Add a for-loop for multiple locations or weather models
 		response = responses[0]
-		print(f"Coordinates {response.Latitude()}°N {response.Longitude()}°E")
-		print(f"Elevation {response.Elevation()} m asl")
-		print(f"Timezone {response.Timezone()}{response.TimezoneAbbreviation()}")
-		print(f"Timezone difference to GMT+0 {response.UtcOffsetSeconds()} s")
 
 		# Process hourly data. The order of variables needs to be the same as requested.
 		hourly = response.Hourly()
@@ -177,7 +173,6 @@ class WeatherHelper:
         if self._data is not None:
             return self._data
 
-        print("STARTING TO LOAD METEO DATA")
 
         original_start = self.start_time
         original_end = self.end_time
