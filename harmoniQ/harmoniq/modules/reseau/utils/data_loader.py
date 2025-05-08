@@ -726,14 +726,13 @@ class NetworkDataLoader:
             logger.info(f"Année 2050 détectée: cible de consommation à {target_energy_twh} TWh")
         else:  # 2035 ou autres années
             target_energy_twh = 260.0
-            target_avg_demand = 30000.0
+            target_avg_demand = 27000.0
             logger.info(f"Année {scenario_year or 'inconnue'} détectée: cible de consommation à {target_energy_twh} TWh")
         
         if abs(annual_energy_twh - target_energy_twh) > 50:
             correction_factor = target_avg_demand / avg_demand
             logger.info(f"Application d'un facteur d'échelle: {correction_factor:.2f}x pour atteindre ~{target_energy_twh:.1f} TWh")
             demand_df['total_demand'] *= correction_factor
-            print("Correction factor appliquée:---------------------------------------------", correction_factor)
         
         demand_df = demand_df.set_index('date')
         demand_df.index = pd.to_datetime(demand_df.index)
