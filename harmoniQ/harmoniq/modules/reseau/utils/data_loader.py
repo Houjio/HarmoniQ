@@ -676,6 +676,7 @@ class NetworkDataLoader:
         
         # Charger la demande totale
         demand_df = await read_demande_data(db_scenario, CUID=1)
+        print("Demande totale chargée:", demand_df)
         logger.info(f"Données de demande chargées: {len(demand_df)} lignes")
         
         # Convertir les dates en datetime

@@ -182,6 +182,7 @@ class InfraReseau(Infrastructure):
             try:
                 # Besoins énergétiques
                 besoins_df = self.network.loads_t.p_set.loc[heure]
+                print("Besoins à l'heure ", heure, " : ", besoins_df)
                 besoins_heure = besoins_df.sum() if isinstance(besoins_df, pd.Series) else besoins_df.sum().sum()
                 besoins_heure = float(besoins_heure)
                 print("Les besoins à l'heure ", heure, " sont ", besoins_heure)

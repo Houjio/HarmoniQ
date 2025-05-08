@@ -146,7 +146,7 @@ def calculate_energy_solar_plants(
     altitude = 0  # Valeur par défaut pour l'altitude
 
     # Calcul de la production
-    print(f"Calcul de la production pour {nom} ({puissance_nominal} MW)...")
+    print(f"Calcul de la production pour {nom}")
     ac = calculate_solar_parameters(
         weather,
         latitude,
@@ -196,9 +196,6 @@ def calculate_energy_solar_plants(
         }
     )
     resultats_centrales_df.set_index("datetime", inplace=True)
-    
-    print(resultats_centrales_df)
-
     return resultats_centrales_df
     
 
