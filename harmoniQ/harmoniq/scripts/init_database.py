@@ -144,7 +144,7 @@ def fill_hydro():
             latitude=row["Longitude"],
             longitude=row["Latitude"],
             hauteur_chute=row["Hauteur_de_chute_m"],
-            debits_nominal=row["Debits_nom"],
+            debits_nominal=row["Debits_nom_m3s"],
             modele_turbine=row["Type_turbine"],
             nb_turbines=row["Nb_turbines"],
             nb_turbines_maintenance=row["nb_turbines_maintenance"],

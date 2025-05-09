@@ -223,7 +223,7 @@ def get_energy(production):
 
 
 def energy_loss(
-    Volume_evacue, Debits_nom, type_turb, nb_turbines, head, nb_turbine_maintenance
+    Volume_evacue, Debits_nom_m3s, type_turb, nb_turbines, head, nb_turbine_maintenance
 ):
 
     # Fonction permettant de calculer la perte d'énergie causé par l'activation d'un évacuateur de crue en MWh
@@ -231,7 +231,7 @@ def energy_loss(
     #   - info_barrage : Dataframe contenant les informations des barrages extraite du csv Info_Barrages.csv. Les colonnes du dataframe utilisées dans la fonction sont les suivantes
     #       - Nom : Nom du barrage [string]
     #       - Type : Type du barrage ["Fil de l'eau" vs "Reservoir" (string)]
-    #       - Debits_nom : Debit d'équipement des turbines en m^3/s [float]
+    #       - Debits_nom_m3s : Debit d'équipement des turbines en m^3/s [float]
     #       - Nb_turbines : Nombre de turbines installée dans le barrage [float]
     #       - Type_turbine : Type de turbine installée dans les barrages [string]
     #   - nom_barrage : Nom du barrage étudié [string]
@@ -248,7 +248,7 @@ def energy_loss(
 
     hp = calculate_hp_potential(
         flow=Debit,
-        design_flow=Debits_nom,
+        design_flow=Debits_nom_m3s,
         head=head,
         units=Units,
         hydropower_type=hp_type,

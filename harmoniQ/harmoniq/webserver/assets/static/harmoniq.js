@@ -1240,7 +1240,7 @@ function modeliserLignes() {
                 }, {});
 
                 // Filtrer les lignes avec un voltage de 735
-                return parseInt(ligne.voltage) === 80;
+                return parseInt(ligne.voltage) === 735;
             });
 
             lignesSelectionnees.forEach(line => {

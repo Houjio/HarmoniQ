@@ -124,11 +124,11 @@ function updateTemporalGraph() {
 
     const productionTraces = [
         {
-            x: demandeX,
-            y: demandeY,
+            x: x,
+            y: y,
             type: 'scatter',
             mode: 'lines',
-            name: 'Demande',
+            name: 'Demande réhaussée',
             line: { shape: 'spline', color: 'black' },
             hovertemplate: "%{x}<br>%{y:.2f} GW<extra></extra>"
         },
