@@ -1,0 +1,115 @@
+{% extends "template.html" %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{{ url_for('static', path='app_style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+{% endblock %}
+
+{% block content %}
+<div id="main">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Carte de l'optimisation</h3>
+        <a href="/" class="btn btn-secondary">Retour</a>
+    </div>
+    <div id="map-box" style="width: 100%; height: 500px;"></div>
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Comparaison de la production</h5>
+            <div id="comparaison-plot" style="height: 400px; width: 100%;">
+                Chargement du graphique...
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"
+    integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    var map;
+    var markers = {};
+    var map_icons = {};
+
+    function initMapIcons() {
+        map_icons = {
+            eolienneparc: L.icon({ iconUrl: '/static/icons/eolienne.png', iconSize: [30, 30], iconAnchor: [20, 20] }),
+            solaire: L.icon({ iconUrl: '/static/icons/solaire.png', iconSize: [40, 40], iconAnchor: [20, 20] }),
+            thermique: L.icon({ iconUrl: '/static/icons/thermique.png', iconSize: [40, 40], iconAnchor: [20, 20] }),
+            hydro: L.icon({ iconUrl: '/static/icons/barrage.png', iconSize: [50, 50], iconAnchor: [20, 20] }),
+            nucleaire: L.icon({ iconUrl: '/static/icons/nucelaire.png', iconSize: [40, 40], iconAnchor: [20, 20] })
+        };
+    }
+
+    function initMap() {
+        map = L.map('map-box', {
+            zoomControl: true,
+            attributionControl: true,
+            maxZoom: 12,
+            minZoom: 5
+        }).setView([52.9399, -67], 4);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+
+        var bounds = [[40.0, -90.0], [65.0, -50.0]];
+        map.setMaxBounds(bounds);
+        map.on('drag', function() {
+            map.panInsideBounds(bounds, { animate: false });
+        });
+    }
+
+    function afficherLignesEtIcones() {
+        fetch('/static/lignes_quebec.csv')
+            .then(response => response.text())
+            .then(csvData => {
+                const lignes = csvData.split('\n').filter(line => line.trim().length > 0);
+                const headers = lignes[0].split(',');
+
+                lignes.slice(1).forEach(line => {
+                    const values = line.split(',');
+                    const data = headers.reduce((acc, h, i) => { acc[h] = values[i]; return acc; }, {});
+
+                    const start = [parseFloat(data.latitude_starting), parseFloat(data.longitude_starting)];
+                    const end = [parseFloat(data.latitude_ending), parseFloat(data.longitude_ending)];
+
+                    L.polyline([start, end], {
+                        color: 'gray',
+                        weight: 1
+                    }).addTo(map)
+                    .bindPopup(`<b>${data.network_node_name_starting} → ${data.network_node_name_ending}</b><br>Voltage: ${data.voltage} kV`);
+                });
+            });
+
+        fetch('/api/toutes_infrastructures')
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(infra => {
+                    const icon = map_icons[infra.type];
+                    if (!icon) return;
+                    const marker = L.marker([infra.latitude, infra.longitude], { icon })
+                        .addTo(map)
+                        .bindPopup(`<b>${infra.nom}</b><br>Type: ${infra.type}`);
+                    markers[`${infra.type}-${infra.id}`] = marker;
+                });
+            });
+    }
+
+    window.onload = function() {
+        initMapIcons();
+        initMap();
+        afficherLignesEtIcones();
+
+        // Comparaison plot
+        if (typeof chargerComparaisonGraphique === 'function') {
+            chargerComparaisonGraphique();
+        } else {
+            console.warn("Fonction chargerComparaisonGraphique non trouvée.");
+        }
+    }
+</script>
+<script src="{{ url_for('static', path='graphiques.js') }}"></script>
+{% endblock %}
