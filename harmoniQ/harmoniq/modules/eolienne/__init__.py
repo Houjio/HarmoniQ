@@ -48,6 +48,7 @@ class InfraParcEolienne(Infrastructure):
         nom = self.donnees.nom
         logger.info(f"Calcul de la production pour {nom}")
         parc_data = get_parc_power(self.donnees, self.meteo)
+        print(parc_data)
         return parc_data
 
 
