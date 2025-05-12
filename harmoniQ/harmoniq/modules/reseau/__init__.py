@@ -220,7 +220,7 @@ class InfraReseau(Infrastructure):
         for iteration in range(iterations_max):
             #imports = [min(Pmax, max_theorique) for max_theorique in import_max_theorique]
             #somme_imports = sum(imports)
-            somme_imports = sum(Pmax)
+            somme_imports = Pmax*len(import_max_theorique)
             
             if abs(somme_imports - deltaE) < tolerance:
                 break

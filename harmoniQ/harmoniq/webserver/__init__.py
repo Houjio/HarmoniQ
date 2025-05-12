@@ -59,6 +59,9 @@ def application(request: Request):
 def eloisepage(request: Request):
     return templates.TemplateResponse(request=request, name="elo.html")
 
+@app.get("/opti", response_class=HTMLResponse)
+def optimal_placement_page(request: Request):
+    return templates.TemplateResponse(request=request, name="opti.html")
 
 @app.exception_handler(404)
 def not_found(request: Request, exc):

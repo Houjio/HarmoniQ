@@ -413,6 +413,8 @@ function lancer_simulation() {
         .then(data => {
             console.log('Simulation réussie:', data);
             production = data;
+            console.log("Simulation réussie, affichage du bouton opti...");
+            document.getElementById("opti-button").style.display = "inline-block";
             updateTemporalGraph();
 
             $("#run").html('Lancer la simulation');
