@@ -1,13 +1,10 @@
 # Gros fichiers/dossiers
-env
-harmoniq_env
 **/db.sqlite
 **/test_db.sqlite
 **/demande.db
 **/demande.db.zip
 
 # Fichier python générés
-*.egg-info
 __pycache__
 _version.py
 *.pyc.DS_Store

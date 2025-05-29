@@ -1,0 +1,39 @@
+Metadata-Version: 2.4
+Name: harmoniq
+Version: 0.1.0
+Summary: Librarie pour l'analyse de production d'énergie de Hydro-Québec
+Author-email: Sébastien Dasys <sebastien.dasys@polymtl.ca>, Alec Mitchell <alec.mitchell@polymtl.ca>
+Requires-Python: >=3.8
+Requires-Dist: numpy==1.26.4
+Requires-Dist: urllib3==1.26.6
+Requires-Dist: pandas
+Requires-Dist: pandera
+Requires-Dist: matplotlib
+Requires-Dist: scipy
+Requires-Dist: openpyxl
+Requires-Dist: scipy
+Requires-Dist: openpyxl
+Requires-Dist: isodate
+Requires-Dist: flask
+Requires-Dist: fastapi
+Requires-Dist: uvicorn
+Requires-Dist: sqlalchemy
+Requires-Dist: pvlib
+Requires-Dist: HydroGenerate
+Requires-Dist: nrel-pysam
+Requires-Dist: windpowerlib
+Requires-Dist: geopandas
+Requires-Dist: env-canada
+Requires-Dist: pypsa
+Requires-Dist: pypsa[hdf5]
+Requires-Dist: pyarrow
+Requires-Dist: fastparquet
+Requires-Dist: openmeteo-requests
+Requires-Dist: requests-cache
+Requires-Dist: retry-requests
+Provides-Extra: dev
+Requires-Dist: black; extra == "dev"
+Requires-Dist: flake8; extra == "dev"
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: httpx; extra == "dev"
+Requires-Dist: Office365-REST-Python-Client; extra == "dev"
