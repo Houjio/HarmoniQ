@@ -8,6 +8,7 @@ from harmoniq.db.schemas import PositionBase
 import openmeteo_requests
 import requests_cache
 from retry_requests import retry
+import numpy as np
 
 logging.basicConfig(
     level=logging.INFO,
@@ -132,6 +133,41 @@ class Meteo:
 		return(hourly_dataframe)
 
 
+def get_weather_data_local(Latitude, Longitude, start_date, end_date):
+    # Charger les données météo depuis le CSV
+    df = pd.read_csv("meteo_data.csv", parse_dates=["date"])
+
+    # Extraire les coordonnées uniques disponibles
+    coords = df[["Latitude", "Longitude"]].drop_duplicates()
+
+    # Calcul de la distance euclidienne simple
+    coords["distance"] = np.sqrt(
+        (coords["Latitude"] - Latitude)**2 + (coords["Longitude"] - Longitude)**2
+    )
+
+    # Récupère les coordonnées les plus proches
+    closest = coords.sort_values("distance").iloc[0]
+    closest_lat = closest["Latitude"]
+    closest_lon = closest["Longitude"]
+
+    print(f"⚠️ Station exacte non trouvée. Utilisation de la plus proche : ({closest_lat:.5f}, {closest_lon:.5f})")
+
+    # Filtrer les données pour cette station
+    df_station = df[
+        (df["Latitude"] == closest_lat) &
+        (df["Longitude"] == closest_lon)
+    ]
+
+    # Filtrer la période de temps
+    df_station = df_station[
+        (df_station["date"] >= pd.to_datetime(start_date)) &
+        (df_station["date"] <= pd.to_datetime(end_date))
+    ]
+
+    # Réinitialiser les index
+    return df_station.reset_index(drop=True)
+
+
 class WeatherHelper:
     def __init__(
         self,
@@ -186,7 +222,7 @@ class WeatherHelper:
         start_str = self.start_time.strftime("%Y-%m-%d")
         end_str = (self.end_time + timedelta(days=1)).strftime("%Y-%m-%d")
 
-        df = self.meteo_client.get_weather_data(
+        df = self.meteo_client.get_weather_data_local(
             Latitude=self.position.latitude,
             Longitude=self.position.longitude,
             start_date=start_str,
