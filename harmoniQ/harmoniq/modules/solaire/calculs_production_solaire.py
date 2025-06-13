@@ -107,6 +107,56 @@ date_end = pd.Timestamp("2037-06-01")
 
 
 def calculate_energy_solar_plants(
+    nom: str,
+    latitude: float,
+    longitude: float,
+    angle_panneau: float,
+    orientation_panneau: float,
+    puissance_nominal: float,
+    nombre_panneau: int,
+    date_start: pd.Timestamp,
+    date_end: pd.Timestamp,
+) -> pd.DataFrame:
+    """
+    Calcule un profil horaire d'énergie produite par une centrale solaire fictive.
+
+    Arguments obligatoires :
+        - nom : nom de la centrale
+        - latitude, longitude : position
+        - angle_panneau, orientation_panneau : non utilisés ici, mais requis
+        - puissance_nominal : puissance crête par panneau [kW]
+        - nombre_panneau : nombre total de panneaux
+        - date_start, date_end : période (de 00:00 à 00:00)
+
+    Retour :
+        - DataFrame avec date, nom, latitude, longitude, production [kW]
+    """
+    np.random.seed(0)  # reproductibilité
+
+    # Index horaire
+    time_index = pd.date_range(start=date_start, end=date_end, freq="H", closed="left")
+    hours = time_index.hour
+
+    # Profil solaire typique avec bruit
+    angle = (hours - 12) * np.pi / 12
+    base_profile = np.maximum(0, np.cos(angle))
+    noise = 1 + np.random.normal(0, 0.05, size=len(base_profile))
+    profile = np.clip(base_profile * noise, 0, 1)
+
+    # Énergie produite (en kW)
+    production_kw = profile * puissance_nominal * nombre_panneau
+
+    return pd.DataFrame({
+        "date": time_index,
+        "nom": nom,
+        "Latitude": latitude,
+        "Longitude": longitude,
+        "production": production_kw
+    })
+
+
+
+def calculate_energy_solar_plants_old(
     nom : str,
     latitude: float,
     longitude: float,
