@@ -136,8 +136,8 @@ class Meteo:
 
 def get_weather_data_local(Latitude, Longitude, start_date, end_date):
     # Colonnes utiles
-    columns_to_use = ["date", "Latitude", "Longitude", "wind_speed_100m", "wind_direction_100m"]
-    df = pd.read_csv("meteo_data.csv", parse_dates=["date"], usecols=columns_to_use)
+    columns_to_use = ["date", "Latitude", "Longitude", "vitesse_vent_kmh", "direction_vent"]
+    df = pd.read_csv(METEO_DATA_PATH, parse_dates=["date"], usecols=columns_to_use)
 
     # Extraire les coordonnées uniques
     coords = df[["Latitude", "Longitude"]].drop_duplicates()
