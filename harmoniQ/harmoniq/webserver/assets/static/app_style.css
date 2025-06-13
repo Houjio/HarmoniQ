@@ -59,32 +59,26 @@ div#main div#infrastructures div.accordion {
     overflow-y: auto;
 }
 
-#map-box {
-    position: relative;
-}
-
+/* Map */
 div.map-overlay {
     position: absolute;
-    top: 1em;              /* ✅ new position */
-    right: 1em;            /* keep right */
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    bottom: 0;
+    right: 0; 
+    /* Hacky since the map is usually on the right (if not uh-oh */
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    background-color: white;
-    padding: 0.5em 1em;
-    border-radius: 0.5em;
- }
-    div.map-overlay p {
-        margin: 0 0.5em 0 0;
-        font-weight: 500;
-    }
+  }
 
-    div.map-overlay img.icon-draggable {
-        width: 2.5em;
-        height: 2.5em;
-        cursor: grab;
-        margin-right: 0.5em;
-    }
+  div.map-overlay p {
+    margin: 0 0.25em;
+  }
+  
+  div.map-overlay img.icon-draggable {
+    width: 2.5em;
+    height: 2.5em;
+    cursor: grab;
+  }
