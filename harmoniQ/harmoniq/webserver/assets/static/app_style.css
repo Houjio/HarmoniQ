@@ -63,7 +63,6 @@ div#main div#infrastructures div.accordion {
     position: relative;
 }
 
-/* Map */
 div.map-overlay {
     position: absolute;
     top: 1em;              /* ✅ new position */
