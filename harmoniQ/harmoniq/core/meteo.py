@@ -134,23 +134,24 @@ class Meteo:
 
 
 def get_weather_data_local(Latitude, Longitude, start_date, end_date):
-    # Charger les données météo depuis le CSV
-    df = pd.read_csv("meteo_data.csv", parse_dates=["date"])
+    # Colonnes utiles
+    columns_to_use = ["date", "Latitude", "Longitude", "wind_speed_100m", "wind_direction_100m"]
+    df = pd.read_csv("meteo_data.csv", parse_dates=["date"], usecols=columns_to_use)
 
-    # Extraire les coordonnées uniques disponibles
+    # Extraire les coordonnées uniques
     coords = df[["Latitude", "Longitude"]].drop_duplicates()
 
-    # Calcul de la distance euclidienne simple
+    # Calcul de la distance euclidienne simple (rapide mais approximatif)
     coords["distance"] = np.sqrt(
         (coords["Latitude"] - Latitude)**2 + (coords["Longitude"] - Longitude)**2
     )
 
-    # Récupère les coordonnées les plus proches
+    # Station la plus proche
     closest = coords.sort_values("distance").iloc[0]
     closest_lat = closest["Latitude"]
     closest_lon = closest["Longitude"]
 
-    print(f"⚠️ Station exacte non trouvée. Utilisation de la plus proche : ({closest_lat:.5f}, {closest_lon:.5f})")
+    print(f"📍 Station la plus proche : ({closest_lat:.5f}, {closest_lon:.5f}) (distance euclidienne)")
 
     # Filtrer les données pour cette station
     df_station = df[
@@ -158,13 +159,12 @@ def get_weather_data_local(Latitude, Longitude, start_date, end_date):
         (df["Longitude"] == closest_lon)
     ]
 
-    # Filtrer la période de temps
+    # Filtrer la période
     df_station = df_station[
         (df_station["date"] >= pd.to_datetime(start_date)) &
         (df_station["date"] <= pd.to_datetime(end_date))
     ]
 
-    # Réinitialiser les index
     return df_station.reset_index(drop=True)
 
 
@@ -222,7 +222,7 @@ class WeatherHelper:
         start_str = self.start_time.strftime("%Y-%m-%d")
         end_str = (self.end_time + timedelta(days=1)).strftime("%Y-%m-%d")
 
-        df = self.meteo_client.get_weather_data_local(
+        df = get_weather_data_local(
             Latitude=self.position.latitude,
             Longitude=self.position.longitude,
             start_date=start_str,
