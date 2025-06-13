@@ -223,7 +223,7 @@ class WeatherHelper:
         start_str = self.start_time.strftime("%Y-%m-%d")
         end_str = (self.end_time + timedelta(days=1)).strftime("%Y-%m-%d")
 
-        df = get_weather_data_local(
+        df = self.meteo_client.get_weather_data(
             Latitude=self.position.latitude,
             Longitude=self.position.longitude,
             start_date=start_str,
