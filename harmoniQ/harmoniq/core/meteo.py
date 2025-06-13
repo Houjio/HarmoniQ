@@ -9,6 +9,7 @@ import openmeteo_requests
 import requests_cache
 from retry_requests import retry
 import numpy as np
+from harmoniq import METEO_DATA_PATH
 
 logging.basicConfig(
     level=logging.INFO,
