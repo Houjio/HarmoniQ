@@ -34,6 +34,11 @@ def index(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
 
 
+@app.get("/index_2", response_class=HTMLResponse)
+def index_2(request: Request):
+    return templates.TemplateResponse(request=request, name="index_2.html")
+
+
 @app.get("/favicon.ico", response_class=FileResponse)
 def favicon():
     print(STATIC_FILE / "favicon" / "favicon.ico")
@@ -45,14 +50,49 @@ def à_propos(request: Request):
     return templates.TemplateResponse(request=request, name="about.html")
 
 
+@app.get("/about_2", response_class=HTMLResponse)
+def about_2(request: Request):
+    return templates.TemplateResponse(request=request, name="about_2.html")
+
+
 @app.get("/documentation", response_class=HTMLResponse)
 def documentation(request: Request):
     return templates.TemplateResponse(request=request, name="docs.html")
 
 
+@app.get("/documentation_2", response_class=HTMLResponse)
+def documentation_2(request: Request):
+    return templates.TemplateResponse(request=request, name="documentation_2.html")
+
+
+@app.get("/documentation_modern", response_class=HTMLResponse)
+def documentation_modern(request: Request):
+    return templates.TemplateResponse(request=request, name="documentation_modern.html")
+
+
+@app.get("/installation_guide", response_class=HTMLResponse)
+def installation_guide(request: Request):
+    return templates.TemplateResponse(request=request, name="installation_guide.html")
+
+
+@app.get("/modules_guide", response_class=HTMLResponse)
+def modules_guide(request: Request):
+    return templates.TemplateResponse(request=request, name="modules_guide.html")
+
+
+@app.get("/api_guide", response_class=HTMLResponse)
+def api_guide(request: Request):
+    return templates.TemplateResponse(request=request, name="api_guide.html")
+
+
 @app.get("/app", response_class=HTMLResponse)
 def application(request: Request):
     return templates.TemplateResponse(request=request, name="app.html")
+
+
+@app.get("/app_2", response_class=HTMLResponse)
+def application_2(request: Request):
+    return templates.TemplateResponse(request=request, name="app_2.html")
 
 
 @app.get("/Eloise", response_class=HTMLResponse)

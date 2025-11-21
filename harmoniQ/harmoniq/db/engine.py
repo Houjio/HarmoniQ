@@ -5,10 +5,10 @@ import inspect
 from typing import Dict
 import pandas as pd
 
-from harmoniq import DB_PATH
+from harmoniq import DEMANDE_PATH
 from harmoniq.db import schemas
 
-DATABASE__URL = f"sqlite:///{DB_PATH}"
+DATABASE__URL = f"sqlite:///{DEMANDE_PATH}"
 engine = create_engine(DATABASE__URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

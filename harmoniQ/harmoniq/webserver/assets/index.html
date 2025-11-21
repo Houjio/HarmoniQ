@@ -6,14 +6,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HarmoniQ</title>
     <link rel="stylesheet" href="{{ url_for('static', path='main_style.css') }}">
+    <style>
+        .new-design-btn {
+            background: linear-gradient(135deg, #00cc66 0%, #0088ff 100%) !important;
+            border: 2px solid transparent !important;
+            color: white !important;
+            font-weight: bold !important;
+            position: relative !important;
+            overflow: hidden !important;
+            animation: pulse-glow 2s infinite !important;
+        }
+        
+        .new-design-btn:hover {
+            background: linear-gradient(135deg, #00aa44 0%, #0066cc 100%) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 10px 25px rgba(0, 136, 255, 0.3) !important;
+        }
+        
+        .new-design-btn::before {
+            content: "✨ NOUVEAU ✨";
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff4444;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 204, 102, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(0, 136, 255, 0.8), 0 0 30px rgba(0, 204, 102, 0.5); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-3px); }
+        }
+    </style>
 </head>
+<body>
     <div id="content">
         <div id="hero-content">
             <h1>HarmoniQ</h1>
             <h3>Modèle de Production Électrique Québecoise</h3>
         </div>
         <div id="nav">
-            <a href="/à-propos">
+            <a href="/index_2">
+                <button class="new-design-btn">🎨 Design Moderne</button>
+            </a>
+            <a href="/about_2">
                 <button>À Propos</button>
             </a>
             <a href="/documentation">

@@ -4,7 +4,7 @@ from typing import Tuple
 import getpass
 import zipfile
 
-from harmoniq import DB_PATH
+from harmoniq import DEMANDE_PATH
 
 try:
     from office365.runtime.auth.user_credential import UserCredential
@@ -59,15 +59,16 @@ def get_sharepoint_folder(ctx: ClientContext) -> Folder:
 
 def upload_db():
     print("Compression de la base de données...")
-    with zipfile.ZipFile(DB_PATH, "w") as zip_ref:
-        zip_ref.write(LOCAL_DB_DIR / LOCAL_UNZIPPED_DB_NAME, LOCAL_DB_NAME)
+    zip_path = LOCAL_DB_DIR / LOCAL_DB_NAME
+    with zipfile.ZipFile(zip_path, "w") as zip_ref:
+        zip_ref.write(LOCAL_DB_DIR / LOCAL_UNZIPPED_DB_NAME, LOCAL_UNZIPPED_DB_NAME)
 
     print(
         "Compression terminée, téléversement de la base de données... (cela peut prendre du temps)"
     )
     ctx = get_sharepoint_user()
     folder = get_sharepoint_folder(ctx)
-    with open(DB_PATH, "rb") as local_file:
+    with open(zip_path, "rb") as local_file:
         file = folder.upload_file(LOCAL_DB_NAME, local_file).execute_query()
 
     print("Téléversement terminé")
@@ -88,11 +89,12 @@ def download_db():
     file = folder.files.get_by_url(SHAREPOINT_FILE)
     file_object = file.open_binary_stream().execute_query()
     file_content = file_object.value
-    with open(DB_PATH, "wb") as local_file:
+    zip_path = LOCAL_DB_DIR / LOCAL_DB_NAME
+    with open(zip_path, "wb") as local_file:
         local_file.write(file_content)
 
     print("Téléchargement terminé, décompression de la base de données...")
-    with zipfile.ZipFile(DB_PATH, "r") as zip_ref:
+    with zipfile.ZipFile(zip_path, "r") as zip_ref:
         zip_ref.extractall(LOCAL_DB_DIR)
     print("Décompression terminée, base de données prête à l'emploi")
 

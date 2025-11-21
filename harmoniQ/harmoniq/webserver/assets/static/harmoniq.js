@@ -3,37 +3,50 @@ let scenarioFetchController = null;
 var openApiJson = null;
 const markers = {}; // Objet pour stocker les marqueurs par ID d'infrastructure
 
+// Filtres de couleur pour les icônes selon la légende
+const colorFilters = {
+    'hydro': 'brightness(0) saturate(100%) invert(60%) sepia(95%) saturate(1200%) hue-rotate(170deg) brightness(95%) contrast(95%)', // Bleu #0ea5e9
+    'wind': 'brightness(0) saturate(100%) invert(65%) sepia(95%) saturate(900%) hue-rotate(160deg) brightness(95%) contrast(95%)', // Cyan #06b6d4
+    'solar': 'brightness(0) saturate(100%) invert(65%) sepia(95%) saturate(1500%) hue-rotate(10deg) brightness(95%) contrast(95%)', // Orange #f59e0b
+    'thermal': 'brightness(0) saturate(100%) invert(35%) sepia(95%) saturate(2500%) hue-rotate(340deg) brightness(95%) contrast(95%)', // Rouge #ef4444
+    'nuclear': 'brightness(0) saturate(100%) invert(45%) sepia(95%) saturate(1500%) hue-rotate(230deg) brightness(95%) contrast(95%)' // Violet #8b5cf6
+};
+
 const map_icons = {
     eolienneparc: L.icon({
         iconUrl: '/static/icons/eolienne.png',
         iconSize: [30, 30],
-        iconAnchor: [20, 20]
+        iconAnchor: [15, 15],
+        className: 'colored-icon icon-wind'
     }),
     solaire: L.icon({
         iconUrl: '/static/icons/solaire.png',
         iconSize: [40, 40],
-        iconAnchor: [20, 20]
+        iconAnchor: [20, 20],
+        className: 'colored-icon icon-solar'
     }),
     thermique: L.icon({
         iconUrl: '/static/icons/thermique.png',
         iconSize: [40, 40],
-        iconAnchor: [20, 20]
+        iconAnchor: [20, 20],
+        className: 'colored-icon icon-thermal'
     }),
     hydro: L.icon({
         iconUrl: '/static/icons/barrage.png',
         iconSize: [50, 50],
-        iconAnchor: [20, 20]
+        iconAnchor: [25, 25],
+        className: 'colored-icon icon-hydro'
     }),
     nucleaire: L.icon({
         iconUrl: '/static/icons/nucelaire.png',
         iconSize: [40, 40],
-        iconAnchor: [20, 20]
+        iconAnchor: [20, 20],
+        className: 'colored-icon icon-nuclear'
     }),
-
     eolienneparcgris: L.icon({
         iconUrl: '/static/icons/eolienne_gris.png',
         iconSize: [30, 30],
-        iconAnchor: [20, 20]
+        iconAnchor: [15, 15]
     }),
     solairegris: L.icon({
         iconUrl: '/static/icons/solaire_gris.png',
@@ -48,7 +61,7 @@ const map_icons = {
     hydrogris: L.icon({
         iconUrl: '/static/icons/barrage_gris.png',
         iconSize: [50, 50],
-        iconAnchor: [20, 20]
+        iconAnchor: [25, 25]
     }),
     nucleairegris: L.icon({
         iconUrl: '/static/icons/nucelaire_gris.png',
@@ -120,60 +133,264 @@ function initialiserListeInfra() {
 function addMarker(lat, lon, type, data) {
     const icon = map_icons[type];
 
-    // Construire le contenu du popup en fonction du type
-    let popupContent = `<b>${data.nom}</b><br>Catégorie: ${prettyNames[type]}<br>`;
-
-    if (type === 'eolienneparc') {
-        popupContent += `
-            Nombre d'éoliennes: ${data.nombre_eoliennes || 'N/A'}<br>
-            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
-            Capacité totale: ${data.capacite_total || 'N/A'} MW
-        `;
-    } else if (type === 'hydro') {
-        popupContent += `
-            type de barrage: ${data.type_barrage || 'N/A'} <br>
-            Débit nominal: ${data.debits_nominal ? parseFloat(data.debits_nominal).toFixed(1) : 'N/A'} m³/s<br>
-            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
-            Volume du réservoir: ${
-                data.volume_reservoir
-                ? data.volume_reservoir >= 1e9
-                    ? (data.volume_reservoir / 1e9).toFixed(1) + ' Gm³' // Milliards de m³
-                    : data.volume_reservoir >= 1e6
-                        ? (data.volume_reservoir / 1e6).toFixed(1) + ' Mm³' // Millions de m³
-                        : (data.volume_reservoir / 1e3).toFixed(1) + ' km³' // Milliers de m³
-                : 'N/A'
-            }<br>
-        `;
-    } else if (type === 'solaire') {
-        popupContent += `
-            Nombre de panneaux: ${data.nombre_panneau || 'N/A'}<br>
-            Orientation des panneaux: ${data.orientation_panneau || 'N/A'}<br>
-            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW
-        `;
-    } else if (type === 'thermique') {
-        popupContent += `
-            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
-            Type d'intrant: ${data.type_intrant || 'N/A'}
-        `;
-    } else if (type === 'nucleaire') { // Ajout pour la catégorie nucléaire
-        popupContent += `
-            Puissance nominale: ${data.puissance_nominal || 'N/A'} MW<br>
-            Type d'intrant: ${data.type_intrant || 'N/A'}
-        `;
-    }
+    // Créer un popup ludique et sympa avec des emojis et des couleurs
+    let popupContent = createLudicPopup(type, data);
 
     // Ajouter le marqueur à la carte avec le popup
     const marker = L.marker([lat, lon], { icon: icon })
         .addTo(map)
-        .bindPopup(popupContent);
+        .bindPopup(popupContent, {
+            className: 'ludic-popup',
+            maxWidth: 300,
+            closeButton: true,
+            autoClose: false,
+            closeOnClick: false
+        });
 
     marker.on('click', function () {
         this.openPopup();
+        // Ajouter une animation subtile au popup
+        setTimeout(() => {
+            const popup = document.querySelector('.leaflet-popup-content-wrapper');
+            if (popup) {
+                popup.style.animation = 'popupSlideIn 0.4s ease-out';
+            }
+        }, 50);
     });
+    
     // Stocker le marqueur dans l'objet global
     const markerKey = `${type}-${data.id}`;
     markers[markerKey] = marker;
 }
+
+// Fonctions de calcul des comparaisons ludiques
+function calculateWindComparison(data) {
+    const power = parseFloat(data.puissance_nominal) || 0;
+    const houses = Math.round(power * 1000 / 3); // 3kW par maison
+    const kites = Math.round(power * 50); // Estimation ludique
+    return {
+        houses: houses,
+        kites: kites,
+        text: `Alimente ${houses} maisons ou fait voler ${kites} cerfs-volants !`
+    };
+}
+
+function calculateHydroComparison(data) {
+    const power = parseFloat(data.puissance_nominal) || 0;
+    const volume = parseFloat(data.volume_reservoir) || 0;
+    const pools = Math.round(volume / 2500000); // Piscine olympique = 2.5M litres
+    const netflix = Math.round(power * 1000 / 0.5); // 0.5kW pour Netflix
+    return {
+        pools: pools,
+        netflix: netflix,
+        text: `Contient ${pools} piscines olympiques et alimente ${netflix}h de Netflix !`
+    };
+}
+
+function calculateSolarComparison(data) {
+    const power = parseFloat(data.puissance_nominal) || 0;
+    const panels = parseInt(data.nombre_panneau) || 0;
+    const phones = Math.round(power * 1000 / 0.005); // 5W par téléphone
+    const suns = Math.round(panels / 1000); // Estimation ludique
+    return {
+        phones: phones,
+        suns: suns,
+        text: `Recharge ${phones} smartphones ou capte l'énergie de ${suns} soleils !`
+    };
+}
+
+function calculateThermalComparison(data) {
+    const power = parseFloat(data.puissance_nominal) || 0;
+    const coffee = Math.round(power * 1000 / 2); // 2kW pour faire bouillir
+    const cars = Math.round(power * 1000 / 50); // 50kW pour recharger voiture
+    return {
+        coffee: coffee,
+        cars: cars,
+        text: `Fait bouillir ${coffee} tasses de café ou recharge ${cars} voitures !`
+    };
+}
+
+function calculateNuclearComparison(data) {
+    const power = parseFloat(data.puissance_nominal) || 0;
+    const lightning = Math.round(power / 1000); // 1GW = 1000 éclairs
+    const rockets = Math.round(power / 100); // Estimation ludique
+    return {
+        lightning: lightning,
+        rockets: rockets,
+        text: `Équivalent à ${lightning} éclairs ou ${rockets} voyages spatiaux !`
+    };
+}
+
+// Fonction pour créer des popups professionnels et informatifs
+function createLudicPopup(type, data) {
+    const typeConfig = {
+        'eolienneparc': {
+            color: '#0891b2',
+            bgColor: '#f8fafc',
+            title: 'Parc Éolien',
+            description: 'Énergie renouvelable issue de la force du vent',
+            comparison: calculateWindComparison(data)
+        },
+        'hydro': {
+            color: '#0284c7',
+            bgColor: '#f8fafc',
+            title: 'Barrage Hydroélectrique',
+            description: 'Énergie renouvelable issue de la force hydraulique',
+            comparison: calculateHydroComparison(data)
+        },
+        'solaire': {
+            color: '#d97706',
+            bgColor: '#f8fafc',
+            title: 'Parc Solaire',
+            description: 'Énergie renouvelable issue du rayonnement solaire',
+            comparison: calculateSolarComparison(data)
+        },
+        'thermique': {
+            color: '#dc2626',
+            bgColor: '#f8fafc',
+            title: 'Centrale Thermique',
+            description: 'Énergie issue de la combustion de combustibles fossiles',
+            comparison: calculateThermalComparison(data)
+        },
+        'nucleaire': {
+            color: '#7c3aed',
+            bgColor: '#f8fafc',
+            title: 'Centrale Nucléaire',
+            description: 'Énergie issue de la fission nucléaire',
+            comparison: calculateNuclearComparison(data)
+        }
+    };
+
+    const config = typeConfig[type] || {
+        color: '#6b7280',
+        bgColor: '#f8fafc',
+        title: 'Source d\'Énergie',
+        description: 'Infrastructure de production d\'énergie',
+        comparison: { text: 'Énergie renouvelable' }
+    };
+
+    let details = '';
+
+    if (type === 'eolienneparc') {
+        details = `
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Nombre d'éoliennes:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.nombre_eoliennes || 'N/A'}</span>
+            </div>
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Puissance nominale:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.puissance_nominal || 'N/A'} MW</span>
+            </div>
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Capacité totale:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.capacite_total || 'N/A'} MW</span>
+            </div>
+        `;
+    } else if (type === 'hydro') {
+        details = `
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Type de barrage:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.type_barrage || 'N/A'}</span>
+            </div>
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Débit nominal:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.debits_nominal ? parseFloat(data.debits_nominal).toFixed(1) : 'N/A'} m³/s</span>
+            </div>
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Puissance nominale:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.puissance_nominal || 'N/A'} MW</span>
+            </div>
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Volume du réservoir:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${
+                    data.volume_reservoir
+                    ? data.volume_reservoir >= 1e9
+                        ? (data.volume_reservoir / 1e9).toFixed(1) + ' Gm³'
+                        : data.volume_reservoir >= 1e6
+                            ? (data.volume_reservoir / 1e6).toFixed(1) + ' Mm³'
+                            : (data.volume_reservoir / 1e3).toFixed(1) + ' km³'
+                    : 'N/A'
+                }</span>
+            </div>
+        `;
+    } else if (type === 'solaire') {
+        details = `
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Nombre de panneaux:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.nombre_panneau || 'N/A'}</span>
+            </div>
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Orientation:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.orientation_panneau || 'N/A'}</span>
+            </div>
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Puissance nominale:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.puissance_nominal || 'N/A'} MW</span>
+            </div>
+        `;
+    } else if (type === 'thermique') {
+        details = `
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Puissance nominale:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.puissance_nominal || 'N/A'} MW</span>
+            </div>
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Type d'intrant:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.type_intrant || 'N/A'}</span>
+            </div>
+        `;
+    } else if (type === 'nucleaire') {
+        details = `
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; margin-bottom: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Puissance nominale:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.puissance_nominal || 'N/A'} MW</span>
+            </div>
+            <div class="popup-detail" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: white; border-radius: 6px; border: 1px solid #e5e7eb;">
+                <span style="color: #6b7280; font-weight: 500; font-size: 13px;">Type d'intrant:</span>
+                <span style="background: ${config.color}15; color: ${config.color}; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">${data.type_intrant || 'N/A'}</span>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="professional-popup-content" style="background: white; border: 1px solid #e5e7eb; border-left: 4px solid ${config.color}; padding: 20px; border-radius: 8px; font-family: 'Inter', sans-serif; max-width: 300px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+            <!-- En-tête professionnel -->
+            <div class="popup-header" style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f3f4f6;">
+                <div style="width: 40px; height: 40px; background: ${config.color}15; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: ${config.color}; font-weight: 600;">
+                    ${type.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                    <h3 style="margin: 0; color: #111827; font-size: 16px; font-weight: 600; line-height: 1.2;">${data.nom}</h3>
+                    <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 13px; font-weight: 500;">${config.title}</p>
+                </div>
+            </div>
+            
+            <!-- Description technique -->
+            <div class="popup-description" style="background: #f9fafb; padding: 12px; border-radius: 6px; margin-bottom: 16px; border-left: 3px solid ${config.color};">
+                <p style="margin: 0; color: #374151; font-size: 13px; line-height: 1.4; font-style: italic;">${config.description}</p>
+            </div>
+            
+            <!-- Comparaison informative -->
+            <div class="popup-comparison" style="background: #f0f9ff; padding: 12px; border-radius: 6px; margin-bottom: 16px; border: 1px solid ${config.color}20;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="font-size: 14px; color: ${config.color}; font-weight: 600;">Comparaison</span>
+                </div>
+                <p style="margin: 0; color: #374151; font-size: 13px; font-weight: 500; line-height: 1.4;">${config.comparison.text}</p>
+            </div>
+            
+            <!-- Détails techniques -->
+            <div class="popup-details" style="display: flex; flex-direction: column; gap: 8px;">
+                ${details}
+            </div>
+            
+            <!-- Footer discret -->
+            <div class="popup-footer" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #f3f4f6; text-align: center;">
+                <span style="font-size: 11px; color: #9ca3af; font-weight: 500;">Cliquez pour plus d'informations</span>
+            </div>
+        </div>
+    `;
+}
+
 
 function createListElement({ nom, id, type }) {
     return `
