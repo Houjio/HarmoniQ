@@ -2,24 +2,39 @@
 Contribution
 ############
 
-Pour ajouter des fonctionnalités aux projets, il faut ajouter des fonctions dans les modules Python dont vous êtes responsable. La liste des modules sont les suivants :
+Pour ajouter des fonctionnalités, ajoutez du code dans les modules Python concernés.
 
-- harmoniQ/harmoniq/modules/eolienne
-- harmoniQ/harmoniq/modules/hydro
-- harmoniQ/harmoniq/modules/solaire
-- harmoniQ/harmoniq/modules/thermique
-- harmoniQ/harmoniq/modules/transmission
+Modules de production
+----------------------
 
-Des fichiers peuvent être ajoutés dans les dossiers pour ajouter de nouvelle fonctions et classes, tans qu'elle sont aussi importer dans le fichier __init__.py du dossier. 
+- ``harmoniQ/harmoniq/modules/eolienne``
+- ``harmoniQ/harmoniq/modules/hydro``
+- ``harmoniQ/harmoniq/modules/solaire``
+- ``harmoniQ/harmoniq/modules/thermique``
+- ``harmoniQ/harmoniq/modules/nucleaire``
+- ``harmoniQ/harmoniq/modules/reseau`` (réseau électrique)
+- ``harmoniQ/harmoniq/modules/transmission``
 
-Du code souvant réutilisé dans plusieurs modules peut être mis dans le dossier harmoniQ/harmoniq/utils. Pour l'importer dans les autres modules, il suffit d'ajouter la ligne suivante au début du fichier :
+Nouvelles fonctions et classes : les ajouter dans le module concerné et les exposer dans le ``__init__.py`` du dossier.
 
-.. code-block:: python
+Code partagé
+------------
 
-    from harmoniq.utils import NOM_DE_LA_FONCTION
+Le code réutilisé par plusieurs modules peut être placé dans :
 
-Pour ajouter des tests, il faut ajouter des tests dans le dossier harmoniQ/tests. Les tests doivent être écrits avec le module unittest de Python. Pour lancer les tests, il suffit de lancer la commande suivante :
+- ``harmoniQ/harmoniq/core/`` (utils, base, meteo)
+- ``harmoniQ/harmoniq/modules/reseau/utils/`` pour le réseau
 
-.. code-block:: bash
+Exemple d'import ::
 
+    from harmoniq.core.utils import NOM_DE_LA_FONCTION
+
+Tests
+-----
+
+Les tests vont dans ``harmoniQ/tests/``. Utiliser **pytest**. Lancer tous les tests ::
+
+    cd harmoniQ
     pytest
+
+Les tests utilisent une base dédiée (variable d'environnement ``HARMONIQ_TESTING=True``).

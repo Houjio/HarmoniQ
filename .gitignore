@@ -1,3 +1,6 @@
+# Virtual environment (created by exec_harmoniQ.sh)
+.venv/
+
 # Gros fichiers/dossiers
 **/db.sqlite
 **/test_db.sqlite

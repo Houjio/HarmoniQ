@@ -1,6 +1,10 @@
+"""Launch the HarmoniQ web app (FastAPI + Uvicorn)."""
+
 import argparse
-from harmoniq.webserver import app
+
 import uvicorn
+
+from harmoniq.webserver import app
 
 
 def main():

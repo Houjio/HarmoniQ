@@ -422,7 +422,7 @@ class InfraReseau(Infrastructure):
                 logger.info(f"Snapshots journaliers détectés (écart: {time_diff})")
             else:
                 period = 'hourly'
-                logger.info(f"Snapshots horazires détectés (écart: {time_diff})")
+                logger.info(f"Snapshots horaires détectés (écart: {time_diff})")
                 
         production_power = self.network.generators_t['p'].copy()
         

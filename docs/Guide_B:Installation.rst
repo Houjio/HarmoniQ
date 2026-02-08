@@ -1,98 +1,95 @@
 ==========================================
-Partie B : Environnement et Lancement
+Guide B : Environnement et installation
 ==========================================
-Choisissez une méthode pour créer un environnement Python.
+
+Choisissez une méthode d'installation.
+
+Méthode recommandée : script tout-en-un
+----------------------------------------
+
+À la racine du projet (répertoire contenant ``harmoniQ/``) :
+
+.. code-block:: bash
+
+    chmod +x exec_harmoniQ.sh
+    ./exec_harmoniQ.sh
+
+Le script crée un venv dans ``.venv/`` à la racine du projet (s'il n'existe pas), installe HarmoniQ, initialise la base et lance l'app sur un port libre. Détails : :doc:`app`.
 
 Méthode A : Conda
-^^^^^^^^^^^^^^^^^
+-----------------
 
-1. Créez l'environnement Conda :
+1. Créer l'environnement ::
 
-.. code-block:: bash
+    conda create --name harmoniq_env python=3.10
 
-    conda create --name harmoniq_env python=3.8
-
-2. Activez-le :
-
-.. code-block:: bash
+2. Activer ::
 
     conda activate harmoniq_env
 
-3. Installez les dépendances :
-
-.. code-block:: bash
-
-    pip install -e ./harmoniQ
-
-Méthode B : Virtualenv
-^^^^^^^^^^^^^^^^^^^^^^
-
-1. Créez un environnement virtuel (ou vous voulez):
-
-.. code-block:: bash
-
-    python -m venv harmoniq_env
-
-2. Activez-le :
-
-- **Linux/MacOS :**
-
-.. code-block:: bash
-
-    source harmoniq_env/bin/activate
-
-- **Windows :**
-
-.. code-block:: bash
-
-    .\harmoniq_env\Scripts\activate
-
-3. Installez les dépendances :
-
-.. code-block:: bash
+3. Depuis la racine du projet ::
 
     pip install -e ./harmoniQ[dev]
 
-Et si la commande précédente ne fonctionne pas, essayez :
-.. code-block:: bash
+Méthode B : venv (Linux / macOS)
+---------------------------------
 
-    pip install -e ./harmoniQ
+1. Créer l'environnement ::
 
-N'oubliez pas d'updaer pip
+    python3 -m venv harmoniq_env
 
-Vérification du Fichier ``demande.db``
---------------------------------------
+2. Activer ::
 
-Assurez-vous que le fichier suivant existe et est accessible :
+    source harmoniq_env/bin/activate
 
-HarmoniQ/harmoniQ/harmoniq/db/
+3. Installer ::
 
-Lancer l’Application
---------------------
+    pip install -U pip
+    pip install -e ./harmoniQ[dev]
 
-Pour initialiser la base de données :
+Méthode C : venv (Windows)
+--------------------------
 
-.. code-block:: bash
+1. Créer l'environnement ::
+
+    python -m venv harmoniq_env
+
+2. Activer ::
+
+    .\harmoniq_env\Scripts\activate
+
+3. Installer ::
+
+    pip install -e ./harmoniQ[dev]
+
+Initialisation de la base
+-------------------------
+
+Après la première installation ::
 
     init-db -p
 
-Télécharger les données nécessaires (réservé aux étudiants du projet) :
-Si cette commande ne marche pas , vous pouvez alternativement placer manuellement 
-la db demande.db dans le dossier harmoniQ/harmoniQ/harmoniq/db/ .
+Pour réinitialiser complètement puis remplir ::
+
+    init-db -R -p
+
+Données de demande (demande.db ou synthèse)
+-------------------------------------------
+
+Au lancement avec le script, vous pouvez choisir :
+
+- ``./exec_harmoniQ.sh --demande-db`` : utiliser la base **demande.db** (fichier requis dans ``harmoniQ/harmoniq/db/``).
+- ``./exec_harmoniQ.sh --demande-synthetic`` : utiliser la **synthèse** (courbe en canard + saisonnalité), pas de fichier.
+
+Sans option, le script utilise la base si ``demande.db`` existe, sinon la synthèse. Pour obtenir ``demande.db`` (accès réservé) : ``load-db -d`` ou copie manuelle dans ``harmoniQ/harmoniq/db/``.
+
+Lancer l'application
+--------------------
+
 .. code-block:: bash
 
-    load-db -d
+    launch-app --debug --port 5000
 
-Lancer l'application web (mode debug) :
+En cas d'erreur « Address already in use », utiliser un autre port (ex. ``--port 5001``) ou lancer via ``./exec_harmoniQ.sh``, qui choisit automatiquement un port libre.
 
-.. code-block:: bash
-
-    launch-app --debug
-
-Si aucun problème ne survient, HarmoniQ est prêt à être utilisé ! Si une erreur survient indiquant:
-
-.. code-block:: bash
-
-    [Errno 48] Address already in use
-
-Alors il faut simplement changer le port dans : harmoniq/scripts/lance_webserver.py
+Voir :doc:`app` pour toutes les options.

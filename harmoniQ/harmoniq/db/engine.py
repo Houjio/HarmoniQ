@@ -1,18 +1,17 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+"""SQLAlchemy engine and session; dynamic discovery of SQL/Pydantic table pairs."""
 
 import inspect
 from typing import Dict
+
 import pandas as pd
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from harmoniq import DB_PATH
 from harmoniq.db import schemas
 
-# engine.py : Ce fichier est responsable de la création de l'engine SQLAlchemy et de la session de base de données.
-# Il est utilisé pour se connecter à la base de données et exécuter des requêtes.
-
-DATABASE__URL = f"sqlite:///{DB_PATH}"
-engine = create_engine(DATABASE__URL)
+DATABASE_URL = f"sqlite:///{DB_PATH}"
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 

@@ -1,66 +1,39 @@
 ===================================================
-Guide de Lancement et Notes de Projet pour HarmoniQ
+Guide A : Prérequis et configuration
 ===================================================
 
+Ce guide décrit les prérequis système et la pré-configuration pour HarmoniQ.
 
-======================================
-Partie A : Guide de l'Application
-======================================
-
-Pré-Configuration de HarmoniQ
------------------------------
-
-Ce guide contient les étapes nécessaires pour installer et lancer HarmoniQ.
-
-Cloner le Projet depuis GitHub
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Clonez le dépôt officiel depuis GitHub (préférablement sur le bureau) :
+Cloner le projet
+----------------
 
 .. code-block:: bash
 
     git clone https://github.com/Houjio/HarmoniQ.git
-
-Placez-vous dans le répertoire cloné :
-
-.. code-block:: bash
-
     cd HarmoniQ
 
-Pré-requis pour macOS (Homebrew)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Homebrew permet une gestion simplifiée des packages requis.
+Prérequis
+---------
 
-Installer Homebrew
-~~~~~~~~~~~~~~~~~~
-Exécutez dans un terminal :
+- **Python 3.8 à 3.12** (3.10 ou 3.12 recommandé). Python 3.14 n'est pas supporté (dépendances comme numpy 1.26.4).
+- **pip** à jour
 
-.. code-block:: bash
+Sous macOS avec Homebrew : ``brew install python@3.12`` ; le script ``exec_harmoniQ.sh`` utilisera ``python3.12`` automatiquement.
 
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+macOS (Homebrew)
+^^^^^^^^^^^^^^^^
 
-Ajouter Homebrew au PATH
-~~~~~~~~~~~~~~~~~~~~~~~~
-Après installation :
-
-.. code-block:: bash
-
-    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/mon_user/.zprofile
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-
-Vérifier l'installation
-~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: bash
-
-    brew -v
-
-Installer les bibliothèques système
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Pour installer les bibliothèques système optionnelles (proj, pyproj) :
 
 .. code-block:: bash
 
     brew install proj
     brew install pyproj
 
-ATTENTION : L'ajout de Homebrew au PATH depend du fichier dans lequel vous 
-vous situez si vous clonez le git a nouveau, il faudra re-effectuer cette étape.
+L'environnement virtuel peut être créé avec le script de lancement (voir :doc:`install` et :doc:`app`) ou manuellement avec ``python3 -m venv`` / conda.
+
+Suite
+-----
+
+- **Installation et environnement** : :doc:`Guide_B:Installation`
+- **Lancer l'application** : :doc:`app`

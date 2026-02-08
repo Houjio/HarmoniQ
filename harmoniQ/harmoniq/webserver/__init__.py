@@ -1,15 +1,14 @@
+from pathlib import Path
+
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from pathlib import Path
-
 from harmoniq.webserver.REST import router as api_router
 
-ASSET_FILE = Path(__file__).parent / "assets"
+ASSET_FILE = Path(__file__).resolve().parent / "assets"
 STATIC_FILE = ASSET_FILE / "static"
-TEMPLATES_FILE = ASSET_FILE / "templates"
 
 app = FastAPI(
     title="HarmoniQ",
@@ -36,7 +35,6 @@ def index(request: Request):
 
 @app.get("/favicon.ico", response_class=FileResponse)
 def favicon():
-    print(STATIC_FILE / "favicon" / "favicon.ico")
     return FileResponse(STATIC_FILE / "favicon" / "favicon.ico")
 
 
@@ -67,7 +65,7 @@ def optimal_placement_page(request: Request):
 def not_found(request: Request, exc):
     if request.url.path.startswith("/api/"):
         return JSONResponse(status_code=404, content={"message": "Not Found"})
-    return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
+    return templates.TemplateResponse(request=request, name="404.html", status_code=404)
 
 
 # Ajoute les endpoints de REST.py

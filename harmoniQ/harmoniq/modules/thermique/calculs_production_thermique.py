@@ -49,26 +49,19 @@ def calculate_thermique_production(
     return production_df
 
 if __name__ == "__main__":
-    import matplotlib.pyplot as plt
+    from datetime import datetime
 
-    # Paramètres de la centrale nucléaire
-    power_kw = 400*1000  # Puissance nominale d'une centrale thermique moyenne en kW (400 MW)
+    # Paramètres de la centrale thermique
+    power_mw = 400.0  # Puissance nominale en MW
     maintenance_week = 22  # Semaine de maintenance
+    date_start = datetime(2035, 1, 1)
+    date_end = datetime(2035, 12, 31)
 
-    # Calculer la production annuelle et hebdomadaire
-    production_df = calculate_thermal_production(power_kw, maintenance_week)
-    weekly_production = production_df.groupby('week')['production_kwh'].sum()
-
-    # Calculer la production annuelle totale en kWh
-    annual_thermal_production = production_df['production_kwh'].sum()
-    print(f"Production électrique thermique annuelle totale : {annual_thermal_production:.2f} kWh")
-
-    # Tracer le graphique de la production hebdomadaire
-    plt.figure(figsize=(10, 6))
-    plt.plot(weekly_production.index, weekly_production.values, marker='o', linestyle='-', color='b')
-    plt.title('Production électrique thermique Hebdomadaire')
-    plt.xlabel('Semaine de l\'année')
-    plt.ylabel('Production (kWh)')
-    plt.grid(True)
-    plt.xticks(range(1, 53))
-    plt.show()
+    production_df = calculate_thermique_production(
+        power_mw=power_mw,
+        maintenance_week=maintenance_week,
+        date_start=date_start,
+        date_end=date_end,
+    )
+    annual_mwh = production_df["production_mwh"].sum()
+    print(f"Production électrique thermique annuelle totale : {annual_mwh:.2f} MWh")

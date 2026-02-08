@@ -1,23 +1,16 @@
-"""Script qui initialise la base de données et la remplit avec des données de référence"""
-
-import pandas as pd
-from pathlib import Path
-from pathlib import Path
-
-from harmoniq.db.engine import engine, get_db
-from harmoniq.db.schemas import SQLBase
-from harmoniq.db import schemas
-from harmoniq.db import CRUD
-
+"""Initialise la base de données et la remplit avec les données de référence (CSV/Excel)."""
 
 import argparse
+from pathlib import Path
 
-#C'est dans ce fichier que l'on utilise les fonctions CRUD pour remplir la base de données
-# On voit aparaitre les chemins vers le répertoire contenant les fichiers CSV
+import pandas as pd
 
+from harmoniq.db import CRUD, schemas
+from harmoniq.db.engine import engine, get_db
+from harmoniq.db.schemas import SQLBase
 
-CURRENT_DIR = Path(__file__).parent
-CSV_DIR = CURRENT_DIR / ".." / "db" / "CSVs"
+CURRENT_DIR = Path(__file__).resolve().parent
+CSV_DIR = CURRENT_DIR.parent / "db" / "CSVs"
 
 
 def init_db(reset=False):
@@ -114,15 +107,14 @@ def fill_parc_eoliennes():
 
             CRUD.create_eolienne_parc(db, eolienne_parc)
         except Exception as e:
-            print(f"Erreur lors de l'ajout du projet {project_name}")
-            print(e)
-            breakpoint()
+            print(f"Erreur lors de l'ajout du projet {project_name}: {e}")
+            continue
 
         print(f"Projet {project_name} ajouté à la base de données")
 
 
 def fill_hydro():
-    """Remplit la table bus à partir du fichier CSV"""
+    """Remplit la table hydro (barrages) à partir du fichier CSV."""
     db = next(get_db())
 
     file_path = CSV_DIR / "Info_Barrages.csv"

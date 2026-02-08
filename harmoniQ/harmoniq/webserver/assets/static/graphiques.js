@@ -106,29 +106,30 @@ function generateTemporalPlot() {
 }
 
 function updateTemporalGraph() {
-    // Add production traces
+    // Use calculated production from API (production.production = array of { snapshot, totale, total_*, ... })
     const productionData = production.production;
-    console.log(productionData);
-    let x = productionData.map(instance => (instance["snapshot"]));
-    let y = productionData.map(instance => (instance["totale"]/ 1000));
-    let eolien = productionData.map(instance => (instance["total_eolien"]/ 1000));
-    let solaire = productionData.map(instance => (instance["total_solaire"]/ 1000));
-    let hydro_fil = productionData.map(instance => (instance["total_hydro_fil"]/ 1000));
-    let hydro_res = productionData.map(instance => (instance["total_hydro_reservoir"]/ 1000));
-    let imports = productionData.map(instance => (instance["total_import"]/ 1000));
-    let nucleaire = productionData.map(instance => (instance["total_nucleaire"]/ 1000));
-    let thermique = productionData.map(instance => (instance["total_thermique"]/ 1000));
+    const get = (instance, key) => (instance[key] != null ? Number(instance[key]) : 0);
+    const toGW = (v) => (v / 1000); // MWh -> GW for display
+    let x = productionData.map(instance => (instance["snapshot"] || instance["timestamp"]));
+    let y = productionData.map(instance => toGW(get(instance, "totale")));
+    let eolien = productionData.map(instance => toGW(get(instance, "total_eolien")));
+    let solaire = productionData.map(instance => toGW(get(instance, "total_solaire")));
+    let hydro_fil = productionData.map(instance => toGW(get(instance, "total_hydro_fil")));
+    let hydro_res = productionData.map(instance => toGW(get(instance, "total_hydro_reservoir")));
+    let imports = productionData.map(instance => toGW(get(instance, "total_import")));
+    let nucleaire = productionData.map(instance => toGW(get(instance, "total_nucleaire")));
+    let thermique = productionData.map(instance => toGW(get(instance, "total_thermique")));
 
-    let demandeX = Object.keys(demandeTemporal.total_electricity);
-    let demandeY = Object.values(demandeTemporal.total_electricity).map(value => value / 1000000);
+    let demandeX = Object.keys(demandeTemporal.total_electricity || {});
+    let demandeY = Object.values(demandeTemporal.total_electricity || {}).map(value => value / 1000000);
 
     const productionTraces = [
         {
-            x: x,
-            y: y,
+            x: demandeX,
+            y: demandeY,
             type: 'scatter',
             mode: 'lines',
-            name: 'Demande réhaussée',
+            name: 'Demande',
             line: { shape: 'spline', color: 'black' },
             hovertemplate: "%{x}<br>%{y:.2f} GW<extra></extra>"
         },

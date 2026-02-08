@@ -1,10 +1,10 @@
+"""DB package: schemas, engine, CRUD. Dynamically attaches CRUD methods per table."""
+
 import asyncio
 
 from harmoniq.db import CRUD
 from harmoniq.db.engine import sql_tables
 
-#This program is designed to create CRUD methods for each table in the database.
-#It uses the SQLAlchemy ORM to interact with the database and the Pydantic library to validate data.
 
 def _format_table_name(table_name):
     """

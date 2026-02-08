@@ -1,45 +1,75 @@
+"""REST API: CRUD endpoints, production calculators, demande, meteo, faker, reseau."""
+
 import asyncio
-from fastapi import APIRouter, Depends, HTTPException
+import glob
+import os
+import time
+from datetime import datetime
+from typing import List, Optional
+
+import pandas as pd
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
-from typing import List, Optional
-from datetime import datetime
-import pandas as pd
-import time
-
-from harmoniq.db import schemas, engine, CRUD
+from harmoniq.core import meteo
+from harmoniq.core.fausse_données import production_aleatoire
+from harmoniq.db import CRUD, engine, schemas
 from harmoniq.db.CRUD import (
     create_data,
-    read_all_data,
-    read_multiple_by_id,
-    read_data_by_id,
-    update_data,
     delete_data,
+    read_all_data,
+    read_data_by_id,
+    read_multiple_by_id,
+    update_data,
 )
 from harmoniq.db.demande import (
-    read_demande_data, 
-    read_demande_data_sankey, 
+    read_demande_data,
+    read_demande_data_sankey,
     read_demande_data_temporal,
 )
-from harmoniq.core import meteo
 from harmoniq.db.engine import get_db
-from harmoniq.core.fausse_données import production_aleatoire
-
 from harmoniq.modules.eolienne import InfraParcEolienne
-from harmoniq.modules.reseau import InfraReseau
+from harmoniq.modules.hydro import InfraHydro
+from harmoniq.modules.nucleaire import InfraNucleaire
+from harmoniq.modules.reseau import InfraReseau, NETWORK_CACHE_DIR
+from harmoniq.modules.reseau.utils.data_loader import DEMAND_CACHE_DIR
 from harmoniq.modules.solaire import InfraSolaire
 from harmoniq.modules.thermique import InfraThermique
-from harmoniq.modules.nucleaire import InfraNucleaire
-from harmoniq.modules.hydro import InfraHydro
+
+# ---- Helpers: ensure API response shape matches frontend ----
+
+def _df_series_to_dict(series: pd.Series):
+    """Convert a pandas Series with datetime index to dict with ISO string keys for JSON."""
+    return {str(k): float(v) if pd.notna(v) else 0 for k, v in series.items()}
 
 
-import os
-import glob
-from harmoniq.modules.reseau import NETWORK_CACHE_DIR
-from harmoniq.modules.reseau.utils.data_loader import DEMAND_CACHE_DIR
+def _production_df_to_eolienne_json(production: pd.DataFrame):
+    """Frontend expects { tempsdate: [...], puissance: [...] }."""
+    return {
+        "tempsdate": [
+            pd.Timestamp(t).isoformat() if hasattr(t, "isoformat") else str(t)
+            for t in production["tempsdate"]
+        ],
+        "puissance": production["puissance"].fillna(0).tolist(),
+    }
 
-#Appel des modules de production énergétique, ainsi que d'autres modules, et crée des routes web pour chaque fonction CRUD et autre!
+
+def _production_df_to_thermique_nucleaire_json(production: pd.DataFrame):
+    """Frontend expects { production_mwh: { date_str: value } }."""
+    return {
+        "production_mwh": _df_series_to_dict(production["production_mwh"]),
+    }
+
+
+def _production_df_to_solaire_json(production: pd.DataFrame):
+    """Frontend expects { production_horaire_wh: { date_str: value } }. Solaire returns production in kW."""
+    # production column is in kW -> Wh = * 1000
+    series = production.set_index("date")["production"] * 1000
+    return {
+        "production_horaire_wh": _df_series_to_dict(series),
+    }
+
 
 router = APIRouter(
     prefix="/api",
@@ -52,17 +82,6 @@ async def ping():
     return {"ping": "pong"}
 
 
-import os
-import glob
-from fastapi import HTTPException, Depends, status
-from sqlalchemy.orm import Session
-from harmoniq.db.schemas import Scenario
-from harmoniq.db.CRUD import delete_data, read_data_by_id
-from harmoniq.db.engine import get_db
-from harmoniq.modules.reseau import NETWORK_CACHE_DIR
-from harmoniq.modules.reseau.utils.data_loader import DEMAND_CACHE_DIR
-
-
 @router.delete(
     "/scenario/{scenario_id}",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -73,7 +92,7 @@ async def delete_scenario_and_purge_cache(
     db: Session = Depends(get_db),
 ):
     # 1) Load the scenario
-    scenario = await read_data_by_id(db, Scenario, scenario_id)
+    scenario = await read_data_by_id(db, schemas.Scenario, scenario_id)
     if not scenario:
         raise HTTPException(status_code=404, detail="Scenario not found")
 
@@ -99,7 +118,7 @@ async def delete_scenario_and_purge_cache(
             pass
 
     # 4) Delete the scenario record from the database
-    result = await delete_data(db, Scenario, scenario_id)
+    result = await delete_data(db, schemas.Scenario, scenario_id)
     if result is None:
         raise HTTPException(status_code=404, detail="Scenario not found")
 
@@ -251,8 +270,14 @@ async def read_demande_sankey(
     if scenario is None:
         raise HTTPException(status_code=404, detail="Scenario not found")
 
-    demande = await read_demande_data_sankey(scenario, CUID)
-    return demande
+    df = await read_demande_data_sankey(scenario, CUID)
+    # Frontend expects { sector: [], total_electricity: [], total_gaz: [] }
+    return {
+        "sector": df["sector"].astype(str).tolist(),
+        "total_electricity": df["total_electricity"].tolist(),
+        "total_gaz": df["total_gaz"].tolist(),
+    }
+
 
 @demande_router.post("/temporal")
 async def read_demande_temporal(
@@ -264,8 +289,12 @@ async def read_demande_temporal(
     if scenario is None:
         raise HTTPException(status_code=404, detail="Scenario not found")
 
-    demande = await read_demande_data_temporal(scenario, CUID)
-    return demande
+    df = await read_demande_data_temporal(scenario, CUID)
+    # Frontend expects { total_electricity: { dateStr: value }, total_gaz: { dateStr: value } }
+    return {
+        "total_electricity": _df_series_to_dict(df["total_electricity"]),
+        "total_gaz": _df_series_to_dict(df["total_gaz"]),
+    }
 
 
 router.include_router(demande_router)
@@ -279,7 +308,7 @@ meteo_router = APIRouter(
 )
 
 @meteo_router.post("/get_data")
-def get_meteo_data(
+async def get_meteo_data(
     latitude: float,
     longitude: float,
     interpolate: bool,
@@ -288,7 +317,7 @@ def get_meteo_data(
     end_time: Optional[datetime] = None,
 ):
     try:
-        granularity = meteo.Granularity(granularity)
+        granularity_enum = meteo.Granularity(granularity)
     except ValueError:
         raise HTTPException(status_code=400, detail="Granularity must be 1 or 2")
 
@@ -297,12 +326,12 @@ def get_meteo_data(
         interpolate=interpolate,
         start_time=start_time,
         end_time=end_time,
-        granularity=granularity,
+        granularity=granularity_enum,
     )
-    helper.load()
-    csv_buffer = helper.data.to_csv()
+    await helper.load()
+    csv_str = helper.data.to_csv()
     return StreamingResponse(
-        csv_buffer,
+        iter([csv_str.encode("utf-8")]),
         media_type="text/csv",
         headers={"Content-Disposition": "attachment; filename=weather_data.csv"},
     )
@@ -329,10 +358,8 @@ async def calculer_production_parc_eolien(
 
     eolienne_infra = InfraParcEolienne(eolienne_parc)
     await eolienne_infra.charger_scenario(scenario)
-    production: pd.DataFrame = eolienne_infra.calculer_production()
-    production = production.fillna(0)
-    print("Production Eolienne AHAHAHA", production)
-    return production
+    production = eolienne_infra.calculer_production().fillna(0)
+    return _production_df_to_eolienne_json(production)
 
 # TODO DRY
 #-----#-----#-----#-----#-----#  Production : Solaire  #-----#-----#-----#-----#-----#
@@ -355,15 +382,13 @@ async def calculer_production_solaire(
 
     solaire_infra = InfraSolaire(solaire)
     solaire_infra.charger_scenario(scenario)
-    production: pd.DataFrame = solaire_infra.calculer_production()
-    production = production.fillna(0)
-    return production
+    production = solaire_infra.calculer_production().fillna(0)
+    return _production_df_to_solaire_json(production)
 
 #-----#-----#-----#-----#-----#  Production : Thermique  #-----#-----#-----#-----#-----#
 
 thermique_router = api_routers["thermique"]
 @thermique_router.post("/{thermique_id}/production")
-
 async def calculer_production_thermique(
     thermique_id: int, scenario_id: int, db: Session = Depends(get_db)
 ):
@@ -379,9 +404,8 @@ async def calculer_production_thermique(
 
     thermique_infra = InfraThermique(thermique)
     thermique_infra.charger_scenario(scenario)
-    production: pd.DataFrame = thermique_infra.calculer_production()
-    production = production.fillna(0)
-    return production
+    production = thermique_infra.calculer_production().fillna(0)
+    return _production_df_to_thermique_nucleaire_json(production)
 
 #-----#-----#-----#-----#-----#  Production : Nucleaire  #-----#-----#-----#-----#-----#
 
@@ -400,12 +424,11 @@ async def calculer_production_nucleaire(
 
     if scenario is None:
         raise HTTPException(status_code=404, detail="Scenario not found")
-    
+
     nucleaire_infra = InfraNucleaire(nucleaire)
     nucleaire_infra.charger_scenario(scenario)
-    production: pd.DataFrame = nucleaire_infra.calculer_production()
-    production = production.fillna(0)
-    return production
+    production = nucleaire_infra.calculer_production().fillna(0)
+    return _production_df_to_thermique_nucleaire_json(production)
 
 
 #-----#-----#-----#-----#-----#  Production : Hydro  #-----#-----#-----#-----#-----#
@@ -433,9 +456,16 @@ async def calculer_production_hydro(
 
     hydro_infra = InfraHydro(hydro)
     hydro_infra.charger_scenario(scenario)
-    production: pd.DataFrame = hydro_infra.calculer_production()
+    production = hydro_infra.calculer_production()
+    if production is None:
+        raise HTTPException(status_code=500, detail="Hydro production returned None")
     production = production.fillna(0)
-    return production
+    # Hydro get_run_of_river_dam_power returns a Series (power_MW); normalize to same API shape as thermique
+    if isinstance(production, pd.Series):
+        return {"production_mwh": _df_series_to_dict(production)}
+    if isinstance(production, pd.DataFrame) and "production_mwh" in production.columns:
+        return _production_df_to_thermique_nucleaire_json(production)
+    return production.reset_index().to_dict(orient="records")
 
 
 #-----#-----#-----#-----#-----#  Fake Data  #-----#-----#-----#-----#-----#
@@ -451,7 +481,7 @@ faker_router = APIRouter(
 async def get_production_aleatoire(scenario_id: int, db: Session = Depends(get_db)):
     scenario = await read_data_by_id(db, schemas.Scenario, scenario_id)
     if scenario is None:
-        raise HTTPException(status_code=200, detail="Scenario not found")
+        raise HTTPException(status_code=404, detail="Scenario not found")
 
     production = await asyncio.to_thread(production_aleatoire, scenario)
     return production
@@ -499,22 +529,28 @@ async def calculer_production_reseau(
     # total_columns = ['totale'] + [col for col in production.columns if col.startswith('total_')]
     # production_totals = production[total_columns]
     
-    production_json = production.reset_index().rename(columns={'index': 'timestamp'})
-    
-    if 'timestamp' in production_json.columns:
-        production_json['timestamp'] = production_json['timestamp'].astype(str)
-    
+    # Frontend (graphiques.js) expects each record to have "snapshot" and total_* columns
+    production_json = production.reset_index().rename(columns={"index": "snapshot"})
+    production_json["snapshot"] = production_json["snapshot"].astype(str)
+
+    # Ensure all total_* columns expected by frontend exist (missing => 0)
+    for col in [
+        "totale", "total_eolien", "total_solaire", "total_hydro_fil",
+        "total_hydro_reservoir", "total_import", "total_nucleaire", "total_thermique",
+    ]:
+        if col not in production_json.columns:
+            production_json[col] = 0.0
+
     response = {
         "metadata": {
             "scenario_id": scenario_id,
             "liste_infra_id": liste_infra_id,
             "is_journalier": is_journalier,
             "execution_time_seconds": execution_time,
-            "timestamps": len(production)
+            "timestamps": len(production),
         },
-        "production": production_json.to_dict(orient='records')
+        "production": production_json.to_dict(orient="records"),
     }
-    
     return response
 
 router.include_router(reseau_router)

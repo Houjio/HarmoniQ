@@ -478,16 +478,20 @@ function single_graph(type, data) {
     console.log(type, data)
     if (type == "eolienneparc") {
         unit = "MW";
-        xval = Object.values(data.tempsdate);
-        yval = Object.values(data.puissance);
-    } else if (type == "thermique" || type == "nucleaire") {
+        xval = (data.tempsdate && Object.values(data.tempsdate)) || [];
+        yval = (data.puissance && Object.values(data.puissance)) || [];
+    } else if (type == "thermique" || type == "nucleaire" || type == "hydro") {
         unit = "MW";
-        xval = Object.keys(data.production_mwh);
-        yval = Object.values(data.production_mwh);
+        xval = data.production_mwh ? Object.keys(data.production_mwh) : [];
+        yval = data.production_mwh ? Object.values(data.production_mwh) : [];
     } else if (type == "solaire") {
-        unit = "W";
-        xval = Object.keys(data.production_horaire_wh);
-        yval = Object.values(data.production_horaire_wh);
+        unit = "Wh";
+        xval = data.production_horaire_wh ? Object.keys(data.production_horaire_wh) : [];
+        yval = data.production_horaire_wh ? Object.values(data.production_horaire_wh) : [];
+    }
+    if (xval == null || yval == null || xval.length === 0) {
+        $("#graph-error").show();
+        return;
     }
 
     const layout = {
